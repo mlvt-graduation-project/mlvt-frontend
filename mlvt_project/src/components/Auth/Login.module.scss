@@ -1,0 +1,24 @@
+// src/components/Auth/Login.module.scss
+@import '../../styles/variables';
+
+.loginContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.loginForm {
+    margin-top: 1rem;
+}
+
+.loginButtons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 2rem;
+}
+
+.rememberForgot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
