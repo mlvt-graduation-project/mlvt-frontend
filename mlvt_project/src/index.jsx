@@ -7,10 +7,14 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from './theme/theme';
 
-ReactDOM.render(
+const page = (
     <ThemeProvider theme={theme}>
         <CssBaseline />
         <App />
-    </ThemeProvider>,
+    </ThemeProvider>
+)
+
+ReactDOM.render(
+    page,
     document.getElementById('root')
 );

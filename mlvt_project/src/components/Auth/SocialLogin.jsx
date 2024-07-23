@@ -1,4 +1,4 @@
-// src/components/Auth/SocialLogin.js
+// src/components/Auth/SocialLogin.jsx
 import React from 'react';
 import { Box, Button } from '@mui/material';
 import { Google as GoogleIcon, Apple as AppleIcon } from '@mui/icons-material';

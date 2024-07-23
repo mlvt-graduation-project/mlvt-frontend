@@ -1,4 +1,4 @@
-// src/components/Auth/Login.js
+// src/components/Auth/Login.jsx
 import React from 'react';
 import { Container, Box, Typography, TextField, Button, Link, Checkbox, FormControlLabel } from '@mui/material';
 import SocialLogin from './SocialLogin';
