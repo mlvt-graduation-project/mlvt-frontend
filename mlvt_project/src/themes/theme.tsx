@@ -1,29 +1,71 @@
 // src/theme.ts
 import { createTheme } from '@mui/material/styles';
 
+type CustomPaletteOptions = {
+    primary: {
+        main: string;
+    };
+    secondary: {
+        main: string;
+    };
+    accessory: {
+        default: string;
+    };
+    text: {
+        primary: string;
+        secondary: string;
+    };
+};
+
 const theme = createTheme({
     palette: {
         primary: {
-            main: '#fef8ff', // Your primary color
+            main: '#a60195', // Your primary color
         },
         secondary: {
-            main: '#dc004e', // Your secondary color
+            main: '#F1EAFF', // Your secondary color
+        },
+        accessory: {
+            default: '#0C2A92', // Your background color
+        },
+        text: {
+            primary: '#000000', // Your text color
+            secondary: '#FFFFFF', // Your text color
+        },
+        error: {
+            main: '#FF0000', // Your error color
+        },
+        warning: {
+            main: '#FFA500', // Your warning color
+        },
+        info: {
+            main: '#0000FF', // Your info color
+        },
+        success: {
+            main: '#008000', // Your success color
         },
         background: {
-            default: '#ffffff', // Your background color
+            primary: '#D9D9D9',
         },
-    },
+
+    } as CustomPaletteOptions,
     typography: {
-        fontFamily: 'Arial, sans-serif', // Your font family
+        fontFamily: 'Araboto, Roboto, Arial, sans-serif',
         h1: {
-            fontSize: '2rem',
+          fontSize: '2.5rem',
+          fontWeight: 900,
         },
         h2: {
-            fontSize: '1.5rem',
+          fontSize: '1.5rem',
+          fontWeight: 400,
         },
         body1: {
-            fontSize: '1rem',
+          fontSize: '1rem',
         },
+        body2: {
+            fontSize: '0.875rem',
+        },
+            
     },
 });
 

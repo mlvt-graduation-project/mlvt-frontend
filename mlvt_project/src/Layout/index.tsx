@@ -1,6 +1,8 @@
 import {ReactNode} from "react";
 import {Box} from "@mui/material";
 import Sidebar from "../components/sidebar";
+import Navbar from "../components/navbar";
+import Theme from "../themes/theme";
 
 interface LayoutProps {
     children: ReactNode
@@ -9,7 +11,7 @@ interface LayoutProps {
 const Layout = ({children} : LayoutProps) => {
     return (
         <Box sx={{
-            backgroundColor: "#ffffff",
+            backgroundColor: Theme.palette.background.default,
             display: "flex",
             flexDirection: {
                 xs: "column",
@@ -23,6 +25,7 @@ const Layout = ({children} : LayoutProps) => {
         }}>
             <Sidebar />
             <Box sx={{width: "100%", overflowY: "scroll"}}>{children}</Box>
+            
         </Box>
     )
 }

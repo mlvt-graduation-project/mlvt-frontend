@@ -6,6 +6,7 @@ import HelpIcon from '@mui/icons-material/Help';
 import Avatar from '../../assets/avatar.png';
 import {Link as RouterLink, useLocation} from "react-router-dom";
 import {Box, Hidden, Typography, Link as MuiLink} from "@mui/material";
+import Theme from '../../themes/theme';
 
 const navLinks = [
     {
@@ -34,12 +35,12 @@ const Sidebar = () => {
     const {pathname} = useLocation()
     return (
         <Box sx={{
-            backgroundColor: "#fef8ff",
+            backgroundColor: Theme.palette.secondary.main,
             padding: 0,
             borderRadius: 2,
             display: "flex",
             flexDirection: {
-                sx: "row",
+                sx: "column",
                 lg: "column"
             },
             alignItems: "center",
@@ -55,10 +56,10 @@ const Sidebar = () => {
                 },
                 display: "flex",
                 flexDirection: {
-                    xs: "row",
+                    xs: "column",
                     lg: "column"
                 },
-                gap: 5,
+                gap: 2,
                 justifyContent: "space-between",
                 alignItems: {
                     xs: "center",
@@ -72,19 +73,19 @@ const Sidebar = () => {
                     gap: 2,
                     alignItems: "center",
                     flexDirection: {
-                        xs: "row",
+                        xs: "column",
                         lg: "column"
                     },
                 }}>
-                    <img src={Avatar} alt="avatar" style={{width: "40px", height: "40px", borderRadius: "50%"}}/>
+                    <img src={Avatar} alt="avatar" style={{width: "55px", height: "55px", borderRadius: "50%"}}/>
                     <MenuIcon />
-                    <AddBoxIcon sx={{color: "#a60195", fontSize: "80px"}} />
+                    <AddBoxIcon sx={{color: Theme.palette.primary.main, fontSize: "100px" }} />
                     {navLinks.map((item) => (
                         <MuiLink
                             component={RouterLink}
                             key={item.name}
                             to={item.link}
-                            style={{textDecoration: "none", color: "black"}}
+                            style={{textDecoration: "none", color: Theme.palette.text.primary}}
                         >
                             <Box sx={{
                                 display: "flex",
@@ -93,17 +94,17 @@ const Sidebar = () => {
                                     lg: "column"
                                 },
                                 alignItems: "center",
-                                color: "black",
+                                color: Theme.palette.text.primary,
                                 textDecoration: "none"
                             }}>
                                 <item.icon.type
                                     sx={{
-                                        color: "black",
+                                        color: Theme.palette.text.primary,
                                         width: "22px"
                                     }}
                                 />
                                 <Hidden mdDown>
-                                    <Typography sx={{fontSize: "12px"}}>{item.name}</Typography>
+                                    <Typography variant='body1'>{item.name}</Typography>
                                 </Hidden>
                             </Box>
                         </MuiLink>
@@ -111,8 +112,8 @@ const Sidebar = () => {
                 </Box>
                 <Box>
                     <HelpIcon sx={{
-                        color: "black",
-                        width: "22px"
+                        color: Theme.palette.text.primary,
+                        width: "35px"
                     }}/>
                 </Box>
             </Box>

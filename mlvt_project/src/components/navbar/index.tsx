@@ -1,0 +1,86 @@
+import React from 'react';
+import { AppBar, Toolbar, IconButton, Typography, Box, Avatar, Badge } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import TranslateIcon from '@mui/icons-material/Translate';
+import SubtitlesIcon from '@mui/icons-material/Subtitles';
+import MicIcon from '@mui/icons-material/Mic';
+import SyncIcon from '@mui/icons-material/Sync';
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+import { styled } from '@mui/system';
+import Theme from '../../themes/theme'
+
+const NavLinks = [
+    {
+        icon: OndemandVideoIcon,
+        text: 'Video Translation',
+        link: '/'
+    },
+    {
+        icon: TranslateIcon,
+        text: 'Text Generation',
+        link: '/'
+    },
+    {
+        icon: SubtitlesIcon,
+        text: 'Subtitle Generation',
+        link: '/'
+    },
+    {
+        icon: MicIcon,
+        text: 'Voice Generation',
+        link: '/'
+    },
+    {
+        icon: SyncIcon,
+        text: 'Lip sync for video',
+        link: '/'
+    },
+];
+
+const NavBar: React.FC = () => {
+    return (
+        <AppBar position="static" sx={{ backgroundColor: Theme.palette.background.default, color: '#000', boxShadow: 'none', borderBottom: '2px solid #e0e0e0' }}>
+            <Toolbar>
+                <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', gap: 3 }}>
+                    {NavLinks.map((link, index) => (
+                        <NavItem key={index} icon={link.icon} text={link.text} />
+                    ))}
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Avatar alt="Minh Minh" src="/path/to/avatar.jpg" />
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                            Minh Minh
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: 'gray' }}>
+                            Premium user
+                        </Typography>
+                    </Box>
+
+                    <Badge badgeContent={4} color="primary">
+                        <NotificationsNoneIcon color="action" />
+                    </Badge>
+                </Box>
+            </Toolbar>
+        </AppBar>
+    );
+};
+
+interface NavItemProps {
+    icon: React.ElementType;
+    text: string;
+}
+
+const NavItem: React.FC<NavItemProps> = ({ icon: Icon, text }) => {
+    return (
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Box component={Icon} sx={{ color: '#000', fontSize: 24 }} />
+            <Typography variant="body2" sx={{ color: '#000' }}>
+                {text}
+            </Typography>
+        </Box>
+    );
+};
+
+export default NavBar;
