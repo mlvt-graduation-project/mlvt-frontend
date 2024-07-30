@@ -46,7 +46,7 @@ const Sidebar = () => {
             alignItems: "center",
             width: {
                 sm: "100%",
-                lg: 150
+                lg: 80
             }
         }}>
             <Box sx={{
@@ -77,9 +77,9 @@ const Sidebar = () => {
                         lg: "column"
                     },
                 }}>
-                    <img src={Avatar} alt="avatar" style={{width: "55px", height: "55px", borderRadius: "50%"}}/>
-                    <MenuIcon />
-                    <AddBoxIcon sx={{color: Theme.palette.primary.main, fontSize: "100px" }} />
+                    <img src={Avatar} alt="avatar" style={{width: "40px", height: "40px", borderRadius: "50%"}}/>
+                    <MenuIcon sx={{ fontSize: "20px" }} />
+                    <AddBoxIcon sx={{ color: Theme.palette.primary.main, fontSize: "50px" }} />
                     {navLinks.map((item) => (
                         <MuiLink
                             component={RouterLink}
@@ -100,12 +100,10 @@ const Sidebar = () => {
                                 <item.icon.type
                                     sx={{
                                         color: Theme.palette.text.primary,
-                                        width: "22px"
+                                        width: "18px"
                                     }}
                                 />
-                                <Hidden mdDown>
-                                    <Typography variant='body1'>{item.name}</Typography>
-                                </Hidden>
+                                <Typography variant='subtitle1' sx={{ fontWeight: 'bold', fontSize: '11px' }}>{item.name}</Typography>
                             </Box>
                         </MuiLink>
                     ))}

@@ -46,6 +46,7 @@ const theme = createTheme({
         },
         background: {
             primary: '#D9D9D9',
+            image: 'url(../assets/background.jpg)',
         },
 
     } as CustomPaletteOptions,
@@ -56,7 +57,7 @@ const theme = createTheme({
           fontWeight: 900,
         },
         h2: {
-          fontSize: '1.5rem',
+          fontSize: '1.25rem',
           fontWeight: 400,
         },
         body1: {
@@ -65,7 +66,12 @@ const theme = createTheme({
         body2: {
             fontSize: '0.875rem',
         },
-            
+        subtitle1: {
+            fontSize: '0.25rem',
+        },
+        subtitle2: {
+            fontSize: '0.15rem',
+        }
     },
 });
 
