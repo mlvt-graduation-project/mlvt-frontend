@@ -69,12 +69,23 @@ const NavBar: React.FC = () => {
                                 textDecoration: "none",
                                 gap: 1
                             }}>
-                                <item.icon.type
-                                    sx={{
-                                        color: Theme.palette.text.primary,
-                                        width: "18px"
-                                    }}
-                                />
+                                <Box sx={{
+                                    borderRadius: '20px',
+                                    width: '50px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    '&:hover': {
+                                        backgroundColor: '#e8def8',
+                                    }
+                                }}>
+                                    <item.icon.type
+                                        sx={{
+                                            color: Theme.palette.text.primary,
+                                            width: '18px',
+                                        }}
+                                    />
+                                </Box>
                                 <Box sx={{width: '60px', textAlign: 'center'}}>
                                     <Typography variant='body1' sx={{ fontWeight: '600', fontSize: '11px' }}>{item.text}</Typography>
                                 </Box>

@@ -97,13 +97,25 @@ const Sidebar = () => {
                                 color: Theme.palette.text.primary,
                                 textDecoration: "none"
                             }}>
-                                <item.icon.type
-                                    sx={{
-                                        color: Theme.palette.text.primary,
-                                        width: "18px"
-                                    }}
-                                />
-                                <Typography variant='subtitle1' sx={{ fontWeight: 'bold', fontSize: '11px' }}>{item.name}</Typography>
+                                <Box sx={{
+                                    borderRadius: '20px',
+                                    width: '50px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    '&:hover': {
+                                        backgroundColor: '#e8def8',
+                                    }
+                                }}>
+                                    <item.icon.type
+                                        sx={{
+                                            color: Theme.palette.text.primary,
+                                            width: '18px',
+                                        }}
+                                    />
+                                </Box>
+                                <Typography variant='subtitle1'
+                                            sx={{fontWeight: 'bold', fontSize: '11px'}}>{item.name}</Typography>
                             </Box>
                         </MuiLink>
                     ))}
