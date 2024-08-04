@@ -15,7 +15,8 @@ const NavLinks = [
     {
         icon: <OndemandVideoIcon />,
         text: 'Video Translation',
-        link: '/'
+        link: '/',
+        action: 'openDialog'
     },
     {
         icon: <TranslateIcon />,
@@ -39,7 +40,17 @@ const NavLinks = [
     },
 ];
 
-const NavBar: React.FC = () => {
+interface NavbarProps {
+    onOpenDialog: () => void;
+}
+
+const NavBar: React.FC<NavbarProps> = ({ onOpenDialog }) => {
+    const handleNavClick = (action?: string) => {
+        if (action === 'openDialog') {
+            onOpenDialog();
+        }
+    };
+
     return (
         <AppBar position="static" sx={{ backgroundColor: Theme.palette.background.default, color: '#000', boxShadow: 'none', borderBottom: '2px solid #e0e0e0' }}>
             <Toolbar sx = {{
@@ -57,6 +68,10 @@ const NavBar: React.FC = () => {
                             key={item.text}
                             to={item.link}
                             style={{textDecoration: "none", color: Theme.palette.text.primary}}
+                            onClick={(e) => {
+                                e.preventDefault(); // Prevent default navigation if handling with a custom action
+                                handleNavClick(item.action);
+                            }}
                         >
                             <Box sx={{
                                 display: "flex",
