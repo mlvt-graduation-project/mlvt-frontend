@@ -13,7 +13,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ placeholder, onChange, searchBarW
         <Box sx={{
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: '#fafafa',
+            backgroundColor: '#DDE6ED',
             padding: '0.5rem',
             height: '20px',
             borderRadius: '4px'

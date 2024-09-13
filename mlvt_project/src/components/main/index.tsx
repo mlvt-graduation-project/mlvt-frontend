@@ -4,10 +4,46 @@ import Theme from '../../themes/theme';
 import Background from '../../assets/background.jpg';
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import SearchBar from '../searchbar';
+import VideoTranslationCard from '../your-project';
+import { Project } from '../../types/Project';
 
 const Main: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [dropdownValue, setDropdownValue] = useState('');
+    const projects: Project[] = [
+        {
+            id: '1',
+            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
+            title: 'Video Translation - 1',
+            status: 'Completed',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        },
+        {
+            id: '2',
+            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
+            title: 'Video Translation - 1',
+            status: 'Completed',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        },
+        {
+            id: '3',
+            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
+            title: 'Video Translation - 1',
+            status: 'Completed',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        },
+        {
+            id: '4',
+            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
+            title: 'Video Translation - 1',
+            status: 'Completed',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        },
+    ]
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         console.log()
@@ -129,6 +165,17 @@ const Main: React.FC = () => {
                         <MenuItem value={20}>Descending</MenuItem>
                     </Select>
                 </FormControl>
+            </Box>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                gap: 1,
+                flexWrap: 'wrap',
+                justifyContent: 'space-between'
+            }}>
+                {projects.map((project) => (
+                    <VideoTranslationCard project={project} />
+                ))}
             </Box>
         </Box>
     );

@@ -104,7 +104,7 @@ const Sidebar = () => {
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     '&:hover': {
-                                        backgroundColor: '#e8def8',
+                                        backgroundColor: '#FEF7FF',
                                     }
                                 }}>
                                     <item.icon.type
