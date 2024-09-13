@@ -2,7 +2,8 @@ import React, {useState} from 'react';
 import Layout from "../../Layout";
 import Navbar from '../../components/navbar';
 import Main from "../../components/main";
-import PopUpForm from "../../components/popup";
+import VideoTransPopUp from "../../components/VideoTransPopUp";
+import ProcessedVidPopUp from "../../components/ProcessedVidPopUp";
 
 const Home = () => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -21,7 +22,7 @@ const Home = () => {
             <h2>Welcome to My channel</h2> */}
             <Navbar onOpenDialog={handleOpenDialog} />
             <Main />
-            <PopUpForm isOpen={isDialogOpen} onClose={handleCloseDialog} />
+            <VideoTransPopUp isOpen={isDialogOpen} onClose={handleCloseDialog} />
         </Layout>
     );
 };

@@ -19,20 +19,38 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { SelectChangeEvent } from "@mui/material";
 
-interface PopUpFormProps {
+interface VideoTransPopUpProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const PopUpForm: FC<PopUpFormProps> = ({ isOpen, onClose }) => {
+const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [language, setLanguage] = useState("Vietnamese");
   const [uploadMethod, setUploadMethod] = useState<'upload' | 'url'>('upload'); // Track upload method
   const [urlInput, setUrlInput] = useState(''); // Track the URL input field
+  const [videoDuration, setVideoDuration] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  
+
+  const token = localStorage.getItem("token");
+  const userID = parseInt(localStorage.getItem('user_id')!, 10);
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles) => {
-      setSelectedFile(acceptedFiles[0]);
+      const file = acceptedFiles[0];
+      setSelectedFile(file);
+
+      // Create a video element to extract video duration
+      const videoElement = document.createElement("video");
+      videoElement.preload = "metadata";
+
+      videoElement.onloadedmetadata = () => {
+        window.URL.revokeObjectURL(videoElement.src);
+        setVideoDuration(videoElement.duration);
+      };
+
+      videoElement.src = URL.createObjectURL(file);
     },
   });
 
@@ -43,7 +61,54 @@ const PopUpForm: FC<PopUpFormProps> = ({ isOpen, onClose }) => {
   const handleUrlChange = (event: ChangeEvent<HTMLInputElement>) => {
     setUrlInput(event.target.value);
   };
+  const handleGenerateAndUpload = async () => {
+    if (!selectedFile || !videoDuration) return;
 
+    setIsLoading(true);
+
+    try {
+      // Step 1: Request presigned URL from the backend using fetch
+      const response = await fetch("http://localhost:8080/api/videos/generate-presigned-url", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + token,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          user_id: userID,
+          file_name: selectedFile.name,
+          contentType: selectedFile.type,
+          title: "Sample Video Title",
+          duration: videoDuration
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate presigned URL");
+      }
+
+      const { presignedUrl } = await response.json();
+
+      // Step 2: Upload video to AWS using the presigned URL
+      const uploadResponse = await fetch(presignedUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": selectedFile.type
+        },
+        body: selectedFile
+      });
+
+      if (uploadResponse.ok) {
+        console.log("Video uploaded successfully");
+      } else {
+        throw new Error("Failed to upload video");
+      }
+    } catch (error) {
+      console.error("Error during the upload process:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <Dialog
       open={isOpen}
@@ -238,4 +303,4 @@ const PopUpForm: FC<PopUpFormProps> = ({ isOpen, onClose }) => {
   );
 }
 
-export default PopUpForm;
+export default VideoTransPopUp;

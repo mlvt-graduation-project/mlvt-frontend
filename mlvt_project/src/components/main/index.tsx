@@ -5,11 +5,15 @@ import Background from '../../assets/background.jpg';
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import SearchBar from '../searchbar';
 import VideoTranslationCard from '../your-project';
+import ProcessedVidPopUp from '../ProcessedVidPopUp';
 import { Project } from '../../types/Project';
 
 const Main: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [dropdownValue, setDropdownValue] = useState('');
+    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+
     const projects: Project[] = [
         {
             id: '1',
@@ -48,6 +52,16 @@ const Main: React.FC = () => {
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         console.log()
     };
+
+    const handleCardClick = (project: Project) => {
+        setSelectedProject(project);
+        setIsPopUpOpen(true);
+    }
+
+    const handleClosePopUp = () => {
+        setIsPopUpOpen(false);
+        setSelectedProject(null);
+    }
 
     const handleDropdownChange = (event: ChangeEvent<{ value: unknown }>) => {
         setDropdownValue(event.target.value as string);
@@ -174,9 +188,20 @@ const Main: React.FC = () => {
                 justifyContent: 'space-between'
             }}>
                 {projects.map((project) => (
-                    <VideoTranslationCard project={project} />
+                    <VideoTranslationCard
+                    key={project.id}
+                    project={project}
+                    onclick={() => handleCardClick(project)}
+                    />
                 ))}
             </Box>
+
+            {selectedProject && (
+                <ProcessedVidPopUp
+                    isOpen={isPopUpOpen}
+                    onClose={handleClosePopUp}
+                    />
+            )}
         </Box>
     );
 };
