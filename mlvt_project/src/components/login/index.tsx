@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, TextField, Checkbox, FormControlLabel, Typography, Box, Link } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import AppleIcon from '@mui/icons-material/Apple';
-import imageLogin from '../../assets/login.avif';
+import imageLogin from '../../assets/background.jpg';
 import { useOutletContext } from 'react-router-dom';
 
 function LoginForm() {

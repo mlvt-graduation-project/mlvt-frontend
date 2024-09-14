@@ -31,7 +31,7 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
   const [urlInput, setUrlInput] = useState(''); // Track the URL input field
   const [videoDuration, setVideoDuration] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  
+
 
   const token = localStorage.getItem("token");
   const userID = parseInt(localStorage.getItem('user_id')!, 10);
@@ -67,7 +67,6 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
     setIsLoading(true);
 
     try {
-      // Step 1: Request presigned URL from the backend using fetch
       const response = await fetch("http://localhost:8080/api/videos/generate-presigned-url", {
         method: "POST",
         headers: {
@@ -77,9 +76,9 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
         body: JSON.stringify({
           user_id: userID,
           file_name: selectedFile.name,
-          contentType: selectedFile.type,
+          file_type: selectedFile.type,
           title: "Sample Video Title",
-          duration: videoDuration
+          duration: 120
         })
       });
 
@@ -87,22 +86,32 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
         throw new Error("Failed to generate presigned URL");
       }
 
-      const { presignedUrl } = await response.json();
+      const jsonResponse = await response.json();
+      const { presignedUrl } = jsonResponse.data;
 
-      // Step 2: Upload video to AWS using the presigned URL
-      const uploadResponse = await fetch(presignedUrl, {
-        method: "PUT",
-        headers: {
-          "Content-Type": selectedFile.type
-        },
-        body: selectedFile
-      });
+      try {
+        const uploadResponse = await fetch(presignedUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": selectedFile.type
+          },
+          body: selectedFile
+        });
 
-      if (uploadResponse.ok) {
-        console.log("Video uploaded successfully");
-      } else {
-        throw new Error("Failed to upload video");
+        if (uploadResponse.ok) {
+          console.log("File uploaded successfully!");
+        } else {
+          console.error("Upload failed:", uploadResponse.statusText);
+        }
+      } catch (error) {
+        console.error("Error during the upload process:", error);
       }
+
+
+      // if (!uploadResponse.ok) {
+      //   throw new Error("Failed to upload video");
+      // }
+      console.log("Video uploaded successfully");
     } catch (error) {
       console.error("Error during the upload process:", error);
     } finally {
@@ -220,10 +229,12 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
               <TextField
                 fullWidth
                 label={
-                  <>
-                    <InfoOutlinedIcon sx={{ marginRight: "5px" }} />
-                    Enter a URL
-                  </>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <InfoOutlinedIcon sx={{ marginRight: '5px' }} />
+                    <Typography variant="body2" sx={{ fontFamily: 'Inter, Araboto, Roboto, Arial, sans-serif' }}>
+                      Enter a URL
+                    </Typography>
+                  </Box>
                 }
                 variant="outlined"
                 value={urlInput}

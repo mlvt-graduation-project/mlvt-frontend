@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, TextField, Typography, Checkbox, FormControlLabel, Box, Link } from '@mui/material';
-import imageLogin from '../../assets/login.avif';
+import imageLogin from '../../assets/background.jpg';
 import { Divider } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import AppleIcon from '@mui/icons-material/Apple';
