@@ -14,8 +14,8 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDropzone } from "react-dropzone";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { SelectChangeEvent } from "@mui/material";
 
@@ -107,10 +107,6 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
         console.error("Error during the upload process:", error);
       }
 
-
-      // if (!uploadResponse.ok) {
-      //   throw new Error("Failed to upload video");
-      // }
       console.log("Video uploaded successfully");
     } catch (error) {
       console.error("Error during the upload process:", error);
@@ -147,7 +143,7 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
       </DialogTitle>
       <Divider orientation="horizontal" flexItem sx={{ borderBottomWidth: 2 }} />
 
-      <DialogContent>
+      <DialogContent >
         {/* File Upload Section */}
         <Typography variant="subtitle1" sx={{ fontWeight: "bold", marginBottom: "5px", fontFamily: 'Inter,Araboto, Roboto, Arial, sans-seri' }}>
           Upload a video
@@ -156,13 +152,15 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
           Drop a file or paste a link.
         </Typography>
         {/* Upload buttons */}
-        <Box sx={{ padding: 1, borderRadius: 1.5, backgroundColor: "#EBEBEB" }}>
-          <Box sx={{ display: "flex", gap: "10px", marginBottom: "20px", outline: 2, borderRadius: 1.5, padding: 0.5, outlineColor: "#CCCCCC", backgroundColor: "white" }}>
+        <Box sx={{ padding: 1.5, borderRadius: 1.5, backgroundColor: "#EBEBEB" }}>
+          <Box sx={{ display: "flex", gap: "10px", marginBottom: "10px", outline: 2, borderRadius: 1.5, padding: 0.5, outlineColor: "#CCCCCC", backgroundColor: "white" }}>
             <Button
               variant={uploadMethod === 'upload' ? "contained" : "text"}
               sx={{
                 backgroundColor: uploadMethod === 'upload' ? "#a60195" : "white",
                 color: uploadMethod === 'upload' ? "white" : "#000",
+                fontFamily: 'Inter,Araboto, Roboto, Arial, sans-seri',
+                fontWeight: 'bold',
                 flex: 1,
                 borderRadius: 1.5,
                 '&:hover': {
@@ -179,6 +177,8 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
               sx={{
                 backgroundColor: uploadMethod === 'url' ? "#a60195" : "white",
                 color: uploadMethod === 'url' ? "white" : "#000",
+                fontFamily: 'Inter,Araboto, Roboto, Arial, sans-seri',
+                fontWeight: 'bold',
                 flex: 1,
                 borderRadius: 1.5,
                 '&:hover': {
@@ -191,6 +191,12 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
               URL
             </Button>
           </Box>
+
+          {uploadMethod === 'upload' && (
+            <Typography variant="body2" sx={{ marginBottom: "10px", fontFamily: 'Inter,Araboto, Roboto, Arial, sans-seri' }}>
+              Drag and drop a video or click to browse your files.
+            </Typography>
+          )}
 
           {/* Conditionally render either the file upload area or the URL input field */}
           {uploadMethod === 'upload' ? (
@@ -212,38 +218,53 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
               }}
             >
               <input {...getInputProps()} />
-              <CloudUploadIcon sx={{ fontSize: '3rem' }} />
+              <FileUploadIcon sx={{ fontSize: '3rem' }} />
               <Typography variant="body2" sx={{ marginTop: "5px" }} fontFamily={'Inter,Araboto, Roboto, Arial, sans-seri'}>
                 {selectedFile ? selectedFile.name : "Drag and drop video file here"}
               </Typography>
               <Button
                 startIcon={<InfoOutlinedIcon />}
                 variant="text"
-                sx={{ marginTop: "5px", fontSize: "0.8rem", padding: 0 }}
+                disabled
+                sx={{ marginTop: "2rem", fontSize: "0.8rem", padding: 0, fontFamily: 'Inter, Araboto, Roboto, Arial, sans-serif', fontWeight: 'bold', '&.Mui-disabled': { color: 'black' } }}
               >
-                requirements
+                Required
               </Button>
             </Box>
           ) : (
-            <Box sx={{ marginBottom: "20px" }}>
+            <Box sx={{
+              marginBottom: "20px",
+              minHeight: "150px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}>
+              <Typography variant="body2" sx={{ marginBottom: "20px", fontFamily: 'Inter, Araboto, Roboto, Arial, sans-serif' }}>
+                Enter a valid YouTube or other supported video URL.
+              </Typography>
               <TextField
                 fullWidth
                 label={
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <InfoOutlinedIcon sx={{ marginRight: '5px' }} />
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <InfoOutlinedIcon sx={{ marginRight: '0.3 rem' }} />
                     <Typography variant="body2" sx={{ fontFamily: 'Inter, Araboto, Roboto, Arial, sans-serif' }}>
-                      Enter a URL
+                      Enter a valid URL
                     </Typography>
                   </Box>
                 }
-                variant="outlined"
+                variant="filled"
                 value={urlInput}
                 onChange={handleUrlChange}
-                sx={{ backgroundColor: "#EBEBEB" }}
+                sx={{ backgroundColor: "#EBEBEB", borderRadius: "0.375rem", height: "2.5rem", padding: "0" }}
               />
-              <Typography variant="body2" sx={{ marginTop: "5px", fontStyle: "italic" }}>
-                Enter a valid YouTube or other supported video URL.
-              </Typography>
+              <Button
+                startIcon={<InfoOutlinedIcon />}
+                variant="text"
+                disabled
+                sx={{ marginTop: "2.5rem", fontSize: "0.8rem", padding: 0, fontFamily: 'Inter, Araboto, Roboto, Arial, sans-serif', fontWeight: 'bold', '&.Mui-disabled': { color: 'black' } }}
+              >
+                Required
+              </Button>
             </Box>
           )}
         </Box>
@@ -280,13 +301,20 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
         {/* Generate Button */}
         <Button
           variant="outlined"
-          disabled={!selectedFile && uploadMethod === 'upload' && !urlInput}
+          disabled={
+            (uploadMethod === 'upload' && !selectedFile) ||  // Disable if no file selected in upload mode
+            (uploadMethod === 'url' && !urlInput)            // Disable if no URL entered in URL mode
+          }
           sx={{
             marginTop: "20px",
             width: "200px",
             height: "40px",
-            backgroundColor: (selectedFile || urlInput) ? "#a60195" : "#EBEBEB",
-            color: (selectedFile || urlInput) ? "white" : "#A3A3A3",
+            backgroundColor: (uploadMethod === 'upload' && selectedFile) || (uploadMethod === 'url' && urlInput)
+              ? "#a60195"
+              : "#EBEBEB",  // Active when valid input exists, otherwise disabled
+            color: (uploadMethod === 'upload' && selectedFile) || (uploadMethod === 'url' && urlInput)
+              ? "white"
+              : "#A3A3A3",
             borderRadius: "10px",
             border: "none",
             textTransform: "none",
