@@ -1,0 +1,35 @@
+import React, { ReactNode } from "react";
+import { Box } from "@mui/material";
+import img from '../assets/background.jpg';
+
+interface LayoutProps {
+    children: ReactNode;
+}
+
+const LoginSignup: React.FC<LayoutProps> = ({ children }) => {
+    return (
+        <Box sx={{ display: "flex", flexDirection: "row", overflowY: 'scroll' }}>
+            {/* Left Side - Form */}
+            <Box sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: 4 }}>
+                <Box sx={{ maxWidth: 500, margin: "auto" }}>
+                    {children}
+                </Box>
+            </Box>
+
+            {/* Right Side - Image */}
+            <Box
+                sx={{
+                    flex: 1, // Make both sides take 50% width on large screens
+                    backgroundImage: `url(${img})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    borderTopLeftRadius: '5%',  // Responsive radius for mobile and desktop
+                    borderBottomLeftRadius: '5%',
+                    overflow: "hidden"  
+                }}
+            />
+        </Box>
+    );
+};
+
+export default LoginSignup;
