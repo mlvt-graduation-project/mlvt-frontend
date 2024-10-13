@@ -8,7 +8,10 @@ interface LayoutProps {
 
 const LoginSignup: React.FC<LayoutProps> = ({ children }) => {
     return (
-        <Box sx={{ display: "flex", flexDirection: "row", overflowY: 'scroll' }}>
+        <Box sx={{ 
+            display: "flex", 
+            flexDirection: "row", 
+            minHeight: '100vh' }}>
             {/* Left Side - Form */}
             <Box sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: 4 }}>
                 <Box sx={{ maxWidth: 500, margin: "auto" }}>
@@ -23,9 +26,10 @@ const LoginSignup: React.FC<LayoutProps> = ({ children }) => {
                     backgroundImage: `url(${img})`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
-                    borderTopLeftRadius: '5%',  // Responsive radius for mobile and desktop
+                    borderTopLeftRadius: '5%',  
                     borderBottomLeftRadius: '5%',
-                    overflow: "hidden"  
+                    overflow: "hidden",
+                    minHeight: '100vh'
                 }}
             />
         </Box>
