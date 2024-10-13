@@ -2,7 +2,7 @@ import {ReactNode} from "react";
 import {Box} from "@mui/material";
 import Sidebar from "../components/sidebar";
 import Navbar from "../components/navbar";
-import Theme from "../themes/theme";
+import Theme from "../config/theme";
 
 interface LayoutProps {
     children: ReactNode

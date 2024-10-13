@@ -1,6 +1,6 @@
 import React, {useState, ChangeEvent } from 'react';
 import { Typography, Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import Theme from '../../themes/theme';
+import Theme from '../../config/theme';
 import Background from '../../assets/background.jpg';
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import SearchBar from '../searchbar';

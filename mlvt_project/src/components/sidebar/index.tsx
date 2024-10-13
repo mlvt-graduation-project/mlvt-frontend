@@ -6,7 +6,7 @@ import HelpIcon from '@mui/icons-material/Help';
 import Avatar from '../../assets/avatar.png';
 import {Link as RouterLink, useLocation} from "react-router-dom";
 import {Box, Hidden, Typography, Link as MuiLink} from "@mui/material";
-import Theme from '../../themes/theme';
+import Theme from '../../config/theme';
 
 const navLinks = [
     {

@@ -8,7 +8,7 @@ import SyncIcon from '@mui/icons-material/Sync';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import { styled } from '@mui/system';
-import Theme from '../../themes/theme'
+import Theme from '../../config/theme'
 import {Link as RouterLink} from "react-router-dom";
 
 const NavLinks = [
