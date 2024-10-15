@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, TextField, Button, Typography, Divider, Checkbox } from "@mui/material";
-import LoginSignup from '../../layout/loginSignup';
+import LoginSignup from '../../layout/LoginSignup';
 import { useTheme } from '@mui/material/styles'; 
 import GoogleLoginButton from '../../components/SocialLoginButton/GoogleLoginButton';
 import FacebookLoginButton from '../../components/SocialLoginButton/FacebookLoginButton';

@@ -1,15 +1,13 @@
 import React from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Box, Avatar, Badge, Link } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import { AppBar, Toolbar, Box, Link, Typography } from '@mui/material';
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import TranslateIcon from '@mui/icons-material/Translate';
 import SubtitlesIcon from '@mui/icons-material/Subtitles';
 import MicIcon from '@mui/icons-material/Mic';
 import SyncIcon from '@mui/icons-material/Sync';
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
-import { styled } from '@mui/system';
-import Theme from '../../config/theme'
-import {Link as RouterLink} from "react-router-dom";
+import Theme from '../../config/theme';
+import { Link as RouterLink } from "react-router-dom";
+import UserProfile from './UserProfile';  // Import your UserProfile component
 
 const NavLinks = [
     {
@@ -53,7 +51,7 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog }) => {
 
     return (
         <AppBar position="static" sx={{ backgroundColor: Theme.palette.background.default, color: '#000', boxShadow: 'none', borderBottom: '2px solid #e0e0e0' }}>
-            <Toolbar sx = {{
+            <Toolbar sx={{
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -67,7 +65,7 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog }) => {
                             component={RouterLink}
                             key={item.text}
                             to={item.link}
-                            style={{textDecoration: "none", color: Theme.palette.text.primary}}
+                            style={{ textDecoration: "none", color: Theme.palette.text.primary }}
                             onClick={(e) => {
                                 e.preventDefault(); // Prevent default navigation if handling with a custom action
                                 handleNavClick(item.action);
@@ -101,46 +99,23 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog }) => {
                                         }}
                                     />
                                 </Box>
-                                <Box sx={{width: '60px', textAlign: 'center'}}>
+                                <Box sx={{ width: '60px', textAlign: 'center' }}>
                                     <Typography variant='body1' sx={{ fontWeight: '600', fontSize: '11px' }}>{item.text}</Typography>
                                 </Box>
                             </Box>
                         </Link>
                     ))}
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Avatar alt="Minh Minh" src="/path/to/avatar.jpg" />
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                            Minh Minh
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: 'gray' }}>
-                            Premium user
-                        </Typography>
-                    </Box>
-
-                    <Badge badgeContent={4} color="primary">
-                        <NotificationsNoneIcon color="action" />
-                    </Badge>
-                </Box>
+                {/* Replace the hardcoded user section with the UserProfile component */}
+                <UserProfile
+                    first_name="Minh"
+                    last_name="Minh"
+                    status={true} // true for premium, false for standard
+                    avatarSrc="/path/to/avatar.jpg"
+                    notifications={4}
+                />
             </Toolbar>
         </AppBar>
-    );
-};
-
-interface NavItemProps {
-    icon: React.ElementType;
-    text: string;
-}
-
-const NavItem: React.FC<NavItemProps> = ({ icon: Icon, text }) => {
-    return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <Box component={Icon} sx={{ color: '#000', fontSize: 24 }} />
-            <Typography variant="body2" sx={{ color: '#000' }}>
-                {text}
-            </Typography>
-        </Box>
     );
 };
 

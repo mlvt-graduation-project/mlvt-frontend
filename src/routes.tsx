@@ -5,11 +5,11 @@ import Login from "./pages/login";
 import Signup from "./pages/signup";
 
 export const router = createBrowserRouter([
-    // {
-    //     path: '/',
-    //     element: <Home />,
-    //     errorElement: <Error />,
-    // },
+    {
+        path: '/',
+        element: <Home />,
+        errorElement: <Error />,
+    },
     {
         path: '/login',
         element: <Login />,
