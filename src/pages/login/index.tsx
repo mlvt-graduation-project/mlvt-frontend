@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, TextField, Button, Typography, Divider, Checkbox } from "@mui/material";
 import LoginSignup from '../../layout/loginSignup';
 import { useTheme } from '@mui/material/styles'; 
 import GoogleLoginButton from '../../components/SocialLoginButton/GoogleLoginButton';
 import FacebookLoginButton from '../../components/SocialLoginButton/FacebookLoginButton';
 import axios from 'axios';
+import { useSnackbar } from "notistack";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const InputStyles = (theme: any) => ({
     sx: {
@@ -17,6 +19,8 @@ const InputStyles = (theme: any) => ({
 });
 
 const Login = () => {
+
+    const navigate = useNavigate(); // React Router's navigation hook
     const theme = useTheme(); // Access the theme object
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
@@ -26,6 +30,16 @@ const Login = () => {
     const [loading, setLoading] = React.useState(false); // State to manage loading state
     const [rememberMe, setRememberMe] = React.useState(false); // State to manage remember me checkbox
     const [showPassword, setShowPassword] = React.useState(false); // State to manage password visibility
+    
+    const location = useLocation();
+    const { enqueueSnackbar } = useSnackbar();
+
+    useEffect(() => {
+        // Check if there's a success message passed through state
+        if (location.state?.successMessage) {
+            enqueueSnackbar(location.state.successMessage, { variant: 'success' });
+        }
+    }, [location.state, enqueueSnackbar]);
     
     // Validate email onBlur
     const validateEmail = () => {
@@ -66,7 +80,7 @@ const Login = () => {
         setLoading(true); // Set loading state to true
 
         try {
-            const response = await axios.post('http://localhost:3001/users/login', {
+            const response = await axios.post('http://localhost:8080/api/users/login', {
                 email: email,
                 password: password
             });
@@ -76,6 +90,8 @@ const Login = () => {
                 // Storing the token
                 localStorage.setItem('authToken', response.data.token);
                 // You can redirect or handle successful login here, e.g., navigate('/dashboard')
+                navigate('/');
+                
             }
         } catch (err) {
             if (axios.isAxiosError(err)) {
