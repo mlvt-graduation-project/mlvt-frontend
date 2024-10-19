@@ -1,6 +1,6 @@
 import { useTheme } from "@mui/material/styles";
 import React, { useState } from "react";
-import { Avatar, Box, Badge, Menu, MenuItem, Typography } from "@mui/material";
+import { Avatar, Box, Badge, Menu, MenuItem, Typography, IconButton } from "@mui/material";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 
 interface UserProfileProps {
@@ -30,7 +30,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
 
     return (
         <>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }} onClick={handleDropdownOpen} style={{ cursor: 'pointer' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }} style={{ cursor: 'pointer' }}>
                 <Avatar src={avatarSrc} alt={altText} />
                 <Box
                     sx={{
@@ -40,14 +40,16 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                     }}
                 >
                     <Typography variant="body2" sx={{ color: theme.fontColor.black }}>
-                        {first_name} {last_name}
+                        {first_name}
                     </Typography>
                     <Typography variant="caption" sx={{ color: theme.fontColor.gray }}>
                         {status ? 'Premium' : 'Standard'}
                     </Typography>
                 </Box>
                 <Badge badgeContent={notifications} color="error">
-                    <NotificationsNoneIcon />
+                    <IconButton onClick={handleDropdownOpen}>
+                        <NotificationsNoneIcon />
+                    </IconButton>
                 </Badge>
             </Box>
 
