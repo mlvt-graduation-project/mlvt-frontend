@@ -136,8 +136,9 @@ const Login = () => {
 
             {/* Email Input */}
             <Typography sx={{
+                fontFamily: theme.typography.body1,
                 fontSize: 14,
-                fontWeight: 600,
+                fontWeight: 500,
                 marginTop: 2.5,
             }}>
                 Email address
@@ -157,19 +158,30 @@ const Login = () => {
                 onChange={(e) => setEmail(e.target.value)} // Capture email input
                 onBlur={validateEmail} // Trigger validation on blur
                 error={emailError} // Trigger error state
-                helperText={emailError ? 'Email is required' : ''} // Show error message if email is empty
+                helperText={emailError ? 'Email is required' : ''}
+
+                FormHelperTextProps={{
+                    sx: {
+                        fontFamily: theme.typography.body1,
+                        fontColor: theme.status.failed.fontColor,
+                        marginLeft: 0,
+                        fontSize: 12,
+                    },
+                }}
+
             />
 
             {/* Password Input */}
             <Typography sx={{
+                fontFamily: theme.typography.body1,
+                fontColor: theme.status.failed.fontColor,
                 fontSize: 14,
-                fontWeight: 600,
                 marginTop: 2,
             }}>
                 Password
             </Typography>
             <TextField
-                placeholder="Password"
+                placeholder="Enter your password"
                 type={showPassword ? "text" : "password"}
                 fullWidth
                 margin="normal"
@@ -184,6 +196,15 @@ const Login = () => {
                 onBlur={validatePassword} // Trigger validation on blur
                 error={passwordError} // Trigger error state
                 helperText={passwordError ? 'Password is required' : ''} // Show error message if password is empty
+                
+                FormHelperTextProps={{
+                    sx: {
+                        fontFamily: theme.typography.body1,
+                        fontColor: theme.status.failed.fontColor,
+                        marginLeft: 0,
+                        fontSize: 12,
+                    },
+                }}
             />
 
             {/* Error Message */}
