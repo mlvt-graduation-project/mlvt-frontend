@@ -138,7 +138,7 @@ const Login = () => {
             <Typography sx={{
                 fontFamily: theme.typography.body1,
                 fontSize: 14,
-                fontWeight: 500,
+                fontWeight: 550,
                 marginTop: 2.5,
             }}>
                 Email address
@@ -153,6 +153,11 @@ const Login = () => {
                 InputProps={InputStyles(theme)}
                 sx={{
                     marginTop: 0.6,
+                    '& .MuiOutlinedInput-root': {
+                        '&.Mui-focused fieldset': {
+                            borderColor: theme.background.main
+                        },
+                    },
                 }}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)} // Capture email input
@@ -177,6 +182,7 @@ const Login = () => {
                 fontColor: theme.status.failed.fontColor,
                 fontSize: 14,
                 marginTop: 2,
+                fontWeight: 550,
             }}>
                 Password
             </Typography>
@@ -190,12 +196,17 @@ const Login = () => {
                 InputProps={InputStyles(theme)}
                 sx={{
                     marginTop: 0.6,
+                    '& .MuiOutlinedInput-root': {
+                        '&.Mui-focused fieldset': {
+                            borderColor: theme.background.main
+                        },
+                    },
                 }}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)} // Capture password input
-                onBlur={validatePassword} // Trigger validation on blur
-                error={passwordError} // Trigger error state
-                helperText={passwordError ? 'Password is required' : ''} // Show error message if password is empty
+                onChange={(e) => setPassword(e.target.value)} 
+                onBlur={validatePassword} 
+                error={passwordError} 
+                helperText={passwordError ? 'Password is required' : ''} 
                 
                 FormHelperTextProps={{
                     sx: {

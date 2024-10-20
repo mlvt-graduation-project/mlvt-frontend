@@ -147,6 +147,7 @@ const Signup: React.FC = () => {
                             display: 'flex',
                             flexDirection: 'row',
                             gap: 0.7,
+                            fontWeight: 550
                         }}
                     >
                         {nameOfField[field as keyof typeof nameOfField]}
@@ -168,15 +169,22 @@ const Signup: React.FC = () => {
                         error={!!errors[field as keyof FormState]}
                         helperText={errors[field as keyof FormState]}
                         InputProps={{ sx: InputStyles }}
-                        sx={{ marginTop: 0.6 }}
-                        // Customize the error message styling here
+                        sx={{
+                            marginTop: 0.6,
+                            '& .MuiOutlinedInput-root': {
+                                '&.Mui-focused fieldset': {
+                                    borderColor: theme.background.main,
+                                },
+                            },
+                        }}
+                        // Customize the error message styling 
                         FormHelperTextProps={{
                             sx: {
-                                color: theme.status.failed.fontColor, // Custom error color (you can modify this)
-                                fontFamily: theme.typography.body1, // Custom font family
-                                marginLeft: '0px', // Adjust the margin if needed
-                                fontSize: '12px', // Custom size
-                                marginTop: '4px', // Adjust the margin if needed
+                                color: theme.status.failed.fontColor,
+                                fontFamily: theme.typography.body1,
+                                marginLeft: '0px',
+                                fontSize: '12px',
+                                marginTop: '4px',
                             },
                         }}
                     />
@@ -187,7 +195,14 @@ const Signup: React.FC = () => {
             {/* Password Input */}
             {['password', 'confirmPassword'].map((field, index) => (
                 <Box key={field} marginBottom={2}>
-                    <Typography sx={{ fontFamily: theme.typography.body1, fontSize: 14, display: 'flex', flexDirection: 'row', gap: 0.7 }}>
+                    <Typography sx={{
+                        fontFamily: theme.typography.body1,
+                        fontSize: 14,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        gap: 0.7,
+                        fontWeight: 550
+                    }}>
                         {field === 'password' ? 'Password' : 'Confirm Password'}
                         <Typography sx={{ color: theme.status.failed.fontColor, fontWeight: theme.typography.fontWeightBold }}>*</Typography>
                     </Typography>
@@ -204,7 +219,7 @@ const Signup: React.FC = () => {
                         helperText={errors[field as keyof FormState]}
                         FormHelperTextProps={{
                             sx: {
-                                color: theme.status.failed.fontColor || 'red',  // Ensure fallback to red if fontColor is undefined
+                                color: theme.status.failed.fontColor || 'red',
                                 fontFamily: theme.typography.body1,
                                 marginLeft: '0px',
                                 fontSize: '12px',  // Adjust font size for error message
@@ -226,7 +241,14 @@ const Signup: React.FC = () => {
                                 </InputAdornment>
                             ),
                         }}
-                        sx={{ marginTop: 0.6 }}
+                        sx={{
+                            marginTop: 0.6,
+                            '& .MuiOutlinedInput-root': {
+                                '&.Mui-focused fieldset': {
+                                    borderColor: theme.background.main,
+                                },
+                            },
+                        }}
                     />
 
                 </Box>
