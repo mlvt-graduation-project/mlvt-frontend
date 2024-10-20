@@ -22,7 +22,7 @@ const LoginSignup: React.FC<LayoutProps> = ({ children }) => {
             {/* Right Side - Image */}
             <Box
                 sx={{
-                    flex: 1, // Make both sides take 50% width on large screens
+                    flex: 1, 
                     backgroundImage: `url(${img})`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
