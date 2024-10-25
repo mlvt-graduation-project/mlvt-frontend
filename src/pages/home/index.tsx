@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import Layout from "../../layout";
+import Layout from "../../layout/homepage";
 import Navbar from '../../components/navbar';
 import Main from "../../components/main";
 import VideoTransPopUp from "../../components/VideoTransPopUp";

@@ -7,13 +7,14 @@ import SearchBar from '../searchbar';
 import VideoTranslationCard from '../your-project';
 import ProcessedVidPopUp from '../ProcessedVidPopUp';
 import { Project } from '../../types/Project';
+import { useTheme } from '@mui/material/styles';
 
 const Main: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [dropdownValue, setDropdownValue] = useState('');
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
-
+    const theme = useTheme();
     const projects: Project[] = [
         {
             id: '1',
