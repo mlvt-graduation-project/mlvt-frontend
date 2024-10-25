@@ -1,8 +1,8 @@
 import { useTheme } from "@mui/material/styles";
 import React, { useState } from "react";
-import { Avatar, Box, Badge, Menu, MenuItem, Typography, IconButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Avatar, Box, Badge, Menu, MenuItem, Typography, IconButton, ListItemIcon, ListItemText, Divider, hexToRgb } from "@mui/material";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import { AccountCircle, Settings, Storage, Help, Logout } from "@mui/icons-material";
+import { AccountCircle, NavigateNext, WorkspacePremiumSharp, Help, Logout, Language, LightMode } from "@mui/icons-material";
 
 interface UserProfileProps {
     first_name: string;
@@ -13,15 +13,16 @@ interface UserProfileProps {
 }
 
 const menuItems = [
-    { label: 'Profile', icon: <AccountCircle /> },
-    { label: 'Storage', icon: <Storage /> },
-    { label: 'Settings', icon: <Settings /> },
+    { label: 'Edit account', icon: <AccountCircle /> },
+    { label: 'Premium membership', icon: <WorkspacePremiumSharp /> },
+    { label: 'Language: English', icon: <Language /> },
+    { label: 'Appearance: Light', icon: <LightMode /> },
     { label: 'Help & Support', icon: <Help /> },
-    { label: 'Logout', icon: <Logout /> },
+    { label: 'Log out', icon: <Logout /> }
 ]
 
 const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status, avatarSrc, notifications }) => {
-    const [anchorDropdown, setAnchorDropdown] = useState<null | HTMLElement>(null); // Ensure the type is HTMLElement or null
+    const [anchorDropdown, setAnchorDropdown] = useState<null | HTMLElement>(null);
     const theme = useTheme();
     const open = Boolean(anchorDropdown);
 
@@ -40,14 +41,13 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
     return (
         <>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }} style={{ cursor: 'pointer' }}>
-                <Avatar src={avatarSrc} alt={altText} />
+                <Avatar src={avatarSrc} alt={altText} sx={{ width: '3rem', height: '3rem' }} />
                 <Box
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'flex-start',
                     }}
-
                     onClick={handleDropdownOpen}
                 >
                     <Typography variant="body2" sx={{
@@ -63,7 +63,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                         fontFamily: theme.typography.body1,
                         fontSize: '0.77rem'
                     }}>
-                        {status ? 'Premium' : 'Standard'}
+                        {status ? 'Premium user' : 'Standard user'}
                     </Typography>
                 </Box>
                 <Badge badgeContent={notifications} color="error">
@@ -87,36 +87,33 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                     horizontal: 'right',
                 }}
                 sx={{
-                    mt: '1.2rem', 
-                    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',  
+                    mt: '1.2rem',
+                    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
                     overflow: 'hidden',
                     borderRadius: '0.7rem',
                 }}
                 PaperProps={{
                     style: {
-                        backgroundColor: theme.background.lightPink,
                         borderRadius: '0.6rem',
                     },
                 }}
             >
 
                 {/* Profile Section */}
-                
                 <Box>
                     <Box sx={{
                         display: 'flex',
                         flexDirection: 'row',
                         gap: 1.5,
                         padding: '1rem 1.5rem',
-                        marginLeft: '0.5rem',  
+                        marginLeft: '0.5rem',
                         marginRight: '0.5rem',
                         marginBottom: '0.5rem',
                         alignItems: 'center',
-                        backgroundColor: theme.background.lightPurple,
                         borderBottom: '1px solid #E0E0E0',
                         borderRadius: '0.4rem',
                     }}>
-                        <Avatar src={avatarSrc} alt={altText} />
+                        <Avatar src={avatarSrc} alt={altText} sx={{ width: '2.8rem', height: '2.5rem' }} />
                         <Box>
                             <Typography variant="body2" sx={{
                                 color: theme.fontColor.black,
@@ -131,43 +128,47 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                                 fontFamily: theme.typography.body1,
                                 fontSize: '0.77rem'
                             }}>
-                                {status ? 'Premium' : 'Standard'}
+                                {status ? 'Premium user' : 'Standard user'}
                             </Typography>
                         </Box>
                     </Box>
                 </Box>
+                
                 {menuItems.map((item) => (
-                    <MenuItem
-                        key={item.label}
-                        onClick={handleDropdownClose}
-                        sx={{
-                            padding: '0.3rem 1.5rem',
-                            margin: '0.5rem 0.5rem',
-                            borderRadius: '0.4rem',
-                            alignItems: 'center',
-                            fontSize: '0.75rem',
-                            backgroundColor: theme.background.lightPink,
-                            gap: '1.2rem',
-                            '&:hover': {
-                                backgroundColor: theme.background.lightPurple,
-                                color: theme.palette.primary.contrastText,
-                            },
-                        }}
-                    >
-                        <ListItemIcon sx={{ minWidth: '35px' }}>  
-                            {item.icon}
-                        </ListItemIcon>
-                        <ListItemText primary={item.label} sx={{
-                            color: theme.fontColor.black,
-                            fontFamily: theme.typography.body1,
-                            fontWeight: 'bold',
-                            fontSize: '0.9rem'
-                        }} />
-                    </MenuItem>
+                    <React.Fragment key={item.label}>
+                        {item.label === 'Log out' && <Divider sx={{ margin: '0.5rem 0' }} variant="middle" component="li" />}
+                        <MenuItem
+                            onClick={handleDropdownClose}
+                            sx={{
+                                padding: '0.3rem 1.5rem',
+                                margin: '0.5rem 0.5rem',
+                                borderRadius: '0.4rem',
+                                alignItems: 'center',
+                                gap: '1.2rem',
+                                '&:hover': {
+                                    backgroundColor: theme.background.lightPurple,
+                                    color: theme.palette.primary.contrastText,
+                                },
+                            }}
+                        >
+                            <ListItemIcon sx={{ minWidth: '35px' }}>
+                                {item.icon}
+                            </ListItemIcon>
+                            <ListItemText disableTypography primary={item.label} sx={{
+                                color: theme.fontColor.black,
+                                fontFamily: theme.typography.body1,
+                                fontSize: '0.8rem',
+                            }} />
+                            {/* Conditionally render NavigateNext icon */}
+                            {['Appearance: Light', 'Language: English'].includes(item.label) && (
+                                <NavigateNext sx={{ marginLeft: 'auto', color: theme.fontColor.black }} />
+                            )}
+                        </MenuItem>
+                    </React.Fragment>
                 ))}
-            </Menu>          
-        </>                  
+            </Menu>
+        </>
     );
-};
+}
 
 export default UserProfile;

@@ -46,7 +46,7 @@ interface NavbarProps {
 const NavBar: React.FC<NavbarProps> = ({ onOpenDialog }) => {
     const [avatarUrl, setAvatarUrl] = useState('avatar.png')
     const [userData, setUserData] = useState({
-        firstName: 'Minh',
+        firstName: 'Minh Minh',
         lastName: 'Nguyen',
         premium: true
     })
