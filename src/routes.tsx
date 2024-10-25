@@ -9,13 +9,13 @@ import VerifyOTP from "./pages/verify_otp";
 
 export const router = createBrowserRouter([
     {
-        path: '/',
-        element: <Home />,
+        path: '/login',
+        element: <Login />,
         errorElement: <Error />,
     },
     {
-        path: '/login',
-        element: <Login />,
+        path: '/',
+        element: <Home />,
         errorElement: <Error />,
     },
     {
