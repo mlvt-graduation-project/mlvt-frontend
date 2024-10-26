@@ -8,6 +8,7 @@ import VideoTranslationCard from '../your-project';
 import ProcessedVidPopUp from '../ProcessedVidPopUp';
 import { Project } from '../../types/Project';
 import { useTheme } from '@mui/material/styles';
+import CardSlider from '../CarouselCard/CardSlider';
 
 const Main: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -80,40 +81,10 @@ const Main: React.FC = () => {
                 backgroundImage: `url(${Background})`,
                 backgroundSize: 'cover',
                 borderRadius: '15px',
-                padding: '20px',
+                padding: '3rem',
+                height: '45vh',
             }}>
-                <Box sx={{
-                    backgroundColor: Theme.palette.secondary.main,
-                    width: '280px',
-                    borderRadius: '15px',
-                    padding: '20px',
-                    paddingTop: '100px',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-end'
-                }}>
-                    <Box>
-                        <Typography variant='h2' sx={{
-                            fontWeight: 'bold',
-                            fontSize: '25px'
-                        }}>
-                            Voice Generation
-                        </Typography>
-                        <Box sx={{
-                            marginTop: '10px',
-                            width: '170px',
-                            textAlign: 'justify'
-                        }}>
-                            <Typography variant='subtitle2' sx={{
-                                fontSize: '10px'
-                            }} >
-                                A dialog is a type of modal window that appears in front of app content to provide critical information, or prompt for a decision to be made.
-                            </Typography>
-                        </Box>
-                    </Box>
-                    <AddBoxIcon sx={{ fontSize: "70px" }} />
-                </Box>
+                <CardSlider />
             </Box>
             <Box sx={{
                 display: 'flex',
