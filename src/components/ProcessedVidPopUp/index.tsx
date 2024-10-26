@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useRef, useState, useEffect} from "react";
 import {
     Box,
     Dialog,
@@ -13,12 +13,20 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
 import ShareIcon from "@mui/icons-material/Share";
 import DeleteIcon from "@mui/icons-material/Delete";
 import InfoIcon from "@mui/icons-material/Info";
 import ReplayIcon from "@mui/icons-material/Replay";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import MusicNoteIcon from '@mui/icons-material/MusicNote';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PauseIcon from '@mui/icons-material/Pause';
+// import AudioPlayer from 'react-h5-audio-player';
+import 'react-h5-audio-player/lib/styles.css';
+import { styled } from '@mui/system';
+// import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import DownloadIcon from '@mui/icons-material/Download'; // Assuming download icon is used
+
 
 
 interface ProcessedVidPopUpProps {
@@ -27,17 +35,112 @@ interface ProcessedVidPopUpProps {
 }
 
 enum View {
-    COMPLETED = "completed",
+    PROCESSED = "processed",
     ORIGINAL = "original",
     RELATED_OUTPUTS = "related-outputs",
 }
 
 const ProcessedVidPopUp: FC<ProcessedVidPopUpProps> = ({ isOpen, onClose }) => {
-    const [currentView, setCurrentView] = useState<View>(View.COMPLETED);
+    const [currentView, setCurrentView] = useState<View>(View.PROCESSED);
+    const [progress, setProgress] = useState< 0 | 25 | 50 | 75 | 100> (75);
 
-    const handleViewChange = (view: View) => {
-        setCurrentView(view);
-    };
+    // const handleViewChange = (view: View) => {
+    //     setCurrentView(view);
+    // };
+
+    const [videoUrl, setVideoUrl] = useState<string | null>(null);
+
+    async function fetchVideoUrl() {
+        try {
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxzdGFuMTUxMjAyQGdtYWlsLmNvbSIsImV4cCI6MTczMDE5NDAwOSwidXNlcklEIjo3fQ.gg3h6e33CJbS1I9zvbawGXWWbM7hTxk7HaJIVCMRM9c";
+            const response = await fetch('http://localhost:8080/api/videos/1',{
+                method: 'GET', 
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json', 
+                },
+            });
+            // Thay bằng URL chính xác của backend
+          const data = await response.json();
+          setVideoUrl(data.video_url.split("?")[0]);
+        } catch (error) {
+          console.error('Error fetching video URL:', error);
+        }
+    }
+    
+    useEffect(() => {
+        fetchVideoUrl();
+    }, []);
+
+    useEffect(() => {
+        console.log("Updated video URL:", videoUrl);
+    }, [videoUrl]);
+
+    interface Tab {
+        currentView: View;
+        setCurrentView: (method: View) => void;
+    }     
+
+    const ChangeView : React.FC<Tab> = ({currentView, setCurrentView}) => {
+        return (
+          <Box sx={{ display: "flex", gap: "10px", margin: "10px", outline: 2, borderRadius: 1.5, padding: 0.5, outlineColor: "#CCCCCC", backgroundColor: "white" }}>
+            <Button
+              variant={currentView === View.ORIGINAL ? "contained" : "text"}
+              sx={{
+                backgroundColor: currentView === View.ORIGINAL ? "#a60195" : "white",
+                color: currentView === View.ORIGINAL ? "white" : "#000",
+                fontFamily: 'Inter,Araboto, Roboto, Arial, sans-seri',
+                fontWeight: 'bold',
+                flex: 1,
+                borderRadius: 1.5,
+                '&:hover': {
+                  backgroundColor: currentView === View.ORIGINAL ? "#F075AA" : "white",
+                  boxShadow: "none",
+                },
+              }}
+              onClick={() => setCurrentView(View.ORIGINAL)} // Switch to upload method
+            >
+              ORIGIN VIDEO
+            </Button>
+            <Button
+              variant={currentView === View.PROCESSED ? "contained" : "text"}
+              sx={{
+                backgroundColor: currentView === View.PROCESSED ? "#a60195" : "white",
+                color: currentView === View.PROCESSED ? "white" : "#000",
+                fontFamily: 'Inter,Araboto, Roboto, Arial, sans-seri',
+                fontWeight: 'bold',
+                flex: 1,
+                borderRadius: 1.5,
+                '&:hover': {
+                  backgroundColor: currentView === View.PROCESSED ? "#F075AA" : "white",
+                  boxShadow: "none",
+                },
+              }}
+              onClick={() => setCurrentView(View.PROCESSED)} // Switch to URL method
+            >
+              PROCESSED VIDEO
+            </Button>
+            <Button
+              variant={currentView === View.RELATED_OUTPUTS ? "contained" : "text"}
+              sx={{
+                backgroundColor: currentView === View.RELATED_OUTPUTS ? "#a60195" : "white",
+                color: currentView === View.RELATED_OUTPUTS ? "white" : "#000",
+                fontFamily: 'Inter,Araboto, Roboto, Arial, sans-seri',
+                fontWeight: 'bold',
+                flex: 1,
+                borderRadius: 1.5,
+                '&:hover': {
+                  backgroundColor: currentView === View.RELATED_OUTPUTS ? "#F075AA" : "white",
+                  boxShadow: "none",
+                },
+              }}
+              onClick={() => setCurrentView(View.RELATED_OUTPUTS)} // Switch to upload method
+            >
+              RELATED OUTPUT
+            </Button>
+          </Box>
+        );
+      };
 
     return (
         <Dialog
@@ -134,6 +237,9 @@ const ProcessedVidPopUp: FC<ProcessedVidPopUpProps> = ({ isOpen, onClose }) => {
                             <ThumbUpAltIcon />
                         </IconButton>
                         <IconButton size="small">
+                            <ThumbDownAltIcon />
+                        </IconButton>
+                        <IconButton size="small">
                             <ShareIcon />
                         </IconButton>
                         <IconButton size="small">
@@ -146,41 +252,21 @@ const ProcessedVidPopUp: FC<ProcessedVidPopUpProps> = ({ isOpen, onClose }) => {
                 </Grid>
 
                 <Box mt={2}>
-                    <Box display="flex" justifyContent="center" gap={2} mb={2}>
-                        <Button
-                            variant={currentView == View.COMPLETED ? "contained" : "outlined"}
-                            // sx={{ backgroundColor: "#a60195", color: "white" }}
-                            sx={colorForViewButton(currentView, View.COMPLETED)}
-                            onClick={() => handleViewChange(View.COMPLETED)}
-                        >
-                            Completed Video
-                        </Button>
-                        <Button
-                            variant={currentView == View.ORIGINAL ? "contained" : "outlined"}
-                            sx={colorForViewButton(currentView, View.ORIGINAL)}
-
-                            onClick={() => handleViewChange(View.ORIGINAL)}
-                        >
-                            Original Video
-                        </Button>
-                        <Button
-                            variant={currentView == View.RELATED_OUTPUTS ? "contained" : "outlined"}
-                            sx={colorForViewButton(currentView, View.RELATED_OUTPUTS)}
-
-                            onClick={() => handleViewChange(View.RELATED_OUTPUTS)}
-                        >Related Outputs</Button>
-                    </Box>
+                    <ChangeView
+                        currentView={currentView}
+                        setCurrentView={setCurrentView}
+                    />
 
                     <Box sx={{
                         width: "100%",
                         height: "430px",
                     }}>
                         {/* Media Preview */}
-                        {currentView === View.COMPLETED &&
-                            <CompletedVideo />
+                        {currentView === View.PROCESSED &&
+                            <CompletedVideo progress={progress}/>
                         }
                         {currentView === View.ORIGINAL &&
-                            <OriginalVideo />
+                            <OriginalVideo videoUrl={videoUrl}/>
                         }
                         {
                             currentView === View.RELATED_OUTPUTS &&
@@ -195,126 +281,298 @@ const ProcessedVidPopUp: FC<ProcessedVidPopUpProps> = ({ isOpen, onClose }) => {
     );
 };
 
-const colorForViewButton = (currentView: View, targetView: View) => ({
-    backgroundColor: currentView === targetView ? "#a60195" : "transparent", // Background color when clicked
-    color: currentView === targetView ? "white" : "#a60195", // Text color
-    "&:hover": {
-        backgroundColor: currentView === targetView ? "#8a017a" : "rgba(166, 1, 149, 0.1)", // Hover color when clicked or not
-    },
-    borderColor: "#a60195", // Border color for the outlined version
-});
+interface CompletedVideoProps {
+    progress: 0 | 25 | 50 | 75 | 100
+}
 
+const CompletedVideo : FC<CompletedVideoProps> = (progress) => {
+    const CustomLinearProgress = styled(LinearProgress)(({ theme }) => ({
+        borderRadius: '8px',
+        height: '20px',
+        backgroundColor: theme.palette.grey[300],
+        '& .MuiLinearProgress-bar': {
+          borderRadius: '8px',
+          background: 'linear-gradient(90deg, rgba(225, 190, 231, 1) 0%, rgba(81, 45, 168, 1) 100%)',
+        },
+      }));
+      
+      interface ProgressBarProps {
+        value: number; // Progress value from 0 to 100
+      }
+      
+      const ProgressBar : React.FC<ProgressBarProps> = ({ value }) => {
+        return (
+          <Box sx={{ width: '100%' }}>
+            <CustomLinearProgress variant="determinate" value={value} />
+          </Box>
+        );
+      };
 
-const CompletedVideo = () => {
     return (
         <Box
             sx={{
                 borderRadius: "10px",
-                overflow: "hidden",
+                overflow: "visible",
+                display: 'inline-block',
                 border: "1px solid #EBEBEB",
-                minHeight: "300px", // Adjust as needed
-                textAlign: "center",
-                position: "relative"
+                minHeight: "300px",
+                margin: "10px",
+                position: "relative" // Đặt relative để các phần tử con có thể được định vị chính xác
             }}
         >
-
-            <video
-                controls
-                src="https://your-hosted-video-link.mp4" // Replace with the actual video source
-                style={{ width: "100%", height: "auto" }}
-            >
-                Your browser does not support the video tag.
-            </video>
-            {/* Progress and Remaining Time */}
+            {/* Hình ảnh */}
+            <Box
+                component="img"
+                src="https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg"
+                alt="VideoFrame"
+                sx={{
+                    width: '100%',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    position: 'relative',
+                    zIndex: 1, // Hình ảnh nằm ở lớp sau
+                }}
+            />
+            
+            {/* Màn xám overlay */}
             <Box
                 sx={{
-                    position: "absolute",
+                    position: 'absolute',
                     top: 0,
                     left: 0,
-                    right: 0,
-                    bottom: 0,
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
-                    backdropFilter: "blur(1px)", // Apply blur effect
-                    color: "white", // Ensure text is visible on the dark background
-                    padding: " 20px 25% 20px",
+                    width: '100%',
+                    height: '100%',
+                    background: 'linear-gradient(to bottom, rgba(160, 160, 160, 0.5), rgba(0, 0, 0, 1))',
+                    zIndex: 2, // Đặt phía trước hình ảnh
+                }}
+            />
+            
+            {/* Thanh progress bar và nội dung */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    bottom: '5%', // Điều chỉnh vị trí tùy ý
+                    width : '60%',
+                    left: '50%',
+                    transform: 'translate(-50%, 0)',
+                    zIndex: 3, // Đặt trên cả màn xám
+                    textAlign: 'center',
+                    color: 'white',
                 }}
             >
-                {/* Image for advertisement */}
-                <Box
-                    component="img"
-                    src="https://www.itec.hcmus.edu.vn/en/images/stories/truongDH.jpg" // Replace with the actual image path
-                    alt="Advertisement"
-                    sx={{
-                        width: '80%', // Adjust size as needed
-                        height: 'auto',
-                        marginBottom: '10px', // Spacing between the image and text
-                    }}
-                />
-
-                {/* Remaining time and progress bar */}
-                <Typography variant="body1" sx={{ fontWeight: "bold", marginBottom: "10px" }}>
-                    10 MINUTES LEFT
+                <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '10px' }}>
+                    75 %
                 </Typography>
-
-                <LinearProgress
-                    variant="determinate"
-                    value={75}
-                    sx={{
-                        width: "80%", // Adjust width as needed
-                        height: "10px",
-                        borderRadius: "5px",
-                        backgroundColor: "rgba(255, 255, 255, 0.2)", // Lighten progress bar background
-                    }}
-                />
+                <ProgressBar value={75} />
             </Box>
-
         </Box>
     )
 }
 
-const OriginalVideo = () => {
+const OriginalVideo = ({videoUrl} : {videoUrl: string | null}) => {
     return (
         <Box
             sx={{
                 borderRadius: "10px",
                 overflow: "hidden",
                 border: "1px solid #EBEBEB",
-                minHeight: "300px", // Adjust as needed
+                minHeight: "300px",
                 textAlign: "center",
             }}
         >
-
-            <video
-                controls
-                src="https://your-hosted-video-link.mp4" // Replace with the actual video source
-                style={{ width: "100%", height: "auto" }}
-            >
-                Your browser does not support the video tag.
-            </video>
+            {videoUrl ? (
+                <video controls style={{ width: "100%", height: "auto" }}>
+                    <source src={videoUrl} type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video>
+            ) : (
+                <p>Loading video...</p>
+            )}
         </Box>
-    )
+    );
 }
 
-const RelatedOutputs = () => {
+interface AudioPlayerProps {
+    audioSrc: string;
+  }
+  
+  const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioSrc }) => {
+    const audioRef = useRef<HTMLAudioElement>(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+  
+    useEffect(() => {
+      const audio = audioRef.current;
+  
+      if (audio) {
+        audio.addEventListener('loadedmetadata', () => {
+          setDuration(audio.duration);
+        });
+  
+        audio.addEventListener('timeupdate', () => {
+          setCurrentTime(audio.currentTime);
+        });
+      }
+  
+      return () => {
+        if (audio) {
+          audio.removeEventListener('loadedmetadata', () => {});
+          audio.removeEventListener('timeupdate', () => {});
+        }
+      };
+    }, []);
+  
+    const handlePlayPause = () => {
+      const audio = audioRef.current;
+  
+      if (audio) {
+        if (isPlaying) {
+          audio.pause();
+        } else {
+          audio.play();
+        }
+        setIsPlaying(!isPlaying);
+      }
+    };
+  
+    const formatTime = (time: number) => {
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60);
+      return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    };
+  
     return (
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6, mt: 4, padding: "30px", paddingTop: "0" }}>
-            {/* Original Audio */}
+      <Box sx={{ width: '100%', padding: 2, borderRadius: 4 }}>
+        <Box sx = {{display:"flex", justifyContent:"flex-start",  flexDirection: 'column'}} >
+            <Box display="flex" alignItems="center" justifyContent="flex-start">
+                <IconButton size="medium" sx={{ padding: '0px'}} onClick={handlePlayPause}>
+                    {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
+                </IconButton>
+                <Typography variant="body2" sx={{ marginLeft: 0.5 }}>
+                    {formatTime(currentTime)} / {formatTime(duration)}
+                </Typography>
+            </Box>
+            <Box sx={{justifyContent: 'center', marginTop:'4px', boxShadow: '0px 0px 12px rgba(0, 0, 0, 0.4)', borderRadius: '4px'}}>
+                <LinearProgress variant="determinate" value={(currentTime / duration) * 100} />
+            </Box>
+        </Box>
+        <audio ref={audioRef} src={audioSrc} />
+      </Box>
+    );
+  };
 
-            <AudioOutput title="Original Audio" audioUrl="/path-to-original-audio.mp3" />
+const RelatedOutputs = () => {
 
-            {/* Original Text */}
-            <TextOutput title="Original Text" text="A common form of Lorem ipsum reads: Lorem ipsum dolor sit amet, consectetur adipiscing elit..." />
+    const CustomAudioPlayer = ({ audioSrc, audioTittle}: { audioSrc: string, audioTittle: string }) => {
+        return (
+            <Box
+                sx={{
+                backgroundColor: '#F3E8FF', // Màu nền tương tự hình ảnh
+                padding: '20px',
+                borderRadius: '20px',
+                maxWidth: '500px',
+                position: 'relative'
+                }}
+            >
+                {/* Tiêu đề */}
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+                    {audioTittle}
+                </Typography>
+        
+                {/* Biểu tượng nốt nhạc */}
+                <Box sx={{ textAlign: 'center', mb: 2 }}>
+                <MusicNoteIcon sx={{ fontSize: '60px', color: '#6D6D6D' }} />
+                </Box>
+        
+                {/* Nút tải về */}
+                <IconButton
+                size = 'medium'
+                sx={{
+                    borderRadius: '10px',
+                    position: 'absolute',
+                    padding: '5px',
+                    top: '20px',
+                    right: '20px',
+                    backgroundColor: '#B800E6',
+                    color: 'white',
+                    '&:hover': { backgroundColor: '#9B00CC' },
+                }}
+                href={audioSrc}
+                download
+                >
+                    <DownloadIcon />
+                </IconButton>
+        
+                {/* Trình phát âm thanh */}
+                <AudioPlayer audioSrc={audioSrc} />
+            </Box>
+        )
+    }
 
-            {/* Translated Audio */}
-            <AudioOutput title="Translated Audio" audioUrl="/path-to-original-audio.mp3" />
+    const TextView = ({displayText, textTittle}: { displayText: string, textTittle: string}) => {
+        const handleDownload = () => {
+            const element = document.createElement("a");
+            const file = new Blob([displayText], { type: 'text/plain' });
+            element.href = URL.createObjectURL(file);
+            element.download = textTittle + ".txt";
+            document.body.appendChild(element); // Required for this to work in FireFox
+            element.click();
+        };
 
+        return (
+            <Box
+                sx={{
+                backgroundColor: '#F3E8FF', // Màu nền tương tự hình ảnh
+                padding: '20px',
+                borderRadius: '20px',
+                maxWidth: '500px',
+                position: 'relative'
+                }}
+            >
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+                    {textTittle}
+                </Typography>
+                <IconButton
+                    size="medium"
+                    sx={{
+                    borderRadius: '10px',
+                    position: 'absolute',
+                    padding: '5px',
+                    top: '20px',
+                    right: '20px',
+                    backgroundColor: '#B800E6',
+                    color: 'white',
+                    '&:hover': { backgroundColor: '#9B00CC' },
+                    }}
+                    onClick={handleDownload} 
+                >
+                    <DownloadIcon />
+                </IconButton>
+                <p style={{ fontSize: '12px' }}>{displayText}</p>
+            </Box>
+        )
+        
+    }
+    return (
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 4, mt: 4, padding: "10px", paddingTop: "0" }}>
+            <CustomAudioPlayer 
+                audioSrc="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" 
+                audioTittle="Original audio"
+            />
+            <TextView 
+                displayText="A common form of Lorem ipsum reads: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.... more" 
+                textTittle="Original text"
+            />
 
-            {/* Translated Text */}
-            <TextOutput title="Translated Text" text="A common form of Lorem ipsum reads: Lorem ipsum dolor sit amet, consectetur adipiscing elit..." />
+            <CustomAudioPlayer 
+                audioSrc="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" 
+                audioTittle="Processed audio"
+            />
+            <TextView 
+                displayText="A common form of Lorem ipsum reads: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.... more" 
+                textTittle="Processed text"
+            />
         </Box>
     );
 };
