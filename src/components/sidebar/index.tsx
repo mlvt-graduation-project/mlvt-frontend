@@ -12,9 +12,9 @@ const navLinks = [
         link: '/'
     },
     {
-        name: "Gallary",
+        name: "Storage",
         icon: <StarsIcon />,
-        link: '/'
+        link: '/storage'
     },
     {
         name: "Museum",
