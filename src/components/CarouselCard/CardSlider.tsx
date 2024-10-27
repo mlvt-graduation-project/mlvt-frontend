@@ -17,7 +17,7 @@ const CardSlider: React.FC = () => {
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentTitleIndex((prevIndex) => (prevIndex + 1) % titles.length);
-        }, 5000);
+        }, 8000);
 
         return () => {
             clearInterval(interval);

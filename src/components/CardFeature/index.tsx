@@ -5,16 +5,16 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import moment from 'moment';
 import { useTheme } from '@mui/material/styles';
 import axios from 'axios';
-import { Bookmark, BookmarkBorder, EditSharp as EditSharpIcon } from '@mui/icons-material';
+import { Bookmark, BookmarkBorder, EditSharp as EditSharpIcon, Circle as CircleIcon } from '@mui/icons-material';
 import { ProjectStatus, toDisplayText } from '../../types/enums/ProjectStatus';
 
-interface VideoTranslationCardProps {
+interface CardFeatureProps {
   project: Project;
   onclick: () => void;
 }
 
 
-const VideoTranslationCard: React.FC<VideoTranslationCardProps> = ({ project, onclick }) => {
+const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
   const theme = useTheme();
   const [isBookmarked, setIsBookmarked] = React.useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -55,7 +55,6 @@ const VideoTranslationCard: React.FC<VideoTranslationCardProps> = ({ project, on
       width: '22rem',
       height: '18rem',
       borderRadius: '0.5rem',
-      // border: '2.3px solid' + theme.background.main,
       boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.55)',
       overflow: 'hidden',
       display: 'flex',
@@ -179,6 +178,16 @@ const VideoTranslationCard: React.FC<VideoTranslationCardProps> = ({ project, on
       >
         <Chip
           label={toDisplayText(project.status)}
+          icon={
+            <CircleIcon 
+              sx={{
+                fontSize: '0.8rem', 
+                color: `${theme.status[project.status].fontColor} !important`,
+                margin: '0',
+                padding: '0',
+              }}
+            />
+          }
           sx={{
             backgroundColor: theme.status[project.status].backgroundColor,
             color: theme.status[project.status].fontColor,
@@ -205,4 +214,4 @@ const VideoTranslationCard: React.FC<VideoTranslationCardProps> = ({ project, on
   );
 }
 
-export default VideoTranslationCard;
+export default CardFeature;

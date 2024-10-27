@@ -35,7 +35,7 @@ function UploadButton() {
         onChange={handleFileInput}
       />
       <Button sx={{
-        backgroundColor: theme.background.main,
+        backgroundColor: theme.background.lightPurple,
         padding: '0.5rem 1rem',
         borderRadius: '0.8rem',
         height: '2.5rem',
@@ -44,19 +44,15 @@ function UploadButton() {
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
         transition: 'background-color 0.3s ease',
+        color: theme.background.main,
+        fontFamily: theme.typography.body1,
+        fontWeight: 'bold',
         '&:hover': {
-          backgroundColor: theme.palette.secondary.dark
+          backgroundColor: theme.background.lightPink,
         }
       }} onClick={handleClick}>
-        <FileUploadIcon style={{ color: theme.background.white }} />
-        <Typography sx={{
-          color: theme.background.white,
-          fontWeight: 'bold',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis'
-        }}>
-          {fileName ? fileName : 'Upload'}
-        </Typography>
+        <FileUploadIcon style={{ color: theme.background.main }} />
+        {fileName ? fileName : 'Upload'}
       </Button>
     </>
   );

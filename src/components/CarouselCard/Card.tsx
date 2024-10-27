@@ -85,7 +85,7 @@ const CarouselCard: React.FC<CarouselCardProps> = ({ title, onClick }) => {
                     justifyContent: 'center',
                     marginLeft: 'auto',
                     '&:hover': {
-                        backgroundColor: theme.palette.secondary.dark
+                        backgroundColor: theme.background.main 
                     }
                 }}>
                 <AddIcon sx={{

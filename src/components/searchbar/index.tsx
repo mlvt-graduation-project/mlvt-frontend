@@ -1,6 +1,7 @@
-import React, {ChangeEvent} from 'react'
-import {Box, Input} from "@mui/material";
+import React, { ChangeEvent } from 'react'
+import { Box, Input } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
+import { useTheme } from '@mui/material/styles';
 
 type SearchBarProps = {
     placeholder: string;
@@ -9,23 +10,28 @@ type SearchBarProps = {
 };
 
 const SearchBar: React.FC<SearchBarProps> = ({ placeholder, onChange, searchBarWidth }) => {
+    const theme = useTheme();
     return (
         <Box sx={{
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: '#DDE6ED',
-            padding: '0.5rem',
-            height: '20px',
-            borderRadius: '4px'
+            backgroundColor: theme.background.lightPurple,
+            width: '100%',
+            height: '2.2rem',
+            borderRadius: '0.7rem',
+            padding: '0.2rem 0.5rem',
+            gap: '0.5rem',
         }}>
-            <SearchIcon sx={{ marginRight: '10px', width: '18px' }}/>
+            <SearchIcon sx={{
+                fontSize: '1.6rem',
+                color: theme.fontColor.gray
+            }} />
             <Input
                 placeholder={placeholder}
                 onChange={onChange}
                 sx={{
                     width: searchBarWidth,
-                    color: 'rgba(0, 0, 0, 0.6)',
-                    fontSize: '0.8rem'
+                    fontSize: '0.9rem'
                 }}
                 disableUnderline
             />
