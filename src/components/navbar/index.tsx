@@ -5,10 +5,10 @@ import TranslateIcon from '@mui/icons-material/Translate';
 import SubtitlesIcon from '@mui/icons-material/Subtitles';
 import MicIcon from '@mui/icons-material/Mic';
 import SyncIcon from '@mui/icons-material/Sync';
-import Theme from '../../config/theme';
 import { Link as RouterLink } from "react-router-dom";
-import UserProfile from './UserProfile';  // Import your UserProfile component
-import UploadVideoButton from './UploadVideoButton'; //
+import UserProfile from './UserProfile';  
+import UploadVideoButton from './UploadVideoButton'; 
+import { useTheme } from '@mui/material/styles';
 
 const NavLinks = [
     {
@@ -46,8 +46,8 @@ interface NavbarProps {
 const NavBar: React.FC<NavbarProps> = ({ onOpenDialog }) => {
     const [avatarUrl, setAvatarUrl] = useState('avatar.png')
     const [userData, setUserData] = useState({
-        firstName: 'Minh',
-        lastName: 'Minh',
+        firstName: 'Minh Minh',
+        lastName: 'Nguyen',
         premium: true
     })
     const [isLoading, setIsLoading] = useState(true);
@@ -60,6 +60,7 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog }) => {
         }
     };
 
+    const theme = useTheme();
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -115,26 +116,30 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog }) => {
     }, [])
 
     return (
-        <AppBar position="static" sx={{ backgroundColor: Theme.palette.background.default, color: '#000', boxShadow: 'none', borderBottom: '2px solid #e0e0e0' }}>
+        <AppBar position="static" sx={{
+            backgroundColor: theme.background.white,
+            color: theme.fontColor.black,
+            boxShadow: 'none',
+            borderBottom: '2px solid' + theme.background.lightPurple
+        }}>
             <Toolbar sx={{
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                paddingTop: '20px',
-                paddingBottom: '10px'
+                padding: '0.7rem 2.2rem'
             }}>
                 <UploadVideoButton />
                 <Box sx={{ display: 'flex' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, marginRight: '30px' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 3.8, marginRight: '2rem' }}>
                         {NavLinks.map((item) => (
                             <Link
                                 component={RouterLink}
                                 key={item.text}
                                 to={item.link}
-                                style={{ textDecoration: "none", color: Theme.palette.text.primary }}
+                                style={{ textDecoration: "none", color: theme.palette.text.primary }}
                                 onClick={(e) => {
-                                    e.preventDefault(); // Prevent default navigation if handling with a custom action
+                                    e.preventDefault(); 
                                     handleNavClick(item.action);
                                 }}
                             >
@@ -145,29 +150,30 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog }) => {
                                         lg: "column"
                                     },
                                     alignItems: "center",
-                                    color: Theme.palette.text.primary,
+                                    color: theme.palette.text.primary,
                                     textDecoration: "none",
-                                    gap: 1
+                                    gap: 0.8
                                 }}>
                                     <Box sx={{
-                                        borderRadius: '20px',
-                                        width: '50px',
+                                        borderRadius: '0.8rem',
+                                        width: '3.3rem',
+                                        height: '1.8rem',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         '&:hover': {
-                                            backgroundColor: '#e8def8',
+                                            backgroundColor: theme.background.lightPurple,
                                         }
                                     }}>
                                         <item.icon.type
                                             sx={{
-                                                color: Theme.palette.text.primary,
-                                                width: '18px',
+                                                color: theme.palette.text.primary,
+                                                width: '1.25rem',
                                             }}
                                         />
                                     </Box>
-                                    <Box sx={{ width: '60px', textAlign: 'center' }}>
-                                        <Typography variant='body1' sx={{ fontWeight: '600', fontSize: '11px' }}>{item.text}</Typography>
+                                    <Box sx={{ width: '4.5rem', textAlign: 'center' }}>
+                                        <Typography variant='body1' sx={{ fontFamily: theme.typography.body1 ,fontWeight: '600', fontSize: '0.75rem' }}>{item.text}</Typography>
                                     </Box>
                                 </Box>
                             </Link>
@@ -176,7 +182,7 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog }) => {
                     {/* Replace the hardcoded user section with the UserProfile component */}
                     <UserProfile
                         first_name={userData.firstName}
-                        last_name="Minh"
+                        last_name={userData.lastName}
                         status={userData.premium} // true for premium, false for standard
                         avatarSrc={avatarUrl}
                         notifications={4}
