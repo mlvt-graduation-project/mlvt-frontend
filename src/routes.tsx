@@ -6,6 +6,7 @@ import Signup from "./pages/signup";
 import SignupSuccess from "./pages/signup_success";
 import EmailOTP from "./pages/email_otp";
 import VerifyOTP from "./pages/verify_otp";
+import Storage from "./pages/storage";
 
 export const router = createBrowserRouter([
     {
@@ -36,6 +37,11 @@ export const router = createBrowserRouter([
     {
         path: '/verify_otp',
         element: <VerifyOTP />,
+        errorElement: <Error />,
+    },
+    {
+        path: '/storage',
+        element: <Storage />,
         errorElement: <Error />,
     }
 ])
