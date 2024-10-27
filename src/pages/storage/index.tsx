@@ -1,5 +1,5 @@
 import { Box, Button, Card, CardContent, CardMedia, Checkbox, FormControlLabel, Grid, Typography } from "@mui/material";
-import Layout from "../../layout";
+import Layout from "../../layout/homepage";
 import { Search, Tune } from "@mui/icons-material";
 import Theme from '../../config/theme';
 
