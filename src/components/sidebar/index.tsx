@@ -1,12 +1,9 @@
-import React from 'react';
-import MenuIcon from '@mui/icons-material/Menu';
-import AddBoxIcon from '@mui/icons-material/AddBox';
 import StarsIcon from '@mui/icons-material/Stars';
 import HelpIcon from '@mui/icons-material/Help';
-import Avatar from '../../assets/avatar.png';
+import MLVTLogo from '../../assets/mlvt_logo.png'
 import {Link as RouterLink, useLocation} from "react-router-dom";
-import {Box, Hidden, Typography, Link as MuiLink} from "@mui/material";
-import Theme from '../../config/theme';
+import {Box, Typography, Link as MuiLink} from "@mui/material";
+import { useTheme } from '@mui/material/styles';
 
 const navLinks = [
     {
@@ -33,11 +30,11 @@ const navLinks = [
 
 const Sidebar = () => {
     const {pathname} = useLocation()
+    const theme = useTheme();
     return (
         <Box sx={{
-            backgroundColor: Theme.palette.secondary.main,
+            backgroundColor: theme.background.lightPink,
             padding: 0,
-            borderRadius: 2,
             display: "flex",
             flexDirection: {
                 sx: "column",
@@ -77,15 +74,22 @@ const Sidebar = () => {
                         lg: "column"
                     },
                 }}>
-                    <img src={Avatar} alt="avatar" style={{width: "40px", height: "40px", borderRadius: "50%"}}/>
-                    <MenuIcon sx={{ fontSize: "20px" }} />
-                    <AddBoxIcon sx={{ color: Theme.palette.primary.main, fontSize: "50px" }} />
+                    {/* MLVT Logo */}
+                    <img src={MLVTLogo} alt="logo" style={
+                        {
+                            width: "5rem",
+                            height: "5rem",
+                            borderRadius: "10%",
+                            marginBottom: "1.5rem"
+                        }
+                    }/>
+
                     {navLinks.map((item) => (
                         <MuiLink
                             component={RouterLink}
                             key={item.name}
                             to={item.link}
-                            style={{textDecoration: "none", color: Theme.palette.text.primary}}
+                            style={{textDecoration: "none", color: theme.palette.text.primary}}
                         >
                             <Box sx={{
                                 display: "flex",
@@ -94,7 +98,7 @@ const Sidebar = () => {
                                     lg: "column"
                                 },
                                 alignItems: "center",
-                                color: Theme.palette.text.primary,
+                                color: theme.palette.text.primary,
                                 textDecoration: "none"
                             }}>
                                 <Box sx={{
@@ -109,7 +113,7 @@ const Sidebar = () => {
                                 }}>
                                     <item.icon.type
                                         sx={{
-                                            color: Theme.palette.text.primary,
+                                            color: theme.palette.text.primary,
                                             width: '18px',
                                         }}
                                     />
@@ -122,7 +126,7 @@ const Sidebar = () => {
                 </Box>
                 <Box>
                     <HelpIcon sx={{
-                        color: Theme.palette.text.primary,
+                        color: theme.palette.text.primary,
                         width: "35px"
                     }}/>
                 </Box>

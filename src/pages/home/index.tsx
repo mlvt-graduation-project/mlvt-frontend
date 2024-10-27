@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import Layout from "../../layout";
-import Navbar from '../../components/navbar';
-import Main from "../../components/main";
+import Layout from "../../layout/homepage";
+import HomeContent from "../../components/HomeContent";
+import NavBar from "../../components/NavBar";
 import VideoTransPopUp from "../../components/VideoTransPopUp";
 import ProcessedVidPopUp from "../../components/ProcessedVidPopUp";
 
@@ -17,11 +17,9 @@ const Home = () => {
     };
 
     return (
-        <Layout>
-            {/* <h1>Home Page</h1>
-            <h2>Welcome to My channel</h2> */}
-            <Navbar onOpenDialog={handleOpenDialog} />
-            <Main />
+        <Layout>   
+            <NavBar onOpenDialog={handleOpenDialog} />
+            <HomeContent />
             <VideoTransPopUp isOpen={isDialogOpen} onClose={handleCloseDialog} />
         </Layout>
     );
