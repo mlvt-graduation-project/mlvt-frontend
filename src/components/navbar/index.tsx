@@ -127,8 +127,7 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog }) => {
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                paddingTop: '20px',
-                paddingBottom: '10px'
+                padding: '0.7rem 2.2rem'
             }}>
                 <UploadVideoButton />
                 <Box sx={{ display: 'flex' }}>
