@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createTheme, ThemeProvider, styled, PaletteOptions} from '@mui/material/styles';
+import { createTheme, ThemeProvider, styled, PaletteOptions } from '@mui/material/styles';
 import CheckBox from '@mui/material/Checkbox';
 
 
@@ -27,6 +27,7 @@ declare module '@mui/material/styles' {
         fontColor: {
             black: string;
             gray: string;
+            yellow: string;
         };
     }
 
@@ -47,6 +48,7 @@ declare module '@mui/material/styles' {
         fontColor: {
             black: string;
             gray: string;
+            yellow: string;
         };
     }
 }
@@ -86,6 +88,7 @@ const theme = createTheme({
     fontColor: {
         black: '#000000',
         gray: '#49454F',
+        yellow: '#FFB200',
     },
 
     typography: {
@@ -94,6 +97,18 @@ const theme = createTheme({
         },
         body1: {
             fontFamily: 'Poppins, serif',
+        },
+    },
+
+    components: {
+        MuiCardContent: {
+            styleOverrides: {
+                root: {
+                    '&:last-child': {
+                       paddingBottom: 0,
+                    },
+                },
+            },
         },
     },
 });
