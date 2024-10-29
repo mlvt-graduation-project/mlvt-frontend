@@ -10,13 +10,13 @@ import Storage from "./pages/storage";
 
 export const router = createBrowserRouter([
     {
-        path: '/',
-        element: <Home />,
+        path: '/login',
+        element: <Login />,
         errorElement: <Error />,
     },
     {
-        path: '/login',
-        element: <Login />,
+        path: '/',
+        element: <Home />,
         errorElement: <Error />,
     },
     {

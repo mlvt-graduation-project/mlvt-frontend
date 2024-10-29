@@ -1,24 +1,170 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import Theme from '../../config/theme'
 import { useTheme } from '@mui/material/styles';
+import axios from 'axios';
 
 function UploadButton() {
   // Define the ref with a specific type HTMLInputElement and initialize as null
+  const [fileData, setFileData] = useState({
+    "title": "My Video Title",
+    "duration": 300,
+    "description": "A description of the video",
+    "file_name": "",
+    "folder": "raw_videos/",
+    "image": "avatar.jpg",
+    "user_id": 123
+  })
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const theme = useTheme();
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      console.log(file); // Log the file object to see the details
+      // console.log(file.name); // Log the file object to see the details
       if (file) {
-        setFileName(file.name);
+        await setFileData((prevData) => ({
+          ...prevData,
+          file_name: file.name,
+        }));
+        if (file.type === "video/mp4") {
+          // Extract first frame and save it as a file
+          const imageFile = await extractFirstFrame(file);
+          // Upload video image to s3
+          await uploadVideoImage(imageFile);
+        }
+        await uploadFile(file, file.type);
       }
     }
   };
+
+  const saveFile = (file: File) => {
+    const url = URL.createObjectURL(file);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = file.name; // The file name for the downloaded image
+    document.body.appendChild(a);
+    a.click();
+    URL.revokeObjectURL(url); // Clean up after download
+  };
+
+  const extractFirstFrame = (videoFile: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video');
+      video.src = URL.createObjectURL(videoFile);
+      video.currentTime = 0.1; // Seek to 0.1 seconds to capture the first frame
+  
+      video.onloadeddata = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+  
+        if (context) {
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+          // Convert the canvas to a Blob in JPEG format
+          canvas.toBlob((blob) => {
+            if (blob) {
+              // Convert the Blob to a File
+              const imageFile = new File([blob], "thumbnail.jpg", { type: 'image/jpeg' });
+              resolve(imageFile); // Return the file
+            } else {
+              reject(new Error("Could not generate image from canvas"));
+            }
+          }, 'image/jpeg');
+        } else {
+          reject(new Error("Failed to get 2D context from canvas"));
+        }
+      };
+  
+      video.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
+  const uploadVideoImage = async(file: File) => {
+    console.log(file);
+    try {
+      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsaWNlLndvbmRlcmxhbmRAZXhhbXBsZS5jb20iLCJleHAiOjE3MzAxMjE3NDUsInVzZXJJRCI6M30.dzmYC1Flrqb1dDhdeb5Yo-B2UjZQTF7FHZ7c9AwEs0k";
+
+      const responseGeneratePresignedImageUpload = await axios.post('http://localhost:8080/api/videos/generate-upload-url/image', null, {
+        params: {
+          "file_name": 'frame.jpg',
+          "file_type": 'image/jpg'
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (responseGeneratePresignedImageUpload.status === 200) {
+        console.log('Generate presigned url for image successfully:', responseGeneratePresignedImageUpload.data);
+
+        const s3UploadImageResponse = await axios.put(responseGeneratePresignedImageUpload.data.upload_url, file, {
+          headers: {
+            'Content-Type': 'image/jpg',
+          },
+        });
+
+        if (s3UploadImageResponse.status === 200) {
+          console.log('Upload image to S3 successfully');
+        }
+      }
+    } catch (e) {
+      console.error('Error uploading file: ' + e)
+    } 
+  }
+
+  const uploadFile = async(file: File, fileType: string) => {
+    try {
+      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsaWNlLndvbmRlcmxhbmRAZXhhbXBsZS5jb20iLCJleHAiOjE3MzAxMjE3NDUsInVzZXJJRCI6M30.dzmYC1Flrqb1dDhdeb5Yo-B2UjZQTF7FHZ7c9AwEs0k";
+
+      const responseAdd = await axios.post('http://localhost:8080/api/videos/', fileData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (responseAdd.status === 201) {
+        console.log('File added successfully:', responseAdd.data);
+      }
+
+      console.log(file.name)
+      const responseGeneratePresignedVideoUpload = await axios.post('http://localhost:8080/api/videos/generate-upload-url/video', null, {
+        params: {
+          "file_name": file.name,
+          "file_type": fileType
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (responseGeneratePresignedVideoUpload.status === 200) {
+        console.log('Generate presigned url for video successfully:', responseGeneratePresignedVideoUpload.data);
+
+        const s3UploadVideoResponse = await axios.put(responseGeneratePresignedVideoUpload.data.upload_url, file, {
+          headers: {
+            'Content-Type': fileType,
+          },
+        });
+
+        if (s3UploadVideoResponse.status === 200) {
+          console.log('Upload video to S3 successfully');
+        }
+      }
+    } catch (e) {
+      console.error('Error uploading file: ' + e)
+    } 
+  }
 
   const handleClick = () => {
     if (fileInputRef.current !== null) {
