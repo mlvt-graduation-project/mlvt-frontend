@@ -20,7 +20,7 @@ function UploadButton() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const theme = useTheme();
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       // console.log(file.name); // Log the file object to see the details
@@ -197,15 +197,6 @@ function UploadButton() {
           backgroundColor: theme.background.lightPink,
         }
       }} onClick={handleClick}>
-        <FileUploadIcon style={{ color: theme.palette.primary.main }} />
-        <Typography sx={{
-          color: theme.palette.primary.main,
-          fontWeight: 'bold',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis'
-        }}>
-          {fileData.file_name ? fileData.file_name : 'Upload'}
-        </Typography>
         <FileUploadIcon style={{ color: theme.background.main }} />
         {fileName ? fileName : 'Upload'}
       </Button>

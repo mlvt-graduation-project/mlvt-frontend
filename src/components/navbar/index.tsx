@@ -9,8 +9,6 @@ import { Link as RouterLink } from "react-router-dom";
 import UserProfile from './UserProfile';  
 import UploadVideoButton from './UploadVideoButton'; 
 import { useTheme } from '@mui/material/styles';
-import UserProfile from './UserProfile';  
-import UploadVideoButton from './UploadVideoButton'; 
 import axios from 'axios';
 
 const NavLinks = [
