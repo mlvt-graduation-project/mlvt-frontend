@@ -1,7 +1,10 @@
-import { Box, Button, Card, CardContent, CardMedia, Checkbox, FormControlLabel, Grid, Typography } from "@mui/material";
+import { Box, Checkbox, FormControlLabel, Grid, Pagination, Typography } from "@mui/material";
 import Layout from "../../layout/homepage";
-import { Search, Tune } from "@mui/icons-material";
 import Theme from '../../config/theme';
+import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+import AlignHorizontalRightIcon from '@mui/icons-material/AlignHorizontalRight';
+import CustomSearchBar from "./CustomSearchBar";
+import VideoCard from './VideoCard';
 
 const Storage = () => {
     const videos = [
@@ -18,8 +21,8 @@ const Storage = () => {
 
     return (
         <Layout>
-            <Box display={'flex'}>
-                <Box width="260px" padding="20px" style={{
+            <Box display='flex'>
+                <Box width='260px' padding='20px' display='flex' flexDirection='column' alignItems='center' style={{
                     borderRight: '2px solid #e0e0e0',
                 }}>
                     <Typography variant="h5" gutterBottom style={{
@@ -27,69 +30,57 @@ const Storage = () => {
                         fontWeight: 'bold',
                         marginBottom: '30px'
                     }}>My Storage</Typography>
-                    <Box paddingLeft="10px">
+                    <Box paddingLeft='10px' display='flex' flexDirection='column' >
                         <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="All" />
                         <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="Video translation" />
                         <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="Text generation" />
                         <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="Subtitle generation" />
                         <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="Voice generation" />
                         <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="Lip synchronization" />
-                        <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="My Favorites" />
+                        <FormControlLabel 
+                            control={
+                                    <BookmarkBorderOutlinedIcon fontSize="large" sx={{ color: "#f9b207", marginLeft: '5px', marginRight: '3px' }} />
+                            } 
+                            sx={{ marginBottom: '5px' }}
+                            label="My Favorites" 
+                        />
 
                         <Box sx={{ width: '100%', margin: '10px auto', borderBottom: '2px solid #ccc' }}></Box>
 
                         <Typography variant="subtitle1" style={{ fontWeight: 'bold' }} gutterBottom>Status</Typography>
-                        <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="Success" />
-                        <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="Processing" />
-                        <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="Failed" />
+                        <FormControlLabel control={<Checkbox sx={{ color: 'green' }} />} sx={{ marginBottom: '5px', color: 'green' }} label="Success" />
+                        <FormControlLabel control={<Checkbox sx={{ color: 'blue' }} />} sx={{ marginBottom: '5px', color: 'blue' }} label="Processing" />
+                        <FormControlLabel control={<Checkbox sx={{ color: 'red' }} />} sx={{ marginBottom: '5px', color: 'red' }} label="Failed" />
                         <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="Raw" />
                     </Box>
                 </Box>
 
                 {/* Main Content */}
-                <Box flex="1" padding="20px">
+                <Box flex='1' paddingTop='20px' paddingLeft='40px' paddingRight='40px'>
                     {/* Search and filter bar */}
-                    <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-                        <Box display="flex" alignItems="center">
-                            <Search />
-                            <input type="text" placeholder="Hinted search text" style={{ marginLeft: '10px', padding: '5px', width: '300px' }} />
-                        </Box>
-                        <Button variant="outlined" startIcon={<Tune/>}>Filter</Button>
+                    <Box display='flex' justifyContent='space-between' paddingLeft='100px' marginBottom='20px'>
+                        <CustomSearchBar />
+                        <AlignHorizontalRightIcon fontSize='large' />
                     </Box>
 
                     {/* Grid of videos */}
                     <Grid container spacing={2}>
                     {videos.map((video, index) => (
                         <Grid item xs={12} sm={6} md={4} key={index}>
-                        <Card>
-                            <CardMedia 
-                                component="img"
-                                height="140"
-                                image={`/assets/${video.img}`} // Update with correct path
-                                alt={video.title}
-                            />
-                            <CardContent>
-                            <Typography gutterBottom variant="h6" component="div">
-                                {video.title}
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary">
-                                Created {video.date}
-                            </Typography>
-                            <Typography variant="body2" color="textPrimary">
-                                Status: {video.status}
-                            </Typography>
-                            </CardContent>
-                        </Card>
+                            <VideoCard video={video} />
                         </Grid>
                     ))}
                     </Grid>
                     
                     {/* Pagination */}
                     <Box mt={4} display="flex" justifyContent="center">
+                        <Pagination count={3} color="primary" /> {/* Adjust count as needed */}
+                    </Box>
+                    {/* <Box mt={4} display="flex" justifyContent="center">
                     <Button variant="outlined">1</Button>
                     <Button variant="outlined">2</Button>
                     <Button variant="outlined">3</Button>
-                    </Box>
+                    </Box> */}
                 </Box>
             </Box>
         </Layout>
