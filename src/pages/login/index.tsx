@@ -7,32 +7,43 @@ import FacebookLoginButton from '../../components/SocialLoginButton/FacebookLogi
 import axios from 'axios';
 import { useSnackbar } from "notistack";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const InputStyles = (theme: any) => ({
     sx: {
         '& input::placeholder': {
-            fontSize: '0.9rem',  // Customize the placeholder font size
-            color: theme.fontColor.gray,  // Customize the placeholder color using your theme
+            fontSize: '0.9rem',  
+            color: theme.fontColor.gray, 
         },
-        borderRadius: 2.5,  // Customize the border radius
+        borderRadius: 2.5,  
     }
 });
 
 const Login = () => {
 
-    const navigate = useNavigate(); // React Router's navigation hook
-    const theme = useTheme(); // Access the theme object
+    const navigate = useNavigate(); 
+
+    useEffect(() => {
+        const authToken = localStorage.getItem('authToken');
+        if (authToken) {
+          navigate('/', { replace: true });
+        }
+      }, [navigate]);
+
+    const theme = useTheme(); 
+    const { login } = useAuth();
+    const { enqueueSnackbar } = useSnackbar();
+
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [error, setError] = React.useState('');
-    const [emailError, setEmailError] = React.useState(false); // State for email validation error
-    const [passwordError, setPasswordError] = React.useState(false); // State for password validation error
-    const [loading, setLoading] = React.useState(false); // State to manage loading state
-    const [rememberMe, setRememberMe] = React.useState(false); // State to manage remember me checkbox
-    const [showPassword, setShowPassword] = React.useState(false); // State to manage password visibility
+    const [emailError, setEmailError] = React.useState(false); 
+    const [passwordError, setPasswordError] = React.useState(false);
+    const [loading, setLoading] = React.useState(false); 
+    const [rememberMe, setRememberMe] = React.useState(false); 
+    const [showPassword, setShowPassword] = React.useState(false);
     
     const location = useLocation();
-    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         // Check if there's a success message passed through state
@@ -41,23 +52,10 @@ const Login = () => {
         }
     }, [location.state, enqueueSnackbar]);
     
-    // Validate email onBlur
-    const validateEmail = () => {
-        if (!email) {
-            setEmailError(true);
-        } else {
-            setEmailError(false);
-        }
-    };
+    // Validate email and password
+    const validateEmail = () => setEmailError(!email);
+    const validatePassword = () => setPasswordError(!password);
 
-    // Validate password onBlur
-    const validatePassword = () => {
-        if (!password) {
-            setPasswordError(true);
-        } else {
-            setPasswordError(false);
-        }
-    };
 
     // Login handler
     const handleLogin = async () => {
@@ -87,9 +85,9 @@ const Login = () => {
     
             if (response.status === 200) {
                 console.log(response.data);
-                // Storing the token
+                login(response.data.token);
                 localStorage.setItem('authToken', response.data.token);
-                // You can redirect or handle successful login here, e.g., navigate('/dashboard')
+                
                 navigate('/');
                 
             }
