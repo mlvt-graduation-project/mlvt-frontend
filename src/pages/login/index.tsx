@@ -1,38 +1,54 @@
 import React, { useEffect } from "react";
 import { Box, TextField, Button, Typography, Divider, Checkbox } from "@mui/material";
 import LoginSignup from '../../layout/loginSignup';
-import { useTheme } from '@mui/material/styles'; 
+import { useTheme } from '@mui/material/styles';
 import GoogleLoginButton from '../../components/SocialLoginButton/GoogleLoginButton';
 import FacebookLoginButton from '../../components/SocialLoginButton/FacebookLoginButton';
 import axios from 'axios';
 import { useSnackbar } from "notistack";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { isToken } from "typescript";
 
 const InputStyles = (theme: any) => ({
     sx: {
         '& input::placeholder': {
-            fontSize: '0.9rem',  // Customize the placeholder font size
-            color: theme.fontColor.gray,  // Customize the placeholder color using your theme
+            fontSize: '0.9rem',
+            color: theme.fontColor.gray,
         },
-        borderRadius: 2.5,  // Customize the border radius
+        borderRadius: 2.5,
     }
 });
 
+
 const Login = () => {
 
-    const navigate = useNavigate(); // React Router's navigation hook
-    const theme = useTheme(); // Access the theme object
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const authToken = localStorage.getItem('authToken');
+        if (authToken) {
+           
+            navigate('/', { replace: true });
+        }
+    }, [navigate]);
+
+
+
+    const theme = useTheme();
+    const { login } = useAuth();
+    const { enqueueSnackbar } = useSnackbar();
+
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [error, setError] = React.useState('');
-    const [emailError, setEmailError] = React.useState(false); // State for email validation error
-    const [passwordError, setPasswordError] = React.useState(false); // State for password validation error
-    const [loading, setLoading] = React.useState(false); // State to manage loading state
-    const [rememberMe, setRememberMe] = React.useState(false); // State to manage remember me checkbox
-    const [showPassword, setShowPassword] = React.useState(false); // State to manage password visibility
-    
+    const [emailError, setEmailError] = React.useState(false);
+    const [passwordError, setPasswordError] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
+    const [rememberMe, setRememberMe] = React.useState(false);
+    const [showPassword, setShowPassword] = React.useState(false);
+
     const location = useLocation();
-    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         // Check if there's a success message passed through state
@@ -40,24 +56,11 @@ const Login = () => {
             enqueueSnackbar(location.state.successMessage, { variant: 'success' });
         }
     }, [location.state, enqueueSnackbar]);
-    
-    // Validate email onBlur
-    const validateEmail = () => {
-        if (!email) {
-            setEmailError(true);
-        } else {
-            setEmailError(false);
-        }
-    };
 
-    // Validate password onBlur
-    const validatePassword = () => {
-        if (!password) {
-            setPasswordError(true);
-        } else {
-            setPasswordError(false);
-        }
-    };
+    // Validate email and password
+    const validateEmail = () => setEmailError(!email);
+    const validatePassword = () => setPasswordError(!password);
+
 
     // Login handler
     const handleLogin = async () => {
@@ -84,14 +87,14 @@ const Login = () => {
                 email: email,
                 password: password
             });
-    
+
             if (response.status === 200) {
                 console.log(response.data);
-                // Storing the token
+                login(response.data.token);
                 localStorage.setItem('authToken', response.data.token);
-                // You can redirect or handle successful login here, e.g., navigate('/dashboard')
+
                 navigate('/');
-                
+
             }
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -111,12 +114,12 @@ const Login = () => {
             setLoading(false); // Set loading state to false
         }
     };
-    
+
 
     return (
         <LoginSignup>
             <Typography variant="h4" gutterBottom sx={{
-                color: theme.fontColor.black, 
+                color: theme.fontColor.black,
                 fontFamily: theme.typography.h1,
                 fontWeight: theme.typography.fontWeightBold,
                 fontSize: 60,
@@ -203,11 +206,11 @@ const Login = () => {
                     },
                 }}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)} 
-                onBlur={validatePassword} 
-                error={passwordError} 
-                helperText={passwordError ? 'Password is required' : ''} 
-                
+                onChange={(e) => setPassword(e.target.value)}
+                onBlur={validatePassword}
+                error={passwordError}
+                helperText={passwordError ? 'Password is required' : ''}
+
                 FormHelperTextProps={{
                     sx: {
                         fontFamily: theme.typography.body1,
@@ -231,7 +234,7 @@ const Login = () => {
                     <Checkbox id="rememberMe" size="small" sx={{
                         padding: 0,
                         '&.Mui-checked': {
-                            color: theme.background.main, 
+                            color: theme.background.main,
                         }
                     }} checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} />
                     <Typography
@@ -271,16 +274,16 @@ const Login = () => {
                 fullWidth
                 onClick={handleLogin} // Add onClick event
                 sx={{
-                    marginBottom: 2, 
-                    marginTop: 3.5, 
+                    marginBottom: 2,
+                    marginTop: 3.5,
                     borderRadius: 2.5,
-                    backgroundColor: theme.background.main, 
+                    backgroundColor: theme.background.main,
                     fontFamily: theme.typography.h1,
                     fontWeight: theme.typography.fontWeightBold,
                     fontSize: '1rem',
                     height: '2.5rem',
                     '&:hover': {
-                        backgroundColor: theme.background.main, 
+                        backgroundColor: theme.background.main,
                     },
 
                 }}
@@ -291,13 +294,13 @@ const Login = () => {
 
             {/* Divider */}
             <Divider sx={{ my: 1.5, fontFamily: theme.typography.body1, fontSize: '0.8rem' }}>Or</Divider>
-                
+
             {/* Social Login Buttons */}
-            <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
                 marginTop: 2,
-               }}>
+            }}>
                 <GoogleLoginButton />
                 <FacebookLoginButton />
             </Box>
@@ -311,13 +314,13 @@ const Login = () => {
                     display: 'flex',
                     justifyContent: 'center',
                 }}>
-                <Typography variant="body2" sx={{ 
+                <Typography variant="body2" sx={{
                     marginTop: 3,
                     alignItems: 'center',
                     fontFamily: theme.typography.body1,
                     fontSize: '0.9rem',
-                    }}>
-                    Don’t have an account? <a href="/signup" style={{ color: theme.status.inProgress.fontColor }}>Sign Up</a> 
+                }}>
+                    Don’t have an account? <a href="/signup" style={{ color: theme.status.inProgress.fontColor }}>Sign Up</a>
                 </Typography>
             </Box>
         </LoginSignup >
@@ -325,3 +328,7 @@ const Login = () => {
 };
 
 export default Login;
+function isTokenExpired(authToken: string) {
+    throw new Error("Function not implemented.");
+}
+

@@ -7,6 +7,7 @@ import SignupSuccess from "./pages/signup_success";
 import EmailOTP from "./pages/email_otp";
 import VerifyOTP from "./pages/verify_otp";
 import Storage from "./pages/storage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export const router = createBrowserRouter([
     {
@@ -16,9 +17,14 @@ export const router = createBrowserRouter([
     },
     {
         path: '/',
-        element: <Home />,
+        element: (  
+            <ProtectedRoute>
+                <Home />
+            </ProtectedRoute>
+        ),
         errorElement: <Error />,
     },
+
     {
         path: '/signup',
         element: <Signup />,
