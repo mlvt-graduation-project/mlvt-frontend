@@ -23,11 +23,6 @@ export const router = createBrowserRouter([
             </ProtectedRoute>
         ),
         errorElement: <Error />,
-        // Example: Temporarily make Home page public to test if it loads
-
-        // path: '/',
-        // element: <Home />,
-        // errorElement: <Error />,
     },
 
     {
