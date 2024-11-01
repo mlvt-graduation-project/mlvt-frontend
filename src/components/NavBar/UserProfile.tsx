@@ -1,8 +1,9 @@
 import { useTheme } from "@mui/material/styles";
 import React, { useState } from "react";
-import { Avatar, Box, Badge, Menu, MenuItem, Typography, IconButton, ListItemIcon, ListItemText, Divider, hexToRgb } from "@mui/material";
+import { Avatar, Box, Badge, Menu, MenuItem, Typography, IconButton, ListItemIcon, ListItemText, Divider } from "@mui/material";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { AccountCircle, NavigateNext, WorkspacePremiumSharp, Help, Logout, Language, LightMode } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 interface UserProfileProps {
     first_name: string;
@@ -25,6 +26,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
     const [anchorDropdown, setAnchorDropdown] = useState<null | HTMLElement>(null);
     const theme = useTheme();
     const open = Boolean(anchorDropdown);
+    const navigate = useNavigate();
 
     const altText = `${first_name.charAt(0)}${last_name.charAt(0)}`;
 
@@ -37,6 +39,12 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
     const handleDropdownClose = () => {
         setAnchorDropdown(null);
     };
+
+    // Handle logout
+    const handleLogout = () => {
+        localStorage.removeItem('authToken');
+        navigate('/login');
+    }
 
     return (
         <>
@@ -138,7 +146,10 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                     <React.Fragment key={item.label}>
                         {item.label === 'Log out' && <Divider sx={{ margin: '0.5rem 0' }} variant="middle" component="li" />}
                         <MenuItem
-                            onClick={handleDropdownClose}
+                            onClick={()=>{
+                                handleDropdownClose();
+                                if (item.label === 'Log out') handleLogout();
+                            }}
                             sx={{
                                 padding: '0.3rem 1.5rem',
                                 margin: '0.5rem 0.5rem',
