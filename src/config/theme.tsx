@@ -15,6 +15,7 @@ declare module '@mui/material/styles' {
             complete: StatusTheme;
             inProgress: StatusTheme;
             failed: StatusTheme;
+            raw: StatusTheme;
         };
 
         background: {
@@ -36,6 +37,7 @@ declare module '@mui/material/styles' {
             complete: StatusTheme;
             inProgress: StatusTheme;
             failed: StatusTheme;
+            raw: StatusTheme;
         };
 
         background: {
@@ -75,6 +77,10 @@ const theme = createTheme({
         failed: {
             fontColor: '#B8001F',
             backgroundColor: '#FF9F9F',
+        },
+        raw: {
+            fontColor: '#49454F',
+            backgroundColor: '#E5E5E5',
         },
     },
 
