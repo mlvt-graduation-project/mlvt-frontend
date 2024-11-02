@@ -1,4 +1,4 @@
-import { Box, Checkbox, Divider, FormControlLabel, Grid, IconButton, Pagination, SxProps, Typography } from "@mui/material";
+import { Box, Checkbox, FormControlLabel, Grid, IconButton, Pagination, SxProps, Typography } from "@mui/material";
 import Layout from "../../layout/homepage";
 import { useTheme } from '@mui/material/styles';
 import AlignHorizontalRightIcon from '@mui/icons-material/AlignHorizontalRight';
@@ -8,7 +8,7 @@ import { Bookmark, BookmarkBorder } from "@mui/icons-material";
 import { Project } from "../../types/Project";
 import { ProjectStatus } from "../../types/enums/ProjectStatus";
 import CardFeature from "../../components/CardFeature";
-
+import SearchBar from "../../components/SearchBar";
 
 
 const categoryOption = [
@@ -183,15 +183,24 @@ const Storage = () => {
                 </Box>
 
                 {/* Main Content */}
-                <Box flex='1' paddingTop='20px' paddingLeft='40px' paddingRight='40px'>
+                <Box flex='1' paddingTop='20px' paddingLeft='40px' paddingRight='4rem'>
                     {/* Search and filter bar */}
-                    <Box display='flex' justifyContent='space-between' paddingLeft='100px' margin='1rem auto'>
-                        <CustomSearchBar />
-                        <AlignHorizontalRightIcon fontSize='large' />
+                    <Box display='flex' justifyContent='space-between' margin='0.5rem auto' sx={{ alignItems: 'center'}} padding='0 0.8rem'>
+                        {/* <CustomSearchBar /> */}
+                        <Typography sx={{
+                            fontFamily: 'Kablammo',
+                            fontSize: '3rem',
+                            color: theme.background.main,
+                            fontWeight: 'bold',
+                        }}>MLVT</Typography>
+                        <Box sx={{ width: '50rem' }}>
+                            <SearchBar placeholder='Search' onChange={() => console.log('Search changed')} searchBarWidth='40rem' />
+                        </Box>
+                        <AlignHorizontalRightIcon fontSize='medium' />
                     </Box>
 
                     {/* Grid of videos */}
-                    <Grid container rowSpacing={3} sx= {{ marginTop: '1rem' }}>
+                    <Grid container rowSpacing={3} sx={{ marginTop: '1rem' }}>
                         {projects.map((project, index) => (
                             <Grid item xs={12} sm={6} md={4} key={index} container justifyContent="center" alignItems="center">
                                 <CardFeature
@@ -205,7 +214,7 @@ const Storage = () => {
 
                     {/* Pagination */}
                     <Box mt={4} display="flex" justifyContent="center">
-                        <Pagination count={3} color="primary" /> {/* Adjust count as needed */}
+                        <Pagination count={3} color="primary" />
                     </Box>
 
                 </Box>
