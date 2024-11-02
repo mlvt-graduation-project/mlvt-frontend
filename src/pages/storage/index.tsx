@@ -1,86 +1,213 @@
-import { Box, Checkbox, FormControlLabel, Grid, Pagination, Typography } from "@mui/material";
+import { Box, Checkbox, Divider, FormControlLabel, Grid, IconButton, Pagination, SxProps, Typography } from "@mui/material";
 import Layout from "../../layout/homepage";
-import Theme from '../../config/theme';
-import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+import { useTheme } from '@mui/material/styles';
 import AlignHorizontalRightIcon from '@mui/icons-material/AlignHorizontalRight';
 import CustomSearchBar from "./CustomSearchBar";
-import VideoCard from './VideoCard';
+import React, { MouseEventHandler } from "react";
+import { Bookmark, BookmarkBorder } from "@mui/icons-material";
+import { Project } from "../../types/Project";
+import { ProjectStatus } from "../../types/enums/ProjectStatus";
+import CardFeature from "../../components/CardFeature";
+
+
+
+const categoryOption = [
+    { label: 'All' },
+    { label: 'Video translation' },
+    { label: 'Text generation' },
+    { label: 'Subtitle generation' },
+    { label: 'Voice generation' },
+    { label: 'Lip synchronization' },
+    { label: 'My Favorites' },
+];
+
+interface ComponentProps {
+    label: string;
+    labelProps?: SxProps;
+    color: string;
+}
+
+function CheckboxComponent({ label, labelProps, color }: ComponentProps) {
+    const theme = useTheme();
+    return (
+        <FormControlLabel
+            control={
+                <Checkbox
+                    sx={{
+                        color: { color },
+                        '&.Mui-checked': {
+                            color: { color },
+                        },
+                        height: '2.625rem'
+                    }}
+                />
+            }
+            sx={{
+                margin: '0',
+                color: theme.fontColor.gray,
+                ...labelProps,
+            }}
+            label={<Typography sx={labelProps}>{label}</Typography>}
+        />
+    );
+}
+
+
+
 
 const Storage = () => {
-    const videos = [
-        { title: 'Video Translation - 1', status: 'Processing', date: '1 minute ago', img: 'video_placeholder.jpg' },
-        { title: 'Voice Generation - 2', status: 'Processing', date: '1 minute ago', img: 'audio_placeholder.jpg' },
-        { title: 'Subtitle Generation - 3', status: 'Completed', date: '1 minute ago', img: 'subtitle_placeholder.jpg' },
-        { title: 'Text Generation - 4', status: 'Processing', date: '15 minutes ago', img: 'text_placeholder.jpg' },
-        { title: 'Lip Synchronization - 5', status: 'Processing', date: '30 minutes ago', img: 'lip_sync_placeholder.jpg' },
-        { title: 'Video Translation - 6', status: 'Failed', date: '3 years ago', img: 'video_placeholder.jpg' },
-        { title: 'Video Translation - 7', status: 'Completed', date: '4 years ago', img: 'video_placeholder.jpg' },
-        { title: 'Video Translation - 8', status: 'Completed', date: '4 years ago', img: 'video_placeholder.jpg' },
-        { title: 'Video Translation - 9', status: 'Completed', date: '5 years ago', img: 'video_placeholder.jpg' },
-    ];
+    const theme = useTheme();
+    const [isFavorite, setIsFavorite] = React.useState(false);
+
+    const statusOption = [
+        { label: 'Completed', color: theme.status.complete.fontColor },
+        { label: 'Processing', color: theme.status.inProgress.fontColor },
+        { label: 'Failed', color: theme.status.failed.fontColor },
+        { label: 'Raw', color: theme.status.raw.fontColor },
+    ]
+
+    const projects: Project[] = [
+        {
+            id: '1',
+            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
+            title: 'Video Translation',
+            status: ProjectStatus.Complete,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            type_project: 'Video Translation',
+        },
+        {
+            id: '2',
+            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
+            title: 'Video Translation',
+            status: ProjectStatus.InProgress,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            type_project: 'Video Translation',
+        },
+        {
+            id: '3',
+            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
+            title: 'Video Translation',
+            status: ProjectStatus.Complete,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            type_project: 'Video Translation',
+        },
+        {
+            id: '4',
+            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
+            title: 'Video Translation',
+            status: ProjectStatus.Failed,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            type_project: 'Video Translation',
+        },
+    ]
+
+    const handleFavoriteClicked = (e: any) => {
+        e.stopPropagation();
+        console.log('Favorite clicked');
+        setIsFavorite(!isFavorite);
+    };
 
     return (
         <Layout>
             <Box display='flex'>
-                <Box width='260px' padding='20px' display='flex' flexDirection='column' alignItems='center' style={{
+                <Box width='15rem' padding='20px' display='flex' flexDirection='column' alignItems='center' style={{
                     borderRight: '2px solid #e0e0e0',
                 }}>
-                    <Typography variant="h5" gutterBottom style={{
-                        color: Theme.palette.secondary.main, 
+                    <Typography sx={{
+                        fontFamily: theme.typography.body1,
+                        fontSize: '2rem',
                         fontWeight: 'bold',
+                        color: theme.background.main,
                         marginBottom: '30px'
-                    }}>My Storage</Typography>
-                    <Box paddingLeft='10px' display='flex' flexDirection='column' >
-                        <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="All" />
-                        <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="Video translation" />
-                        <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="Text generation" />
-                        <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="Subtitle generation" />
-                        <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="Voice generation" />
-                        <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="Lip synchronization" />
-                        <FormControlLabel 
-                            control={
-                                    <BookmarkBorderOutlinedIcon fontSize="large" sx={{ color: "#f9b207", marginLeft: '5px', marginRight: '3px' }} />
-                            } 
-                            sx={{ marginBottom: '5px' }}
-                            label="My Favorites" 
-                        />
+                    }}>
+                        My Storage
+                    </Typography>
+                    <Box display='flex' flexDirection='column' >
 
-                        <Box sx={{ width: '100%', margin: '10px auto', borderBottom: '2px solid #ccc' }}></Box>
+                        {/* Checkbox filter: session 1 */}
+                        {categoryOption.map((option, index) => (
+                            <CheckboxComponent
+                                key={index}
+                                label={option.label}
+                                labelProps={{ fontFamily: theme.typography.body1, fontSize: '0.9rem' }}
+                                color={theme.fontColor.gray}
+                            />
+                        ))}
 
-                        <Typography variant="subtitle1" style={{ fontWeight: 'bold' }} gutterBottom>Status</Typography>
-                        <FormControlLabel control={<Checkbox sx={{ color: 'green' }} />} sx={{ marginBottom: '5px', color: 'green' }} label="Success" />
-                        <FormControlLabel control={<Checkbox sx={{ color: 'blue' }} />} sx={{ marginBottom: '5px', color: 'blue' }} label="Processing" />
-                        <FormControlLabel control={<Checkbox sx={{ color: 'red' }} />} sx={{ marginBottom: '5px', color: 'red' }} label="Failed" />
-                        <FormControlLabel control={<Checkbox />} sx={{ marginBottom: '5px' }} label="Raw" />
+                        {/* Favorite */}
+                        <Box
+                            onClick={handleFavoriteClicked}
+                            sx={{
+                                marginLeft: '0', color: theme.fontColor.gray,
+                                height: '2.625rem',
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                '&:hover': {
+                                    cursor: 'pointer',
+                                },
+                            }}
+                        >
+                            <IconButton sx={{ padding: '5px' }}>
+                                {isFavorite ? (
+                                    <Bookmark sx={{ color: theme.fontColor.yellow, fontSize: '2rem' }} />
+                                ) : (
+                                    <BookmarkBorder sx={{ color: theme.fontColor.yellow, fontSize: '2rem' }} />
+                                )}
+                            </IconButton>
+                            <Typography sx={{ fontFamily: theme.typography.body1, fontSize: '0.9rem' }}>Favorite</Typography>
+
+                        </Box>
+
+
+                        <Box sx={{ width: '100%', margin: '1rem auto', borderBottom: '2px solid #e0e0e0' }}></Box>
+
+                        <Typography sx={{ fontFamily: theme.typography.body1, fontSize: '1rem', fontWeight: 'bold' }}>Status</Typography>
+
+                        {/* Checkbox filter: session 2 */}
+                        <Box display='flex' flexDirection='column'>
+                            {statusOption.map((option, index) => (
+                                <CheckboxComponent
+                                    key={index}
+                                    label={option.label}
+                                    labelProps={{ fontFamily: theme.typography.body1, fontSize: '0.9rem' }}
+                                    color={option.color}
+                                />
+                            ))}
+                        </Box>
                     </Box>
                 </Box>
 
                 {/* Main Content */}
                 <Box flex='1' paddingTop='20px' paddingLeft='40px' paddingRight='40px'>
                     {/* Search and filter bar */}
-                    <Box display='flex' justifyContent='space-between' paddingLeft='100px' marginBottom='20px'>
+                    <Box display='flex' justifyContent='space-between' paddingLeft='100px' margin='1rem auto'>
                         <CustomSearchBar />
                         <AlignHorizontalRightIcon fontSize='large' />
                     </Box>
 
                     {/* Grid of videos */}
-                    <Grid container spacing={2}>
-                    {videos.map((video, index) => (
-                        <Grid item xs={12} sm={6} md={4} key={index}>
-                            <VideoCard video={video} />
-                        </Grid>
-                    ))}
+                    <Grid container rowSpacing={3} sx= {{ marginTop: '1rem' }}>
+                        {projects.map((project, index) => (
+                            <Grid item xs={12} sm={6} md={4} key={index} container justifyContent="center" alignItems="center">
+                                <CardFeature
+                                    key={project.id}
+                                    project={project}
+                                    onclick={() => console.log('Card clicked')}
+                                />
+                            </Grid>
+                        ))}
                     </Grid>
-                    
+
                     {/* Pagination */}
                     <Box mt={4} display="flex" justifyContent="center">
                         <Pagination count={3} color="primary" /> {/* Adjust count as needed */}
                     </Box>
-                    {/* <Box mt={4} display="flex" justifyContent="center">
-                    <Button variant="outlined">1</Button>
-                    <Button variant="outlined">2</Button>
-                    <Button variant="outlined">3</Button>
-                    </Box> */}
+
                 </Box>
             </Box>
         </Layout>

@@ -3,6 +3,7 @@ export enum ProjectStatus {
     Complete = 'complete',
     InProgress = 'inProgress',
     Failed = 'failed',
+    Raw = 'raw',
 }
 
 export const toDisplayText = (status: ProjectStatus) => {
@@ -13,5 +14,7 @@ export const toDisplayText = (status: ProjectStatus) => {
             return 'In Progress';
         case ProjectStatus.Failed:
             return 'Failed';
+        case ProjectStatus.Raw:
+            return 'Raw';
     }
 }
