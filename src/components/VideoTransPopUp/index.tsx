@@ -546,7 +546,7 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
           startIcon={<AutoAwesomeIcon />}
           onClick={handleGenerate}
         >
-          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', fontFamily: 'Inter,Araboto, Roboto, Arial, sans-serif' }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', fontFamily: 'Inter,Araboto, Roboto, Arial, sans-serif' }} onClick={handleGenerate}>
             GENERATE
           </Typography>
         </Button>
