@@ -62,7 +62,9 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
     setUrlInput(event.target.value);
   };
 
-  const handleGenerate = () => {
+  const handleGenerate = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    // alert("Generate button clicked");
     console.log("Generate button clicked");
 
     const isUploadSuccessful = true;
@@ -542,8 +544,9 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
             marginRight: "auto",
           }}
           startIcon={<AutoAwesomeIcon />}
+          onClick={handleGenerate}
         >
-          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', fontFamily: 'Inter,Araboto, Roboto, Arial, sans-serif' }} onClick={handleGenerate}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', fontFamily: 'Inter,Araboto, Roboto, Arial, sans-serif' }}>
             GENERATE
           </Typography>
         </Button>
