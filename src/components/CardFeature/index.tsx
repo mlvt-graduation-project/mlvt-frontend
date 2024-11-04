@@ -6,7 +6,7 @@ import moment from 'moment';
 import { useTheme } from '@mui/material/styles';
 import axios from 'axios';
 import { Bookmark, BookmarkBorder, EditSharp as EditSharpIcon, Circle as CircleIcon } from '@mui/icons-material';
-import { ProjectStatus, toDisplayText } from '../../types/enums/ProjectStatus';
+import { ProjectStatus, toDisplayText } from '../../types/ProjectStatus';
 
 interface CardFeatureProps {
   project: Project;

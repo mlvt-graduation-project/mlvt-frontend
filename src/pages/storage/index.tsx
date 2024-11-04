@@ -5,7 +5,7 @@ import AlignHorizontalRightIcon from '@mui/icons-material/AlignHorizontalRight';
 import React, { MouseEventHandler } from "react";
 import { Bookmark, BookmarkBorder } from "@mui/icons-material";
 import { Project } from "../../types/Project";
-import { ProjectStatus } from "../../types/enums/ProjectStatus";
+import { ProjectStatus } from "../../types/ProjectStatus";
 import CardFeature from "../../components/CardFeature";
 import SearchBar from "../../components/SearchBar";
 
