@@ -90,8 +90,9 @@ const Login = () => {
 
             if (response.status === 200) {
                 console.log(response.data);
-                login(response.data.token);
-                localStorage.setItem('authToken', response.data.token);
+                login(response.data.token, response.data.user_id);
+
+                console.log(response.data.user_id);
 
                 navigate('/');
 
