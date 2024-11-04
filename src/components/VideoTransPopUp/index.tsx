@@ -20,6 +20,8 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { SelectChangeEvent } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
+import {getPresignedImageURL, getPresignedVideoURL, postVideo} from '../../api/VideoAPI'
+import { putImageS3, putVideoS3 } from "../../api/AWSAPI";
 
 
 interface VideoTransPopUpProps {
@@ -34,16 +36,22 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
   const [voice, setVoice] = useState("Voice 1");
   const [uploadMethod, setUploadMethod] = useState<'upload' | 'url' | 'browse'>('upload'); // Track upload method
   const [urlInput, setUrlInput] = useState(''); // Track the URL input field
+  const [fileData, setFileData] = useState({
+    "title": "My Video Title",
+    "duration": 300,
+    "description": "A description of the video",
+    "file_name": "",
+    "folder": "raw_videos/",
+    "image": "avatar.jpg",
+    "user_id": 123
+  })
   
   // Don't erase these following code 
 
   // const [videoDuration, setVideoDuration] = useState<number | null>(null);
   // const [isLoading, setIsLoading] = useState(false);
 
-  // const token = localStorage.getItem("token");
   // const userID = parseInt(localStorage.getItem('user_id')!, 10);
-
-  
 
   useEffect (() => {}, [videoLocalUrl])
 
@@ -59,60 +67,106 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
     setUrlInput(event.target.value);
   };
 
-  // const handleGenerateAndUpload = async () => {
-  //   if (!selectedFile) return;
+  const handleClick = async ({file} : {file : File | null}) => {
+    if (file) {
+      setFileData((prevData) => ({
+        ...prevData,
+        file_name: file.name,
+      }));
+      if (file.type.includes('video')) {
+        const imageFile = await extractFirstFrame(file);
+        await uploadVideoImage(imageFile);
+      }
+      await uploadFile(file, file.type);
+      setLocalVideoUrl(null);
+      setSelectedFile(null);
+      onClose();
+    }
+  } 
 
-  //   setIsLoading(true);
+  const extractFirstFrame = (videoFile: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video');
+      video.src = URL.createObjectURL(videoFile);
+      video.currentTime = 0.1;
 
-  //   try {
-  //     const response = await fetch("http://localhost:8080/api/videos/generate-presigned-url", {
-  //       method: "POST",
-  //       headers: {
-  //         "Authorization": "Bearer " + token,
-  //         "Content-Type": "application/json"
-  //       },
-  //       body: JSON.stringify({
-  //         user_id: userID,
-  //         file_name: selectedFile.name,
-  //         file_type: selectedFile.type,
-  //         title: "Sample Video Title",
-  //         duration: 120
-  //       })
-  //     });
+      // separate the type of video
+      const parts = videoFile.name.split('.');
+      parts.pop(); 
+      const imageName = parts.join('.');
+  
+      video.onloadeddata = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+  
+        if (context) {
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const imageFile = new File([blob], `${imageName}.jpg`, { type: 'image/jpeg' });
+              resolve(imageFile); 
+            } else {
+              reject(new Error("Could not generate image from canvas"));
+            }
+          }, 'image/jpeg');
+        } else {
+          reject(new Error("Failed to get 2D context from canvas"));
+        }
+      };
+  
+      video.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
 
-  //     if (!response.ok) {
-  //       // show pop up for failed generate presigned URL
-  //       throw new Error("Failed to generate presigned URL");
-  //     }
+  const uploadVideoImage = async(file: File) => {
+    console.log(file);
+    try {
+      const responsegetPresignedImageURL = await getPresignedImageURL(`${file.name}`, 'image/jpg');
+      console.log(responsegetPresignedImageURL)
 
-  //     const jsonResponse = await response.json();
-  //     const { presignedUrl } = jsonResponse.data;
+      if (responsegetPresignedImageURL.status === 200) {
+        console.log('Generate presigned url for image successfully:', responsegetPresignedImageURL.data);
 
-  //     try {
-  //       const uploadResponse = await fetch(presignedUrl, {
-  //         method: "PUT",
-  //         headers: {
-  //           "Content-Type": selectedFile.type
-  //         },
-  //         body: selectedFile
-  //       });
+        const s3UploadImageResponse = await putImageS3 (responsegetPresignedImageURL.data.upload_url, file)
 
-  //       if (uploadResponse.ok) {
-  //         console.log("File uploaded successfully!");
-  //       } else {
-  //         console.error("Upload failed:", uploadResponse.statusText);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error during the upload process:", error);
-  //     }
+        if (s3UploadImageResponse.status === 200) {
+          console.log('Upload image to S3 successfully');
+        }
+      }
+    } catch (e) {
+      console.error('Error uploading file: ' + e)
+    } 
+  }
 
-  //     console.log("Video uploaded successfully");
-  //   } catch (error) {
-  //     console.error("Error during the upload process:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const uploadFile = async(file: File, fileType: string) => {
+    try {
+
+      const postVideoResponse = await postVideo (fileData);
+
+      if (postVideoResponse.status === 201) {
+        console.log('File added successfully:', postVideoResponse.data);
+      }
+
+      const getPresignedVideoResponse = await getPresignedVideoURL(file.name, fileType)
+
+      if (getPresignedVideoResponse.status === 200) {
+        console.log('Generate presigned url for video successfully:', getPresignedVideoResponse.data);
+
+        const s3UploadVideoResponse = await putVideoS3(getPresignedVideoResponse.data.upload_url, file, fileType)
+
+        if (s3UploadVideoResponse.status === 200) {
+          console.log('Upload video to S3 successfully');
+        }
+      }
+    } catch (e) {
+      console.error('Error uploading file: ' + e)
+    } 
+  }
 
 
   // Changing upload video method component
@@ -190,16 +244,17 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
     setVideoUrl: (method: string | null) => void,
   }
 
-  const UploadVideoFromDevice : React.FC<DeviceVideoProps> = ({videoUrl, setVideoUrl,  selectedFile }) => {
-    
+  const UploadVideoFromDevice : React.FC<DeviceVideoProps> = ({videoUrl, setVideoUrl,  selectedFile}) => {
+    const [isDragActive, setIsDragActive] = useState(false);
     const { getRootProps, getInputProps } = useDropzone({
+      onDragEnter: () => setIsDragActive(true),
+      onDragLeave: () => setIsDragActive(false),
       onDrop: (acceptedFiles) => {
         const file = acceptedFiles[0];
         if (file && file.type.includes('video')) {
-          
           setSelectedFile(file);
           setVideoUrl(URL.createObjectURL(file));
-
+          setIsDragActive(false);
         }
       },
     });
@@ -208,6 +263,7 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
       setLocalVideoUrl(null);
       setSelectedFile(null);
     }
+
     return (
       <>
         <Typography variant="body2" sx={{ marginBottom: "10px", fontFamily: 'Inter,Araboto, Roboto, Arial, sans-seri' }}>
@@ -229,6 +285,9 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              ...(isDragActive && {
+                backgroundColor: "white",
+              })
             }}
           >
             <input {...getInputProps()} />
@@ -261,8 +320,8 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
             onClick={handleRemoveVideo}
             sx={{
               position: 'absolute',
-              top: '15px',
-              right: '5px',
+              top: '25px',
+              right: '15px',
               backgroundColor: 'grey',
               color: 'white',
               zIndex: 1, 
@@ -348,7 +407,8 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
         >
           <FileOpenIcon sx={{ fontSize: '3rem' }} />
           <Typography variant="body2" sx={{ marginTop: "5px" }} fontFamily={'Inter,Araboto, Roboto, Arial, sans-seri'}>
-            {selectedFile ? selectedFile?.name : "Browse your MLVT storage to find materials"}
+            {/* {selectedFile ? selectedFile?.name : "Browse your MLVT storage to find materials"} */}
+            Browse your MLVT storage to find materials
           </Typography>
           <Button
             startIcon={<InfoOutlinedIcon />}
@@ -384,6 +444,7 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
           justifyContent: "space-between",
           alignItems: "center",
           height: "30px",
+          margin: "10px"
         }}
       >
         <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: "bold", fontFamily: 'Araboto, Roboto, Arial, sans-serif', color: "#a60195" }}>Video Translation</Typography>
@@ -501,6 +562,7 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
             (uploadMethod === 'upload' && !selectedFile) || 
             (uploadMethod === 'url' && !urlInput)          
           }
+          onClick={() => handleClick({ file: selectedFile })}
           sx={{
             marginTop: "20px",
             width: "200px",
