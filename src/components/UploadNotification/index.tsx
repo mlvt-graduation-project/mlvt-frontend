@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Dialog } from '@mui/material';
+import VideoTransPopUp from '../VideoTransPopUp';
 
 interface UploadNotificationProps {
     isOpen: boolean;
