@@ -5,7 +5,7 @@ import React from "react";
 import ProcessedVidPopUp from "../ProcessedVidPopUp";
 import CardFeature from "../CardFeature";
 import { Project } from "../../types/Project";
-import { ProjectStatus } from "../../types/enums/ProjectStatus";
+import { ProjectStatus } from "../../types/ProjectStatus";
 
 const ProjectSection = () => {
     const theme = useTheme();

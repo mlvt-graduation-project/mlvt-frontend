@@ -3,7 +3,8 @@ import { Navigate, useNavigate } from "react-router-dom";
 
 interface AuthContextType {
     authToken: string | null;
-    login: (token: string) => void;
+    userId: string | null;
+    login: (token: string, userId: string) => void;
     logout: () => void;
 }
 
@@ -11,10 +12,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [authToken, setAuthToken] = useState<string | null>(localStorage.getItem("authToken"));
+    const [userId, setUserId] = useState<string | null>(localStorage.getItem("userId"));
 
-    const login = (token: string) => {
+    // method to save token, and user id in local storage
+    const login = (token: string, userId: string) => {
         setAuthToken(token);
+        setUserId(userId);
         localStorage.setItem("authToken", token);
+        localStorage.setItem("userId", userId);
+
     };
 
     const logout = () => {
@@ -25,7 +31,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ authToken, login, logout }}>
+        <AuthContext.Provider value={{ authToken, userId, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

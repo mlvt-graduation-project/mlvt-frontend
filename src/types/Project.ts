@@ -1,4 +1,4 @@
-import { ProjectStatus } from "./enums/ProjectStatus";
+import { ProjectStatus } from "./ProjectStatus";
 
 export interface Project {
     id: string;

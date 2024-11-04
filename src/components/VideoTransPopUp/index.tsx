@@ -20,6 +20,7 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { SelectChangeEvent } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
+import UploadNotification from "../../components/UploadNotification";
 
 
 interface VideoTransPopUpProps {
@@ -30,11 +31,13 @@ interface VideoTransPopUpProps {
 const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [language, setLanguage] = useState("Vietnamese");
-  const [videoLocalUrl, setLocalVideoUrl] = useState<string | null>(null); 
+  const [videoLocalUrl, setLocalVideoUrl] = useState<string | null>(null);
   const [voice, setVoice] = useState("Voice 1");
   const [uploadMethod, setUploadMethod] = useState<'upload' | 'url' | 'browse'>('upload'); // Track upload method
   const [urlInput, setUrlInput] = useState(''); // Track the URL input field
-  
+  const [uploadStatus, setUploadStatus] = useState<"success" | "fail">("success");
+  const [statusPopupOpen, setStatusPopupOpen] = useState(false);
+
   // Don't erase these following code 
 
   // const [videoDuration, setVideoDuration] = useState<number | null>(null);
@@ -43,9 +46,9 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
   // const token = localStorage.getItem("token");
   // const userID = parseInt(localStorage.getItem('user_id')!, 10);
 
-  
 
-  useEffect (() => {}, [videoLocalUrl])
+
+  useEffect(() => { }, [videoLocalUrl])
 
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
     setLanguage(event.target.value);
@@ -59,6 +62,16 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
     setUrlInput(event.target.value);
   };
 
+  const handleGenerate = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    // alert("Generate button clicked");
+    console.log("Generate button clicked");
+
+    const isUploadSuccessful = true;
+    setUploadStatus(isUploadSuccessful ? "success" : "fail");
+    setStatusPopupOpen(true);    
+
+  }
   // const handleGenerateAndUpload = async () => {
   //   if (!selectedFile) return;
 
@@ -119,10 +132,13 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
   interface UploadMethods {
     uploadMethod: 'upload' | 'url' | 'browse';
     setUploadMethod: (method: 'upload' | 'url' | 'browse') => void;
-  } 
+  }
 
-  const ChangeUploadVideopMethod : React.FC<UploadMethods> = ({uploadMethod, setUploadMethod}) => {
+  const ChangeUploadVideopMethod: React.FC<UploadMethods> = ({ uploadMethod, setUploadMethod }) => {
+
     return (
+      
+
       <Box sx={{ display: "flex", gap: "10px", marginBottom: "10px", outline: 2, borderRadius: 1.5, padding: 0.5, outlineColor: "#CCCCCC", backgroundColor: "white" }}>
         <Button
           variant={uploadMethod === 'upload' ? "contained" : "text"}
@@ -186,17 +202,17 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
   // Uploading video from device component
   interface DeviceVideoProps {
     selectedFile: File | null,
-    videoUrl : string | null,
+    videoUrl: string | null,
     setVideoUrl: (method: string | null) => void,
   }
 
-  const UploadVideoFromDevice : React.FC<DeviceVideoProps> = ({videoUrl, setVideoUrl,  selectedFile }) => {
-    
+  const UploadVideoFromDevice: React.FC<DeviceVideoProps> = ({ videoUrl, setVideoUrl, selectedFile }) => {
+
     const { getRootProps, getInputProps } = useDropzone({
       onDrop: (acceptedFiles) => {
         const file = acceptedFiles[0];
         if (file && file.type.includes('video')) {
-          
+
           setSelectedFile(file);
           setVideoUrl(URL.createObjectURL(file));
 
@@ -211,9 +227,9 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
     return (
       <>
         <Typography variant="body2" sx={{ marginBottom: "10px", fontFamily: 'Inter,Araboto, Roboto, Arial, sans-seri' }}>
-                Drag and drop a video or click to browse your files.
+          Drag and drop a video or click to browse your files.
         </Typography>
-        {(videoUrl === null)?
+        {(videoUrl === null) ?
           <Box
             {...getRootProps()}
             sx={{
@@ -245,35 +261,35 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
               Required
             </Button>
           </Box>
-        : 
-        <Box sx={{ position: 'relative', margin: '20px' }}>
-          {/* Video */}
-          <video
-            src={videoUrl}
-            controls
-            width="100%"
-            style={{ borderRadius: '10px', marginTop: '10px' }}
-          />
+          :
+          <Box sx={{ position: 'relative', margin: '20px' }}>
+            {/* Video */}
+            <video
+              src={videoUrl}
+              controls
+              width="100%"
+              style={{ borderRadius: '10px', marginTop: '10px' }}
+            />
 
-          {/* Nút gỡ video ở góc phải trên của video */}
-          <IconButton 
-            aria-label="delete"
-            onClick={handleRemoveVideo}
-            sx={{
-              position: 'absolute',
-              top: '15px',
-              right: '5px',
-              backgroundColor: 'grey',
-              color: 'white',
-              zIndex: 1, 
-            }}
-          >
+            {/* Nút gỡ video ở góc phải trên của video */}
+            <IconButton
+              aria-label="delete"
+              onClick={handleRemoveVideo}
+              sx={{
+                position: 'absolute',
+                top: '15px',
+                right: '5px',
+                backgroundColor: 'grey',
+                color: 'white',
+                zIndex: 1,
+              }}
+            >
               <DeleteIcon />
-          </IconButton>
-          <Typography variant="body2" align="center" sx={{ marginTop: "5px"}} fontFamily={'Inter,Araboto, Roboto, Arial, sans-seri'}>
+            </IconButton>
+            <Typography variant="body2" align="center" sx={{ marginTop: "5px" }} fontFamily={'Inter,Araboto, Roboto, Arial, sans-seri'}>
               {selectedFile?.name}
-          </Typography>
-        </Box>
+            </Typography>
+          </Box>
         }
       </>
     );
@@ -281,11 +297,11 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
 
   // uploading video from url component
   interface UrlVideoProps {
-    handleUrlChange : (event: ChangeEvent<HTMLInputElement>) => void,
-    urlInput : string,
+    handleUrlChange: (event: ChangeEvent<HTMLInputElement>) => void,
+    urlInput: string,
   }
 
-  const UploadVideoFromUrl : React.FC<UrlVideoProps> = ({urlInput, handleUrlChange}) => {
+  const UploadVideoFromUrl: React.FC<UrlVideoProps> = ({ urlInput, handleUrlChange }) => {
     return (
       <Box sx={{
         marginBottom: "20px",
@@ -328,7 +344,7 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
     return (
       <>
         <Typography variant="body2" sx={{ marginTop: "5px" }} fontFamily={'Inter,Araboto, Roboto, Arial, sans-seri'}>
-           Browse your existed file on our MLVT 
+          Browse your existed file on our MLVT
         </Typography>
         <Box
           sx={{
@@ -361,7 +377,7 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
         </Box>
       </>
     )
-    
+
   }
 
   return (
@@ -403,30 +419,30 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
         </Typography>
         {/* Upload buttons */}
         <Box sx={{ padding: 1.5, borderRadius: 1.5, backgroundColor: "#EBEBEB" }}>
-          <ChangeUploadVideopMethod uploadMethod = {uploadMethod} setUploadMethod = {setUploadMethod}/>
+          <ChangeUploadVideopMethod uploadMethod={uploadMethod} setUploadMethod={setUploadMethod} />
           {uploadMethod === 'upload' && (
             <UploadVideoFromDevice
-            setVideoUrl={setLocalVideoUrl}
-            videoUrl={videoLocalUrl}
-            selectedFile={selectedFile}
+              setVideoUrl={setLocalVideoUrl}
+              videoUrl={videoLocalUrl}
+              selectedFile={selectedFile}
             />
           )}
           {uploadMethod === 'url' && (
-            <UploadVideoFromUrl handleUrlChange={handleUrlChange} urlInput={urlInput}/>
+            <UploadVideoFromUrl handleUrlChange={handleUrlChange} urlInput={urlInput} />
           )}
           {uploadMethod === 'browse' && (
-            <BrowseFile/>
+            <BrowseFile />
           )}
         </Box>
 
         {/* Translate To Section */}
         <Box
           sx={{
-            display: "flex",            
-            flexDirection: "row",       
+            display: "flex",
+            flexDirection: "row",
             justifyContent: "space-between",
-            alignItems: "flex-start",    
-            gap: "10px",                 
+            alignItems: "flex-start",
+            gap: "10px",
           }}
         >
           <Box sx={{ flex: 1 }}>
@@ -466,7 +482,7 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
               Voice
             </Typography>
             <Select
-              value = {voice}
+              value={voice}
               onChange={handleVoiceChange}
               fullWidth
               sx={{
@@ -490,16 +506,16 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
               <MenuItem value="Voice 3">Voice 3</MenuItem>
             </Select>
           </Box>
-          
+
         </Box>
-        
+
 
         {/* Generate Button */}
         <Button
           variant="outlined"
           disabled={
-            (uploadMethod === 'upload' && !selectedFile) || 
-            (uploadMethod === 'url' && !urlInput)          
+            (uploadMethod === 'upload' && !selectedFile) ||
+            (uploadMethod === 'url' && !urlInput)
           }
           sx={{
             marginTop: "20px",
@@ -507,7 +523,7 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
             height: "40px",
             backgroundColor: (uploadMethod === 'upload' && selectedFile) || (uploadMethod === 'url' && urlInput)
               ? "#a60195"
-              : "#EBEBEB",  
+              : "#EBEBEB",
             color: (uploadMethod === 'upload' && selectedFile) || (uploadMethod === 'url' && urlInput)
               ? "white"
               : "#A3A3A3",
@@ -528,12 +544,18 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
             marginRight: "auto",
           }}
           startIcon={<AutoAwesomeIcon />}
+          onClick={handleGenerate}
         >
           <Typography variant="subtitle1" sx={{ fontWeight: 'bold', fontFamily: 'Inter,Araboto, Roboto, Arial, sans-serif' }}>
-            Generate
+            GENERATE
           </Typography>
         </Button>
       </DialogContent>
+      <UploadNotification
+        isOpen={statusPopupOpen}
+        uploadStatus={uploadStatus}
+        onClose={() => setStatusPopupOpen(false)}
+      />
     </Dialog>
   );
 }

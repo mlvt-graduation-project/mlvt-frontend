@@ -1,9 +1,12 @@
 import { useTheme } from "@mui/material/styles";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Box, Badge, Menu, MenuItem, Typography, IconButton, ListItemIcon, ListItemText, Divider } from "@mui/material";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { AccountCircle, NavigateNext, WorkspacePremiumSharp, Help, Logout, Language, LightMode } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { getUser } from "../../api/user.api";
+import { useAuth } from "../../context/AuthContext";
+import { User } from "../../types/User";
 
 interface UserProfileProps {
     first_name: string;
@@ -27,6 +30,26 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
     const theme = useTheme();
     const open = Boolean(anchorDropdown);
     const navigate = useNavigate();
+    const [user, setUser] = useState<User | null>(null);    
+    const { userId } = useAuth();
+    
+
+    useEffect(() => {
+        const fetchUserDetails = async () => {
+          try {
+            if (userId) {
+              const userData = await getUser(userId);
+              setUser(userData.user);
+            } else {
+              throw new Error("User ID is null");
+            }
+          } catch (error) {
+            throw new Error(`Failed to fetch user data: ${error}`);
+          }
+        };
+    
+        fetchUserDetails();
+      }, []);
 
     const altText = `${first_name.charAt(0)}${last_name.charAt(0)}`;
 
@@ -64,7 +87,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                         fontWeight: 'bold',
                         fontSize: '0.95rem'
                     }}>
-                        {`${first_name} ${last_name}`}
+                        {`${user?.first_name} ${user?.last_name}`}
                     </Typography>
                     <Typography variant="caption" sx={{
                         color: theme.fontColor.gray,
@@ -129,14 +152,14 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                                 fontWeight: 'bold',
                                 fontSize: '0.95rem'
                             }}>
-                                {`${first_name} ${last_name}`}
+                                {`${user?.first_name} ${user?.last_name}`}
                             </Typography>
                             <Typography variant="caption" sx={{
                                 color: theme.fontColor.gray,
                                 fontFamily: theme.typography.body1,
                                 fontSize: '0.77rem'
                             }}>
-                                {status ? 'Premium user' : 'Standard user'}
+                                {user?.status ? 'Premium user' : 'Standard user'}
                             </Typography>
                         </Box>
                     </Box>

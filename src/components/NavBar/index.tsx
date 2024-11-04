@@ -67,7 +67,7 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog }) => {
             try {
                 // Retrieve user_id from local storage
                 // const userId = localStorage.getItem('user_id');
-                const userId = "3"
+                const userId = null;
                 const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsaWNlLndvbmRlcmxhbmRAZXhhbXBsZS5jb20iLCJleHAiOjE3MzAxMjE3NDUsInVzZXJJRCI6M30.dzmYC1Flrqb1dDhdeb5Yo-B2UjZQTF7FHZ7c9AwEs0k";
 
                 if (!userId) {

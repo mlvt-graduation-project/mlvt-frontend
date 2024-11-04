@@ -2,11 +2,10 @@ import { Box, Checkbox, FormControlLabel, Grid, IconButton, Pagination, SxProps,
 import Layout from "../../layout/homepage";
 import { useTheme } from '@mui/material/styles';
 import AlignHorizontalRightIcon from '@mui/icons-material/AlignHorizontalRight';
-import CustomSearchBar from "./CustomSearchBar";
 import React, { MouseEventHandler } from "react";
 import { Bookmark, BookmarkBorder } from "@mui/icons-material";
 import { Project } from "../../types/Project";
-import { ProjectStatus } from "../../types/enums/ProjectStatus";
+import { ProjectStatus } from "../../types/ProjectStatus";
 import CardFeature from "../../components/CardFeature";
 import SearchBar from "../../components/SearchBar";
 
