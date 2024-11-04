@@ -152,7 +152,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                                 fontWeight: 'bold',
                                 fontSize: '0.95rem'
                             }}>
-                                {`${first_name} ${last_name}`}
+                                {`${user?.first_name} ${user?.last_name}`}
                             </Typography>
                             <Typography variant="caption" sx={{
                                 color: theme.fontColor.gray,
