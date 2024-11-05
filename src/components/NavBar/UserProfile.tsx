@@ -6,7 +6,7 @@ import { AccountCircle, NavigateNext, WorkspacePremiumSharp, Help, Logout, Langu
 import { useNavigate } from "react-router-dom";
 import { getUser } from "../../api/user.api";
 import { useAuth } from "../../context/AuthContext";
-import { User } from "../../types/User";
+import { User } from "../../types/Response/User";
 
 interface UserProfileProps {
     first_name: string;
