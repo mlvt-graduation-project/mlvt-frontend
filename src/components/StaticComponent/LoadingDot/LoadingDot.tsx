@@ -10,7 +10,7 @@ export const LoadingDots = ({content }: {content : string}) => {
           <span className="dot">.</span>
           <span className="dot">.</span>
         </div>
-        <Typography style={{ marginLeft: '8px' }}> 
+        <Typography className = "text" style={{ marginLeft: '8px', fontWeight: 'bold', color: 'blue' }}> 
           {content !== null ? content : "Loading"}
         </Typography>
     </div>

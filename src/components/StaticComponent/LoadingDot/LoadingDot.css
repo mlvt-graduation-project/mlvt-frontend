@@ -12,6 +12,8 @@
   
   .dot {
     animation: bounce 0.6s infinite alternate;
+    font-weight: bold;
+    color: blue;
   }
   
   .dot:nth-child(1) {

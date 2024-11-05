@@ -55,6 +55,20 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
 
   useEffect(() => { }, [videoLocalUrl])
 
+  useEffect(() => {
+    return () => {
+      setSelectedFile(null);
+      setLanguage("Vietnamese");
+      setLocalVideoUrl(null);
+      setVoice("Voice 1");
+      setUploadMethod('upload');
+      setUrlInput('');
+      setUploadStatus("success");
+      setStatusPopupOpen(false);
+      setIsLoading(false);
+    };
+  }, []);
+
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
     setLanguage(event.target.value);
   };
@@ -121,8 +135,9 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
           console.log('Upload image to S3 successfully');
         }
       }
-    } catch (e) {
-      console.error('Error uploading file: ' + e)
+    } catch (error) {
+      console.error('Error uploading file: ' + error)
+      throw error
     } 
   }
 
@@ -146,11 +161,13 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
           console.log('Upload video to S3 successfully');
         }
       }
-    } catch (e) {
-      console.error('Error uploading file: ' + e)
+    } catch (error) {
+      console.error('Error uploading file: ' + error)
+      throw error
     } 
   }
   const handleGenerate = async (file : File | null) => {
+    var isUploadSuccessful = true;
     if (file) {
       setIsLoading(true);
       try {
@@ -165,11 +182,13 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
         await uploadFile(file, file.type);
         
         // onClose();
-      } finally {
+      } catch (error) {
+        isUploadSuccessful = false;
+      }
+      finally {
         setIsLoading(false);
         setLocalVideoUrl(null);
         setSelectedFile(null);
-        const isUploadSuccessful = true;
         setUploadStatus(isUploadSuccessful ? "success" : "fail");
         setStatusPopupOpen(true);
       }
@@ -571,17 +590,17 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
           variant="outlined"
           disabled={
             (uploadMethod === 'upload' && !selectedFile) ||
-            (uploadMethod === 'url' && !urlInput)
+            (uploadMethod === 'url' && !urlInput) ||
+            (isLoading)
           }
-          // onClick={() => handleClick({ file: selectedFile })}
           sx={{
             marginTop: "20px",
             width: "200px",
             height: "40px",
-            backgroundColor: (uploadMethod === 'upload' && selectedFile) || (uploadMethod === 'url' && urlInput)
+            backgroundColor: !isLoading && ((uploadMethod === 'upload' && selectedFile) || (uploadMethod === 'url' && urlInput))
               ? "#a60195"
               : "#EBEBEB",
-            color: (uploadMethod === 'upload' && selectedFile) || (uploadMethod === 'url' && urlInput)
+            color:  !isLoading && ((uploadMethod === 'upload' && selectedFile) || (uploadMethod === 'url' && urlInput))
               ? "white"
               : "#A3A3A3",
             borderRadius: "10px",
