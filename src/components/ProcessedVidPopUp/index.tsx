@@ -42,17 +42,14 @@ enum View {
 
 const ProcessedVidPopUp: FC<ProcessedVidPopUpProps> = ({ isOpen, onClose }) => {
     const [currentView, setCurrentView] = useState<View>(View.PROCESSED);
-    const [progress, setProgress] = useState< 0 | 25 | 50 | 75 | 100> (75);
-
-    // const handleViewChange = (view: View) => {
-    //     setCurrentView(view);
-    // };
-
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
+    const [videoStatus, setVideoStatus] = useState<string | null>(null);
+    const [progress, setProgress] = useState< 0 | 25 | 50 | 75 | 100> (75);    
 
     async function fetchVideoUrl() {
         try {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxzdGFuMTUxMjAyQGdtYWlsLmNvbSIsImV4cCI6MTczMDE5NDAwOSwidXNlcklEIjo3fQ.gg3h6e33CJbS1I9zvbawGXWWbM7hTxk7HaJIVCMRM9c";
+            const token = localStorage.getItem('authToken');
             const response = await fetch('http://localhost:8080/api/videos/1',{
                 method: 'GET', 
                 headers: {
@@ -60,9 +57,10 @@ const ProcessedVidPopUp: FC<ProcessedVidPopUpProps> = ({ isOpen, onClose }) => {
                     'Content-Type': 'application/json', 
                 },
             });
-            // Thay bằng URL chính xác của backend
           const data = await response.json();
           setVideoUrl(data.video_url.split("?")[0]);
+          setImageUrl(data.image_url.split("?")[0]);
+          setVideoStatus(data.status);
         } catch (error) {
           console.error('Error fetching video URL:', error);
         }
@@ -263,7 +261,7 @@ const ProcessedVidPopUp: FC<ProcessedVidPopUpProps> = ({ isOpen, onClose }) => {
                     }}>
                         {/* Media Preview */}
                         {currentView === View.PROCESSED &&
-                            <CompletedVideo progress={progress}/>
+                            <ProcessedVideoComp progress={progress} status = {videoStatus} imageUrl={imageUrl}/>
                         }
                         {currentView === View.ORIGINAL &&
                             <OriginalVideo videoUrl={videoUrl}/>
@@ -281,93 +279,110 @@ const ProcessedVidPopUp: FC<ProcessedVidPopUpProps> = ({ isOpen, onClose }) => {
     );
 };
 
-interface CompletedVideoProps {
-    progress: 0 | 25 | 50 | 75 | 100
+interface ProcessedVideoCompProps {
+    progress: 0 | 25 | 50 | 75 | 100,
+    status: string | null
+    imageUrl: string | null
 }
 
-const CompletedVideo : FC<CompletedVideoProps> = (progress) => {
+const ProcessedVideoComp: FC<ProcessedVideoCompProps> = ({ progress, status, imageUrl }) => {
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
+
     const CustomLinearProgress = styled(LinearProgress)(({ theme }) => ({
+      borderRadius: '8px',
+      height: '20px',
+      backgroundColor: theme.palette.grey[300],
+      '& .MuiLinearProgress-bar': {
         borderRadius: '8px',
-        height: '20px',
-        backgroundColor: theme.palette.grey[300],
-        '& .MuiLinearProgress-bar': {
-          borderRadius: '8px',
-          background: 'linear-gradient(90deg, rgba(225, 190, 231, 1) 0%, rgba(81, 45, 168, 1) 100%)',
-        },
-      }));
-      
-      interface ProgressBarProps {
-        value: number; // Progress value from 0 to 100
-      }
-      
-      const ProgressBar : React.FC<ProgressBarProps> = ({ value }) => {
-        return (
-          <Box sx={{ width: '100%' }}>
-            <CustomLinearProgress variant="determinate" value={value} />
-          </Box>
-        );
-      };
+        background: 'linear-gradient(90deg, rgba(225, 190, 231, 1) 0%, rgba(81, 45, 168, 1) 100%)',
+      },
+    }));
 
+    useEffect(() => {
+        if (imageUrl) {
+          const img = new Image();
+          img.src = imageUrl;
+          img.onload = () => setIsImageLoaded(true);
+          img.onerror = () => setIsImageLoaded(false);
+        }
+      }, [imageUrl]);
+  
+    interface ProgressBarProps {
+      value: number; // Progress value from 0 to 100
+    }
+  
+    const ProgressBar: FC<ProgressBarProps> = ({ value }) => (
+      <Box sx={{ width: '100%' }}>
+        <CustomLinearProgress variant="determinate" value={value} />
+      </Box>
+    );
+  
     return (
-        <Box
+      <>
+        {status !== 'complete' && status !== null && (
+          <Box
             sx={{
-                borderRadius: "10px",
-                overflow: "visible",
-                display: 'inline-block',
-                border: "1px solid #EBEBEB",
-                minHeight: "300px",
-                margin: "10px",
-                position: "relative" // Đặt relative để các phần tử con có thể được định vị chính xác
+              borderRadius: '10px',
+              overflow: 'visible',
+              display: 'flex',
+              border: '1px solid #EBEBEB',
+              minHeight: '300px',
+              margin: '10px',
+              position: 'relative',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
-        >
-            {/* Hình ảnh */}
+          >
+            {/* Image */}
             <Box
-                component="img"
-                src="https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg"
-                alt="VideoFrame"
-                sx={{
-                    width: '100%',
-                    height: 'auto',
-                    objectFit: 'contain',
-                    position: 'relative',
-                    zIndex: 1, // Hình ảnh nằm ở lớp sau
-                }}
+              component="img"
+              src= {(isImageLoaded && imageUrl) || "https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg"}
+              alt="VideoFrame"
+              sx={{
+                width: '100%',
+                height: 'auto',
+                objectFit: 'contain',
+                position: 'relative',
+                zIndex: 1,
+              }}
             />
-            
-            {/* Màn xám overlay */}
+  
+            {/* Gray overlay */}
             <Box
-                sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    background: 'linear-gradient(to bottom, rgba(160, 160, 160, 0.5), rgba(0, 0, 0, 1))',
-                    zIndex: 2, // Đặt phía trước hình ảnh
-                }}
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                background: 'linear-gradient(to bottom, rgba(160, 160, 160, 0.5), rgba(0, 0, 0, 1))',
+                zIndex: 2,
+              }}
             />
-            
-            {/* Thanh progress bar và nội dung */}
+  
+            {/* Progress bar and content */}
             <Box
-                sx={{
-                    position: 'absolute',
-                    bottom: '5%', // Điều chỉnh vị trí tùy ý
-                    width : '60%',
-                    left: '50%',
-                    transform: 'translate(-50%, 0)',
-                    zIndex: 3, // Đặt trên cả màn xám
-                    textAlign: 'center',
-                    color: 'white',
-                }}
+              sx={{
+                position: 'absolute',
+                bottom: '5%',
+                width: '60%',
+                left: '50%',
+                transform: 'translate(-50%, 0)',
+                zIndex: 3,
+                textAlign: 'center',
+                color: 'white',
+              }}
             >
-                <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '10px' }}>
-                    75 %
-                </Typography>
-                <ProgressBar value={75} />
+              <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '10px' }}>
+                {progress}%
+              </Typography>
+              <ProgressBar value={progress} />
             </Box>
-        </Box>
-    )
-}
+          </Box>
+        )}
+      </>
+    );
+  };
 
 const OriginalVideo = ({videoUrl} : {videoUrl: string | null}) => {
     return (
@@ -576,72 +591,5 @@ const RelatedOutputs = () => {
         </Box>
     );
 };
-
-interface AudioOutputProps {
-    title: string;
-    audioUrl: string;
-}
-
-const AudioOutput: React.FC<AudioOutputProps> = ({ title, audioUrl }) => {
-    return (
-        <Box
-            sx={{
-                borderRadius: '10px',
-                border: '1px solid #EBEBEB',
-                padding: 2,
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                backgroundColor: '#f7f7f7',
-                height: "140px"
-            }}
-        >
-            <Box>
-                <Typography variant="h6" fontWeight="bold">
-                    {title}
-                </Typography>
-                <audio controls src={audioUrl}>
-                    Your browser does not support the audio element.
-                </audio>
-            </Box>
-            <IconButton sx={{ backgroundColor: '#a60195', color: 'white', borderRadius: '7px' }}>
-                <DownloadIcon />
-            </IconButton>
-        </Box>
-    );
-}
-
-interface TextOutputProps {
-    title: string;
-    text: string;
-}
-
-const TextOutput: React.FC<TextOutputProps> = ({ title, text }) => {
-    return (
-        <Box
-            sx={{
-                borderRadius: '10px',
-                border: '1px solid #EBEBEB',
-                padding: 2,
-                backgroundColor: '#f7f7f7',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-            }}
-        >
-            <Box>
-                <Typography variant="h6" fontWeight="bold">
-                    {title}
-                </Typography>
-                <Typography variant="body2">
-                    {text}
-                </Typography>
-            </Box>
-            <IconButton sx={{ backgroundColor: '#a60195', color: 'white', borderRadius: '7px' }}>
-                <DownloadIcon />
-            </IconButton>
-        </Box>
-    )
-}
 
 export default ProcessedVidPopUp;

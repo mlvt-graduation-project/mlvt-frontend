@@ -1,5 +1,5 @@
-import apiClient from './apiClient';
-import { GetUserResponse } from '../types/User';
+import apiClient from './credentailAPI';
+import { GetUserResponse } from '../types/Response/User';
 
 export const getUser = async (userId: string): Promise<GetUserResponse> => {
   try {
