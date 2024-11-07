@@ -1,5 +1,5 @@
 import credentialAPI from './credentailAPI';
-import {GetPresignedURL} from '../types/Response/Video'
+import {GetPresignedURL, PostVideo} from '../types/Response/Video'
 
 // Image request
 export const getPresignedImageURL = async (fileName: string, fileType: string) => {
@@ -36,10 +36,20 @@ export const getPresignedVideoURL = async (fileName: string, fileType: string) =
 
 export const postVideo = async (file: object) => {
     try {
-        const response = await credentialAPI.post<GetPresignedURL>('videos/', file);
+        const response = await credentialAPI.post<PostVideo>('videos/', file);
         return response;
     } catch (error) {
         console.error('Posting video to server', error);
         throw error;
     }
 };
+
+export const postVideoTranscription = async (videoId: number) => {
+    try {
+        const response = await credentialAPI.post(`transcriptions/process/${videoId}`);
+        return response;
+    } catch (error) {
+        console.error('Posting Video Transcription to server', error);
+        throw error;
+    }
+}

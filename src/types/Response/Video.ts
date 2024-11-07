@@ -19,6 +19,11 @@ export interface GetVideoById {
     }
 }
 
+export interface PostVideo {
+    message: string
+    id: number
+}
+
 export interface GetPresignedURL {
     upload_url: string
 }

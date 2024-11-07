@@ -49,7 +49,7 @@ const ProcessedVidPopUp: FC<ProcessedVidPopUpProps> = ({ isOpen, onClose }) => {
 
     async function fetchVideoUrl() {
         try {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxzdGFuMTUxMjAyQGdtYWlsLmNvbSIsImV4cCI6MTczMDY4NzU0MiwidXNlcklEIjo3fQ.1tnIQk941pc0MUquSlGcDuBlXWm8qkE8OzH4eCe8L68";
+            const token = localStorage.getItem('authToken');
             const response = await fetch('http://localhost:8080/api/videos/1',{
                 method: 'GET', 
                 headers: {
@@ -324,11 +324,13 @@ const ProcessedVideoComp: FC<ProcessedVideoCompProps> = ({ progress, status, ima
             sx={{
               borderRadius: '10px',
               overflow: 'visible',
-              display: 'inline-block',
+              display: 'flex',
               border: '1px solid #EBEBEB',
               minHeight: '300px',
               margin: '10px',
-              position: 'relative', // Positioning for child elements
+              position: 'relative',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           >
             {/* Image */}

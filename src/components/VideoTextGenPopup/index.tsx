@@ -6,8 +6,6 @@ import {
   DialogContent,
   DialogTitle,
   Typography,
-  Select,
-  MenuItem,
   IconButton,
   Divider,
   TextField,
@@ -17,30 +15,30 @@ import { useDropzone } from "react-dropzone";
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { SelectChangeEvent } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 import UploadNotification from "../../components/UploadNotification";
-import {getPresignedImageURL, getPresignedVideoURL, postVideo} from '../../api/VideoAPI'
+import {getPresignedImageURL, getPresignedVideoURL, postVideo, postVideoTranscription} from '../../api/VideoAPI'
 import { putImageS3, putVideoS3 } from "../../api/AWSAPI";
 import { LoadingDots } from "../StaticComponent/LoadingDot/LoadingDot";
-
 
 interface VideoTransPopUpProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
+const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [language, setLanguage] = useState("Vietnamese");
   const [videoLocalUrl, setLocalVideoUrl] = useState<string | null>(null);
-  const [voice, setVoice] = useState("Voice 1");
   const [uploadMethod, setUploadMethod] = useState<'upload' | 'url' | 'browse'>('upload'); // Track upload method
   const [urlInput, setUrlInput] = useState(''); // Track the URL input field
   const [uploadStatus, setUploadStatus] = useState<"success" | "fail">("success");
+  const [transcriptStatus, setTrancriptStatus] = useState<"success" | "fail">("success");
+  const [transcriptPopupOpen, setTranscriptPopupOpen] = useState(false);
   const [statusPopupOpen, setStatusPopupOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [videoId, setVideoId] = useState<null | number> (null);
+  
   const [fileData, setFileData] = useState({
     "title": "My Video Title",
     "duration": 300,
@@ -51,16 +49,12 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
     "user_id": 123
   })  
 
-  // const userID = parseInt(localStorage.getItem('user_id')!, 10);
-
   useEffect(() => { }, [videoLocalUrl])
 
   useEffect(() => {
     return () => {
       setSelectedFile(null);
-      setLanguage("Vietnamese");
       setLocalVideoUrl(null);
-      setVoice("Voice 1");
       setUploadMethod('upload');
       setUrlInput('');
       setUploadStatus("success");
@@ -68,14 +62,6 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
       setIsLoading(false);
     };
   }, []);
-
-  const handleLanguageChange = (event: SelectChangeEvent<string>) => {
-    setLanguage(event.target.value);
-  };
-
-  const handleVoiceChange = (event: SelectChangeEvent<string>) => {
-    setVoice(event.target.value);
-  };
 
   const handleUrlChange = (event: ChangeEvent<HTMLInputElement>) => {
     setUrlInput(event.target.value);
@@ -145,6 +131,7 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
     try {
 
       const postVideoResponse = await postVideo (fileData);
+      setVideoId(postVideoResponse.data.id);
 
       if (postVideoResponse.status === 201) {
         console.log('File added successfully:', postVideoResponse.data);
@@ -166,8 +153,26 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
       throw error
     } 
   }
+
+  const processTranscription = async (videoId: number | null) => {
+    try {
+      if (videoId){
+        const postTranscriptionResponse = await postVideoTranscription(videoId);
+      
+        if (postTranscriptionResponse.status === 201) {
+          console.log('File added successfully:', postTranscriptionResponse.data);
+        }
+      }
+    } catch (error) {
+      console.error('Error post process Transcription: ' + error)
+      throw error
+    }
+  }
+
   const handleGenerate = async (file : File | null) => {
     var isUploadSuccessful = true;
+    var isTrancriptSuccessful = true;
+
     if (file) {
       setIsLoading(true);
       try {
@@ -191,6 +196,18 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
         setSelectedFile(null);
         setUploadStatus(isUploadSuccessful ? "success" : "fail");
         setStatusPopupOpen(true);
+      }
+      try {
+        setIsLoading(true);
+        await processTranscription(videoId);
+      } catch (error) {
+        isTrancriptSuccessful = false;
+        throw error
+      }
+      finally {
+        setIsLoading(false);
+        setTranscriptPopupOpen(true);
+        setTrancriptStatus(isTrancriptSuccessful ? "success" : "fail")
       }
     }
   }
@@ -510,79 +527,6 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
           )}
         </Box>
 
-        {/* Translate To Section */}
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            gap: "10px",
-          }}
-        >
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="body1" sx={{ marginTop: "13px", fontFamily: 'Inter,Araboto, Roboto, Arial, sans-seri', fontWeight: 'bold' }}>
-              Translate to
-            </Typography>
-            <Select
-              value={language}
-              onChange={handleLanguageChange}
-              fullWidth
-              sx={{
-                marginBottom: "10px",
-                height: "35px",
-                backgroundColor: "#EBEBEB",
-                borderRadius: "5px",
-                outline: "none",
-                border: "none",
-                '& .MuiOutlinedInput-notchedOutline': {
-                  border: "none",
-                },
-                '& .MuiSelect-select': {
-                  paddingLeft: '10px',
-                },
-                boxShadow: 'none',
-              }}
-            >
-              <MenuItem value="Vietnamese">Vietnamese</MenuItem>
-              <MenuItem value="English">English</MenuItem>
-              <MenuItem value="French">French</MenuItem>
-            </Select>
-          </Box>
-
-          <Box sx={{ flex: 1 }} />
-
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="body1" sx={{ marginTop: "13px", fontFamily: 'Inter,Araboto, Roboto, Arial, sans-seri', fontWeight: 'bold' }}>
-              Voice
-            </Typography>
-            <Select
-              value={voice}
-              onChange={handleVoiceChange}
-              fullWidth
-              sx={{
-                marginBottom: "10px",
-                height: "35px",
-                backgroundColor: "#EBEBEB",
-                borderRadius: "5px",
-                outline: "none",
-                border: "none",
-                '& .MuiOutlinedInput-notchedOutline': {
-                  border: "none",
-                },
-                '& .MuiSelect-select': {
-                  paddingLeft: '10px',
-                },
-                boxShadow: 'none',
-              }}
-            >
-              <MenuItem value="Voice 1">Voice 1</MenuItem>
-              <MenuItem value="Voice 2">Voice 2</MenuItem>
-              <MenuItem value="Voice 3">Voice 3</MenuItem>
-            </Select>
-          </Box>
-
-        </Box>
 
         {isLoading && <LoadingDots content="Uploading video"/>}
         {/* Generate Button */}
@@ -636,8 +580,14 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
         onClose={() => setStatusPopupOpen(false)}
         content={null}
       />
+      <UploadNotification
+        isOpen={transcriptPopupOpen}
+        uploadStatus={transcriptStatus}
+        onClose={() => setTranscriptPopupOpen(false)}
+        content={"TRANCRIPT"}
+      />
     </Dialog>
   );
 }
 
-export default TranscriptionPopup;
+export default VideoTransPopUp;

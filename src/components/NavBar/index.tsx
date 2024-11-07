@@ -21,7 +21,9 @@ const NavLinks = [
     {
         icon: <TranslateIcon />,
         text: 'Text Generation',
-        link: '/'
+        link: '/',
+        action: 'openTranscription'
+        
     },
     {
         icon: <SubtitlesIcon />,
@@ -42,9 +44,10 @@ const NavLinks = [
 
 interface NavbarProps {
     onOpenDialog: () => void;
+    onOpenTranscription: () => void;
 }
 
-const NavBar: React.FC<NavbarProps> = ({ onOpenDialog }) => {
+const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) => {
     const [avatarUrl, setAvatarUrl] = useState('avatar.png')
     const [userData, setUserData] = useState({
         firstName: 'Minh Minh',
@@ -58,6 +61,9 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog }) => {
     const handleNavClick = (action?: string) => {
         if (action === 'openDialog') {
             onOpenDialog();
+        }
+        else if (action === 'openTranscription'){
+            onOpenTranscription();
         }
     };
 

@@ -10,10 +10,11 @@ interface UploadNotificationProps {
     isOpen: boolean;
     uploadStatus: "success" | "fail";
     onClose: () => void;
+    content: string | null
 }
 
 
-const UploadNotification: FC<UploadNotificationProps> = ({isOpen , uploadStatus , onClose }) => {
+const UploadNotification: FC<UploadNotificationProps> = ({isOpen , uploadStatus , onClose, content }) => {
 
     const isSuccess = uploadStatus === 'success';
     const navigate = useNavigate();
@@ -73,7 +74,7 @@ const UploadNotification: FC<UploadNotificationProps> = ({isOpen , uploadStatus 
                     color: (theme) => isSuccess ? theme.palette.success.main : theme.palette.error.main
                     }}
                     >
-                        {isSuccess ? "UPLOAD SUCESSFULLY" : "UPLOAD FAIL"}
+                        {isSuccess ? `${content !== null ? content : "UPLOAD"} SUCESSFULLY` : `${content !== null ? content : "UPLOAD"} FAILED`}
                     </Typography>
                     
                     <Typography
