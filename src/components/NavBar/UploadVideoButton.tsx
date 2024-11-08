@@ -90,7 +90,7 @@ function UploadButton() {
   const uploadVideoImage = async(file: File) => {
     console.log(file);
     try {
-      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsaWNlLndvbmRlcmxhbmRAZXhhbXBsZS5jb20iLCJleHAiOjE3MzAxMjE3NDUsInVzZXJJRCI6M30.dzmYC1Flrqb1dDhdeb5Yo-B2UjZQTF7FHZ7c9AwEs0k";
+      const token = localStorage.getItem('authToken');
 
       const responseGeneratePresignedImageUpload = await axios.post('http://localhost:8080/api/videos/generate-upload-url/image', null, {
         params: {
@@ -123,7 +123,7 @@ function UploadButton() {
 
   const uploadFile = async(file: File, fileType: string) => {
     try {
-      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsaWNlLndvbmRlcmxhbmRAZXhhbXBsZS5jb20iLCJleHAiOjE3MzAxMjE3NDUsInVzZXJJRCI6M30.dzmYC1Flrqb1dDhdeb5Yo-B2UjZQTF7FHZ7c9AwEs0k";
+      const token = localStorage.getItem('authToken');
 
       const responseAdd = await axios.post('http://localhost:8080/api/videos/', fileData, {
         headers: {

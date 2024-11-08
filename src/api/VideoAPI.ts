@@ -20,6 +20,7 @@ export const getPresignedImageURL = async (fileName: string, fileType: string) =
 
 // Video request
 export const getPresignedVideoURL = async (fileName: string, fileType: string) => {
+    console.log(fileType);
     try {
         const response = await credentialAPI.post<GetPresignedURL>('/videos/generate-upload-url/video', null, {
         params: {

@@ -107,10 +107,8 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
   };
 
   const uploadVideoImage = async(file: File) => {
-    console.log(file);
     try {
       const responsegetPresignedImageURL = await getPresignedImageURL(`${file.name}`, 'image/jpg');
-      console.log(responsegetPresignedImageURL)
 
       if (responsegetPresignedImageURL.status === 200) {
         console.log('Generate presigned url for image successfully:', responsegetPresignedImageURL.data);
@@ -129,7 +127,6 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
 
   const uploadFile = async(file: File, fileType: string) => {
     try {
-
       const postVideoResponse = await postVideo (fileData);
       setVideoId(postVideoResponse.data.id);
 
@@ -143,6 +140,7 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
         console.log('Generate presigned url for video successfully:', getPresignedVideoResponse.data);
 
         const s3UploadVideoResponse = await putVideoS3(getPresignedVideoResponse.data.upload_url, file, fileType)
+        console.log(s3UploadVideoResponse)
 
         if (s3UploadVideoResponse.status === 200) {
           console.log('Upload video to S3 successfully');
@@ -172,15 +170,13 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
   const handleGenerate = async (file : File | null) => {
     var isUploadSuccessful = true;
     var isTrancriptSuccessful = true;
+    
 
     if (file) {
       setIsLoading(true);
       try {
-        setFileData((prevData) => ({
-          ...prevData,
-          file_name: file.name,
-        }));
-        if (file.type.includes('video')) {
+        
+        if (file.type === "video/mp4") {
           const imageFile = await extractFirstFrame(file);
           await uploadVideoImage(imageFile);
         }
@@ -192,8 +188,6 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
       }
       finally {
         setIsLoading(false);
-        setLocalVideoUrl(null);
-        setSelectedFile(null);
         setUploadStatus(isUploadSuccessful ? "success" : "fail");
         setStatusPopupOpen(true);
       }
@@ -202,12 +196,14 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
         await processTranscription(videoId);
       } catch (error) {
         isTrancriptSuccessful = false;
-        throw error
+
       }
       finally {
         setIsLoading(false);
         setTranscriptPopupOpen(true);
         setTrancriptStatus(isTrancriptSuccessful ? "success" : "fail")
+        setLocalVideoUrl(null);
+        setSelectedFile(null);
       }
     }
   }
@@ -297,11 +293,14 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
       onDragLeave: () => setIsDragActive(false),
       onDrop: (acceptedFiles) => {
         const file = acceptedFiles[0];
-        if (file && file.type.includes('video')) {
-
+        if (file && file.type === "video/mp4") {
           setSelectedFile(file);
           setVideoUrl(URL.createObjectURL(file));
           setIsDragActive(false);
+          setFileData((prevData) => ({
+            ...prevData,
+            file_name: file.name,
+          }));
         }
       },
     });
