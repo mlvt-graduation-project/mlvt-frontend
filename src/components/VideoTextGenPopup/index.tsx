@@ -37,7 +37,6 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
   const [transcriptPopupOpen, setTranscriptPopupOpen] = useState(false);
   const [statusPopupOpen, setStatusPopupOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [videoId, setVideoId] = useState<null | number> (null);
   
   const [fileData, setFileData] = useState({
     "title": "My Video Title",
@@ -49,7 +48,7 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
     "user_id": 123
   })  
 
-  useEffect(() => { }, [videoLocalUrl])
+  useEffect(() => { }, [videoLocalUrl, selectedFile])
 
   useEffect(() => {
     return () => {
@@ -128,10 +127,9 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
   const uploadFile = async(file: File, fileType: string) => {
     try {
       const postVideoResponse = await postVideo (fileData);
-      setVideoId(postVideoResponse.data.id);
-
-      if (postVideoResponse.status === 201) {
+      if (postVideoResponse.status === 201) {      
         console.log('File added successfully:', postVideoResponse.data);
+        
       }
 
       const getPresignedVideoResponse = await getPresignedVideoURL(file.name, fileType)
@@ -146,13 +144,14 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
           console.log('Upload video to S3 successfully');
         }
       }
+      return postVideoResponse.data.id;
     } catch (error) {
       console.error('Error uploading file: ' + error)
       throw error
     } 
   }
 
-  const processTranscription = async (videoId: number | null) => {
+  const processTranscription = async (videoId: number | undefined) => {
     try {
       if (videoId){
         const postTranscriptionResponse = await postVideoTranscription(videoId);
@@ -168,21 +167,21 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
   }
 
   const handleGenerate = async (file : File | null) => {
-    var isUploadSuccessful = true;
-    var isTrancriptSuccessful = true;
+    var isUploadSuccessful = false;
+    var isTranscriptSuccessful = true;
     
 
     if (file) {
       setIsLoading(true);
+      let videoId: number | undefined;
       try {
         
         if (file.type === "video/mp4") {
           const imageFile = await extractFirstFrame(file);
           await uploadVideoImage(imageFile);
         }
-        await uploadFile(file, file.type);
-        
-        // onClose();
+        videoId = await uploadFile(file, file.type);
+        isUploadSuccessful = true;
       } catch (error) {
         isUploadSuccessful = false;
       }
@@ -191,19 +190,19 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
         setUploadStatus(isUploadSuccessful ? "success" : "fail");
         setStatusPopupOpen(true);
       }
-      try {
+      if (isUploadSuccessful && videoId !== undefined) {  // Chỉ thực thi nếu upload thành công
         setIsLoading(true);
-        await processTranscription(videoId);
-      } catch (error) {
-        isTrancriptSuccessful = false;
-
-      }
-      finally {
-        setIsLoading(false);
-        setTranscriptPopupOpen(true);
-        setTrancriptStatus(isTrancriptSuccessful ? "success" : "fail")
-        setLocalVideoUrl(null);
-        setSelectedFile(null);
+        try {
+          await processTranscription(videoId);
+        } catch (error) {
+          isTranscriptSuccessful = false;
+        } finally {
+          setIsLoading(false);
+          setTranscriptPopupOpen(true);
+          setTrancriptStatus(isTranscriptSuccessful ? "success" : "fail");
+          setLocalVideoUrl(null);
+          setSelectedFile(null);
+        }
       }
     }
   }
@@ -288,19 +287,50 @@ const VideoTransPopUp: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
 
   const UploadVideoFromDevice : React.FC<DeviceVideoProps> = ({videoUrl, setVideoUrl,  selectedFile}) => {
     const [isDragActive, setIsDragActive] = useState(false);
+
+    const getVideoDuration = (file: File) => {
+      return new Promise((resolve, reject) => {
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+    
+        // Chuyển file video thành URL để đọc
+        const fileURL = URL.createObjectURL(file);
+        video.src = fileURL;
+    
+        // Sự kiện này sẽ kích hoạt khi metadata của video đã được tải (bao gồm thời lượng)
+        video.onloadedmetadata = () => {
+          URL.revokeObjectURL(fileURL); // Giải phóng bộ nhớ cho URL
+          resolve(Math.floor(video.duration)); // Trả về thời lượng của video (đơn vị giây)
+        };
+    
+        video.onerror = () => {
+          URL.revokeObjectURL(fileURL);
+          reject(new Error("Failed to load video metadata"));
+        };
+      });
+    };
+
     const { getRootProps, getInputProps } = useDropzone({
       onDragEnter: () => setIsDragActive(true),
       onDragLeave: () => setIsDragActive(false),
-      onDrop: (acceptedFiles) => {
+      onDrop: async (acceptedFiles) => {
         const file = acceptedFiles[0];
         if (file && file.type === "video/mp4") {
           setSelectedFile(file);
           setVideoUrl(URL.createObjectURL(file));
           setIsDragActive(false);
-          setFileData((prevData) => ({
-            ...prevData,
-            file_name: file.name,
-          }));
+    
+          // Lấy duration của video và cập nhật vào fileData
+          try {
+            const duration = await getVideoDuration(file) as number;
+            setFileData((prevData) => ({
+              ...prevData,
+              file_name: file.name,
+              duration: duration,
+            }));
+          } catch (error) {
+            console.error("Error getting video duration:", error);
+          }
         }
       },
     });

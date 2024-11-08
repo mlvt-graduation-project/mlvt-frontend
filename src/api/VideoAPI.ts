@@ -35,14 +35,15 @@ export const getPresignedVideoURL = async (fileName: string, fileType: string) =
     }
 };
 
-export const postVideo = async (file: object) => {
-    try {
-        const response = await credentialAPI.post<PostVideo>('videos/', file);
-        return response;
-    } catch (error) {
-        console.error('Posting video to server', error);
-        throw error;
-    }
+export const postVideo = (file: object) => {
+    return credentialAPI.post<PostVideo>('videos/', file)
+        .then(response => {
+            return response;
+        })
+        .catch(error => {
+            console.error('Posting video to server', error);
+            throw error;
+        });
 };
 
 export const postVideoTranscription = async (videoId: number) => {

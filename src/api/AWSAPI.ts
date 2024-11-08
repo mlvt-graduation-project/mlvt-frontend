@@ -13,7 +13,7 @@ export const putImageS3 = async (URL : string, file: File) =>{
 }
 
 export const putVideoS3 = async (URL : string, file: File, fileType: string) =>{
-    console.log("Updload filetype S3: ",fileType)
+    console.log("File data before upload: ", file);
     return api.put(URL, file, {
         headers: {
           'Content-Type': fileType,
