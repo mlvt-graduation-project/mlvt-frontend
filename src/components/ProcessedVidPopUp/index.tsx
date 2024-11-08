@@ -26,12 +26,14 @@ import 'react-h5-audio-player/lib/styles.css';
 import { styled } from '@mui/system';
 // import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import DownloadIcon from '@mui/icons-material/Download'; // Assuming download icon is used
+import { getVideoById } from "../../api/video.api";
 
 
 
 interface ProcessedVidPopUpProps {
     isOpen: boolean;
     onClose: () => void;
+    videoId: number;
 }
 
 enum View {
@@ -40,39 +42,27 @@ enum View {
     RELATED_OUTPUTS = "related-outputs",
 }
 
-const ProcessedVidPopUp: FC<ProcessedVidPopUpProps> = ({ isOpen, onClose }) => {
+const ProcessedVidPopUp: FC<ProcessedVidPopUpProps> = ({ isOpen, onClose, videoId }) => {
     const [currentView, setCurrentView] = useState<View>(View.PROCESSED);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const [videoStatus, setVideoStatus] = useState<string | null>(null);
     const [progress, setProgress] = useState< 0 | 25 | 50 | 75 | 100> (75);    
 
-    async function fetchVideoUrl() {
-        try {
-            const token = localStorage.getItem('authToken');
-            const response = await fetch('http://localhost:8080/api/videos/1',{
-                method: 'GET', 
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json', 
-                },
-            });
-          const data = await response.json();
-          setVideoUrl(data.video_url.split("?")[0]);
-          setImageUrl(data.image_url.split("?")[0]);
-          setVideoStatus(data.status);
-        } catch (error) {
-          console.error('Error fetching video URL:', error);
-        }
-    }
-    
     useEffect(() => {
-        fetchVideoUrl();
-    }, []);
+      const fetchVideoData = async () => {
+          try {
+              const response = await getVideoById(videoId);
+              setVideoUrl(response.video_url.split("?")[0]);
+              setImageUrl(response.image_url.split("?")[0]);
+              setVideoStatus(response.video.status);
+          } catch (error) {
+              console.error('Error fetching video URL:', error);
+          }
+      };
 
-    useEffect(() => {
-        console.log("Updated video URL:", videoUrl);
-    }, [videoUrl]);
+      fetchVideoData();
+  }, [videoId, videoUrl, imageUrl]); 
 
     interface Tab {
         currentView: View;

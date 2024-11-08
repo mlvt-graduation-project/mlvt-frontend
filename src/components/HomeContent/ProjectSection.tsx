@@ -5,9 +5,9 @@ import React, { useEffect, useState } from "react";
 import ProcessedVidPopUp from "../ProcessedVidPopUp";
 import CardFeature from "../CardFeature";
 import { Project} from "../../types/Project";
-import { Videos, VideoList} from "../../types/Response/Video";
+import { VideoList} from "../../types/Response/Video";
 import { getVideosByUserId } from "../../api/video.api";
-import { mapStatusToProjectStatus, ProjectStatus, toDisplayText } from "../../types/ProjectStatus";
+import { mapStatusToProjectStatus } from "../../types/ProjectStatus";
 
 const ProjectSection = () => {
     const theme = useTheme();
@@ -38,14 +38,13 @@ const ProjectSection = () => {
         const fetchVideoData = async () => {
             try {
                 const videoListResponse: VideoList = await getVideosByUserId(userId);
-                console.log(videoListResponse);
                 
                 if (videoListResponse && videoListResponse.videos) {
                     const newProjects = videoListResponse.videos.map(video => {
                         const frame = videoListResponse.frames.find(f => f.video_id === video.id);
                         return {
                             id: video.id.toString(),
-                            thumbnail: frame ? frame.link : '',  // lấy link từ frames
+                            thumbnail: frame ? frame.link.split("?")[0] : '',  // lấy link từ frames
                             title: video.title,
                             status: mapStatusToProjectStatus(video.status),
                             createdAt: new Date(video.created_at),
@@ -53,9 +52,9 @@ const ProjectSection = () => {
                             type_project: 'Video Translation'
                         };
                     });
-
                     setProjects(newProjects);
                 }
+                
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);
             }
@@ -63,7 +62,6 @@ const ProjectSection = () => {
 
         fetchVideoData();
     }, [userId]);
-
 
     return (
         <Box>
@@ -196,6 +194,7 @@ const ProjectSection = () => {
             {
                 selectedProject && (
                     <ProcessedVidPopUp
+                        videoId = {videoId}
                         isOpen={isPopUpOpen}
                         onClose={handleClosePopUp}
                     />

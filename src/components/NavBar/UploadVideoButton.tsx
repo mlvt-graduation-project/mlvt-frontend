@@ -12,10 +12,10 @@ function UploadButton() {
     "title": "My Video Title",
     "duration": 300,
     "description": "A description of the video",
-    "file_name": "vietnamese.mp4",
-    "folder": "raw_videos",
-    "image": "frame.jpeg",
-    "user_id": localStorage.getItem("userId"),
+    "file_name": "",
+    "folder": "raw_videos/",
+    "image": "avatar.jpg",
+    "user_id": 123
   })
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -56,16 +56,16 @@ function UploadButton() {
       const video = document.createElement('video');
       video.src = URL.createObjectURL(videoFile);
       video.currentTime = 0.1; // Seek to 0.1 seconds to capture the first frame
-  
+
       video.onloadeddata = () => {
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         const context = canvas.getContext('2d');
-  
+
         if (context) {
           context.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
+
           // Convert the canvas to a Blob in JPEG format
           canvas.toBlob((blob) => {
             if (blob) {
@@ -80,17 +80,17 @@ function UploadButton() {
           reject(new Error("Failed to get 2D context from canvas"));
         }
       };
-  
+
       video.onerror = (error) => {
         reject(error);
       };
     });
   };
 
-  const uploadVideoImage = async(file: File) => {
+  const uploadVideoImage = async (file: File) => {
     console.log(file);
     try {
-      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1pbmhtaW5oQGV4YW1wbGUuY29tIiwiZXhwIjoxNzMxMzM5NzYwLCJ1c2VySUQiOjV9.JRlNSDuQw0H86Xc5Do2-5TlzDWbdzdOwQfO0mBTs3aQ";
+      const token = localStorage.getItem('authToken');
 
       const responseGeneratePresignedImageUpload = await axios.post('http://localhost:8080/api/videos/generate-upload-url/image', null, {
         params: {
@@ -118,10 +118,10 @@ function UploadButton() {
       }
     } catch (e) {
       console.error('Error uploading file: ' + e)
-    } 
+    }
   }
 
-  const uploadFile = async(file: File, fileType: string) => {
+  const uploadFile = async (file: File, fileType: string) => {
     try {
       const token = localStorage.getItem("authToken");
 
@@ -168,7 +168,7 @@ function UploadButton() {
       }
     } catch (e) {
       console.error('Error uploading file: ' + e)
-    } 
+    }
   }
 
   const handleClick = () => {
