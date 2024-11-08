@@ -13,7 +13,7 @@ function UploadButton() {
     "duration": 300,
     "description": "A description of the video",
     "file_name": "",
-    "folder": "raw_videos/",
+    "folder": "raw_videos",
     "image": "avatar.jpg",
     "user_id": 123
   })
@@ -56,16 +56,16 @@ function UploadButton() {
       const video = document.createElement('video');
       video.src = URL.createObjectURL(videoFile);
       video.currentTime = 0.1; // Seek to 0.1 seconds to capture the first frame
-  
+
       video.onloadeddata = () => {
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         const context = canvas.getContext('2d');
-  
+
         if (context) {
           context.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
+
           // Convert the canvas to a Blob in JPEG format
           canvas.toBlob((blob) => {
             if (blob) {
@@ -80,14 +80,14 @@ function UploadButton() {
           reject(new Error("Failed to get 2D context from canvas"));
         }
       };
-  
+
       video.onerror = (error) => {
         reject(error);
       };
     });
   };
 
-  const uploadVideoImage = async(file: File) => {
+  const uploadVideoImage = async (file: File) => {
     console.log(file);
     try {
       const token = localStorage.getItem('authToken');
@@ -118,10 +118,10 @@ function UploadButton() {
       }
     } catch (e) {
       console.error('Error uploading file: ' + e)
-    } 
+    }
   }
 
-  const uploadFile = async(file: File, fileType: string) => {
+  const uploadFile = async (file: File, fileType: string) => {
     try {
       const token = localStorage.getItem('authToken');
 
@@ -163,7 +163,7 @@ function UploadButton() {
       }
     } catch (e) {
       console.error('Error uploading file: ' + e)
-    } 
+    }
   }
 
   const handleClick = () => {

@@ -21,7 +21,7 @@ import { SelectChangeEvent } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 import UploadNotification from "../../components/UploadNotification";
-import {getPresignedImageURL, getPresignedVideoURL, postVideo} from '../../api/VideoAPI'
+import { getPresignedImageURL, getPresignedVideoURL, postVideo } from '../../api/VideoAPI'
 import { putImageS3, putVideoS3 } from "../../api/AWSAPI";
 import { LoadingDots } from "../StaticComponent/LoadingDot/LoadingDot";
 
@@ -46,10 +46,10 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
     "duration": 300,
     "description": "A description of the video",
     "file_name": "",
-    "folder": "raw_videos/",
+    "folder": "raw_videos",
     "image": "avatar.jpg",
     "user_id": 123
-  })  
+  })
 
   // const userID = parseInt(localStorage.getItem('user_id')!, 10);
 
@@ -89,22 +89,22 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
 
       // separate the type of video
       const parts = videoFile.name.split('.');
-      parts.pop(); 
+      parts.pop();
       const imageName = parts.join('.');
-  
+
       video.onloadeddata = () => {
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         const context = canvas.getContext('2d');
-  
+
         if (context) {
           context.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
+
           canvas.toBlob((blob) => {
             if (blob) {
               const imageFile = new File([blob], `${imageName}_thumbnail.jpg`, { type: 'image/jpeg' });
-              resolve(imageFile); 
+              resolve(imageFile);
             } else {
               reject(new Error("Could not generate image from canvas"));
             }
@@ -113,14 +113,14 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
           reject(new Error("Failed to get 2D context from canvas"));
         }
       };
-  
+
       video.onerror = (error) => {
         reject(error);
       };
     });
   };
 
-  const uploadVideoImage = async(file: File) => {
+  const uploadVideoImage = async (file: File) => {
     console.log(file);
     try {
       const responsegetPresignedImageURL = await getPresignedImageURL(`${file.name}`, 'image/jpg');
@@ -129,7 +129,7 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
       if (responsegetPresignedImageURL.status === 200) {
         console.log('Generate presigned url for image successfully:', responsegetPresignedImageURL.data);
 
-        const s3UploadImageResponse = await putImageS3 (responsegetPresignedImageURL.data.upload_url, file)
+        const s3UploadImageResponse = await putImageS3(responsegetPresignedImageURL.data.upload_url, file)
 
         if (s3UploadImageResponse.status === 200) {
           console.log('Upload image to S3 successfully');
@@ -138,13 +138,13 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
     } catch (error) {
       console.error('Error uploading file: ' + error)
       throw error
-    } 
+    }
   }
 
-  const uploadFile = async(file: File, fileType: string) => {
+  const uploadFile = async (file: File, fileType: string) => {
     try {
 
-      const postVideoResponse = await postVideo (fileData);
+      const postVideoResponse = await postVideo(fileData);
 
       if (postVideoResponse.status === 201) {
         console.log('File added successfully:', postVideoResponse.data);
@@ -164,9 +164,9 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
     } catch (error) {
       console.error('Error uploading file: ' + error)
       throw error
-    } 
+    }
   }
-  const handleGenerate = async (file : File | null) => {
+  const handleGenerate = async (file: File | null) => {
     var isUploadSuccessful = true;
     if (file) {
       setIsLoading(true);
@@ -180,7 +180,7 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
           await uploadVideoImage(imageFile);
         }
         await uploadFile(file, file.type);
-        
+
         // onClose();
       } catch (error) {
         isUploadSuccessful = false;
@@ -204,7 +204,7 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
   const ChangeUploadVideopMethod: React.FC<UploadMethods> = ({ uploadMethod, setUploadMethod }) => {
 
     return (
-      
+
 
       <Box sx={{ display: "flex", gap: "10px", marginBottom: "10px", outline: 2, borderRadius: 1.5, padding: 0.5, outlineColor: "#CCCCCC", backgroundColor: "white" }}>
         <Button
@@ -273,7 +273,7 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
     setVideoUrl: (method: string | null) => void,
   }
 
-  const UploadVideoFromDevice : React.FC<DeviceVideoProps> = ({videoUrl, setVideoUrl,  selectedFile}) => {
+  const UploadVideoFromDevice: React.FC<DeviceVideoProps> = ({ videoUrl, setVideoUrl, selectedFile }) => {
     const [isDragActive, setIsDragActive] = useState(false);
     const { getRootProps, getInputProps } = useDropzone({
       onDragEnter: () => setIsDragActive(true),
@@ -344,19 +344,19 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
               style={{ borderRadius: '10px', marginTop: '10px' }}
             />
 
-          {/* Nút gỡ video ở góc phải trên của video */}
-          <IconButton 
-            aria-label="delete"
-            onClick={handleRemoveVideo}
-            sx={{
-              position: 'absolute',
-              top: '25px',
-              right: '15px',
-              backgroundColor: 'grey',
-              color: 'white',
-              zIndex: 1, 
-            }}
-          >
+            {/* Nút gỡ video ở góc phải trên của video */}
+            <IconButton
+              aria-label="delete"
+              onClick={handleRemoveVideo}
+              sx={{
+                position: 'absolute',
+                top: '25px',
+                right: '15px',
+                backgroundColor: 'grey',
+                color: 'white',
+                zIndex: 1,
+              }}
+            >
               <DeleteIcon />
             </IconButton>
             <Typography variant="body2" align="center" sx={{ marginTop: "5px" }} fontFamily={'Inter,Araboto, Roboto, Arial, sans-seri'}>
@@ -584,7 +584,7 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
 
         </Box>
 
-        {isLoading && <LoadingDots content="Uploading video"/>}
+        {isLoading && <LoadingDots content="Uploading video" />}
         {/* Generate Button */}
         <Button
           variant="outlined"
@@ -600,7 +600,7 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
             backgroundColor: !isLoading && ((uploadMethod === 'upload' && selectedFile) || (uploadMethod === 'url' && urlInput))
               ? "#a60195"
               : "#EBEBEB",
-            color:  !isLoading && ((uploadMethod === 'upload' && selectedFile) || (uploadMethod === 'url' && urlInput))
+            color: !isLoading && ((uploadMethod === 'upload' && selectedFile) || (uploadMethod === 'url' && urlInput))
               ? "white"
               : "#A3A3A3",
             borderRadius: "10px",
@@ -622,7 +622,8 @@ const TranscriptionPopup: FC<VideoTransPopUpProps> = ({ isOpen, onClose }) => {
           startIcon={<AutoAwesomeIcon />}
           onClick={(e: React.MouseEvent<HTMLElement>) => {
             e.stopPropagation();
-            handleGenerate(selectedFile)}
+            handleGenerate(selectedFile)
+          }
           }
         >
           <Typography variant="subtitle1" sx={{ fontWeight: 'bold', fontFamily: 'Inter,Araboto, Roboto, Arial, sans-serif' }}>
