@@ -8,7 +8,7 @@ import { Project } from "../../types/Project";
 import { ProjectStatus, toDisplayText } from "../../types/ProjectStatus";
 import CardFeature from "../../components/CardFeature";
 import SearchBar from "../../components/SearchBar";
-import { getVideosByUserId, getPresignedDownloadImageURL, getPresignedDownloadVideoURL } from "../../api/VideoAPI";
+import { getVideosByUserId, getPresignedDownloadImageURL, getPresignedDownloadVideoURL } from "../../api/video.api";
 import useFetchProjects from "./FetchVideoData";
 
 

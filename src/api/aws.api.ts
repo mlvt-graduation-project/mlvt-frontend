@@ -1,4 +1,4 @@
-import api from './baseAPI';
+import api from './base.api';
 
 export const putImageS3 = async (URL : string, file: File) =>{
     return api.put(URL, file, {

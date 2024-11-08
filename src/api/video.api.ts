@@ -1,4 +1,4 @@
-import credentialAPI from './credentailAPI';
+import credentialAPI from './credential.api';
 import {GetPresignedURL, PostVideo, GetVideoList, GetVideoById, VideoList} from '../types/Response/Video'
 
 // Image request

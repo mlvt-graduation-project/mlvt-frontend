@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Project } from "../../types/Project";
-import { getVideosByUserId } from "../../api/VideoAPI";
+import { getVideosByUserId } from "../../api/video.api";
 import { mapStatusToProjectStatus, ProjectStatus, toDisplayText } from "../../types/ProjectStatus";
 
 

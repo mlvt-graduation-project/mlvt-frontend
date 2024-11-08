@@ -18,8 +18,8 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 import UploadNotification from "../../components/UploadNotification";
-import {getPresignedImageURL, getPresignedVideoURL, postVideo, postVideoTranscription} from '../../api/VideoAPI'
-import { putImageS3, putVideoS3 } from "../../api/AWSAPI";
+import {getPresignedImageURL, getPresignedVideoURL, postVideo, postVideoTranscription} from '../../api/video.api'
+import { putImageS3, putVideoS3 } from "../../api/aws.api";
 import { LoadingDots } from "../StaticComponent/LoadingDot/LoadingDot";
 
 interface VideoTransPopUpProps {
