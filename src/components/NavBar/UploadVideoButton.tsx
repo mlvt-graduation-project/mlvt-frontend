@@ -12,10 +12,10 @@ function UploadButton() {
     "title": "My Video Title",
     "duration": 300,
     "description": "A description of the video",
-    "file_name": "",
-    "folder": "raw_videos/",
-    "image": "avatar.jpg",
-    "user_id": 123
+    "file_name": "vietnamese.mp4",
+    "folder": "raw_videos",
+    "image": "frame.jpeg",
+    "user_id": localStorage.getItem("userId"),
   })
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -25,7 +25,7 @@ function UploadButton() {
       const file = e.target.files[0];
       // console.log(file.name); // Log the file object to see the details
       if (file) {
-        await setFileData((prevData) => ({
+        setFileData((prevData) => ({
           ...prevData,
           file_name: file.name,
         }));
@@ -90,12 +90,12 @@ function UploadButton() {
   const uploadVideoImage = async(file: File) => {
     console.log(file);
     try {
-      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsaWNlLndvbmRlcmxhbmRAZXhhbXBsZS5jb20iLCJleHAiOjE3MzAxMjE3NDUsInVzZXJJRCI6M30.dzmYC1Flrqb1dDhdeb5Yo-B2UjZQTF7FHZ7c9AwEs0k";
+      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1pbmhtaW5oQGV4YW1wbGUuY29tIiwiZXhwIjoxNzMxMzM5NzYwLCJ1c2VySUQiOjV9.JRlNSDuQw0H86Xc5Do2-5TlzDWbdzdOwQfO0mBTs3aQ";
 
       const responseGeneratePresignedImageUpload = await axios.post('http://localhost:8080/api/videos/generate-upload-url/image', null, {
         params: {
-          "file_name": 'frame.jpg',
-          "file_type": 'image/jpg'
+          "file_name": 'frame.jpeg',
+          "file_type": 'image/jpeg'
         },
         headers: {
           'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ function UploadButton() {
 
         const s3UploadImageResponse = await axios.put(responseGeneratePresignedImageUpload.data.upload_url, file, {
           headers: {
-            'Content-Type': 'image/jpg',
+            'Content-Type': 'image/jpeg',
           },
         });
 
@@ -123,7 +123,13 @@ function UploadButton() {
 
   const uploadFile = async(file: File, fileType: string) => {
     try {
-      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsaWNlLndvbmRlcmxhbmRAZXhhbXBsZS5jb20iLCJleHAiOjE3MzAxMjE3NDUsInVzZXJJRCI6M30.dzmYC1Flrqb1dDhdeb5Yo-B2UjZQTF7FHZ7c9AwEs0k";
+      const token = localStorage.getItem("authToken");
+
+      setFileData((prevData) => ({
+        ...prevData,
+        file_name: file.name,
+      }));
+      console.log(fileData);
 
       const responseAdd = await axios.post('http://localhost:8080/api/videos/', fileData, {
         headers: {
@@ -136,7 +142,6 @@ function UploadButton() {
         console.log('File added successfully:', responseAdd.data);
       }
 
-      console.log(file.name)
       const responseGeneratePresignedVideoUpload = await axios.post('http://localhost:8080/api/videos/generate-upload-url/video', null, {
         params: {
           "file_name": file.name,

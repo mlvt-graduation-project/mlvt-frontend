@@ -2,12 +2,14 @@ import { Box, Checkbox, FormControlLabel, Grid, IconButton, Pagination, SxProps,
 import Layout from "../../layout/homepage";
 import { useTheme } from '@mui/material/styles';
 import AlignHorizontalRightIcon from '@mui/icons-material/AlignHorizontalRight';
-import React, { MouseEventHandler } from "react";
+import React, { MouseEventHandler, useEffect } from "react";
 import { Bookmark, BookmarkBorder } from "@mui/icons-material";
 import { Project } from "../../types/Project";
-import { ProjectStatus } from "../../types/ProjectStatus";
+import { ProjectStatus, toDisplayText } from "../../types/ProjectStatus";
 import CardFeature from "../../components/CardFeature";
 import SearchBar from "../../components/SearchBar";
+import { getVideosByUserId, getPresignedDownloadImageURL, getPresignedDownloadVideoURL } from "../../api/VideoAPI";
+import useFetchProjects from "./FetchVideoData";
 
 
 const categoryOption = [
@@ -51,11 +53,9 @@ function CheckboxComponent({ label, labelProps, color }: ComponentProps) {
     );
 }
 
-
-
-
 const Storage = () => {
     const theme = useTheme();
+    const userId = 3;
     const [isFavorite, setIsFavorite] = React.useState(false);
 
     const statusOption = [
@@ -65,44 +65,7 @@ const Storage = () => {
         { label: 'Raw', color: theme.status.raw.fontColor },
     ]
 
-    const projects: Project[] = [
-        {
-            id: '1',
-            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
-            title: 'Video Translation',
-            status: ProjectStatus.Complete,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            type_project: 'Video Translation',
-        },
-        {
-            id: '2',
-            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
-            title: 'Video Translation',
-            status: ProjectStatus.InProgress,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            type_project: 'Video Translation',
-        },
-        {
-            id: '3',
-            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
-            title: 'Video Translation',
-            status: ProjectStatus.Complete,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            type_project: 'Video Translation',
-        },
-        {
-            id: '4',
-            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
-            title: 'Video Translation',
-            status: ProjectStatus.Failed,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            type_project: 'Video Translation',
-        },
-    ]
+    let projects = useFetchProjects(userId);
 
     const handleFavoriteClicked = (e: any) => {
         e.stopPropagation();
@@ -205,7 +168,7 @@ const Storage = () => {
                                 <CardFeature
                                     key={project.id}
                                     project={project}
-                                    onclick={() => console.log('Card clicked')}
+                                    onclick={() => console.log(project.id)}
                                 />
                             </Grid>
                         ))}

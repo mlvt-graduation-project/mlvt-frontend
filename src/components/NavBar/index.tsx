@@ -73,8 +73,8 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) =>
             try {
                 // Retrieve user_id from local storage
                 // const userId = localStorage.getItem('user_id');
-                const userId = null;
-                const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsaWNlLndvbmRlcmxhbmRAZXhhbXBsZS5jb20iLCJleHAiOjE3MzAxMjE3NDUsInVzZXJJRCI6M30.dzmYC1Flrqb1dDhdeb5Yo-B2UjZQTF7FHZ7c9AwEs0k";
+                const userId = 3;
+                const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRhbmdodXluaEBleGFtcGxlLmNvbSIsImV4cCI6MTczMTMzMTA4MiwidXNlcklEIjozfQ.FJW8D1mqpHM1uYTCHhIAudksHCrhaQGTorGKQfiT1vc";
 
                 if (!userId) {
                     setError('No user ID found in local storage');
