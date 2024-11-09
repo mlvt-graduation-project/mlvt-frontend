@@ -4,7 +4,7 @@ import { getVideosByUserId } from "../../api/video.api";
 import { mapStatusToProjectStatus, ProjectStatus, toDisplayText } from "../../types/ProjectStatus";
 
 
-const useFetchProjects = (userId: number) => {
+const useFetchProjects = (userId: string) => {
     const [projects, setProjects] = useState<Project[]>([]);
   
     useEffect(() => {

@@ -6,10 +6,12 @@ import SubtitlesIcon from '@mui/icons-material/Subtitles';
 import MicIcon from '@mui/icons-material/Mic';
 import SyncIcon from '@mui/icons-material/Sync';
 import { Link as RouterLink } from "react-router-dom";
-import UserProfile from './UserProfile';  
-import UploadVideoButton from './UploadVideoButton'; 
+import UserProfile from './UserProfile';
+import UploadVideoButton from './UploadVideoButton';
 import { useTheme } from '@mui/material/styles';
 import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
+import { getUser } from '../../api/user.api';
 
 const NavLinks = [
     {
@@ -23,7 +25,7 @@ const NavLinks = [
         text: 'Text Generation',
         link: '/',
         action: 'openTranscription'
-        
+
     },
     {
         icon: <SubtitlesIcon />,
@@ -57,12 +59,14 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) =>
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const { userId } = useAuth();
+
 
     const handleNavClick = (action?: string) => {
         if (action === 'openDialog') {
             onOpenDialog();
         }
-        else if (action === 'openTranscription'){
+        else if (action === 'openTranscription') {
             onOpenTranscription();
         }
     };
@@ -73,8 +77,7 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) =>
             try {
                 // Retrieve user_id from local storage
                 // const userId = localStorage.getItem('user_id');
-                const userId = 3;
-                const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRhbmdodXluaEBleGFtcGxlLmNvbSIsImV4cCI6MTczMTMzMTA4MiwidXNlcklEIjozfQ.FJW8D1mqpHM1uYTCHhIAudksHCrhaQGTorGKQfiT1vc";
+                const token = localStorage.getItem('authToken');
 
                 if (!userId) {
                     setError('No user ID found in local storage');
@@ -82,31 +85,16 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) =>
                     return;
                 }
 
-                // axios.get('http://localhost:8080/api/users', {
-                //     params: {
-                //         userId: userId
-                //     }
-                // })
-
-                const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`, // Add token to the Authorization header
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                try {
+                    const userData = await getUser(userId);
+                    setUserData({
+                        firstName: userData.user.first_name,
+                        lastName: userData.user.last_name,
+                        premium: userData.user.premium
+                    });
+                } catch (error) {
+                    throw new Error(`Failed to fetch user data: ${error}`);
                 }
-                const data = await response.json();
-                console.log('Response Object:', data);
-                setUserData({
-                    firstName: data.user.first_name,
-                    lastName: data.user.last_name,
-                    premium: data.user.premium
-                });
-                console.log(userData.firstName, userData.premium);
 
                 const avatarResponse = await fetch(`http://localhost:8080/api/users/${userId}/avatar-download-url`, {
                     method: 'GET',
@@ -152,7 +140,7 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) =>
                                 to={item.link}
                                 style={{ textDecoration: "none", color: theme.palette.text.primary }}
                                 onClick={(e) => {
-                                    e.preventDefault(); 
+                                    e.preventDefault();
                                     handleNavClick(item.action);
                                 }}
                             >
@@ -186,7 +174,7 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) =>
                                         />
                                     </Box>
                                     <Box sx={{ width: '4.5rem', textAlign: 'center' }}>
-                                        <Typography variant='body1' sx={{ fontFamily: theme.typography.body1 ,fontWeight: '600', fontSize: '0.75rem' }}>{item.text}</Typography>
+                                        <Typography variant='body1' sx={{ fontFamily: theme.typography.body1, fontWeight: '600', fontSize: '0.75rem' }}>{item.text}</Typography>
                                     </Box>
                                 </Box>
                             </Link>

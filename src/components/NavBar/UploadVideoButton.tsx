@@ -5,10 +5,13 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import Theme from '../../config/theme'
 import { useTheme } from '@mui/material/styles';
 import axios from 'axios';
+import { FileData } from '../../types/FileData';
+import { getPresignedImageURL, getPresignedVideoURL, postVideo, uploadImageToS3, uploadVideoToS3 } from '../../api/video.api';
+
 
 function UploadButton() {
   // Define the ref with a specific type HTMLInputElement and initialize as null
-  const [fileData, setFileData] = useState({
+  const [fileData, setFileData] = useState<FileData>({
     "title": "My Video Title",
     "duration": 300,
     "description": "A description of the video",
@@ -56,16 +59,16 @@ function UploadButton() {
       const video = document.createElement('video');
       video.src = URL.createObjectURL(videoFile);
       video.currentTime = 0.1; // Seek to 0.1 seconds to capture the first frame
-  
+
       video.onloadeddata = () => {
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         const context = canvas.getContext('2d');
-  
+
         if (context) {
           context.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
+
           // Convert the canvas to a Blob in JPEG format
           canvas.toBlob((blob) => {
             if (blob) {
@@ -80,78 +83,45 @@ function UploadButton() {
           reject(new Error("Failed to get 2D context from canvas"));
         }
       };
-  
+
       video.onerror = (error) => {
         reject(error);
       };
     });
   };
 
-  const uploadVideoImage = async(file: File) => {
-    console.log(file);
+  const uploadVideoImage = async (file: File) => {
     try {
-      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1pbmhtaW5oQGV4YW1wbGUuY29tIiwiZXhwIjoxNzMxMzM5NzYwLCJ1c2VySUQiOjV9.JRlNSDuQw0H86Xc5Do2-5TlzDWbdzdOwQfO0mBTs3aQ";
-
-      const responseGeneratePresignedImageUpload = await axios.post('http://localhost:8080/api/videos/generate-upload-url/image', null, {
-        params: {
-          "file_name": 'frame.jpeg',
-          "file_type": 'image/jpeg'
-        },
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      })
-
+      const responseGeneratePresignedImageUpload = await getPresignedImageURL(file.name, file.type);
       if (responseGeneratePresignedImageUpload.status === 200) {
         console.log('Generate presigned url for image successfully:', responseGeneratePresignedImageUpload.data);
-
-        const s3UploadImageResponse = await axios.put(responseGeneratePresignedImageUpload.data.upload_url, file, {
-          headers: {
-            'Content-Type': 'image/jpeg',
-          },
-        });
-
-        if (s3UploadImageResponse.status === 200) {
-          console.log('Upload image to S3 successfully');
-        }
       }
+
+      const s3UploadImageResponse = await uploadImageToS3(responseGeneratePresignedImageUpload.data.upload_url, file);
+      if (s3UploadImageResponse.status === 200) {
+        console.log('Upload image to S3 successfully');
+      }
+
     } catch (e) {
       console.error('Error uploading file: ' + e)
-    } 
+    }
   }
 
-  const uploadFile = async(file: File, fileType: string) => {
+  const uploadFile = async (file: File, fileType: string) => {
     try {
-      const token = localStorage.getItem("authToken");
 
       setFileData((prevData) => ({
         ...prevData,
         file_name: file.name,
       }));
-      console.log(fileData);
 
-      const responseAdd = await axios.post('http://localhost:8080/api/videos/', fileData, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      })
+      const responseAdd = await postVideo(fileData);
 
       if (responseAdd.status === 201) {
         console.log('File added successfully:', responseAdd.data);
       }
 
-      const responseGeneratePresignedVideoUpload = await axios.post('http://localhost:8080/api/videos/generate-upload-url/video', null, {
-        params: {
-          "file_name": file.name,
-          "file_type": fileType
-        },
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      })
+      const responseGeneratePresignedVideoUpload = await getPresignedVideoURL(file.name, fileType);
 
       if (responseGeneratePresignedVideoUpload.status === 200) {
         console.log('Generate presigned url for video successfully:', responseGeneratePresignedVideoUpload.data);
@@ -168,7 +138,7 @@ function UploadButton() {
       }
     } catch (e) {
       console.error('Error uploading file: ' + e)
-    } 
+    }
   }
 
   const handleClick = () => {

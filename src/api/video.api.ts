@@ -102,7 +102,7 @@ export const getVideoStatus = async (videoId: string) => {
     }
 }
 
-export const getVideosByUserId = async (userId: number): Promise<VideoList> => {
+export const getVideosByUserId = async (userId: string): Promise<VideoList> => {
     try {
         const response = await credentialAPI.get<VideoList>(`/videos/user/${userId}`);
         console.log(response);
@@ -111,3 +111,32 @@ export const getVideosByUserId = async (userId: number): Promise<VideoList> => {
         throw new Error(`Failed to fetch videos: ${error}`);
     }
 }
+
+export const uploadImageToS3 = async (uploadUrl: string, file: File) => {
+    try {
+        const response = await credentialAPI.put(uploadUrl, file, {
+            headers: {
+                'Content-Type': 'image/jpeg',
+            },
+        });
+        return response;
+    } catch (error) {
+        console.error('Error uploading image to S3:', error);
+        throw error;
+    }
+}
+
+export const uploadVideoToS3 = async (uploadUrl: string, file: File, fileType: string) => {
+    try {
+        const response = await credentialAPI.put(uploadUrl, file, {
+            headers: {
+                'Content-Type': fileType,
+            },
+        });
+        return response;
+    } catch (error) {
+        console.error('Error uploading video to S3:', error);
+        throw error;
+    }
+}
+

@@ -5,7 +5,7 @@ import AlignHorizontalRightIcon from '@mui/icons-material/AlignHorizontalRight';
 import React, { MouseEventHandler, useEffect } from "react";
 import { Bookmark, BookmarkBorder } from "@mui/icons-material";
 import { Project } from "../../types/Project";
-import { ProjectStatus, toDisplayText } from "../../types/ProjectStatus";
+import { mapStatusToProjectStatus, ProjectStatus, toDisplayText } from "../../types/ProjectStatus";
 import CardFeature from "../../components/CardFeature";
 import SearchBar from "../../components/SearchBar";
 import { getVideosByUserId, getPresignedDownloadImageURL, getPresignedDownloadVideoURL } from "../../api/video.api";
@@ -55,7 +55,7 @@ function CheckboxComponent({ label, labelProps, color }: ComponentProps) {
 
 const Storage = () => {
     const theme = useTheme();
-    const userId = 3;
+    const userId = localStorage.getItem('userId');
     const [isFavorite, setIsFavorite] = React.useState(false);
 
     const statusOption = [
@@ -65,7 +65,37 @@ const Storage = () => {
         { label: 'Raw', color: theme.status.raw.fontColor },
     ]
 
-    let projects = useFetchProjects(userId);
+    const [projects, setProjects] = React.useState<Project[]>([]);
+
+    useEffect(() => {
+        const fetchVideoData = async () => {
+            try {
+
+                if (!userId) {
+                    setError('No user ID found in local storage');
+                    return;
+                }
+                const videoListResponse = await getVideosByUserId(userId);
+                console.log(videoListResponse);
+                if (videoListResponse && videoListResponse.videos) {
+                    const newProjects = videoListResponse.videos.map(video => ({
+                        id: video.video.id.toString(),
+                        thumbnail: video.image_url,
+                        title: video.video.file_name,
+                        status: mapStatusToProjectStatus(video.video.status),
+                        createdAt: new Date(video.video.created_at),
+                        updatedAt: new Date(video.video.updated_at),
+                        type_project: 'Video Translation'
+                    }));
+                    setProjects(newProjects);
+                }
+            } catch (error) {
+                console.error('Failed to fetch video or image URLs:', error);
+            }
+        };
+
+        fetchVideoData();
+    }, [userId]);
 
     const handleFavoriteClicked = (e: any) => {
         e.stopPropagation();
@@ -186,3 +216,7 @@ const Storage = () => {
 }
 
 export default Storage;
+
+function setError(arg0: string) {
+    throw new Error("Function not implemented.");
+}
