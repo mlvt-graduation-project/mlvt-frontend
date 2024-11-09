@@ -32,7 +32,6 @@ const ProjectSection = () => {
         setIsPopUpOpen(false);
         setSelectedProject(null);
     }
-
     
     useEffect(() => {
         const fetchVideoData = async () => {
