@@ -15,10 +15,10 @@ function UploadButton() {
     "title": "My Video Title",
     "duration": 300,
     "description": "A description of the video",
-    "file_name": "vietnamese.mp4",
-    "folder": "raw_videos",
-    "image": "frame.jpeg",
-    "user_id": localStorage.getItem("userId"),
+    "file_name": "",
+    "folder": "raw_videos/",
+    "image": "avatar.jpg",
+    "user_id": "123"
   })
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);

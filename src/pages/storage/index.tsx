@@ -2,7 +2,7 @@ import { Box, Checkbox, FormControlLabel, Grid, IconButton, Pagination, SxProps,
 import Layout from "../../layout/homepage";
 import { useTheme } from '@mui/material/styles';
 import AlignHorizontalRightIcon from '@mui/icons-material/AlignHorizontalRight';
-import React, { MouseEventHandler, useEffect } from "react";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 import { Bookmark, BookmarkBorder } from "@mui/icons-material";
 import { Project } from "../../types/Project";
 import { mapStatusToProjectStatus, ProjectStatus, toDisplayText } from "../../types/ProjectStatus";
@@ -10,6 +10,7 @@ import CardFeature from "../../components/CardFeature";
 import SearchBar from "../../components/SearchBar";
 import { getVideosByUserId, getPresignedDownloadImageURL, getPresignedDownloadVideoURL } from "../../api/video.api";
 import useFetchProjects from "./FetchVideoData";
+import { Videos } from "../../types/Response/Video";
 
 
 const categoryOption = [
@@ -65,7 +66,7 @@ const Storage = () => {
         { label: 'Raw', color: theme.status.raw.fontColor },
     ]
 
-    const [projects, setProjects] = React.useState<Project[]>([]);
+    const [projects, setProjects] = useState<Project[]>([]);
 
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -78,15 +79,18 @@ const Storage = () => {
                 const videoListResponse = await getVideosByUserId(userId);
                 console.log(videoListResponse);
                 if (videoListResponse && videoListResponse.videos) {
-                    const newProjects = videoListResponse.videos.map(video => ({
-                        id: video.video.id.toString(),
-                        thumbnail: video.image_url,
-                        title: video.video.file_name,
-                        status: mapStatusToProjectStatus(video.video.status),
-                        createdAt: new Date(video.video.created_at),
-                        updatedAt: new Date(video.video.updated_at),
-                        type_project: 'Video Translation'
-                    }));
+                    const newProjects = videoListResponse.videos.map(video => {
+                        const frame = videoListResponse.frames.find(f => f.video_id === video.id);
+                        return {
+                            id: video.id.toString(),
+                            thumbnail: frame ? frame.link : '',  // lấy link từ frames
+                            title: video.title,
+                            status: mapStatusToProjectStatus(video.status),
+                            createdAt: new Date(video.created_at),
+                            updatedAt: new Date(video.updated_at),
+                            type_project: 'Video Translation'
+                        };
+                    });
                     setProjects(newProjects);
                 }
             } catch (error) {
@@ -193,8 +197,8 @@ const Storage = () => {
 
                     {/* Grid of videos */}
                     <Grid container rowSpacing={3} sx={{ marginTop: '1rem' }}>
-                        {projects.map((project, index) => (
-                            <Grid item xs={12} sm={6} md={4} key={index} container justifyContent="center" alignItems="center">
+                        {projects.map((project) => (
+                            <Grid item xs={12} sm={6} md={4} key={project.id} container justifyContent="center" alignItems="center">
                                 <CardFeature
                                     key={project.id}
                                     project={project}

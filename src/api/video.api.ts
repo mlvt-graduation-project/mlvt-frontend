@@ -84,7 +84,7 @@ export const getVideoList = async (userId: number): Promise<GetVideoList> => {
     }
 };
 
-export const getVideoById = async (videoId: string): Promise<GetVideoById> => {
+export const getVideoById = async (videoId: number): Promise<GetVideoById> => {
     try {
         const response = await credentialAPI.get<GetVideoById>(`/videos/${videoId}`);
         return response.data;
