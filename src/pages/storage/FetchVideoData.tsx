@@ -10,6 +10,7 @@ const useFetchProjects = (userId: string) => {
     useEffect(() => {
       const fetchVideoData = async () => {
         try {
+          console.log(test);
           const videoListResponse = await getVideosByUserId(userId);
           console.log(videoListResponse);
           if (videoListResponse && videoListResponse.videos) {
