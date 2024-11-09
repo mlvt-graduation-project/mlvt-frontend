@@ -10,7 +10,7 @@ import CardFeature from "../../components/CardFeature";
 import SearchBar from "../../components/SearchBar";
 import { getVideosByUserId, getPresignedDownloadImageURL, getPresignedDownloadVideoURL } from "../../api/video.api";
 import useFetchProjects from "./FetchVideoData";
-import { Videos } from "../../types/Response/Video";
+import { Video } from "../../types/Response/Video";
 
 
 const categoryOption = [
@@ -79,18 +79,15 @@ const Storage = () => {
                 const videoListResponse = await getVideosByUserId(userId);
                 console.log(videoListResponse);
                 if (videoListResponse && videoListResponse.videos) {
-                    const newProjects = videoListResponse.videos.map(video => {
-                        const frame = videoListResponse.frames.find(f => f.video_id === video.id);
-                        return {
-                            id: video.id.toString(),
-                            thumbnail: frame ? frame.link : '',  // lấy link từ frames
-                            title: video.title,
-                            status: mapStatusToProjectStatus(video.status),
-                            createdAt: new Date(video.created_at),
-                            updatedAt: new Date(video.updated_at),
-                            type_project: 'Video Translation'
-                        };
-                    });
+                    const newProjects = videoListResponse.videos.map((videoData => ({
+                        id: videoData.video.id.toString(),
+                        thumbnail: videoData.image_url, // sử dụng image_url làm thumbnail
+                        title: videoData.video.title,
+                        status: mapStatusToProjectStatus(videoData.video.status),
+                        createdAt: new Date(videoData.video.created_at),
+                        updatedAt: new Date(videoData.video.updated_at),
+                        type_project: 'Video Translation'
+                })))
                     setProjects(newProjects);
                 }
             } catch (error) {
