@@ -3,7 +3,7 @@ import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 
 // Create an axios instance
 const apiClient: AxiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api', // use environment variables for flexibility
-  timeout: 10000, // Set a timeout limit
+  timeout: 1000000, // Set a timeout limit
   headers: {
     'Content-Type': 'application/json',
   },

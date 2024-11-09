@@ -2,12 +2,15 @@ import { Box, Checkbox, FormControlLabel, Grid, IconButton, Pagination, SxProps,
 import Layout from "../../layout/homepage";
 import { useTheme } from '@mui/material/styles';
 import AlignHorizontalRightIcon from '@mui/icons-material/AlignHorizontalRight';
-import React, { MouseEventHandler } from "react";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 import { Bookmark, BookmarkBorder } from "@mui/icons-material";
 import { Project } from "../../types/Project";
-import { ProjectStatus } from "../../types/ProjectStatus";
+import { mapStatusToProjectStatus, ProjectStatus, toDisplayText } from "../../types/ProjectStatus";
 import CardFeature from "../../components/CardFeature";
 import SearchBar from "../../components/SearchBar";
+import { getVideosByUserId, getPresignedDownloadImageURL, getPresignedDownloadVideoURL } from "../../api/video.api";
+import useFetchProjects from "./FetchVideoData";
+import { Videos } from "../../types/Response/Video";
 
 
 const categoryOption = [
@@ -51,11 +54,9 @@ function CheckboxComponent({ label, labelProps, color }: ComponentProps) {
     );
 }
 
-
-
-
 const Storage = () => {
     const theme = useTheme();
+    const userId = localStorage.getItem('userId');
     const [isFavorite, setIsFavorite] = React.useState(false);
 
     const statusOption = [
@@ -65,44 +66,40 @@ const Storage = () => {
         { label: 'Raw', color: theme.status.raw.fontColor },
     ]
 
-    const projects: Project[] = [
-        {
-            id: '1',
-            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
-            title: 'Video Translation',
-            status: ProjectStatus.Complete,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            type_project: 'Video Translation',
-        },
-        {
-            id: '2',
-            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
-            title: 'Video Translation',
-            status: ProjectStatus.InProgress,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            type_project: 'Video Translation',
-        },
-        {
-            id: '3',
-            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
-            title: 'Video Translation',
-            status: ProjectStatus.Complete,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            type_project: 'Video Translation',
-        },
-        {
-            id: '4',
-            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
-            title: 'Video Translation',
-            status: ProjectStatus.Failed,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            type_project: 'Video Translation',
-        },
-    ]
+    const [projects, setProjects] = useState<Project[]>([]);
+
+    useEffect(() => {
+        const fetchVideoData = async () => {
+            try {
+
+                if (!userId) {
+                    setError('No user ID found in local storage');
+                    return;
+                }
+                const videoListResponse = await getVideosByUserId(userId);
+                console.log(videoListResponse);
+                if (videoListResponse && videoListResponse.videos) {
+                    const newProjects = videoListResponse.videos.map(video => {
+                        const frame = videoListResponse.frames.find(f => f.video_id === video.id);
+                        return {
+                            id: video.id.toString(),
+                            thumbnail: frame ? frame.link : '',  // lấy link từ frames
+                            title: video.title,
+                            status: mapStatusToProjectStatus(video.status),
+                            createdAt: new Date(video.created_at),
+                            updatedAt: new Date(video.updated_at),
+                            type_project: 'Video Translation'
+                        };
+                    });
+                    setProjects(newProjects);
+                }
+            } catch (error) {
+                console.error('Failed to fetch video or image URLs:', error);
+            }
+        };
+
+        fetchVideoData();
+    }, [userId]);
 
     const handleFavoriteClicked = (e: any) => {
         e.stopPropagation();
@@ -200,12 +197,12 @@ const Storage = () => {
 
                     {/* Grid of videos */}
                     <Grid container rowSpacing={3} sx={{ marginTop: '1rem' }}>
-                        {projects.map((project, index) => (
-                            <Grid item xs={12} sm={6} md={4} key={index} container justifyContent="center" alignItems="center">
+                        {projects.map((project) => (
+                            <Grid item xs={12} sm={6} md={4} key={project.id} container justifyContent="center" alignItems="center">
                                 <CardFeature
                                     key={project.id}
                                     project={project}
-                                    onclick={() => console.log('Card clicked')}
+                                    onclick={() => console.log(project.id)}
                                 />
                             </Grid>
                         ))}
@@ -223,3 +220,7 @@ const Storage = () => {
 }
 
 export default Storage;
+
+function setError(arg0: string) {
+    throw new Error("Function not implemented.");
+}

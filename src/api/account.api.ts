@@ -1,4 +1,4 @@
-import api from './baseAPI';
+import api from './base.api';
 
 async function hashPassword(password: string): Promise<string> {
     const encoder = new TextEncoder();

@@ -1,4 +1,4 @@
-import apiClient from './credentailAPI';
+import apiClient from './credential.api';
 import { GetUserResponse } from '../types/Response/User';
 
 export const getUser = async (userId: string): Promise<GetUserResponse> => {

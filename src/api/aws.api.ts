@@ -1,4 +1,4 @@
-import api from './baseAPI';
+import api from './base.api';
 
 export const putImageS3 = async (URL : string, file: File) =>{
     return api.put(URL, file, {
@@ -13,9 +13,10 @@ export const putImageS3 = async (URL : string, file: File) =>{
 }
 
 export const putVideoS3 = async (URL : string, file: File, fileType: string) =>{
+    console.log("File data before upload: ", file);
     return api.put(URL, file, {
         headers: {
-          'Content-Type': 'image/jpg',
+          'Content-Type': fileType,
         },
     })
     .then(response => response)

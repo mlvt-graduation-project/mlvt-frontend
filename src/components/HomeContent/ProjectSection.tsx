@@ -1,68 +1,71 @@
 import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
 import SearchBar from "../SearchBar";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ProcessedVidPopUp from "../ProcessedVidPopUp";
 import CardFeature from "../CardFeature";
-import { Project } from "../../types/Project";
-import { ProjectStatus } from "../../types/ProjectStatus";
+import { Project} from "../../types/Project";
+import { VideoList} from "../../types/Response/Video";
+import { getVideosByUserId } from "../../api/video.api";
+import { mapStatusToProjectStatus } from "../../types/ProjectStatus";
+import { useAuth } from "../../context/AuthContext";
 
 const ProjectSection = () => {
     const theme = useTheme();
+    const { userId } = useAuth();
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         console.log()
     }
     const [selectedProject, setSelectedProject] = React.useState<Project | null>(null);
     const [isPopUpOpen, setIsPopUpOpen] = React.useState(false);
     const [dropdownValue, setDropdownValue] = React.useState('');
-    const projects: Project[] = [
-        {
-            id: '1',
-            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
-            title: 'Video Translation',
-            status: ProjectStatus.Complete,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            type_project: 'Video Translation',
-        },
-        {
-            id: '2',
-            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
-            title: 'Video Translation',
-            status: ProjectStatus.InProgress,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            type_project: 'Video Translation',
-        },
-        {
-            id: '3',
-            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
-            title: 'Video Translation',
-            status: ProjectStatus.Complete,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            type_project: 'Video Translation',
-        },
-        {
-            id: '4',
-            thumbnail: 'https://i.ytimg.com/vi/tvX8_f6LZaA/maxresdefault.jpg',
-            title: 'Video Translation',
-            status: ProjectStatus.Failed,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            type_project: 'Video Translation',
-        }
-    ]
-
+    const [videoId, setVideoId] = useState<number>(0);
+    const [projects, setProjects] = useState<Project[]>([]);
+    
     const handleCardClick = (project: Project) => {
         setSelectedProject(project);
         setIsPopUpOpen(true);
+        setVideoId(parseInt(project.id))
     }
 
     const handleClosePopUp = () => {
         setIsPopUpOpen(false);
         setSelectedProject(null);
     }
+
+    
+    useEffect(() => {
+        const fetchVideoData = async () => {
+            try {
+                if (!userId) {
+                    setError('No user ID found in local storage');
+                    return;
+                }
+                const videoListResponse: VideoList = await getVideosByUserId(userId);
+                
+                if (videoListResponse && videoListResponse.videos) {
+                    const newProjects = videoListResponse.videos.map(video => {
+                        const frame = videoListResponse.frames.find(f => f.video_id === video.id);
+                        return {
+                            id: video.id.toString(),
+                            thumbnail: frame ? frame.link : '',  // lấy link từ frames
+                            title: video.title,
+                            status: mapStatusToProjectStatus(video.status),
+                            createdAt: new Date(video.created_at),
+                            updatedAt: new Date(video.updated_at),
+                            type_project: 'Video Translation'
+                        };
+                    });
+                    setProjects(newProjects);
+                }
+                
+            } catch (error) {
+                console.error('Failed to fetch video or image URLs:', error);
+            }
+        };
+
+        fetchVideoData();
+    }, [userId]);
 
     return (
         <Box>
@@ -102,7 +105,7 @@ const ProjectSection = () => {
                             whiteSpace: 'nowrap',
                         }}
                     >
-                        10
+                        {projects.length}
                     </Typography>
                 </Box>
 
@@ -195,6 +198,7 @@ const ProjectSection = () => {
             {
                 selectedProject && (
                     <ProcessedVidPopUp
+                        videoId = {videoId}
                         isOpen={isPopUpOpen}
                         onClose={handleClosePopUp}
                     />
@@ -206,3 +210,7 @@ const ProjectSection = () => {
 }
 
 export default ProjectSection
+
+function setError(arg0: string) {
+    throw new Error("Function not implemented.");
+}
