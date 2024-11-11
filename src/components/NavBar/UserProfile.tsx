@@ -32,7 +32,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
     const navigate = useNavigate();
     const [user, setUser] = useState<User | null>(null);    
     const { userId } = useAuth();
-    
+
+    console.log("AVATAR URL: ", avatarSrc);
 
     useEffect(() => {
         const fetchUserDetails = async () => {
