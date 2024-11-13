@@ -116,7 +116,7 @@ export const uploadImageToS3 = async (uploadUrl: string, file: File) => {
     try {
         const response = await credentialAPI.put(uploadUrl, file, {
             headers: {
-                'Content-Type': 'image/jpeg',
+                'Content-Type': file.type,
             },
         });
         return response;
