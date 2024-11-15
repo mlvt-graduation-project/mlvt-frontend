@@ -6,9 +6,10 @@ import ProcessedVidPopUp from "../ProcessedVidPopUp";
 import CardFeature from "../CardFeature";
 import { Project} from "../../types/Project";
 import { VideoList} from "../../types/Response/Video";
-import { getVideosByUserId } from "../../api/video.api";
+import { getPresignedDownloadImageURL, getVideosByUserId } from "../../api/video.api";
 import { mapStatusToProjectStatus } from "../../types/ProjectStatus";
 import { useAuth } from "../../context/AuthContext";
+import { getTranscriptionsByUserId } from "../../api/transcription.api";
 
 const ProjectSection = () => {
     const theme = useTheme();
@@ -41,23 +42,42 @@ const ProjectSection = () => {
                     setError('No user ID found in local storage');
                     return;
                 }
-                const videoListResponse: VideoList = await getVideosByUserId(userId);
-                
-                if (videoListResponse && videoListResponse.videos) {
-                    const newProjects = videoListResponse.videos.map(video => {
-                        const frame = videoListResponse.frames.find(f => f.video_id === video.video.id);
+                const videoListResponse = await getVideosByUserId(userId);
+                const transcriptionListResponse = await getTranscriptionsByUserId(userId);
+
+                // console.log(videoListResponse);
+                console.log(transcriptionListResponse);
+
+                const videoProjects = await Promise.all(
+                    videoListResponse.videos.map(async video => {
+                        const videoImageUrl = await getPresignedDownloadImageURL(video.video.id.toString());
+                        const videoLink = videoImageUrl.split('?X-Amz-Algorithm')[0].replace('raw_videos', 'video_frames'); 
+                        // console.log(video.video.id);
+                        // console.log(videoLink);
                         return {
                             id: video.video.id.toString(),
-                            thumbnail: frame ? frame.link : '',  // lấy link từ frames
+                            thumbnail: videoLink || '',
                             title: video.video.title,
                             status: mapStatusToProjectStatus(video.video.status),
                             createdAt: new Date(video.video.created_at),
                             updatedAt: new Date(video.video.updated_at),
                             type_project: 'Video Translation'
                         };
-                    });
-                    setProjects(newProjects);
-                }
+                    })
+                );
+
+                const transcriptionProjects = transcriptionListResponse.transcriptions.map(transcription => ({
+                    id: transcription.id.toString(),
+                    thumbnail: 'text.png',
+                    title: transcription.file_name || 'Transcription',
+                    status: mapStatusToProjectStatus('raw'),
+                    createdAt: new Date(transcription.created_at),
+                    updatedAt: new Date(transcription.updated_at),
+                    type_project: 'Transcription'
+                }));
+
+                const newProjects:Project[] = [...videoProjects, ...transcriptionProjects];
+                setProjects(newProjects);
                 
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);
