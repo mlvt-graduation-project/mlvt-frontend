@@ -8,9 +8,10 @@ import { Project } from "../../types/Project";
 import { mapStatusToProjectStatus, ProjectStatus, toDisplayText } from "../../types/ProjectStatus";
 import CardFeature from "../../components/CardFeature";
 import SearchBar from "../../components/SearchBar";
-import { getVideosByUserId, getPresignedDownloadImageURL, getPresignedDownloadVideoURL } from "../../api/video.api";
+import { getVideosByUserId, getPresignedDownloadImageURL, getPresignedDownloadVideoURL, getVideoById } from "../../api/video.api";
 import useFetchProjects from "./FetchVideoData";
 import { Videos } from "../../types/Response/Video";
+import { getTranscriptionsByUserId } from "../../api/transcription.api";
 
 
 const categoryOption = [
@@ -69,36 +70,54 @@ const Storage = () => {
     const [projects, setProjects] = useState<Project[]>([]);
 
     useEffect(() => {
-        const fetchVideoData = async () => {
+        const fetchData = async () => {
             try {
-
                 if (!userId) {
                     setError('No user ID found in local storage');
                     return;
                 }
                 const videoListResponse = await getVideosByUserId(userId);
-                console.log(videoListResponse);
-                if (videoListResponse && videoListResponse.videos) {
-                    const newProjects = videoListResponse.videos.map(video => {
-                        const frame = videoListResponse.frames.find(f => f.video_id === video.id);
+                const transcriptionListResponse = await getTranscriptionsByUserId(userId);
+
+                // console.log(videoListResponse);
+                console.log(transcriptionListResponse);
+
+                const videoProjects = await Promise.all(
+                    videoListResponse.videos.map(async video => {
+                        const videoImageUrl = await getPresignedDownloadImageURL(video.video.id.toString());
+                        const videoLink = videoImageUrl.split('?X-Amz-Algorithm')[0].replace('raw_videos', 'video_frames'); 
+                        // console.log(video.video.id);
+                        // console.log(videoLink);
                         return {
-                            id: video.id.toString(),
-                            thumbnail: frame ? frame.link : '',  // lấy link từ frames
-                            title: video.title,
-                            status: mapStatusToProjectStatus(video.status),
-                            createdAt: new Date(video.created_at),
-                            updatedAt: new Date(video.updated_at),
+                            id: video.video.id.toString(),
+                            thumbnail: videoLink || '',
+                            title: video.video.title,
+                            status: mapStatusToProjectStatus(video.video.status),
+                            createdAt: new Date(video.video.created_at),
+                            updatedAt: new Date(video.video.updated_at),
                             type_project: 'Video Translation'
                         };
-                    });
-                    setProjects(newProjects);
-                }
+                    })
+                );
+
+                const transcriptionProjects = transcriptionListResponse.transcriptions.map(transcription => ({
+                    id: transcription.id.toString(),
+                    thumbnail: 'text.png',
+                    title: transcription.file_name || 'Transcription',
+                    status: mapStatusToProjectStatus('raw'),
+                    createdAt: new Date(transcription.created_at),
+                    updatedAt: new Date(transcription.updated_at),
+                    type_project: 'Transcription'
+                }));
+
+                const newProjects:Project[] = [...videoProjects, ...transcriptionProjects];
+                setProjects(newProjects);
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);
             }
         };
 
-        fetchVideoData();
+        fetchData();
     }, [userId]);
 
     const handleFavoriteClicked = (e: any) => {

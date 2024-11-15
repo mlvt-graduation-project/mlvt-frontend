@@ -45,14 +45,14 @@ const ProjectSection = () => {
                 
                 if (videoListResponse && videoListResponse.videos) {
                     const newProjects = videoListResponse.videos.map(video => {
-                        const frame = videoListResponse.frames.find(f => f.video_id === video.id);
+                        const frame = videoListResponse.frames.find(f => f.video_id === video.video.id);
                         return {
-                            id: video.id.toString(),
+                            id: video.video.id.toString(),
                             thumbnail: frame ? frame.link : '',  // lấy link từ frames
-                            title: video.title,
-                            status: mapStatusToProjectStatus(video.status),
-                            createdAt: new Date(video.created_at),
-                            updatedAt: new Date(video.updated_at),
+                            title: video.video.title,
+                            status: mapStatusToProjectStatus(video.video.status),
+                            createdAt: new Date(video.video.created_at),
+                            updatedAt: new Date(video.video.updated_at),
                             type_project: 'Video Translation'
                         };
                     });
