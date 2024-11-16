@@ -2,11 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import Theme from '../../config/theme'
+import Theme from '../../../config/theme'
 import { useTheme } from '@mui/material/styles';
 import axios from 'axios';
-import { FileData } from '../../types/FileData';
-import { getPresignedImageURL, getPresignedVideoURL, postVideo, uploadImageToS3, uploadVideoToS3 } from '../../api/video.api';
+import { FileData } from '../../../types/FileData';
+import { getPresignedImageURL, getPresignedVideoURL, postVideo, uploadImageToS3, uploadVideoToS3 } from '../../../api/video.api';
 
 
 function UploadButton() {

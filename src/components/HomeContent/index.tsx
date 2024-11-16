@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent } from 'react';
 import { Box } from '@mui/material';
 import Background from '../../assets/background.jpg';
-import CardSlider from '../CarouselCard/CardSlider';
+import CardSlider from '../CarouselCard';
 import ProjectSection from './ProjectSection';
 
 const HomeContent: React.FC = () => {  
