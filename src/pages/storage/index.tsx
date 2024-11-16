@@ -9,8 +9,8 @@ import { mapStatusToProjectStatus, ProjectStatus, toDisplayText } from "../../ty
 import CardFeature from "../../components/CardFeature";
 import SearchBar from "../../components/SearchBar";
 import { getVideosByUserId, getPresignedDownloadImageURL, getPresignedDownloadVideoURL } from "../../api/video.api";
-import useFetchProjects from "./FetchVideoData";
-import { Videos } from "../../types/Response/Video";
+import { Video } from "../../types/Response/Video";
+import { handleGetVideosByUserId } from "../../utils/video.utils";
 
 
 const categoryOption = [
@@ -76,23 +76,8 @@ const Storage = () => {
                     setError('No user ID found in local storage');
                     return;
                 }
-                const videoListResponse = await getVideosByUserId(userId);
-                console.log(videoListResponse);
-                if (videoListResponse && videoListResponse.videos) {
-                    const newProjects = videoListResponse.videos.map(video => {
-                        const frame = videoListResponse.frames.find(f => f.video_id === video.id);
-                        return {
-                            id: video.id.toString(),
-                            thumbnail: frame ? frame.link : '',  // lấy link từ frames
-                            title: video.title,
-                            status: mapStatusToProjectStatus(video.status),
-                            createdAt: new Date(video.created_at),
-                            updatedAt: new Date(video.updated_at),
-                            type_project: 'Video Translation'
-                        };
-                    });
-                    setProjects(newProjects);
-                }
+                const projects = await handleGetVideosByUserId(userId);
+                setProjects(projects);
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);
             }
@@ -181,7 +166,7 @@ const Storage = () => {
                 {/* Main Content */}
                 <Box flex='1' paddingTop='20px' paddingLeft='40px' paddingRight='4rem'>
                     {/* Search and filter bar */}
-                    <Box display='flex' justifyContent='space-between' margin='0.5rem auto' sx={{ alignItems: 'center'}} padding='0 0.8rem'>
+                    <Box display='flex' justifyContent='space-between' margin='0.5rem auto' sx={{ alignItems: 'center' }} padding='0 0.8rem'>
                         {/* <CustomSearchBar /> */}
                         <Typography sx={{
                             fontFamily: 'Kablammo',
@@ -224,3 +209,7 @@ export default Storage;
 function setError(arg0: string) {
     throw new Error("Function not implemented.");
 }
+function fetchVideoProjects(userId: string) {
+    throw new Error("Function not implemented.");
+}
+
