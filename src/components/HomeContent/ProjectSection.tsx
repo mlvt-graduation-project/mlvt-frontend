@@ -5,10 +5,8 @@ import React, { useEffect, useState } from "react";
 import ProcessedVidPopUp from "../ProcessedVidPopUp";
 import CardFeature from "../CardFeature";
 import { Project} from "../../types/Project";
-import { VideoList} from "../../types/Response/Video";
-import { getVideosByUserId } from "../../api/video.api";
-import { mapStatusToProjectStatus } from "../../types/ProjectStatus";
 import { useAuth } from "../../context/AuthContext";
+import { handleGetVideosByUserId } from "../../utils/video.utils";
 
 const ProjectSection = () => {
     const theme = useTheme();
@@ -32,7 +30,6 @@ const ProjectSection = () => {
         setIsPopUpOpen(false);
         setSelectedProject(null);
     }
-
     
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -41,23 +38,8 @@ const ProjectSection = () => {
                     setError('No user ID found in local storage');
                     return;
                 }
-                const videoListResponse: VideoList = await getVideosByUserId(userId);
-                
-                if (videoListResponse && videoListResponse.videos) {
-                    const newProjects = videoListResponse.videos.map(video => {
-                        const frame = videoListResponse.frames.find(f => f.video_id === video.id);
-                        return {
-                            id: video.id.toString(),
-                            thumbnail: frame ? frame.link : '',  // lấy link từ frames
-                            title: video.title,
-                            status: mapStatusToProjectStatus(video.status),
-                            createdAt: new Date(video.created_at),
-                            updatedAt: new Date(video.updated_at),
-                            type_project: 'Video Translation'
-                        };
-                    });
-                    setProjects(newProjects);
-                }
+                const projects = await handleGetVideosByUserId(userId);
+                setProjects(projects);
                 
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);
