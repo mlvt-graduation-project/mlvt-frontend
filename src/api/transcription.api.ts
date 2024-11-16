@@ -1,9 +1,9 @@
 import credentialAPI from './credential.api';
-import { TranscriptionResponse } from '../types/Response/Transcription';
+import { TranscriptionListResponse } from '../types/Response/Transcription';
 
 export const getTranscriptionIdByVideoId = async (videoId: number) => {
     try {
-        const response = await credentialAPI.get<TranscriptionResponse>(`/transcriptions/video/${videoId}`)
+        const response = await credentialAPI.get<TranscriptionListResponse>(`/transcriptions/video/${videoId}`)
         return response;
     } catch (error) {
         console.error('Error generating presigned Video URL:', error);
@@ -13,7 +13,7 @@ export const getTranscriptionIdByVideoId = async (videoId: number) => {
 
 export const  getTranscriptionDownloadUrl = async (TranscriptionId: number) => {
     try {
-        const response = await credentialAPI.get<TranscriptionResponse>(`/transcriptions/video/${TranscriptionId}`)
+        const response = await credentialAPI.get<TranscriptionListResponse>(`/transcriptions/video/${TranscriptionId}`)
         return response;
     } catch (error) {
         console.error('Error generating presigned Video URL:', error);

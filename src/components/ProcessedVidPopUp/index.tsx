@@ -26,7 +26,7 @@ import 'react-h5-audio-player/lib/styles.css';
 import { styled } from '@mui/system';
 // import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import DownloadIcon from '@mui/icons-material/Download'; // Assuming download icon is used
-import { getVideoById } from "../../api/video.api";
+import { getOneVideoById } from "../../api/video.api";
 
 
 
@@ -52,7 +52,7 @@ const ProcessedVidPopUp: FC<ProcessedVidPopUpProps> = ({ isOpen, onClose, videoI
     useEffect(() => {
       const fetchVideoData = async () => {
           try {
-              const response = await getVideoById(videoId);
+              const response = await getOneVideoById(videoId);
               setVideoUrl(response.video_url.split("?")[0]);
               setImageUrl(response.image_url.split("?")[0]);
               setVideoStatus(response.video.status);

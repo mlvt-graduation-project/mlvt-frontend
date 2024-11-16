@@ -5,10 +5,8 @@ import React, { useEffect, useState } from "react";
 import ProcessedVidPopUp from "../ProcessedVidPopUp";
 import CardFeature from "../CardFeature";
 import { Project} from "../../types/Project";
-import { VideoList} from "../../types/Response/Video";
-import { getVideosByUserId } from "../../api/video.api";
-import { mapStatusToProjectStatus } from "../../types/ProjectStatus";
 import { useAuth } from "../../context/AuthContext";
+import { handleGetVideosByUserId } from "../../utils/video.utils";
 
 const ProjectSection = () => {
     const theme = useTheme();
@@ -40,20 +38,8 @@ const ProjectSection = () => {
                     setError('No user ID found in local storage');
                     return;
                 }
-                const videoListResponse: VideoList = await getVideosByUserId(userId);
-                
-                if (videoListResponse && videoListResponse.videos) {
-                    const newProjects = videoListResponse.videos.map((videoData => ({
-                        id: videoData.video.id.toString(),
-                        thumbnail: videoData.image_url, // sử dụng image_url làm thumbnail
-                        title: videoData.video.title,
-                        status: mapStatusToProjectStatus(videoData.video.status),
-                        createdAt: new Date(videoData.video.created_at),
-                        updatedAt: new Date(videoData.video.updated_at),
-                        type_project: 'Video Translation'
-                })))
-                    setProjects(newProjects);
-                }
+                const projects = await handleGetVideosByUserId(userId);
+                setProjects(projects);
                 
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);

@@ -10,6 +10,6 @@ export interface Transcription {
     updated_at: string;
 }
 
-export interface TranscriptionResponse {
+export interface TranscriptionListResponse {
     transcriptions: Transcription[];
 }
