@@ -12,6 +12,7 @@ import { getVideosByUserId, getPresignedDownloadImageURL, getPresignedDownloadVi
 import useFetchProjects from "./FetchVideoData";
 import { Videos } from "../../types/Response/Video";
 import { getTranscriptionsByUserId } from "../../api/transcription.api";
+import { getAudiosByUserId } from "../../api/audio.api";
 
 
 const categoryOption = [
@@ -78,9 +79,11 @@ const Storage = () => {
                 }
                 const videoListResponse = await getVideosByUserId(userId);
                 const transcriptionListResponse = await getTranscriptionsByUserId(userId);
+                const audioListResponse = await getAudiosByUserId(userId);
 
                 // console.log(videoListResponse);
-                console.log(transcriptionListResponse);
+                // console.log(transcriptionListResponse);
+                console.log(audioListResponse);
 
                 const videoProjects = await Promise.all(
                     videoListResponse.videos.map(async video => {
@@ -110,7 +113,17 @@ const Storage = () => {
                     type_project: 'Transcription'
                 }));
 
-                const newProjects:Project[] = [...videoProjects, ...transcriptionProjects];
+                const audioProjects = audioListResponse.audios.map(audio => ({
+                    id: audio.id.toString(),
+                    thumbnail: 'audio.png',
+                    title: audio.file_name || 'Audio',
+                    status: mapStatusToProjectStatus('raw'),
+                    createdAt: new Date(audio.created_at),
+                    updatedAt: new Date(audio.updated_at),
+                    type_project: 'Audio'
+                }))
+
+                const newProjects:Project[] = [...videoProjects, ...transcriptionProjects, ...audioProjects];
                 setProjects(newProjects);
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);
