@@ -15,8 +15,8 @@ function UploadButton() {
     "title": "My Video Title",
     "duration": 300,
     "description": "A description of the video",
-    "file_name": "",
-    "folder": "raw_videos/",
+    "file_name": "vietnamese.mp4",
+    "folder": "raw_videos",
     "image": "avatar.jpg",
     "user_id": "123"
   })
@@ -73,7 +73,9 @@ function UploadButton() {
           canvas.toBlob((blob) => {
             if (blob) {
               // Convert the Blob to a File
-              const imageFile = new File([blob], "thumbnail.jpg", { type: 'image/jpeg' });
+              const imageName = videoFile.name.split('.')[0] + '_thumbnail.jpg';
+              console.log(imageName);
+              const imageFile = new File([blob], imageName, { type: 'image/jpeg' });
               resolve(imageFile); // Return the file
             } else {
               reject(new Error("Could not generate image from canvas"));
