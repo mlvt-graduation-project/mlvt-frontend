@@ -4,9 +4,9 @@ import { Avatar, Box, Badge, Menu, MenuItem, Typography, IconButton, ListItemIco
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { AccountCircle, NavigateNext, WorkspacePremiumSharp, Help, Logout, Language, LightMode } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { getUser } from "../../api/user.api";
-import { useAuth } from "../../context/AuthContext";
-import { User } from "../../types/Response/User";
+import { getUser } from "../../../api/user.api";
+import { useAuth } from "../../../context/AuthContext";
+import { User } from "../../../types/Response/User";
 
 interface UserProfileProps {
     first_name: string;

@@ -1,5 +1,5 @@
 import React from 'react';
-import SocialLoginButton from './SocialLoginButton';
+import SocialLoginButton from '..';
 import GoogleIcon from '@mui/icons-material/Google';
 import { useTheme } from '@mui/material/styles';
 

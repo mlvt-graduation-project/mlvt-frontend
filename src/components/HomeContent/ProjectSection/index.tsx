@@ -1,12 +1,12 @@
 import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
-import SearchBar from "../SearchBar";
+import SearchBar from "../../SearchBar";
 import React, { useEffect, useState } from "react";
-import ProcessedVidPopUp from "../ProcessedVidPopUp";
-import CardFeature from "../CardFeature";
-import { Project} from "../../types/Project";
-import { useAuth } from "../../context/AuthContext";
-import { handleGetVideosByUserId } from "../../utils/video.utils";
+import ProcessedVidPopUp from "../../ProcessedVidPopUp";
+import CardFeature from "../../CardFeature";
+import { Project} from "../../../types/Project";
+import { useAuth } from "../../../context/AuthContext";
+import { handleGetVideosByUserId } from "../../../utils/video.utils";
 
 const ProjectSection = () => {
     const theme = useTheme();
