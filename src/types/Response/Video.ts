@@ -15,7 +15,7 @@ export interface Video {
         description: string,
         file_name: string,
         folder: string,
-        image: string,
+        image_name: string,
         status: string,
         user_id: number,
         created_at: string,
