@@ -213,7 +213,7 @@ const Storage = () => {
                 {/* Main Content */}
                 <Box flex='1' paddingTop='20px' paddingLeft='40px' paddingRight='4rem'>
                     {/* Search and filter bar */}
-                    <Box display='flex' justifyContent='space-between' margin='0.5rem auto' sx={{ alignItems: 'center'}} padding='0 0.8rem'>
+                    <Box display='flex' justifyContent='space-between' margin='0.5rem auto' sx={{ alignItems: 'center' }} padding='0 0.8rem'>
                         {/* <CustomSearchBar /> */}
                         <Typography sx={{
                             fontFamily: 'Kablammo',
@@ -256,3 +256,7 @@ export default Storage;
 function setError(arg0: string) {
     throw new Error("Function not implemented.");
 }
+function fetchVideoProjects(userId: string) {
+    throw new Error("Function not implemented.");
+}
+

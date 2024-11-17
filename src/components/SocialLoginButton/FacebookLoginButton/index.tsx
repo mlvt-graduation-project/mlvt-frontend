@@ -1,5 +1,5 @@
 import React from 'react';
-import SocialLoginButton from './SocialLoginButton';
+import SocialLoginButton from '..';
 import FacebookRoundedIcon from '@mui/icons-material/FacebookRounded';
 import { useTheme } from '@mui/material/styles';
 const FacebookLoginButton = () => {

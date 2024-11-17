@@ -1,16 +1,12 @@
 import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
-import SearchBar from "../SearchBar";
+import SearchBar from "../../SearchBar";
 import React, { useEffect, useState } from "react";
-import ProcessedVidPopUp from "../ProcessedVidPopUp";
-import CardFeature from "../CardFeature";
-import { Project} from "../../types/Project";
-import { VideoList} from "../../types/Response/Video";
-import { getPresignedDownloadImageURL, getVideosByUserId } from "../../api/video.api";
-import { mapStatusToProjectStatus } from "../../types/ProjectStatus";
-import { useAuth } from "../../context/AuthContext";
-import { getTranscriptionsByUserId } from "../../api/transcription.api";
-import { getAudiosByUserId } from "../../api/audio.api";
+import ProcessedVidPopUp from "../../ProcessedVidPopUp";
+import CardFeature from "../../CardFeature";
+import { Project} from "../../../types/Project";
+import { useAuth } from "../../../context/AuthContext";
+import { handleGetVideosByUserId } from "../../../utils/video.utils";
 
 const ProjectSection = () => {
     const theme = useTheme();
@@ -34,7 +30,6 @@ const ProjectSection = () => {
         setIsPopUpOpen(false);
         setSelectedProject(null);
     }
-
     
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -43,53 +38,8 @@ const ProjectSection = () => {
                     setError('No user ID found in local storage');
                     return;
                 }
-                const videoListResponse = await getVideosByUserId(userId);
-                const transcriptionListResponse = await getTranscriptionsByUserId(userId);
-                const audioListResponse = await getAudiosByUserId(userId);
-
-                // console.log(videoListResponse);
-                console.log(transcriptionListResponse);
-
-                const videoProjects = await Promise.all(
-                    videoListResponse.videos.map(async video => {
-                        const videoImageUrl = await getPresignedDownloadImageURL(video.video.id.toString());
-                        const videoLink = videoImageUrl.split('?X-Amz-Algorithm')[0].replace('raw_videos', 'video_frames'); 
-                        // console.log(video.video.id);
-                        // console.log(videoLink);
-                        return {
-                            id: video.video.id.toString(),
-                            thumbnail: videoLink || '',
-                            title: video.video.title,
-                            status: mapStatusToProjectStatus(video.video.status),
-                            createdAt: new Date(video.video.created_at),
-                            updatedAt: new Date(video.video.updated_at),
-                            type_project: 'Video Translation'
-                        };
-                    })
-                );
-
-                const transcriptionProjects = transcriptionListResponse.transcriptions.map(transcription => ({
-                    id: transcription.id.toString(),
-                    thumbnail: 'text.png',
-                    title: transcription.file_name || 'Transcription',
-                    status: mapStatusToProjectStatus('raw'),
-                    createdAt: new Date(transcription.created_at),
-                    updatedAt: new Date(transcription.updated_at),
-                    type_project: 'Transcription'
-                }));
-
-                const audioProjects = audioListResponse.audios.map(audio => ({
-                    id: audio.id.toString(),
-                    thumbnail: 'audio.png',
-                    title: audio.file_name || 'Audio',
-                    status: mapStatusToProjectStatus('raw'),
-                    createdAt: new Date(audio.created_at),
-                    updatedAt: new Date(audio.updated_at),
-                    type_project: 'Audio'
-                }))
-
-                const newProjects:Project[] = [...videoProjects, ...transcriptionProjects, ...audioProjects];
-                setProjects(newProjects);
+                const projects = await handleGetVideosByUserId(userId);
+                setProjects(projects);
                 
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);
