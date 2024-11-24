@@ -26,6 +26,5 @@ export interface Video {
 }
 
 export interface VideoList {
-    videos: GetVideoById[]
-    frames: Frame[]
+    videos: Video[]
 }

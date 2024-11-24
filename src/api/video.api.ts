@@ -1,5 +1,5 @@
 import credentialAPI from './credential.api';
-import {GetPresignedURL, PostVideo, VideoListResponse, Video} from '../types/Response/Video'
+import {GetPresignedURL, PostVideo, Video, VideoList} from '../types/Response/Video'
 
 // Image request
 export const getPresignedImageURL = async (fileName: string, fileType: string) => {
@@ -75,14 +75,14 @@ export const postVideoTranscription = async (videoId: number) => {
     }
 }
 
-export const getVideoList = async (userId: number): Promise<VideoListResponse> => {
-    try {
-        const response = await credentialAPI.get<VideoListResponse>(`/videos/user/${userId}`);
-        return response.data;
-    } catch (error) {
-        throw new Error(`Failed to fetch videos: ${error}`);
-    }
-};
+// export const getVideoList = async (userId: number): Promise<VideoListResponse> => {
+//     try {
+//         const response = await credentialAPI.get<VideoListResponse>(`/videos/user/${userId}`);
+//         return response.data;
+//     } catch (error) {
+//         throw new Error(`Failed to fetch videos: ${error}`);
+//     }
+// };
 
 export const getOneVideoById = async (videoId: number): Promise<Video> => {
     try {
@@ -102,7 +102,7 @@ export const getVideoStatus = async (videoId: string) => {
     }
 }
 
-export const getVideosByUserId = async (userId: string): Promise<VideoListResponse> => {
+export const getVideosByUserId = async (userId: string): Promise<VideoList> => {
     try {
         const response = await credentialAPI.get<VideoList>(`/videos/user/${userId}`);
         // console.log(response);

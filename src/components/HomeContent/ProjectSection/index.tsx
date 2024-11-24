@@ -7,10 +7,14 @@ import CardFeature from "../../CardFeature";
 import { Project} from "../../../types/Project";
 import { useAuth } from "../../../context/AuthContext";
 import { handleGetVideosByUserId } from "../../../utils/video.utils";
+import { getAudiosByUserId } from "../../../api/audio.api";
+import { getPresignedDownloadImageURL, getVideosByUserId } from "../../../api/video.api";
+import { getTranscriptionsByUserId } from "../../../api/transcription.api";
+import { mapStatusToProjectStatus } from "../../../types/ProjectStatus";
 
 const ProjectSection = () => {
     const theme = useTheme();
-    const { userId } = useAuth();
+    const userId = localStorage.getItem('userId');
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         console.log()
     }
@@ -32,7 +36,7 @@ const ProjectSection = () => {
     }
     
     useEffect(() => {
-        const fetchVideoData = async () => {
+        const fetchData = async () => {
             try {
                 if (!userId) {
                     setError('No user ID found in local storage');
@@ -40,6 +44,7 @@ const ProjectSection = () => {
                 }
                 const videoListResponse = await getVideosByUserId(userId);
                 const transcriptionListResponse = await getTranscriptionsByUserId(userId);
+                const audioListResponse = await getAudiosByUserId(userId);
 
                 // console.log(videoListResponse);
                 console.log(transcriptionListResponse);
@@ -72,15 +77,24 @@ const ProjectSection = () => {
                     type_project: 'Transcription'
                 }));
 
-                const newProjects:Project[] = [...videoProjects, ...transcriptionProjects];
+                const audioProjects = audioListResponse.audios.map(audio => ({
+                    id: audio.id.toString(),
+                    thumbnail: 'audio.png',
+                    title: audio.file_name || 'Audio',
+                    status: mapStatusToProjectStatus('raw'),
+                    createdAt: new Date(audio.created_at),
+                    updatedAt: new Date(audio.updated_at),
+                    type_project: 'Audio'
+                }))
+
+                const newProjects:Project[] = [...videoProjects, ...transcriptionProjects, ...audioProjects];
                 setProjects(newProjects);
-                
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);
             }
         };
 
-        fetchVideoData();
+        fetchData();
     }, [userId]);
 
     return (
