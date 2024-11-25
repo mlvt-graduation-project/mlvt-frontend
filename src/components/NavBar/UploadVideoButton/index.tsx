@@ -18,7 +18,7 @@ function UploadButton() {
     "file_name": "vietnamese.mp4",
     "folder": "raw_videos",
     "image": "avatar.jpg",
-    "user_id": "123"
+    "user_id": parseInt(localStorage.getItem('userId') || '0')
   })
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);

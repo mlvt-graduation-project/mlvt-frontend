@@ -9,7 +9,6 @@ import { Link as RouterLink } from "react-router-dom";
 import UserProfile from './UserProfile';
 import UploadVideoButton from './UploadVideoButton';
 import { useTheme } from '@mui/material/styles';
-import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { getUser } from '../../api/user.api';
 

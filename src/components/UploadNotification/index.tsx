@@ -52,12 +52,17 @@ const UploadNotification: FC<UploadNotificationProps> = ({isOpen , uploadStatus 
                 >
                     Video Translation
                 </Typography>
+
                 <IconButton onClick={onClose}>
                     <CloseIcon />
                 </IconButton>
+                
             </DialogTitle>
+
             <Divider orientation="horizontal" flexItem sx={{ borderBottomWidth: 2 }} />
+
             <DialogContent>
+
                 <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
                     {isSuccess ? (
                         <CheckCircleIcon sx={{ color: (theme) => theme.palette.success.main, fontSize: 80 }} />
@@ -66,24 +71,24 @@ const UploadNotification: FC<UploadNotificationProps> = ({isOpen , uploadStatus 
                     )}
 
                     <Typography
-                    variant="h6"
-                    sx={{
-                    flexGrow: 1,
-                    fontWeight: "bold",
-                    fontFamily: "Araboto, Roboto, Arial, sans-serif",
-                    color: (theme) => isSuccess ? theme.palette.success.main : theme.palette.error.main
-                    }}
+                        variant="h6"
+                        sx={{
+                        flexGrow: 1,
+                        fontWeight: "bold",
+                        fontFamily: "Araboto, Roboto, Arial, sans-serif",
+                        color: (theme) => isSuccess ? theme.palette.success.main : theme.palette.error.main
+                        }}
                     >
                         {isSuccess ? `${content !== null ? content : "UPLOAD"} SUCESSFULLY` : `${content !== null ? content : "UPLOAD"} FAILED`}
                     </Typography>
                     
                     <Typography
-                    variant="body2"
-                    paddingTop='15px'
-                    sx={{
-                    flexGrow: 1,
-                    fontFamily: "Araboto, Roboto, Arial, sans-serif",
-                    }}
+                        variant="body2"
+                        paddingTop='15px'
+                        sx={{
+                        flexGrow: 1,
+                        fontFamily: "Araboto, Roboto, Arial, sans-serif",
+                        }}
                     >
                         Navigate to the video storage by {' '}
                         <Link
@@ -95,7 +100,7 @@ const UploadNotification: FC<UploadNotificationProps> = ({isOpen , uploadStatus 
                         </Link>
                     </Typography>
                 </Box>
-                
+
             </DialogContent>
         </Dialog>
     );

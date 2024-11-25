@@ -2,9 +2,8 @@ import React, {useState} from 'react';
 import Layout from "../../layout/homepage";
 import HomeContent from "../../components/HomeContent";
 import NavBar from "../../components/NavBar";
-import VideoTransPopUp from "../../components/VideoTransPopUp";
-import ProcessedVidPopUp from "../../components/ProcessedVidPopUp";
-import TranscriptionPopup from "../../components/VideoTextGenPopup"
+import { VideoTranscriptionPopup } from '../../components/VideoPopup/Transcription';
+import { VideoTranslationPopup } from '../../components/VideoPopup/FullPipeline';
 
 const Home = () => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -33,8 +32,8 @@ const Home = () => {
                 onOpenTranscription={handleOpenTrascriptionDialog} 
             />
             <HomeContent />
-            <VideoTransPopUp isOpen={isDialogOpen} onClose={handleCloseDialog} />
-            <TranscriptionPopup isOpen={isTranscription} onClose={handleCloseTranscriptionDialog} />
+            <VideoTranslationPopup isOpen={isDialogOpen} onClose={handleCloseDialog} />
+            <VideoTranscriptionPopup isOpen={isTranscription} onClose={handleCloseTranscriptionDialog} />
         </Layout>
     );
 };
