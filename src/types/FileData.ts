@@ -5,5 +5,5 @@ export interface FileData {
     file_name: string;
     folder: string;
     image: string;
-    user_id: string | null;
+    user_id: number | null;
 }

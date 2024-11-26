@@ -25,6 +25,6 @@ export interface Video {
     image_url: string
 }
 
-export interface VideoListResponse {
+export interface VideoList {
     videos: Video[]
 }

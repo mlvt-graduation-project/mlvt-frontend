@@ -7,10 +7,14 @@ import CardFeature from "../../CardFeature";
 import { Project} from "../../../types/Project";
 import { useAuth } from "../../../context/AuthContext";
 import { handleGetVideosByUserId } from "../../../utils/video.utils";
+import { getAudiosByUserId } from "../../../api/audio.api";
+import { getPresignedDownloadImageURL, getVideosByUserId } from "../../../api/video.api";
+import { getTranscriptionsByUserId } from "../../../api/transcription.api";
+import { mapStatusToProjectStatus } from "../../../types/ProjectStatus";
 
 const ProjectSection = () => {
     const theme = useTheme();
-    const { userId } = useAuth();
+    const userId = localStorage.getItem('userId');
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         console.log()
     }
@@ -32,21 +36,65 @@ const ProjectSection = () => {
     }
     
     useEffect(() => {
-        const fetchVideoData = async () => {
+        const fetchData = async () => {
             try {
                 if (!userId) {
                     setError('No user ID found in local storage');
                     return;
                 }
-                const projects = await handleGetVideosByUserId(userId);
-                setProjects(projects);
-                
+                const videoListResponse = await getVideosByUserId(userId);
+                const transcriptionListResponse = await getTranscriptionsByUserId(userId);
+                const audioListResponse = await getAudiosByUserId(userId);
+
+                // console.log(videoListResponse);
+                console.log(transcriptionListResponse);
+
+                const videoProjects = await Promise.all(
+                    videoListResponse.videos.map(async video => {
+                        const videoImageUrl = await getPresignedDownloadImageURL(video.video.id.toString());
+                        const videoLink = videoImageUrl.split('?X-Amz-Algorithm')[0].replace('raw_videos', 'video_frames'); 
+                        // console.log(video.video.id);
+                        // console.log(videoLink);
+                        return {
+                            id: video.video.id.toString(),
+                            thumbnail: videoLink || '',
+                            title: video.video.title,
+                            status: mapStatusToProjectStatus(video.video.status),
+                            createdAt: new Date(video.video.created_at),
+                            updatedAt: new Date(video.video.updated_at),
+                            type_project: 'Video Translation'
+                        };
+                    })
+                );
+
+                const transcriptionProjects = transcriptionListResponse.transcriptions.map(transcription => ({
+                    id: transcription.id.toString(),
+                    thumbnail: 'text.png',
+                    title: transcription.file_name || 'Transcription',
+                    status: mapStatusToProjectStatus('raw'),
+                    createdAt: new Date(transcription.created_at),
+                    updatedAt: new Date(transcription.updated_at),
+                    type_project: 'Transcription'
+                }));
+
+                const audioProjects = audioListResponse.audios.map(audio => ({
+                    id: audio.id.toString(),
+                    thumbnail: 'audio.png',
+                    title: audio.file_name || 'Audio',
+                    status: mapStatusToProjectStatus('raw'),
+                    createdAt: new Date(audio.created_at),
+                    updatedAt: new Date(audio.updated_at),
+                    type_project: 'Audio'
+                }))
+
+                const newProjects:Project[] = [...videoProjects, ...transcriptionProjects, ...audioProjects];
+                setProjects(newProjects);
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);
             }
         };
 
-        fetchVideoData();
+        fetchData();
     }, [userId]);
 
     return (

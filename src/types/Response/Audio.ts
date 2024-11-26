@@ -1,8 +1,8 @@
-export interface Transcription {
+export interface Audio {
     id: number,
     video_id: number,
     user_id: number,
-    text: string,
+    duration: number,
     lang: string,
     folder: string,
     file_name: string,
@@ -10,11 +10,11 @@ export interface Transcription {
     updated_at: string
 }
 
-export interface TranscriptionList {
-    transcriptions: Transcription[]
+export interface AudioList {
+    audios: Audio[]
 }
 
-export interface GetTranscriptionById {
-    transcription: Transcription,
+export interface GetAudioById {
+    audio: Audio,
     download_url: string
 }

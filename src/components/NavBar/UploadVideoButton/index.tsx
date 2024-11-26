@@ -1,37 +1,52 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import Theme from '../../../config/theme'
 import { useTheme } from '@mui/material/styles';
 import axios from 'axios';
 import { FileData } from '../../../types/FileData';
-import { getPresignedImageURL, getPresignedVideoURL, postVideo, uploadImageToS3, uploadVideoToS3 } from '../../../api/video.api';
+import { getPresignedImageURL, getPresignedVideoURL, postVideo, uploadVideoToS3 } from '../../../api/video.api';
 
+const s3ApiClient = axios.create({
+  // No base URL, timeouts, or headers needed here
+});
+
+const uploadImageToS3 = async (uploadUrl: string, file: File) => {
+  try {
+    const response = await s3ApiClient.put(uploadUrl, file, {
+      headers: {
+        'Content-Type': file.type  // As needed, based on your server's presigned URL expectations
+      }
+    });
+    return response;
+  } catch (error) {
+    console.error('Error uploading image to S3:', error);
+    throw error;
+  }
+}
 
 function UploadButton() {
   // Define the ref with a specific type HTMLInputElement and initialize as null
-  const [fileData, setFileData] = useState<FileData>({
+  let ref = useRef<FileData>({
     "title": "My Video Title",
     "duration": 300,
     "description": "A description of the video",
     "file_name": "vietnamese.mp4",
     "folder": "raw_videos",
     "image": "avatar.jpg",
-    "user_id": "123"
+    "user_id": 3
   })
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const theme = useTheme();
+
   const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      // console.log(file.name); // Log the file object to see the details
+      console.log(file.name); // Log the file object to see the details
+      ref.current.file_name = file.name;
+      ref.current.user_id = Number(localStorage.getItem('userId'));
       if (file) {
-        setFileData((prevData) => ({
-          ...prevData,
-          file_name: file.name,
-        }));
         if (file.type === "video/mp4") {
           // Extract first frame and save it as a file
           const imageFile = await extractFirstFrame(file);
@@ -42,6 +57,27 @@ function UploadButton() {
       }
     }
   };
+
+  // useEffect(() => {
+  //   // Assuming extractFirstFrame and uploadVideoImage return promises
+  //   if (selectedFile.type === "video/mp4") {
+  //     extractFirstFrame(selectedFile)
+  //       .then(imageFile => {
+  //         uploadVideoImage(imageFile)
+  //           .then(() => {
+  //             console.log('Video image uploaded successfully');
+  //           })
+  //           .catch(error => console.error('Error uploading video image:', error));
+  //       })
+  //       .catch(error => console.error('Error extracting first frame:', error));
+  //   }
+
+  //   uploadFile(selectedFile, selectedFile.type)
+  //     .then(() => {
+  //       console.log('File uploaded successfully');
+  //     })
+  //     .catch(error => console.error('Error uploading file:', error));
+  // }, [fileData])
 
   const saveFile = (file: File) => {
     const url = URL.createObjectURL(file);
@@ -77,6 +113,8 @@ function UploadButton() {
               console.log(imageName);
               const imageFile = new File([blob], imageName, { type: 'image/jpeg' });
               resolve(imageFile); // Return the file
+
+              ref.current.image = imageName;
             } else {
               reject(new Error("Could not generate image from canvas"));
             }
@@ -111,13 +149,8 @@ function UploadButton() {
 
   const uploadFile = async (file: File, fileType: string) => {
     try {
-
-      setFileData((prevData) => ({
-        ...prevData,
-        file_name: file.name,
-      }));
-
-      const responseAdd = await postVideo(fileData);
+      console.log(ref.current);
+      const responseAdd = await postVideo(ref.current);
 
       if (responseAdd.status === 201) {
         console.log('File added successfully:', responseAdd.data);
