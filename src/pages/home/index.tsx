@@ -2,8 +2,8 @@ import React, {useState} from 'react';
 import Layout from "../../layout/homepage";
 import HomeContent from "../../components/HomeContent";
 import NavBar from "../../components/NavBar";
-import { VideoTranscriptionPopup } from '../../components/VideoPopup/Transcription';
-import { VideoTranslationPopup } from '../../components/VideoPopup/FullPipeline';
+import { VideoTranscriptionPopup } from '../../components/VideoPopup/ModulePopup/Transcription';
+import { VideoTranslationPopup } from '../../components/VideoPopup/ModulePopup/FullPipeline';
 
 const Home = () => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -26,6 +26,7 @@ const Home = () => {
     }
 
     return (
+        
         <Layout>   
             <NavBar 
                 onOpenDialog={handleOpenDialog} 

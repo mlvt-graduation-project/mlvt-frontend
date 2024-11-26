@@ -67,7 +67,7 @@ export const postVideo = async (file: object) => {
 
 export const postVideoTranscription = async (videoId: number) => {
     try {
-        const response = await credentialAPI.post(`transcriptions/process/${videoId}`);
+        const response = await credentialAPI.post(`transcriptions/process/${videoId}`, {"model" : "whisper"});
         return response;
     } catch (error) {
         console.error('Posting Video Transcription to server', error);

@@ -1,6 +1,6 @@
 import React from "react";
 import { DialogContent } from "./PopupContent";
-import { BasePopup } from "../BaseComponent/BasePopup";
+import { BasePopup } from "../../BaseComponent/BasePopup";
 
 interface VideoTranslationPopupProps {
     isOpen: boolean

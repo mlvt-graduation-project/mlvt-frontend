@@ -2,14 +2,14 @@ import React, { useMemo, useState, useCallback } from "react";
 import {
     Box,
   } from "@mui/material";
-import ChangeViewBox from "../BaseComponent/ChangView"
-import { UploadVideoFromDevice } from "../BaseComponent/UploadFileFromDevice";
-import { UploadVideoFromUrl  } from "../BaseComponent/UploadVideoURL";
-import { FileData } from "../../../types/FileData";
-import { GenerateButton } from "../BaseComponent/GenerateButton";
-import UploadNotification from "../../UploadNotification";
-import { BrowseFile } from "../BaseComponent/BrowseMLVTFile";
-import { LoadingDots } from "../../StaticComponent/LoadingDot/LoadingDot";
+import ChangeViewBox from "../../BaseComponent/ModulePopup/ChangView"
+import { UploadVideoFromDevice } from "../../BaseComponent/ModulePopup/UploadFileFromDevice";
+import { UploadVideoFromUrl  } from "../../BaseComponent/ModulePopup/UploadVideoURL";
+import { FileData } from "../../../../types/FileData";
+import { GenerateButton } from "../../BaseComponent/ModulePopup/GenerateButton";
+import UploadNotification from "../../../UploadNotification";
+import { BrowseFile } from "../../BaseComponent/ModulePopup/BrowseMLVTFile";
+import { LoadingDots } from "../../../StaticComponent/LoadingDot/LoadingDot";
 
 interface UploadNoti {
     isOpen: boolean,

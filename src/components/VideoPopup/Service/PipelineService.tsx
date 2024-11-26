@@ -1,5 +1,5 @@
 import { uploadVideo, uploadVideoImage, extractFirstFrame} from "./VideoService"
-import { postVideoTranscription } from "../../../api/video.api"
+import { postVideoTranscription } from "../../../api/transcription.api"
 import { FileData } from "../../../types/FileData"
 
 export const uploadVideoToServer = async (file: File, fileData: FileData): Promise<number> => {

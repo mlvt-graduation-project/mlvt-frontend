@@ -2,11 +2,27 @@ import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui
 import { useTheme } from "@mui/material/styles"
 import SearchBar from "../../SearchBar";
 import React, { useEffect, useState } from "react";
-import ProcessedVidPopUp from "../../ProcessedVidPopUp";
+// import ProcessedVidPopUp from "../../ProcessedVidPopUp";
+import { ProcessedVideoPopUp } from "../../VideoPopup/ProcessedPopup";
+import { getListTranscriptionByUserId } from "../../../api/transcription.api";
 import CardFeature from "../../CardFeature";
 import { Project} from "../../../types/Project";
 import { useAuth } from "../../../context/AuthContext";
 import { handleGetVideosByUserId } from "../../../utils/video.utils";
+import { ProjectStatus } from "../../../types/ProjectStatus";
+
+type ExtendedProject =
+    | (Project & {
+        type_project: "translation";
+        translationId: string;
+        text: string;
+        lang: string;
+    })
+    | (Project & {
+        type_project: "transcription";
+        transcriptionId: number;
+        videoId: number;
+    });
 
 const ProjectSection = () => {
     const theme = useTheme();
@@ -39,7 +55,11 @@ const ProjectSection = () => {
                     return;
                 }
                 const projects = await handleGetVideosByUserId(userId);
-                setProjects(projects);
+                const rawProjects = projects.filter(item => item.status === ProjectStatus.Raw);
+                const transcriptionList = await getListTranscriptionByUserId(Number(userId))
+                const processProjects = projects.filter(item => item.status !== ProjectStatus.Raw);
+                
+                setProjects(rawProjects);
                 
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);
@@ -179,11 +199,7 @@ const ProjectSection = () => {
 
             {
                 selectedProject && (
-                    <ProcessedVidPopUp
-                        videoId = {videoId}
-                        isOpen={isPopUpOpen}
-                        onClose={handleClosePopUp}
-                    />
+                    <ProcessedVideoPopUp videoId={videoId} isOpen={isPopUpOpen} onClose={handleClosePopUp}/>
                 )
             }
 

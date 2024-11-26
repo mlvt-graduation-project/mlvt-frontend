@@ -1,7 +1,5 @@
 import React, { FC } from "react";
 import {
-  Box,
-  Button,
   Dialog,
   DialogContent,
   DialogTitle,

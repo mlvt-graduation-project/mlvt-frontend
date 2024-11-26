@@ -2,7 +2,6 @@ import { getVideosByUserId } from "../api/video.api";
 import { Project } from "../types/Project";
 import { mapStatusToProjectStatus } from "../types/ProjectStatus";
 
-
 export const handleGetVideosByUserId = async (userId: string): Promise<Project[]> => {
     try {
         const videoListResponse = await getVideosByUserId(userId);
