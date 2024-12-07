@@ -1,52 +1,61 @@
-import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material"
-import { useTheme } from "@mui/material/styles"
-import SearchBar from "../../SearchBar";
-import React, { useEffect, useState } from "react";
+import {
+    Box,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    Typography,
+} from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import SearchBar from '../../SearchBar';
+import React, { useEffect, useState } from 'react';
 // import ProcessedVidPopUp from "../../ProcessedVidPopUp";
-import { ProcessedVideoPopUp } from "../../VideoPopup/ProcessedPopup";
-import { getListTranscriptionByUserId } from "../../../api/transcription.api";
-import CardFeature from "../../CardFeature";
-import { Project} from "../../../types/Project";
-import { useAuth } from "../../../context/AuthContext";
-import { handleGetVideosByUserId } from "../../../utils/video.utils";
-import { ProjectStatus } from "../../../types/ProjectStatus";
+import { ProcessedVideoPopUp } from '../../VideoPopup/ProjectPopup';
+import { getListTranscriptionByUserId } from '../../../api/transcription.api';
+import CardFeature from '../../CardFeature';
+import { Project } from '../../../types/Project';
+import { useAuth } from '../../../context/AuthContext';
+import { handleGetVideosByUserId } from '../../../utils/video.utils';
+import { ProjectType } from '../../../types/Project';
+import { ProjectStatus } from '../../../types/ProjectStatus';
 
 type ExtendedProject =
     | (Project & {
-        type_project: "translation";
-        translationId: string;
-        text: string;
-        lang: string;
-    })
+          type_project: 'translation';
+          translationId: string;
+          text: string;
+          lang: string;
+      })
     | (Project & {
-        type_project: "transcription";
-        transcriptionId: number;
-        videoId: number;
-    });
+          type_project: 'transcription';
+          transcriptionId: number;
+          videoId: number;
+      });
 
 const ProjectSection = () => {
     const theme = useTheme();
     const { userId } = useAuth();
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log()
-    }
-    const [selectedProject, setSelectedProject] = React.useState<Project | null>(null);
+        console.log();
+    };
+    const [selectedProject, setSelectedProject] =
+        React.useState<Project | null>(null);
     const [isPopUpOpen, setIsPopUpOpen] = React.useState(false);
     const [dropdownValue, setDropdownValue] = React.useState('');
     const [videoId, setVideoId] = useState<number>(0);
     const [projects, setProjects] = useState<Project[]>([]);
-    
+
     const handleCardClick = (project: Project) => {
         setSelectedProject(project);
         setIsPopUpOpen(true);
-        setVideoId(parseInt(project.id))
-    }
+        setVideoId(parseInt(project.id));
+    };
 
     const handleClosePopUp = () => {
         setIsPopUpOpen(false);
         setSelectedProject(null);
-    }
-    
+    };
+
     useEffect(() => {
         const fetchVideoData = async () => {
             try {
@@ -55,12 +64,8 @@ const ProjectSection = () => {
                     return;
                 }
                 const projects = await handleGetVideosByUserId(userId);
-                const rawProjects = projects.filter(item => item.status === ProjectStatus.Raw);
-                const transcriptionList = await getListTranscriptionByUserId(Number(userId))
-                const processProjects = projects.filter(item => item.status !== ProjectStatus.Raw);
-                
-                setProjects(rawProjects);
-                
+
+                setProjects(projects);
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);
             }
@@ -72,17 +77,21 @@ const ProjectSection = () => {
     return (
         <Box>
             {/* YOUR PROJECT - SEARCH BAR */}
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginBottom: '1.6rem'
-            }}>
-                <Typography sx={{
-                    fontFamily: theme.typography.body1,
-                    fontWeight: 'bold',
-                    fontSize: '1.8rem'
-                }}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginBottom: '1.6rem',
+                }}
+            >
+                <Typography
+                    sx={{
+                        fontFamily: theme.typography.body1,
+                        fontWeight: 'bold',
+                        fontSize: '1.8rem',
+                    }}
+                >
                     Your Projects
                 </Typography>
                 <Box
@@ -111,13 +120,12 @@ const ProjectSection = () => {
                     </Typography>
                 </Box>
 
-
                 {/* Search bar */}
                 <Box>
                     <SearchBar
-                        placeholder='Search'
+                        placeholder="Search"
                         onChange={handleSearchChange}
-                        searchBarWidth='20rem'
+                        searchBarWidth="20rem"
                     />
                 </Box>
                 {/* Sort for search */}
@@ -147,23 +155,25 @@ const ProjectSection = () => {
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                 borderColor: theme.background.main,
                             },
-
                         }}
                         MenuProps={{
                             PaperProps: {
                                 sx: {
                                     borderRadius: '0.8rem',
-                                    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                                    boxShadow:
+                                        '0px 4px 12px rgba(0, 0, 0, 0.1)',
                                     marginTop: '0.5rem',
                                     '& .MuiMenuItem-root': {
                                         fontFamily: theme.typography.body1,
                                         fontSize: '0.8rem',
                                         '&:hover': {
-                                            backgroundColor: theme.background.lightPink,
+                                            backgroundColor:
+                                                theme.background.lightPink,
                                         },
                                         '&.Mui-selected': {
-                                            backgroundColor: theme.background.lightPurple,
-                                        }
+                                            backgroundColor:
+                                                theme.background.lightPurple,
+                                        },
                                     },
                                 },
                             },
@@ -177,17 +187,18 @@ const ProjectSection = () => {
                         <MenuItem value="5">Lip Synchronization</MenuItem>
                     </Select>
                 </FormControl>
-
             </Box>
 
             {/* PROJECTS */}
-            <Box sx={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gridAutoRows: 'minmax(100px, auto)',
-                justifyItems: 'center',
-                rowGap: '3rem',
-            }}>
+            <Box
+                sx={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gridAutoRows: 'minmax(100px, auto)',
+                    justifyItems: 'center',
+                    rowGap: '3rem',
+                }}
+            >
                 {projects.map((project) => (
                     <CardFeature
                         key={project.id}
@@ -197,18 +208,20 @@ const ProjectSection = () => {
                 ))}
             </Box>
 
-            {
-                selectedProject && (
-                    <ProcessedVideoPopUp videoId={videoId} isOpen={isPopUpOpen} onClose={handleClosePopUp}/>
-                )
-            }
-
+            {selectedProject && (
+                <ProcessedVideoPopUp
+                    videoId={videoId}
+                    isOpen={isPopUpOpen}
+                    onClose={handleClosePopUp}
+                    type={ProjectType.Fullpipeline}
+                />
+            )}
         </Box>
-    )
-}
+    );
+};
 
-export default ProjectSection
+export default ProjectSection;
 
 function setError(arg0: string) {
-    throw new Error("Function not implemented.");
+    throw new Error('Function not implemented.');
 }
