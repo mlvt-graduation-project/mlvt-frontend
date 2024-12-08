@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material/styles';
-import LoginSignup from '../../layout/loginSignup';
+import LoginSignup from '../../layout/LoginRegistration';
 import { Box, Typography } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
