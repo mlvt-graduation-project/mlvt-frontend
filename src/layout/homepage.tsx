@@ -34,18 +34,6 @@ const HomePage = ({ children }: HomepageProps) => {
 
             </Box>
             {/* Footer */}
-            {/* <Box sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "50px",
-                backgroundColor: "black",
-                color: "white",
-                fontSize: "1.5em"
-            }}>
-                <p>Footer</p>
-
-            </Box> */}
             <Footer />
         </Box>
     )
