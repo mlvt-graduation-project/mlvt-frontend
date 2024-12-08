@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, TextField, Button, Typography, Divider, IconButton, InputAdornment, Snackbar } from "@mui/material";
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import LoginSignup from '../../layout/loginSignup';
+import LoginSignup from '../../layout/LoginRegistration';
 import { useTheme } from '@mui/material/styles';
 import GoogleLoginButton from '../../components/SocialLoginButton/GoogleLoginButton';
 import FacebookLoginButton from '../../components/SocialLoginButton/FacebookLoginButton';
