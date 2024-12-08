@@ -17,7 +17,7 @@ interface UserProfileProps {
 }
 
 const menuItems = [
-    { label: 'Edit account', icon: <AccountCircle /> },
+    { label: 'Edit account', icon: <AccountCircle />, path: '/edit_account' },
     { label: 'Premium membership', icon: <WorkspacePremiumSharp /> },
     { label: 'Language: English', icon: <Language /> },
     { label: 'Appearance: Light', icon: <LightMode /> },
@@ -170,7 +170,11 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                         <MenuItem
                             onClick={()=>{
                                 handleDropdownClose();
-                                if (item.label === 'Log out') handleLogout();
+                                if (item.label === 'Log out') {
+                                    handleLogout();
+                                } else if (item.path) {
+                                    navigate(item.path); // Navigate to the specified path
+                                }
                             }}
                             sx={{
                                 padding: '0.3rem 1.5rem',

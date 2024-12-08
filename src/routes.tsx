@@ -8,6 +8,8 @@ import EmailOTP from "./pages/email_otp";
 import VerifyOTP from "./pages/verify_otp";
 import Storage from "./pages/storage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PersonalDetails from "./pages/edit_account";
+import EditAccount from "./pages/edit_account";
 
 export const router = createBrowserRouter([
     {
@@ -48,6 +50,11 @@ export const router = createBrowserRouter([
     {
         path: '/storage',
         element: <Storage />,
+        errorElement: <Error />,
+    },
+    {
+        path: '/edit_account',
+        element: <EditAccount />,
         errorElement: <Error />,
     }
 ])
