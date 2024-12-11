@@ -3,9 +3,11 @@ import DownloadIcon from '@mui/icons-material/Download';
 export const TextView = ({
     displayText,
     textTittle,
+    customizeSx,
 }: {
     displayText: string;
     textTittle: string;
+    customizeSx?: object;
 }) => {
     const handleDownload = () => {
         const element = document.createElement('a');
@@ -27,6 +29,7 @@ export const TextView = ({
                 display: 'inline-block',
                 overflow: 'hidden',
                 position: 'relative',
+                ...customizeSx,
             }}
         >
             <Box

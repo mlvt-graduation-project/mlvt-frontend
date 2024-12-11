@@ -26,10 +26,7 @@ interface RealatedOutputProps {
     splitTwoColumn: boolean;
 }
 
-export const RealatedOutput: React.FC<RealatedOutputProps> = ({
-    childrenData,
-    splitTwoColumn,
-}) => {
+export const RealatedOutput: React.FC<RealatedOutputProps> = ({ childrenData, splitTwoColumn }) => {
     // const defaultSx = {};
 
     const splitTwoColumnSx = splitTwoColumn
@@ -79,6 +76,7 @@ export const RealatedOutput: React.FC<RealatedOutputProps> = ({
                             key={index}
                             displayText={child.props.displayText}
                             textTittle={child.props.textTittle}
+                            customizeSx={customChildSx}
                         />
                     );
                 }

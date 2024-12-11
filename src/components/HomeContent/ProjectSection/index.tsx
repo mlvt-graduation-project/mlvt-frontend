@@ -1,11 +1,4 @@
-import {
-    Box,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    Typography,
-} from '@mui/material';
+import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import SearchBar from '../../SearchBar';
 import React, { useEffect, useState } from 'react';
@@ -19,27 +12,13 @@ import { handleGetVideosByUserId } from '../../../utils/video.utils';
 import { ProjectType } from '../../../types/Project';
 import { ProjectStatus } from '../../../types/ProjectStatus';
 
-type ExtendedProject =
-    | (Project & {
-          type_project: 'translation';
-          translationId: string;
-          text: string;
-          lang: string;
-      })
-    | (Project & {
-          type_project: 'transcription';
-          transcriptionId: number;
-          videoId: number;
-      });
-
 const ProjectSection = () => {
     const theme = useTheme();
     const { userId } = useAuth();
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         console.log();
     };
-    const [selectedProject, setSelectedProject] =
-        React.useState<Project | null>(null);
+    const [selectedProject, setSelectedProject] = React.useState<Project | null>(null);
     const [isPopUpOpen, setIsPopUpOpen] = React.useState(false);
     const [dropdownValue, setDropdownValue] = React.useState('');
     const [videoId, setVideoId] = useState<number>(0);
@@ -64,7 +43,6 @@ const ProjectSection = () => {
                     return;
                 }
                 const projects = await handleGetVideosByUserId(userId);
-
                 setProjects(projects);
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);
@@ -122,11 +100,7 @@ const ProjectSection = () => {
 
                 {/* Search bar */}
                 <Box>
-                    <SearchBar
-                        placeholder="Search"
-                        onChange={handleSearchChange}
-                        searchBarWidth="20rem"
-                    />
+                    <SearchBar placeholder="Search" onChange={handleSearchChange} searchBarWidth="20rem" />
                 </Box>
                 {/* Sort for search */}
                 <FormControl
@@ -160,19 +134,16 @@ const ProjectSection = () => {
                             PaperProps: {
                                 sx: {
                                     borderRadius: '0.8rem',
-                                    boxShadow:
-                                        '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                                    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
                                     marginTop: '0.5rem',
                                     '& .MuiMenuItem-root': {
                                         fontFamily: theme.typography.body1,
                                         fontSize: '0.8rem',
                                         '&:hover': {
-                                            backgroundColor:
-                                                theme.background.lightPink,
+                                            backgroundColor: theme.background.lightPink,
                                         },
                                         '&.Mui-selected': {
-                                            backgroundColor:
-                                                theme.background.lightPurple,
+                                            backgroundColor: theme.background.lightPurple,
                                         },
                                     },
                                 },
@@ -200,11 +171,7 @@ const ProjectSection = () => {
                 }}
             >
                 {projects.map((project) => (
-                    <CardFeature
-                        key={project.id}
-                        project={project}
-                        onclick={() => handleCardClick(project)}
-                    />
+                    <CardFeature key={project.id} project={project} onclick={() => handleCardClick(project)} />
                 ))}
             </Box>
 
@@ -213,7 +180,7 @@ const ProjectSection = () => {
                     videoId={videoId}
                     isOpen={isPopUpOpen}
                     onClose={handleClosePopUp}
-                    type={ProjectType.Fullpipeline}
+                    type={selectedProject.type_project}
                 />
             )}
         </Box>

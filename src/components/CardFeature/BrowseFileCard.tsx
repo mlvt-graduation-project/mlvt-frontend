@@ -1,52 +1,34 @@
 import React, { useState } from 'react';
-import { Card, CardContent, Typography, Avatar, Box, Chip, Icon, IconButton, TextField } from '@mui/material';
+import { Card, CardContent, Typography, Box, Chip, Button } from '@mui/material';
 import { Project } from '../../types/Project';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
 import moment from 'moment';
 import { useTheme } from '@mui/material/styles';
-import axios from 'axios';
-import { Bookmark, BookmarkBorder, EditSharp as EditSharpIcon, Circle as CircleIcon } from '@mui/icons-material';
-import { ProjectStatus, toDisplayText } from '../../types/ProjectStatus';
+import { Circle as CircleIcon } from '@mui/icons-material';
+import { toDisplayText } from '../../types/ProjectStatus';
+import { ProcessedVideoPopUp } from '../VideoPopup/ProjectPopup';
 
-interface CardFeatureProps {
+interface BrowseFileCardProps {
     project: Project;
+    customSx?: object;
+    blueBoxOutside?: boolean;
     onclick: () => void;
 }
 
-const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
+export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
+    project,
+    onclick,
+    customSx,
+    blueBoxOutside = false,
+}) => {
     const theme = useTheme();
-    const [isBookmarked, setIsBookmarked] = React.useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [title, setTitle] = useState(project.title);
-
-    const handleEditClick = () => {
-        setIsEditing(true);
-    };
-
-    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setTitle(e.target.value);
-    };
-
-    const handleTitleBlur = () => {
-        setIsEditing(false);
-        // onUpdateTitle(project.id, title); // Call the update function to save changes
-    };
-
-    const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            setIsEditing(false);
-            // onUpdateTitle(project.id, title); // Save changes on Enter key press
-        }
-    };
+    const [viewContent, setViewContent] = useState<boolean>(false);
 
     const handleClick = () => {
         onclick();
     };
 
-    const handleBookmarkClick = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setIsBookmarked((prev) => !prev);
-        console.log('Bookmark clicked');
+    const handleCloseViewContent = () => {
+        setViewContent(false);
     };
 
     return (
@@ -56,12 +38,14 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                 width: '22rem',
                 height: '18rem',
                 borderRadius: '0.5rem',
-                boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.55)',
+                boxShadow: blueBoxOutside ? '0px 0px 12px rgba(0,0,255)' : '0px 2px 6px rgba(0, 0, 0, 0.55)',
                 overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column',
                 padding: '0.4rem',
+                ...customSx,
             }}
+            onClick={handleClick}
         >
             {/* Image section */}
             <Box
@@ -72,7 +56,6 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                     borderRadius: '0.5rem',
                     overflow: 'hidden',
                 }}
-                onClick={handleClick}
             >
                 <img
                     src={project.thumbnail}
@@ -83,24 +66,6 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                         objectFit: 'fill',
                     }}
                 />
-
-                {/* Bookmark icon */}
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: '0.1rem',
-                        right: '0.1rem',
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <IconButton onClick={handleBookmarkClick} sx={{ padding: '0' }}>
-                        {isBookmarked ? (
-                            <Bookmark sx={{ color: theme.fontColor.yellow, fontSize: '2rem' }} />
-                        ) : (
-                            <BookmarkBorder sx={{ color: theme.fontColor.yellow, fontSize: '2rem' }} />
-                        )}
-                    </IconButton>
-                </Box>
             </Box>
 
             {/* Card Content */}
@@ -123,38 +88,16 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                         alignItems: 'center',
                     }}
                 >
-                    {isEditing ? (
-                        <TextField
-                            value={title}
-                            onChange={handleTitleChange}
-                            onBlur={handleTitleBlur}
-                            onKeyDown={handleTitleKeyDown}
-                            variant="standard"
-                            autoFocus
-                            sx={{
-                                fontFamily: theme.typography.body1.fontFamily,
-                                fontSize: '1rem',
-                                fontWeight: 550,
-                                marginRight: '0.5rem',
-                                flex: '1',
-                            }}
-                        />
-                    ) : (
-                        <Typography
-                            sx={{
-                                fontFamily: theme.typography.body1.fontFamily,
-                                color: theme.background.main,
-                                fontWeight: 550,
-                                fontSize: '1rem',
-                            }}
-                        >
-                            {title} - {project.id}
-                        </Typography>
-                    )}
-
-                    <IconButton onClick={handleEditClick} sx={{ color: theme.background.main }}>
-                        <EditSharpIcon fontSize="small" />
-                    </IconButton>
+                    <Typography
+                        sx={{
+                            fontFamily: theme.typography.body1.fontFamily,
+                            color: theme.background.main,
+                            fontWeight: 550,
+                            fontSize: '0.9rem',
+                        }}
+                    >
+                        {project.title} - {project.id}
+                    </Typography>
                 </Box>
 
                 {/* Created Time */}
@@ -162,7 +105,7 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                     sx={{
                         fontFamily: theme.typography.body1.fontFamily,
                         color: theme.fontColor.gray,
-                        fontSize: '0.9rem',
+                        fontSize: '0.8rem',
                     }}
                 >
                     Created at: {moment(project.createdAt).format('DD/MM/YYYY')}
@@ -181,7 +124,7 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                         icon={
                             <CircleIcon
                                 sx={{
-                                    fontSize: '0.8rem',
+                                    fontSize: '0.7rem',
                                     color: `${theme.status[project.status].fontColor} !important`,
                                     margin: '0',
                                     padding: '0',
@@ -192,25 +135,51 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                             backgroundColor: theme.status[project.status].backgroundColor,
                             color: theme.status[project.status].fontColor,
                             fontFamily: theme.typography.body1.fontFamily,
-                            fontSize: '0.8rem',
+                            fontSize: '0.7rem',
                             fontWeight: 'bold',
-                            borderRadius: '0.5rem',
+                            borderRadius: '0.7rem',
                         }}
                     />
+                    <Button
+                        aria-label="view"
+                        data-ignore="true"
+                        sx={{
+                            backgroundColor: theme.background.lightPink,
+                            color: theme.fontColor.gray,
+                            fontFamily: theme.typography.body1.fontFamily,
+                            fontSize: '0.7rem',
+                            borderRadius: '0.5rem',
+                            textTransform: 'none',
+                            fontWeight: 'bold',
+                        }}
+                        onClick={(event) => {
+                            event.stopPropagation(); // Prevent click from triggering parent handler
+                            setViewContent(true);
+                        }}
+                    >
+                        View
+                    </Button>
                     <Chip
                         label={project.type_project}
                         sx={{
                             backgroundColor: theme.background.lightPink,
                             color: theme.fontColor.gray,
                             fontFamily: theme.typography.body1.fontFamily,
-                            fontSize: '0.8rem',
+                            fontSize: '0.7rem',
                             borderRadius: '0.5rem',
                         }}
                     />
                 </Box>
             </CardContent>
+            {viewContent && (
+                <ProcessedVideoPopUp
+                    videoId={parseInt(project.id)}
+                    isOpen={viewContent}
+                    onClose={handleCloseViewContent}
+                    type={project.type_project}
+                    hideNavBar={true}
+                />
+            )}
         </Card>
     );
 };
-
-export default CardFeature;

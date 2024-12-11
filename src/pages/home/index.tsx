@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Layout from '../../layout/homepage';
 import HomeContent from '../../components/HomeContent';
 import NavBar from '../../components/NavBar';
-import { VideoTranscriptionPopup } from '../../components/VideoPopup/ProcessTriggerPopup/Transcription';
+import { TextGenerationPopup } from '../../components/VideoPopup/ProcessTriggerPopup/TextGeneration';
 import { TextTranslationPopup } from '../../components/VideoPopup/ProcessTriggerPopup/TextTranslation';
 import { VideoTranslationPopup } from '../../components/VideoPopup/ProcessTriggerPopup/VideoTranslation';
 import { LipsyncPopup } from '../../components/VideoPopup/ProcessTriggerPopup/LipSync';
@@ -64,7 +64,7 @@ const Home = () => {
             />
             <HomeContent />
             <VideoTranslationPopup isOpen={isVideoTranslation} onClose={handleCloseVideoTranslationDialog} />
-            <VideoTranscriptionPopup isOpen={isVideoTranscription} onClose={handleCloseTranscriptionDialog} />
+            <TextGenerationPopup isOpen={isVideoTranscription} onClose={handleCloseTranscriptionDialog} />
             <TextTranslationPopup isOpen={isTextTranslation} onClose={handleCloseTextTranslationDialogg} />
             <VoiceGenerationPopup isOpen={isVoiceGeneration} onClose={handleCloseVoiceGenerationDialog} />
             <LipsyncPopup isOpen={isLipsync} onClose={handleCloseLipsyncDialog} />

@@ -11,9 +11,7 @@ interface ContentProps {
 }
 
 export const TextGenerationContent: React.FC<ContentProps> = ({ videoId }) => {
-    const [viewState, setViewState] = useState<
-        'translated video' | 'related output'
-    >('translated video');
+    const [viewState, setViewState] = useState<'translated video' | 'related output'>('translated video');
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
 
@@ -55,8 +53,7 @@ export const TextGenerationContent: React.FC<ContentProps> = ({ videoId }) => {
                                 type: 'text',
                                 props: {
                                     textTittle: "Video's extracted text",
-                                    displayText:
-                                        'Some text here \n asldfkjasdlfkjaslkdjlkasjdaklsdj \n asdjkfhlasfhasdljhasfjkasldfjhsdafkjlahdfjklh \n asldfkjasdlfkjaslkdjlkasjdaklsdj \n asdjkfhlasfhasdljhasfjkasldfjhsdafkjlahdfjklh \n asldfkjasdlfkjaslkdjlkasjdaklsdj \n asdjkfhlasfhasdljhasfjkasldfjhsdafkjlahdfjklh \n asldfkjasdlfkjaslkdjlkasjdaklsdj \n asdjkfhlasfhasdljhasfjkasldfjhsdafkjlahdfjklh \n asldfkjasdlfkjaslkdjlkasjdaklsdj \n asdjkfhlasfhasdljhasfjkasldfjhsdafkjlahdfjklh \n asldfkjasdlfkjaslkdjlkasjdaklsdj \n asdjkfhlasfhasdljhasfjkasldfjhsdafkjlahdfjklh',
+                                    displayText: 'Some text here ',
                                 },
                             },
                         ]}

@@ -8,10 +8,7 @@ import { checkValidUrl } from '../../Service/CheckValidUrl';
 import { GenerateButton } from '../BaseComponent/GenerateButton';
 import UploadNotification from '../../../UploadNotification';
 import { BrowseFile } from '../BaseComponent/BrowseMLVTFile';
-import {
-    transcribeVideo,
-    uploadVideoToServer,
-} from '../../Service/PipelineService';
+import { transcribeVideo, uploadVideoToServer } from '../../Service/PipelineService';
 import { LoadingDots } from '../../../StaticComponent/LoadingDot/LoadingDot';
 import { VideoFileType } from '../../../../types/FileType';
 
@@ -21,9 +18,7 @@ interface UploadNoti {
 }
 
 export const DialogContent: React.FC = () => {
-    const [viewState, setViewState] = useState<'upload' | 'url' | 'browse'>(
-        'upload'
-    );
+    const [viewState, setViewState] = useState<'upload' | 'url' | 'browse'>('upload');
     const [deviceFile, setDeviceFile] = useState<File | null>(null);
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const [disableGenerate, setDisableGenerate] = useState<boolean>(true);
@@ -126,9 +121,7 @@ export const DialogContent: React.FC = () => {
                 handleSubmit: () => console.log('click submit url'),
                 component: (
                     <UploadVideoFromUrl
-                        handleChangeDisableGenerate={
-                            handleChangeDisableGenerate
-                        }
+                        handleChangeDisableGenerate={handleChangeDisableGenerate}
                         setURLInput={setVideoUrl}
                     />
                 ),
@@ -140,12 +133,7 @@ export const DialogContent: React.FC = () => {
                 component: <BrowseFile />,
             },
         ],
-        [
-            deviceFile,
-            handleChangeFileData,
-            handleChangeDisableGenerate,
-            handleGenerateFileFromDevice,
-        ]
+        [deviceFile, handleChangeFileData, handleChangeDisableGenerate, handleGenerateFileFromDevice]
     );
 
     useEffect(() => {
@@ -168,8 +156,7 @@ export const DialogContent: React.FC = () => {
 
     const activeView = Views.find((view) => view.viewState === viewState);
     const ActiveComponent = activeView?.component || null;
-    const handleGenerate =
-        activeView?.handleSubmit || (() => Promise.resolve());
+    const handleGenerate = activeView?.handleSubmit || (() => Promise.resolve());
 
     return (
         <>
@@ -184,10 +171,7 @@ export const DialogContent: React.FC = () => {
                 {ActiveComponent}
             </Box>
             {isLoading && <LoadingDots content="Uploading video" />}
-            <GenerateButton
-                isDisable={disableGenerate}
-                handleGenerate={handleGenerate}
-            />
+            <GenerateButton isDisable={disableGenerate} handleGenerate={handleGenerate} />
             <UploadNotification
                 isOpen={uploadNoti['isOpen']}
                 uploadStatus={uploadNoti['status']}

@@ -7,7 +7,7 @@ export interface Project {
     status: ProjectStatus;
     createdAt: Date;
     updatedAt: Date;
-    type_project: string;
+    type_project: ProjectType;
 }
 
 export enum ProjectType {
@@ -16,10 +16,7 @@ export enum ProjectType {
     TextTranslation = 'text translation',
     AudioGeneration = 'audio generation',
     Lipsync = 'lipsync',
-    RawVideo = 'raw video',
-    ResultVideo = 'result video',
-    RawText = 'raw text',
-    ResultText = 'result text',
-    RawAudio = 'raw audio',
-    ResultAudio = 'result audio',
+    Video = 'video',
+    Text = 'text',
+    Audio = 'audio',
 }

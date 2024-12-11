@@ -111,7 +111,7 @@ export const DialogContent: React.FC = () => {
                 ),
             },
             {
-                text: 'BROWSE MLVT',
+                text: 'CUSTOM VOICE',
                 viewState: 'custom',
                 handleSubmit: () => console.log('Browse MLVT clicked'),
                 component: (

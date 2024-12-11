@@ -2,15 +2,12 @@ import React from 'react';
 import { DialogContent } from './PopupContent';
 import { BasePopup } from '../../BasePopup/BasePopup';
 
-interface VideoTranslationPopupProps {
+interface TextGenerationPopupProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
-export const VideoTranscriptionPopup: React.FC<VideoTranslationPopupProps> = ({
-    isOpen,
-    onClose,
-}) => {
+export const TextGenerationPopup: React.FC<TextGenerationPopupProps> = ({ isOpen, onClose }) => {
     return (
         <>
             <BasePopup

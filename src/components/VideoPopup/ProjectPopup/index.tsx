@@ -12,6 +12,7 @@ interface ProcessedVideoProps {
     videoId: number;
     isOpen: boolean;
     type: ProjectType;
+    hideNavBar?: boolean;
     onClose: () => void;
 }
 
@@ -26,6 +27,7 @@ export const ProcessedVideoPopUp: React.FC<ProcessedVideoProps> = ({
     type,
     isOpen,
     onClose,
+    hideNavBar = false,
 }) => {
     const childComponent: childComponentType[] = [
         {
@@ -54,9 +56,9 @@ export const ProcessedVideoPopUp: React.FC<ProcessedVideoProps> = ({
             childComponent: <></>,
         },
         {
-            type: ProjectType.RawVideo,
-            tittle: 'Raw video',
-            childComponent: <RawVideoContent videoId={videoId} />,
+            type: ProjectType.Video,
+            tittle: 'Video',
+            childComponent: <RawVideoContent videoId={videoId} hideNavBar={hideNavBar} />,
         },
     ];
     const matchingComponent = childComponent.find((item) => item.type === type);
@@ -64,7 +66,7 @@ export const ProcessedVideoPopUp: React.FC<ProcessedVideoProps> = ({
     return (
         <>
             <BasePopup
-                tittle="Video Transcription"
+                tittle={matchingComponent?.tittle || 'Video translation'}
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={ProjectStatus.Complete}

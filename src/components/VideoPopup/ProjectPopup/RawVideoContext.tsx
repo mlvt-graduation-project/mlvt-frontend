@@ -5,9 +5,10 @@ import { OriginalVideo } from './BaseComponent/OriginalVideo/OriginalVideo';
 
 interface ContentProps {
     videoId: number;
+    hideNavBar?: boolean;
 }
 
-export const RawVideoContent: React.FC<ContentProps> = ({ videoId }) => {
+export const RawVideoContent: React.FC<ContentProps> = ({ videoId, hideNavBar = false }) => {
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
 
     useEffect(() => {
@@ -25,7 +26,7 @@ export const RawVideoContent: React.FC<ContentProps> = ({ videoId }) => {
 
     return (
         <>
-            <InfoNav />
+            {!hideNavBar && <InfoNav />}
             <OriginalVideo videoUrl={videoUrl}></OriginalVideo>
         </>
     );

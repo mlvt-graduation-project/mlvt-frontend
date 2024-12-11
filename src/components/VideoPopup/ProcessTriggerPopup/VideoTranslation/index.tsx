@@ -7,10 +7,7 @@ interface VideoTranslationPopupProps {
     onClose: () => void;
 }
 
-export const VideoTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
-    isOpen,
-    onClose,
-}) => {
+export const VideoTranslationPopup: React.FC<VideoTranslationPopupProps> = ({ isOpen, onClose }) => {
     return (
         <>
             <BasePopup

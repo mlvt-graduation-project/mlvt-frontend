@@ -39,6 +39,7 @@ export const UploadVideoFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
     const [localFileType, setLocalFileType] = useState<'video' | 'audio' | 'text' | null>(null);
     const [fileContent, setFileContent] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const joinedFileTypes = fileTypeList.map((fileType) => fileType).join(', ');
 
     useEffect(() => {
         if (selectedFile) {
@@ -86,8 +87,7 @@ export const UploadVideoFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
                     }
                 }
             } else {
-                const joinedFileTypes = fileTypeList.map((fileType) => fileType).join(', ');
-                setErrorMessage(`Wrong input file type. Supported types: ${joinedFileTypes}`);
+                setErrorMessage(`Wrong input file type`);
             }
         },
     });
@@ -214,7 +214,14 @@ export const UploadVideoFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
                                 fontFamily: 'Inter, Arial, sans-serif',
                             }}
                         >
-                            {selectedFile ? selectedFile.name : 'Drag and drop a file here'}
+                            {selectedFile ? (
+                                selectedFile.name
+                            ) : (
+                                <>
+                                    Drag and drop a file here <br />
+                                    Supported types: {joinedFileTypes}
+                                </>
+                            )}
                         </Typography>
                     </Box>
                     {errorMessage && (
