@@ -13,11 +13,14 @@ import {
   ListItemText,
   useTheme,
   Divider,
+  Link,
 } from "@mui/material";
 import { AccountCircle, Lock, Subscriptions } from "@mui/icons-material";
 import PersonalDetails from "../../components/PersonalDetails";
 import { getUser, updateUser } from "../../api/user.api";
 import { useAuth } from "../../context/AuthContext";
+import ChangePassword from "../../components/ChangePassword";
+import Subscription from "../../components/Subscription";
 
 interface UserDetails {
     firstName: string;
@@ -39,9 +42,10 @@ const EditAccount: React.FC = () => {
         createdDate: "2024-04-30",
         userRole: "USER",
         premiumExpiredDate: "",
-        avatarSrc: ""
+        avatarSrc: "image.jpeg"
     });
     const [isLoading, setIsLoading] = useState(true);
+    const [activeComponent, setActiveComponent] = useState("personalDetails");
     const theme = useTheme();
     const { userId } = useAuth();
 
@@ -107,11 +111,13 @@ const EditAccount: React.FC = () => {
     return (
         <Box
             sx={{
-            display: "flex", // Align items horizontally
-            flexDirection: "row", // Horizontal layout
-            paddingTop: 4,
-            paddingRight: 10,
-            paddingLeft: 10,
+                display: "flex", // Align items horizontally
+                flexDirection: "row", // Horizontal layout
+                paddingTop: 4,
+                paddingBottom: 4,
+                paddingRight: 10,
+                paddingLeft: 10,
+                height: "100vh",
             }}
         >
             {/* Left Section */}
@@ -124,80 +130,87 @@ const EditAccount: React.FC = () => {
                 >
                     {/* Logo Section */}
                     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginBottom: "1.5rem" }}>
-                        <Box
-                            component="img"
-                            src={require("./image.jpeg")}
-                            alt="Logo"
-                            sx={{
-                            width: 120,
-                            height: 120,
-                            marginBottom: "1rem",
-                            borderRadius: "0.8rem",
-                            }}
-                        />
-                            <Typography variant="h6" sx={{ fontWeight: "bold", color: theme.background.main, textAlign: "center" }}>
-                                Multi-language Video Translation
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: "#757575", textAlign: "center", marginTop: "0.5rem" }}
-                            >
-                                Manage your personal account settings
-                            </Typography>
-                        </Box>
-
-                        {/* Account Settings */}
+                        <Link href="/">
+                            <Box
+                                component="img"
+                                src={require("./image.jpeg")}
+                                alt="Logo"
+                                sx={{
+                                width: 120,
+                                height: 120,
+                                marginBottom: "1rem",
+                                borderRadius: "0.8rem",
+                                }}
+                            />
+                        </Link>
+                        <Typography variant="h6" sx={{ fontWeight: "bold", color: theme.background.main, textAlign: "center" }}>
+                            Multi-language Video Translation
+                        </Typography>
                         <Typography
                             variant="body2"
-                            sx={{
-                                fontWeight: "bold",
-                                color: "#424242",
-                                marginBottom: "1rem",
-                            }}
+                            sx={{ color: "#757575", textAlign: "center", marginTop: "0.5rem" }}
                         >
-                            Account settings
+                            Manage your personal account settings
                         </Typography>
+                    </Box>
 
-                        {/* Options */}
-                        <List>
+                    {/* Account Settings */}
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            fontWeight: "bold",
+                            color: "#424242",
+                            marginBottom: "1rem",
+                        }}
+                    >
+                        Account settings
+                    </Typography>
+
+                    {/* Options */}
+                    <List>
                         <ListItem
                             button
+                            onClick={() => setActiveComponent("personalDetails")}
                             sx={{
-                            backgroundColor: "#F3E5F5",
-                            borderRadius: "0.5rem",
-                            marginBottom: "0.5rem",
-                            "&:hover": { backgroundColor: "#D1C4E9" },
+                                backgroundColor: activeComponent === "personalDetails" ? theme.background.main : "transparent",
+                                borderRadius: "0.5rem",
+                                marginBottom: "0.5rem",
+                                "&:hover": { backgroundColor: "#D1C4E9" },
                             }}
                         >
                             <ListItemIcon>
-                            <AccountCircle sx={{ color: "#5E35B1" }} />
+                                <AccountCircle sx={{ color: activeComponent === "personalDetails" ? "#FFFFFF" : "#757575" }} />
                             </ListItemIcon>
-                            <ListItemText primary="Personal details" sx={{ color: "#5E35B1", fontWeight: "bold" }} />
+                            <ListItemText primary="Personal details" sx={{ color: activeComponent === "personalDetails" ? "#FFFFFF" : "#757575", fontWeight: "bold" }} />
                         </ListItem>
                         <ListItem
                             button
+                            onClick={() => setActiveComponent("changePassword")}
                             sx={{
-                            borderRadius: "0.5rem",
-                            marginBottom: "0.5rem",
-                            "&:hover": { backgroundColor: "#F5F5F5" },
+                                backgroundColor: activeComponent === "changePassword" ? theme.background.main : "transparent",
+                                borderRadius: "0.5rem",
+                                marginBottom: "0.5rem",
+                                "&:hover": { backgroundColor: "#D1C4E9" },
                             }}
                         >
                             <ListItemIcon>
-                            <Lock sx={{ color: "#757575" }} />
+                                <Lock sx={{ color: activeComponent === "changePassword" ? "#FFFFFF" : "#757575" }} />
                             </ListItemIcon>
-                            <ListItemText primary="Change password" />
+                            <ListItemText primary="Change password" sx={{ color: activeComponent === "changePassword" ? "#FFFFFF" : "#757575" }} />
                         </ListItem>
                         <ListItem
                             button
+                            onClick={() => setActiveComponent("subscription")}
                             sx={{
-                            borderRadius: "0.5rem",
-                            "&:hover": { backgroundColor: "#F5F5F5" },
+                                backgroundColor: activeComponent === "subscription" ? theme.background.main : "transparent",
+                                borderRadius: "0.5rem",
+                                "&:hover": { backgroundColor: "#D1C4E9" },
                             }}
                         >
                             <ListItemIcon>
-                            <Subscriptions sx={{ color: "#757575" }} />
+                                <Subscriptions sx={{ color: activeComponent === "subscription" ? "#FFFFFF" : "#757575" }} />
                             </ListItemIcon>
-                            <ListItemText primary="Subscription" />
+                            <ListItemText primary="Subscription" sx={{ color: activeComponent === "subscription" ? "#FFFFFF" : "#757575" }}/>
                         </ListItem>
                     </List>
                 </Box>
@@ -216,16 +229,20 @@ const EditAccount: React.FC = () => {
 
             {/* Right Section */}
             <Box sx={{ flex: 2, paddingLeft: 5 }}>
-            <PersonalDetails
-                firstName={userDetails.firstName}
-                lastName={userDetails.lastName}
-                username={userDetails.username}
-                email={userDetails.email}
-                createdDate={userDetails.createdDate}
-                userRole={userDetails.userRole}
-                premiumExpiredDate=""
-                avatarSrc={userDetails.avatarSrc}
-            />
+                {activeComponent === "personalDetails" && (
+                    <PersonalDetails
+                        firstName={userDetails.firstName}
+                        lastName={userDetails.lastName}
+                        username={userDetails.username}
+                        email={userDetails.email}
+                        createdDate={userDetails.createdDate}
+                        userRole={userDetails.userRole}
+                        premiumExpiredDate=""
+                        avatarSrc={userDetails.avatarSrc}
+                    />
+                )}
+                {activeComponent === "changePassword" && <ChangePassword />}
+                {activeComponent === "subscription" && <Subscription />}
             </Box>
         </Box>
   );

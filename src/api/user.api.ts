@@ -18,3 +18,15 @@ export const updateUser = async (userId: string, updatedData: UserUpdateData) =>
     throw new Error(`Failed to update user data: ${error}`);
   }
 }
+
+export const changePassword = async (userId: string, oldPassword: string, newPassword: string) => {
+  try {
+    const response = await apiClient.put<string>(`/users/${userId}/change-password`, {
+      old_password: oldPassword,
+      new_password: newPassword,
+    });
+    return response;
+  } catch (error) {
+    throw new Error(`Failed to change password: ${error}`);
+  }
+}
