@@ -61,7 +61,6 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) =>
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const { userId } = useAuth();
 
-
     const handleNavClick = (action?: string) => {
         if (action === 'openDialog') {
             onOpenDialog();
