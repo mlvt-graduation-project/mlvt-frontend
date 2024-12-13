@@ -77,7 +77,12 @@ export const DialogContent: React.FC = () => {
         }
     };
 
-    const videoTranscription = async (file: File, data: FileData) => {
+    const videoTranslation = async (
+        file: File,
+        data: FileData,
+        sourceLanguage: TranslateLanguage,
+        targetLanguage: TranslateLanguage
+    ) => {
         if (file) {
             setIsLoading(true);
             setDisableGenerate(true);
@@ -85,7 +90,7 @@ export const DialogContent: React.FC = () => {
                 const videoId = await uploadVideoToServer(file, data);
                 setUploadNoti({ isOpen: true, status: 'success' });
                 try {
-                    if (sourceLanguage && targetLanguage) await translateVideo(videoId, sourceLanguage, targetLanguage);
+                    await translateVideo(videoId, sourceLanguage, targetLanguage);
                 } catch {}
             } catch {
                 setUploadNoti({ isOpen: true, status: 'fail' });
@@ -97,10 +102,10 @@ export const DialogContent: React.FC = () => {
     };
 
     const handleGenerateFileFromDevice = useCallback(async () => {
-        if (deviceFile) {
-            await videoTranscription(deviceFile, fileData);
+        if (deviceFile && sourceLanguage && targetLanguage) {
+            await videoTranslation(deviceFile, fileData, sourceLanguage, targetLanguage);
         }
-    }, [deviceFile, fileData]);
+    }, [deviceFile, fileData, sourceLanguage, targetLanguage]);
 
     const Views = useMemo(
         () => [
