@@ -2,31 +2,41 @@ import {ReactNode} from "react";
 import {Box} from "@mui/material";
 import Sidebar from "../components/SideBar";
 import Theme from "../config/theme";
+import Footer from "../components/Footer";
 
-interface LayoutProps {
+interface HomepageProps {
     children: ReactNode
 }
 
-const Layout = ({children} : LayoutProps) => {
+const HomePage = ({ children }: HomepageProps) => {
     return (
         <Box sx={{
-            backgroundColor: Theme.palette.background.default,
             display: "flex",
-            flexDirection: {
-                xs: "column",
-                lg: "row"
-            },
-            color: "black",
+            flexDirection: "column",
             padding: 0,
             gap: 0,
-            overflowY: "hidden",
+            overflowY: "scroll",
             height: "100vh"
         }}>
-            <Sidebar />
-            <Box sx={{width: "100%", overflowY: "scroll"}}>{children}</Box>
-            
+            {/* Layout of sidebar and content */}
+            <Box sx={{
+                display: "flex",
+                flexDirection: {
+                    xs: "column",
+                    lg: "row"
+                },
+                flex: 1,
+            }}>
+                <Sidebar />
+                <Box sx={{ width: "100%", overflowY: "scroll", backgroundColor: Theme.palette.background.default }}>
+                    {children}
+                </Box>
+
+            </Box>
+            {/* Footer */}
+            <Footer />
         </Box>
     )
 }
 
-export default Layout
+export default HomePage;

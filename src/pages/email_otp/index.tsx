@@ -1,7 +1,7 @@
 import { useTheme } from "@mui/material/styles";
 import { Button, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
-import LoginSignup from "../../layout/loginSignup";
+import LoginSignup from "../../layout/LoginRegistration";
 
 // A simple email validation function using regex
 const validateEmailFormat = (email: string) => {

@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from "@mui/material";
-import LoginSignup from "../../layout/loginSignup";
+import LoginSignup from "../../layout/LoginRegistration";
 import { useState, useRef } from "react";
 import { useTheme } from "@mui/material/styles";
 
