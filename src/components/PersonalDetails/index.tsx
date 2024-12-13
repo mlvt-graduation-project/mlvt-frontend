@@ -3,6 +3,8 @@ import { Box, Typography, TextField, Button, Avatar, Grid, Snackbar, Alert } fro
 import { useTheme } from "@mui/material/styles";
 import { updateUser } from "../../api/user.api";
 import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
+import { getPresignedImageURL } from "../../api/video.api";
 
 interface UserDetails {
     firstName: string;
@@ -13,6 +15,26 @@ interface UserDetails {
     userRole: string;
     premiumExpiredDate: string;
     avatarSrc: string;
+}
+
+const s3ApiClient = axios.create({
+    // No base URL, timeouts, or headers needed here
+  });
+
+const uploadImageToS3 = async (uploadUrl: string, file: File) => {
+    try {
+        console.log(uploadUrl);
+        console.log(file.type);
+        const response = await s3ApiClient.put(uploadUrl, file, {
+            headers: {
+                'Content-Type': file.type  // As needed, based on your server's presigned URL expectations
+            }
+        });
+        return response;
+    } catch (error) {
+        console.error('Error uploading image to S3:', error);
+        throw error;
+    }
 }
 
 const PersonalDetails: React.FC<UserDetails> = ({firstName, lastName, username, email, createdDate, userRole, premiumExpiredDate, avatarSrc}) => {
@@ -77,7 +99,14 @@ const PersonalDetails: React.FC<UserDetails> = ({firstName, lastName, username, 
             }
 
             const updatedDataResponse = await updateUser(userId, updatedData);
-            console.log(updatedDataResponse);
+            
+            // if (fileInputRef.current?.files && fileInputRef.current.files[0]) {
+            //     const file = fileInputRef.current.files[0];
+            //     console.log("Uploading avatar...");
+            //     await uploadAvatar(file);
+            //     console.log("Avatar uploaded successfully!");
+            // }
+
             setShowSuccessPopup(true);
 
             setTimeout(() => {
@@ -87,6 +116,28 @@ const PersonalDetails: React.FC<UserDetails> = ({firstName, lastName, username, 
             console.error('Failed to update user data:', error);
         }
     };
+
+    const uploadAvatar = async (file: File) => {
+        try {
+            const responseGeneratePresignedImageUpload = await getPresignedImageURL(file.name, file.type);
+            if (responseGeneratePresignedImageUpload.status === 200) {
+                console.log('Generate presigned url for image successfully:', responseGeneratePresignedImageUpload.data);
+                const avatarUploadUrl = responseGeneratePresignedImageUpload.data.upload_url.replace('video_frames', 'avatars');
+
+                const s3UploadImageResponse = await uploadImageToS3(avatarUploadUrl, file);
+                if (s3UploadImageResponse.status === 200) {
+                    console.log('Avatar uploaded to S3 successfully');
+                } else {
+                    console.error('Failed to upload avatar to S3:', s3UploadImageResponse);
+                }
+            } else {
+                console.log('Failed to generate presigned image');
+            }
+
+        } catch (e) {
+            console.error('Error uploading file: ' + e)
+        }
+    }
 
     return (
         <>
