@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardContent, Typography, Box, Chip, Button } from '@mui/material';
-import { Project } from '../../types/Project';
+import { Project, ProjectType } from '../../types/Project';
 import moment from 'moment';
 import { useTheme } from '@mui/material/styles';
 import { Circle as CircleIcon } from '@mui/icons-material';
@@ -58,7 +58,7 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                 }}
             >
                 <img
-                    src={project.thumbnail}
+                    src={project.type_project !== ProjectType.Text ? project.thumbnail : '../../assets/TextIcon.png'}
                     alt="Project Thumbnail"
                     style={{
                         width: '100%',
@@ -173,7 +173,8 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
             </CardContent>
             {viewContent && (
                 <ProcessedVideoPopUp
-                    videoId={parseInt(project.id)}
+                    // videoId={project.id}
+                    inputObject={project}
                     isOpen={viewContent}
                     onClose={handleCloseViewContent}
                     type={project.type_project}

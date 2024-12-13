@@ -10,7 +10,8 @@ import { SingleOptionBox } from '../BaseComponent/OptionBox';
 import { BrowseFile } from '../BaseComponent/BrowseMLVTFile';
 import { TranslateLanguage } from '../../../../types/Translation';
 import { LoadingDots } from '../../../StaticComponent/LoadingDot/LoadingDot';
-import { AudioFileType, VideoFileType } from '../../../../types/FileType';
+import { VideoFileType } from '../../../../types/FileType';
+import { uploadVideoToServer, translateVideo, transcribeVideo } from '../../Service/PipelineService';
 
 interface UploadNoti {
     isOpen: boolean;
@@ -19,21 +20,16 @@ interface UploadNoti {
 
 export const DialogContent: React.FC = () => {
     const [viewState, setViewState] = useState<'upload' | 'url' | 'browse'>('upload');
-    const [language, setLanguage] = useState<TranslateLanguage | null>(null);
+    const [sourceLanguage, setSourceLanguage] = useState<TranslateLanguage | null>(null);
     const [deviceFile, setDeviceFile] = useState<File | null>(null);
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
-    const [voice, setVoice] = useState<TranslateLanguage | null>(null);
+    const [targetLanguage, setTargetLanguage] = useState<TranslateLanguage | null>(null);
     const [disableGenerate, setDisableGenerate] = useState<boolean>(true);
     const [uploadNoti, setUploadNoti] = useState<UploadNoti>({
         isOpen: false,
         status: 'success',
     });
-    const [transcriptNoti, setTranscriptNoti] = useState<UploadNoti>({
-        isOpen: false,
-        status: 'success',
-    });
     const [isLoading, setIsLoading] = useState(false);
-    const [isValidURL, setIsValidURL] = useState<boolean>(true);
     const [fileData, setFileData] = useState<FileData>({
         title: 'My Video Title',
         duration: 300,
@@ -44,15 +40,15 @@ export const DialogContent: React.FC = () => {
         user_id: parseInt(localStorage.getItem('userId') || '0'),
     });
 
-    const handleChangeLanguage = (value: string) => {
+    const handleChangeSourceLanguage = (value: string) => {
         if (Object.values(TranslateLanguage).includes(value as TranslateLanguage)) {
-            setLanguage(value as TranslateLanguage);
+            setSourceLanguage(value as TranslateLanguage);
         }
     };
 
-    const handleChangeVoice = (value: string) => {
+    const handleChangeTargetLanguage = (value: string) => {
         if (Object.values(TranslateLanguage).includes(value as TranslateLanguage)) {
-            setVoice(value as TranslateLanguage);
+            setTargetLanguage(value as TranslateLanguage);
         }
     };
 
@@ -75,28 +71,49 @@ export const DialogContent: React.FC = () => {
         setUploadNoti((prevData) => ({ ...prevData, isOpen: false }));
     };
 
-    const handleCloseTranscriptionPopup = () => {
-        setTranscriptNoti((prevData) => ({ ...prevData, isOpen: false }));
-    };
-
     const changeViewState = (view: string) => {
         if (['upload', 'url', 'browse'].includes(view)) {
             setViewState(view as 'upload' | 'url' | 'browse');
         }
     };
 
+    const videoTranscription = async (file: File, data: FileData) => {
+        if (file) {
+            setIsLoading(true);
+            setDisableGenerate(true);
+            try {
+                const videoId = await uploadVideoToServer(file, data);
+                setUploadNoti({ isOpen: true, status: 'success' });
+                try {
+                    if (sourceLanguage && targetLanguage) await translateVideo(videoId, sourceLanguage, targetLanguage);
+                } catch {}
+            } catch {
+                setUploadNoti({ isOpen: true, status: 'fail' });
+            } finally {
+                setIsLoading(false);
+                setDisableGenerate(false);
+            }
+        }
+    };
+
+    const handleGenerateFileFromDevice = useCallback(async () => {
+        if (deviceFile) {
+            await videoTranscription(deviceFile, fileData);
+        }
+    }, [deviceFile, fileData]);
+
     const Views = useMemo(
         () => [
             {
                 text: 'UPLOAD',
                 viewState: 'upload',
-                handleSubmit: () => console.log('Click upload file'),
+                handleSubmit: handleGenerateFileFromDevice,
                 component: (
                     <UploadVideoFromDevice
                         selectedFile={deviceFile}
                         handleChangeSelectedFile={handleChangeDeviceFile}
                         handleChangeFileData={handleChangeFileData}
-                        fileTypeList={[VideoFileType.MP4, AudioFileType.WAV]}
+                        fileTypeList={[VideoFileType.MP4]}
                     />
                 ),
             },
@@ -118,18 +135,21 @@ export const DialogContent: React.FC = () => {
                 component: <BrowseFile />,
             },
         ],
-        [deviceFile, handleChangeFileData, handleChangeDisableGenerate]
+        [deviceFile, handleChangeFileData, handleChangeDisableGenerate, handleGenerateFileFromDevice]
     );
 
     useEffect(() => {
+        console.log('Deivice file: ', deviceFile);
+        console.log('Language: ', sourceLanguage);
+        console.log('Voice: ', targetLanguage);
         if (viewState === 'url') {
-            if (!videoUrl || !language || !voice) {
+            if (!videoUrl || !sourceLanguage || !targetLanguage) {
                 setDisableGenerate(true);
             } else {
                 setDisableGenerate(false);
             }
         } else if (viewState === 'upload') {
-            if (!deviceFile || !language || !voice) {
+            if (!deviceFile || !sourceLanguage || !targetLanguage) {
                 setDisableGenerate(true);
             } else {
                 setDisableGenerate(false);
@@ -137,7 +157,7 @@ export const DialogContent: React.FC = () => {
         } else if (viewState === 'browse') {
             setDisableGenerate(true);
         }
-    }, [viewState, deviceFile, videoUrl, language, voice]);
+    }, [viewState, deviceFile, videoUrl, sourceLanguage, targetLanguage]);
 
     const activeView = Views.find((view) => view.viewState === viewState);
     const ActiveComponent = activeView?.component || null;
@@ -172,7 +192,7 @@ export const DialogContent: React.FC = () => {
                             fontWeight: 'bold',
                         }}
                     >
-                        Translate to:
+                        Video's language:
                     </Typography>
                     <SingleOptionBox
                         choices={[
@@ -181,8 +201,7 @@ export const DialogContent: React.FC = () => {
                             TranslateLanguage.French,
                             TranslateLanguage.Japanese,
                         ]}
-                        customSx={{}}
-                        handleChangeOption={handleChangeLanguage}
+                        handleChangeOption={handleChangeSourceLanguage}
                     />
                 </Box>
                 <Box>
@@ -193,7 +212,7 @@ export const DialogContent: React.FC = () => {
                             fontWeight: 'bold',
                         }}
                     >
-                        Voice:
+                        Translate to:
                     </Typography>
                     <SingleOptionBox
                         choices={[
@@ -202,8 +221,7 @@ export const DialogContent: React.FC = () => {
                             TranslateLanguage.French,
                             TranslateLanguage.Japanese,
                         ]}
-                        customSx={{}}
-                        handleChangeOption={handleChangeVoice}
+                        handleChangeOption={handleChangeTargetLanguage}
                     />
                 </Box>
             </Box>
@@ -216,12 +234,6 @@ export const DialogContent: React.FC = () => {
                 uploadStatus={uploadNoti['status']}
                 onClose={handleCloseStatusPopup}
                 content={null}
-            />
-            <UploadNotification
-                isOpen={transcriptNoti['isOpen']}
-                uploadStatus={transcriptNoti['status']}
-                onClose={handleCloseTranscriptionPopup}
-                content={'TRANCRIPT'}
             />
         </>
     );

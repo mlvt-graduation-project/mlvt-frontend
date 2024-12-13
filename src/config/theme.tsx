@@ -2,7 +2,6 @@ import * as React from 'react';
 import { createTheme, ThemeProvider, styled, PaletteOptions } from '@mui/material/styles';
 import CheckBox from '@mui/material/Checkbox';
 
-
 interface StatusTheme {
     fontColor: string;
     backgroundColor: string;
@@ -10,10 +9,9 @@ interface StatusTheme {
 
 declare module '@mui/material/styles' {
     interface Theme {
-
         status: {
             complete: StatusTheme;
-            inProgress: StatusTheme;
+            processing: StatusTheme;
             failed: StatusTheme;
             raw: StatusTheme;
         };
@@ -35,7 +33,7 @@ declare module '@mui/material/styles' {
     interface ThemeOptions {
         status: {
             complete: StatusTheme;
-            inProgress: StatusTheme;
+            processing: StatusTheme;
             failed: StatusTheme;
             raw: StatusTheme;
         };
@@ -56,7 +54,7 @@ declare module '@mui/material/styles' {
 }
 
 interface CustomCheckBoxProps {
-    status: 'complete' | 'inProgress' | 'failed';
+    status: 'complete' | 'processing' | 'failed';
 }
 
 const CustomCheckBox = styled(CheckBox)<CustomCheckBoxProps>(({ theme, status }) => ({
@@ -64,13 +62,12 @@ const CustomCheckBox = styled(CheckBox)<CustomCheckBoxProps>(({ theme, status })
     backgroundColor: theme.status[status].backgroundColor,
 }));
 const theme = createTheme({
-
     status: {
         complete: {
             fontColor: '#1C7947',
             backgroundColor: '#C0EBA6',
         },
-        inProgress: {
+        processing: {
             fontColor: '#0C2991',
             backgroundColor: '#B7E0FF',
         },
@@ -85,7 +82,7 @@ const theme = createTheme({
     },
 
     background: {
-        main: "#A60195",
+        main: '#A60195',
         white: '#FFFFFF',
         lightPink: '#F1EAFF',
         lightPurple: '#E4B1F0',
@@ -99,7 +96,7 @@ const theme = createTheme({
 
     typography: {
         h1: {
-            fontFamily: 'Inter, serif'
+            fontFamily: 'Inter, serif',
         },
         body1: {
             fontFamily: 'Poppins, serif',
@@ -111,7 +108,7 @@ const theme = createTheme({
             styleOverrides: {
                 root: {
                     '&:last-child': {
-                       paddingBottom: 0,
+                        paddingBottom: 0,
                     },
                 },
             },

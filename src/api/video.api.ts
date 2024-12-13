@@ -1,27 +1,15 @@
 import credentialAPI from './credential.api';
-import {
-    GetPresignedURL,
-    PostVideo,
-    VideoListResponse,
-    Video,
-} from '../types/Response/Video';
+import { GetPresignedURL, PostVideo, VideoListResponse, Video } from '../types/Response/Video';
 
 // Image request
-export const getPresignedImageURL = async (
-    fileName: string,
-    fileType: string
-) => {
+export const getPresignedImageURL = async (fileName: string, fileType: string) => {
     try {
-        const response = await credentialAPI.post<GetPresignedURL>(
-            '/videos/generate-upload-url/image',
-            null,
-            {
-                params: {
-                    file_name: fileName,
-                    file_type: fileType,
-                },
-            }
-        );
+        const response = await credentialAPI.post<GetPresignedURL>('/videos/generate-upload-url/image', null, {
+            params: {
+                file_name: fileName,
+                file_type: fileType,
+            },
+        });
         return response;
     } catch (error) {
         console.error('Error generating presigned Image URL:', error);
@@ -30,21 +18,14 @@ export const getPresignedImageURL = async (
 };
 
 // Video request
-export const getPresignedVideoURL = async (
-    fileName: string,
-    fileType: string
-) => {
+export const getPresignedVideoURL = async (fileName: string, fileType: string) => {
     try {
-        const response = await credentialAPI.post<GetPresignedURL>(
-            '/videos/generate-upload-url/video',
-            null,
-            {
-                params: {
-                    file_name: fileName,
-                    file_type: fileType,
-                },
-            }
-        );
+        const response = await credentialAPI.post<GetPresignedURL>('/videos/generate-upload-url/video', null, {
+            params: {
+                file_name: fileName,
+                file_type: fileType,
+            },
+        });
         return response;
     } catch (error) {
         console.error('Error generating presigned Video URL:', error);
@@ -88,13 +69,9 @@ export const postVideo = async (file: object) => {
     }
 };
 
-export const getVideoList = async (
-    userId: number
-): Promise<VideoListResponse> => {
+export const getVideoList = async (userId: number): Promise<VideoListResponse> => {
     try {
-        const response = await credentialAPI.get<VideoListResponse>(
-            `/videos/user/${userId}`
-        );
+        const response = await credentialAPI.get<VideoListResponse>(`/videos/user/${userId}`);
         return response.data;
     } catch (error) {
         throw new Error(`Failed to fetch videos: ${error}`);
@@ -112,22 +89,16 @@ export const getOneVideoById = async (videoId: number): Promise<Video> => {
 
 export const getVideoStatus = async (videoId: string) => {
     try {
-        const response = await credentialAPI.get<{ status: string }>(
-            `/videos/${videoId}`
-        );
+        const response = await credentialAPI.get<{ status: string }>(`/videos/${videoId}`);
         return response.data;
     } catch (error) {
         throw new Error(`Failed to fetch videos: ${error}`);
     }
 };
 
-export const getVideosByUserId = async (
-    userId: string
-): Promise<VideoListResponse> => {
+export const getVideosByUserId = async (userId: string): Promise<VideoListResponse> => {
     try {
-        const response = await credentialAPI.get<VideoListResponse>(
-            `/videos/user/${userId}`
-        );
+        const response = await credentialAPI.get<VideoListResponse>(`/videos/user/${userId}`);
         console.log(response);
         return response.data;
     } catch (error) {
@@ -149,11 +120,7 @@ export const uploadImageToS3 = async (uploadUrl: string, file: File) => {
     }
 };
 
-export const uploadVideoToS3 = async (
-    uploadUrl: string,
-    file: File,
-    fileType: string
-) => {
+export const uploadVideoToS3 = async (uploadUrl: string, file: File, fileType: string) => {
     try {
         const response = await credentialAPI.put(uploadUrl, file, {
             headers: {

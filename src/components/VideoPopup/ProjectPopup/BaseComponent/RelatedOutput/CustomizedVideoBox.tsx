@@ -65,16 +65,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioSrc }) => {
                     flexDirection: 'column',
                 }}
             >
-                <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="flex-start"
-                >
-                    <IconButton
-                        size="medium"
-                        sx={{ padding: '0px' }}
-                        onClick={handlePlayPause}
-                    >
+                <Box display="flex" alignItems="center" justifyContent="flex-start">
+                    <IconButton size="medium" sx={{ padding: '0px' }} onClick={handlePlayPause}>
                         {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
                     </IconButton>
 
@@ -91,10 +83,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioSrc }) => {
                         borderRadius: '4px',
                     }}
                 >
-                    <LinearProgress
-                        variant="determinate"
-                        value={(currentTime / duration) * 100}
-                    />
+                    <LinearProgress variant="determinate" value={(currentTime / duration) * 100} />
                 </Box>
             </Box>
 
@@ -108,11 +97,13 @@ export const CustomAudioPlayer = ({
     audioTittle,
     customizeSx,
     sourceType,
+    disableDownload = false,
 }: {
     audioSrc: string;
     audioTittle: string;
-    customizeSx: object;
+    customizeSx?: object;
     sourceType: 'audio' | 'video';
+    disableDownload?: boolean;
 }) => {
     console.log('Box tittle: ', audioTittle);
     console.log('Source type: ', sourceType);
@@ -151,29 +142,29 @@ export const CustomAudioPlayer = ({
                     {audioTittle}
                 </Typography>
                 {/* Nút tải về */}
-                <IconButton
-                    size="medium"
-                    sx={{
-                        borderRadius: '10px',
-                        padding: '5px',
-                        backgroundColor: '#B800E6',
-                        color: 'white',
-                        '&:hover': { backgroundColor: '#9B00CC' },
-                    }}
-                    href={audioSrc}
-                    download
-                >
-                    <DownloadIcon />
-                </IconButton>
+                {!disableDownload && (
+                    <IconButton
+                        size="medium"
+                        sx={{
+                            borderRadius: '10px',
+                            padding: '5px',
+                            backgroundColor: '#B800E6',
+                            color: 'white',
+                            '&:hover': { backgroundColor: '#9B00CC' },
+                        }}
+                        href={audioSrc}
+                        download
+                    >
+                        <DownloadIcon />
+                    </IconButton>
+                )}
             </Box>
 
             {sourceType === 'audio' ? (
                 <>
                     {/* Biểu tượng nốt nhạc */}
                     <Box sx={{ textAlign: 'center', mb: 2 }}>
-                        <MusicNoteIcon
-                            sx={{ fontSize: '60px', color: '#6D6D6D' }}
-                        />
+                        <MusicNoteIcon sx={{ fontSize: '60px', color: '#6D6D6D' }} />
                     </Box>
 
                     {/* Trình phát âm thanh */}

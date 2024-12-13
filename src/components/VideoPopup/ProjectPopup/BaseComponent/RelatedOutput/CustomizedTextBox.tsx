@@ -4,10 +4,12 @@ export const TextView = ({
     displayText,
     textTittle,
     customizeSx,
+    disableDownload = false,
 }: {
     displayText: string;
     textTittle: string;
     customizeSx?: object;
+    disableDownload?: boolean;
 }) => {
     const handleDownload = () => {
         const element = document.createElement('a');
@@ -51,19 +53,21 @@ export const TextView = ({
                 >
                     {textTittle}
                 </Typography>
-                <IconButton
-                    sx={{
-                        borderRadius: '25%',
-                        padding: '5px',
-                        hegith: '100%',
-                        backgroundColor: '#B800E6',
-                        color: 'white',
-                        '&:hover': { backgroundColor: '#9B00CC' },
-                    }}
-                    onClick={handleDownload}
-                >
-                    <DownloadIcon />
-                </IconButton>
+                {!disableDownload && (
+                    <IconButton
+                        sx={{
+                            borderRadius: '25%',
+                            padding: '5px',
+                            hegith: '100%',
+                            backgroundColor: '#B800E6',
+                            color: 'white',
+                            '&:hover': { backgroundColor: '#9B00CC' },
+                        }}
+                        onClick={handleDownload}
+                    >
+                        <DownloadIcon />
+                    </IconButton>
+                )}
             </Box>
             <p
                 style={{

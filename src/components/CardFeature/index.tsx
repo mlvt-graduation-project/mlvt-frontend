@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, Typography, Avatar, Box, Chip, Icon, IconButton, TextField } from '@mui/material';
 import { Project } from '../../types/Project';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+import { ProjectType } from '../../types/Project';
 import moment from 'moment';
 import { useTheme } from '@mui/material/styles';
 import axios from 'axios';
@@ -75,7 +76,7 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                 onClick={handleClick}
             >
                 <img
-                    src={project.thumbnail}
+                    src={project.type_project !== ProjectType.Text ? project.thumbnail : '../../assets/TextIcon.png'}
                     alt="Project Thumbnail"
                     style={{
                         width: '100%',
@@ -148,7 +149,7 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                                 fontSize: '1rem',
                             }}
                         >
-                            {title} - {project.id}
+                            {title}
                         </Typography>
                     )}
 

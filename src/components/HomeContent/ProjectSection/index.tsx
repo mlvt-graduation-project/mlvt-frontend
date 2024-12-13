@@ -8,9 +8,11 @@ import { getListTranscriptionByUserId } from '../../../api/transcription.api';
 import CardFeature from '../../CardFeature';
 import { Project } from '../../../types/Project';
 import { useAuth } from '../../../context/AuthContext';
-import { handleGetVideosByUserId } from '../../../utils/video.utils';
-import { ProjectType } from '../../../types/Project';
-import { ProjectStatus } from '../../../types/ProjectStatus';
+import {
+    handleGetVideosProjectByUserId,
+    handleGetTranscriptionProjectByUserId,
+    combineAndSortProjects,
+} from '../../../utils/project.utils';
 
 const ProjectSection = () => {
     const theme = useTheme();
@@ -27,7 +29,7 @@ const ProjectSection = () => {
     const handleCardClick = (project: Project) => {
         setSelectedProject(project);
         setIsPopUpOpen(true);
-        setVideoId(parseInt(project.id));
+        setVideoId(project.id);
     };
 
     const handleClosePopUp = () => {
@@ -42,8 +44,10 @@ const ProjectSection = () => {
                     setError('No user ID found in local storage');
                     return;
                 }
-                const projects = await handleGetVideosByUserId(userId);
-                setProjects(projects);
+                const videoProjects = await handleGetVideosProjectByUserId(userId);
+                const transcriptionProject = await handleGetTranscriptionProjectByUserId(userId, videoProjects);
+                const combinedProject = combineAndSortProjects(videoProjects, transcriptionProject);
+                setProjects(combinedProject);
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);
             }
@@ -177,7 +181,8 @@ const ProjectSection = () => {
 
             {selectedProject && (
                 <ProcessedVideoPopUp
-                    videoId={videoId}
+                    // videoId={videoId}
+                    inputObject={selectedProject}
                     isOpen={isPopUpOpen}
                     onClose={handleClosePopUp}
                     type={selectedProject.type_project}

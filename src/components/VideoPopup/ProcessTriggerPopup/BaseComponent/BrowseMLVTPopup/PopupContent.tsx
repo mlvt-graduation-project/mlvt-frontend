@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import SearchBar from '../../../../SearchBar';
 import { Box, Button } from '@mui/material';
-import { handleGetVideosByUserId } from '../../../../../utils/video.utils';
+import { handleGetVideosProjectByUserId } from '../../../../../utils/project.utils';
 import { Project } from '../../../../../types/Project';
 import { useAuth } from '../../../../../context/AuthContext';
 import { BrowseFileCard } from '../../../../CardFeature/BrowseFileCard';
@@ -25,7 +25,7 @@ export const DialogContent: React.FC = () => {
         const fetchVideoData = async () => {
             try {
                 if (userId) {
-                    const projects = await handleGetVideosByUserId(userId);
+                    const projects = await handleGetVideosProjectByUserId(userId);
                     setProjects(projects);
                 }
             } catch (error) {

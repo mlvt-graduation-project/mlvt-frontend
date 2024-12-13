@@ -1,6 +1,9 @@
 import credentialAPI from './credential.api';
 import { TranscriptionListResponse } from '../types/Response/Transcription';
 import { resolveNaptr } from 'dns';
+import { Project } from '../types/Project';
+import { mapStatusToProjectStatus } from '../types/ProjectStatus';
+import { ProjectType } from '../types/Project';
 
 export const getTranscriptionIdByVideoId = async (videoId: number) => {
     try {
@@ -35,7 +38,6 @@ export const getTranscriptionDownloadUrl = async (TranscriptionId: number) => {
 export const postVideoTranscription = async (videoId: number) => {
     try {
         const response = await credentialAPI.post(`/mlvt/stt/${videoId}`, { model: 'whisper' });
-        console.log('Response from speak to text (transcription): ', response);
         return response;
     } catch (error) {
         console.error('Posting Video Transcription to server error', error);
