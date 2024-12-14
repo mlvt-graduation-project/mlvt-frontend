@@ -21,6 +21,7 @@ import { getUser, updateUser } from "../../api/user.api";
 import { useAuth } from "../../context/AuthContext";
 import ChangePassword from "../../components/ChangePassword";
 import Subscription from "../../components/Subscription";
+import Footer from "../../components/Footer";
 
 interface UserDetails {
     firstName: string;
@@ -109,143 +110,146 @@ const EditAccount: React.FC = () => {
     };
 
     return (
-        <Box
-            sx={{
-                display: "flex", // Align items horizontally
-                flexDirection: "row", // Horizontal layout
-                paddingTop: 4,
-                paddingBottom: 4,
-                paddingRight: 10,
-                paddingLeft: 10,
-                height: "100vh",
-            }}
-        >
-            {/* Left Section */}
-            <Box sx={{ flex: 1, maxWidth: "400px", paddingRight: 5 }}>
-                <Box
-                    sx={{
-                    width: "100%",
-                    backgroundColor: "#fff",
-                    }}
-                >
-                    {/* Logo Section */}
-                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginBottom: "1.5rem" }}>
-                        <Link href="/">
-                            <Box
-                                component="img"
-                                src={require("./image.jpeg")}
-                                alt="Logo"
-                                sx={{
-                                width: 120,
-                                height: 120,
-                                marginBottom: "1rem",
-                                borderRadius: "0.8rem",
-                                }}
-                            />
-                        </Link>
-                        <Typography variant="h6" sx={{ fontWeight: "bold", color: theme.background.main, textAlign: "center" }}>
-                            Multi-language Video Translation
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            sx={{ color: "#757575", textAlign: "center", marginTop: "0.5rem" }}
-                        >
-                            Manage your personal account settings
-                        </Typography>
-                    </Box>
-
-                    {/* Account Settings */}
-                    <Typography
-                        variant="body2"
+        <Box>
+            <Box
+                sx={{
+                    display: "flex", // Align items horizontally
+                    flexDirection: "row", // Horizontal layout
+                    paddingTop: 4,
+                    paddingBottom: 4,
+                    paddingRight: 10,
+                    paddingLeft: 10,
+                    height: "100vh",
+                }}
+            >
+                {/* Left Section */}
+                <Box sx={{ flex: 1, maxWidth: "400px", paddingRight: 5 }}>
+                    <Box
                         sx={{
-                            fontWeight: "bold",
-                            color: "#424242",
-                            marginBottom: "1rem",
+                        width: "100%",
+                        backgroundColor: "#fff",
                         }}
                     >
-                        Account settings
-                    </Typography>
+                        {/* Logo Section */}
+                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginBottom: "1.5rem" }}>
+                            <Link href="/">
+                                <Box
+                                    component="img"
+                                    src={require("./image.jpeg")}
+                                    alt="Logo"
+                                    sx={{
+                                    width: 120,
+                                    height: 120,
+                                    marginBottom: "1rem",
+                                    borderRadius: "0.8rem",
+                                    }}
+                                />
+                            </Link>
+                            <Typography variant="h6" sx={{ fontWeight: "bold", color: theme.background.main, textAlign: "center" }}>
+                                Multi-language Video Translation
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: "#757575", textAlign: "center", marginTop: "0.5rem" }}
+                            >
+                                Manage your personal account settings
+                            </Typography>
+                        </Box>
 
-                    {/* Options */}
-                    <List>
-                        <ListItem
-                            button
-                            onClick={() => setActiveComponent("personalDetails")}
+                        {/* Account Settings */}
+                        <Typography
+                            variant="body2"
                             sx={{
-                                backgroundColor: activeComponent === "personalDetails" ? theme.background.main : "transparent",
-                                borderRadius: "0.5rem",
-                                marginBottom: "0.5rem",
-                                "&:hover": { backgroundColor: "#D1C4E9" },
+                                fontWeight: "bold",
+                                color: "#424242",
+                                marginBottom: "1rem",
                             }}
                         >
-                            <ListItemIcon>
-                                <AccountCircle sx={{ color: activeComponent === "personalDetails" ? "#FFFFFF" : "#757575" }} />
-                            </ListItemIcon>
-                            <ListItemText primary="Personal details" sx={{ color: activeComponent === "personalDetails" ? "#FFFFFF" : "#757575", fontWeight: "bold" }} />
-                        </ListItem>
-                        <ListItem
-                            button
-                            onClick={() => setActiveComponent("changePassword")}
-                            sx={{
-                                backgroundColor: activeComponent === "changePassword" ? theme.background.main : "transparent",
-                                borderRadius: "0.5rem",
-                                marginBottom: "0.5rem",
-                                "&:hover": { backgroundColor: "#D1C4E9" },
-                            }}
-                        >
-                            <ListItemIcon>
-                                <Lock sx={{ color: activeComponent === "changePassword" ? "#FFFFFF" : "#757575" }} />
-                            </ListItemIcon>
-                            <ListItemText primary="Change password" sx={{ color: activeComponent === "changePassword" ? "#FFFFFF" : "#757575" }} />
-                        </ListItem>
-                        <ListItem
-                            button
-                            onClick={() => setActiveComponent("subscription")}
-                            sx={{
-                                backgroundColor: activeComponent === "subscription" ? theme.background.main : "transparent",
-                                borderRadius: "0.5rem",
-                                "&:hover": { backgroundColor: "#D1C4E9" },
-                            }}
-                        >
-                            <ListItemIcon>
-                                <Subscriptions sx={{ color: activeComponent === "subscription" ? "#FFFFFF" : "#757575" }} />
-                            </ListItemIcon>
-                            <ListItemText primary="Subscription" sx={{ color: activeComponent === "subscription" ? "#FFFFFF" : "#757575" }}/>
-                        </ListItem>
-                    </List>
+                            Account settings
+                        </Typography>
+
+                        {/* Options */}
+                        <List>
+                            <ListItem
+                                button
+                                onClick={() => setActiveComponent("personalDetails")}
+                                sx={{
+                                    backgroundColor: activeComponent === "personalDetails" ? theme.background.main : "transparent",
+                                    borderRadius: "0.5rem",
+                                    marginBottom: "0.5rem",
+                                    "&:hover": { backgroundColor: "#D1C4E9" },
+                                }}
+                            >
+                                <ListItemIcon>
+                                    <AccountCircle sx={{ color: activeComponent === "personalDetails" ? "#FFFFFF" : "#757575" }} />
+                                </ListItemIcon>
+                                <ListItemText primary="Personal details" sx={{ color: activeComponent === "personalDetails" ? "#FFFFFF" : "#757575", fontWeight: "bold" }} />
+                            </ListItem>
+                            <ListItem
+                                button
+                                onClick={() => setActiveComponent("changePassword")}
+                                sx={{
+                                    backgroundColor: activeComponent === "changePassword" ? theme.background.main : "transparent",
+                                    borderRadius: "0.5rem",
+                                    marginBottom: "0.5rem",
+                                    "&:hover": { backgroundColor: "#D1C4E9" },
+                                }}
+                            >
+                                <ListItemIcon>
+                                    <Lock sx={{ color: activeComponent === "changePassword" ? "#FFFFFF" : "#757575" }} />
+                                </ListItemIcon>
+                                <ListItemText primary="Change password" sx={{ color: activeComponent === "changePassword" ? "#FFFFFF" : "#757575" }} />
+                            </ListItem>
+                            <ListItem
+                                button
+                                onClick={() => setActiveComponent("subscription")}
+                                sx={{
+                                    backgroundColor: activeComponent === "subscription" ? theme.background.main : "transparent",
+                                    borderRadius: "0.5rem",
+                                    "&:hover": { backgroundColor: "#D1C4E9" },
+                                }}
+                            >
+                                <ListItemIcon>
+                                    <Subscriptions sx={{ color: activeComponent === "subscription" ? "#FFFFFF" : "#757575" }} />
+                                </ListItemIcon>
+                                <ListItemText primary="Subscription" sx={{ color: activeComponent === "subscription" ? "#FFFFFF" : "#757575" }}/>
+                            </ListItem>
+                        </List>
+                    </Box>
+                </Box>
+
+                {/* Vertical Divider */}
+                <Divider
+                orientation="vertical"
+                flexItem
+                sx={{
+                    borderWidth: "1px",
+                    marginX: 2,
+                    backgroundColor: "#E0E0E0",
+                }}
+                />
+
+                {/* Right Section */}
+                <Box sx={{ flex: 2, paddingLeft: 5 }}>
+                    {activeComponent === "personalDetails" && (
+                        <PersonalDetails
+                            firstName={userDetails.firstName}
+                            lastName={userDetails.lastName}
+                            username={userDetails.username}
+                            email={userDetails.email}
+                            createdDate={userDetails.createdDate}
+                            userRole={userDetails.userRole}
+                            premiumExpiredDate=""
+                            avatarSrc={userDetails.avatarSrc}
+                        />
+                    )}
+                    {activeComponent === "changePassword" && <ChangePassword />}
+                    {activeComponent === "subscription" && <Subscription />}
                 </Box>
             </Box>
-
-            {/* Vertical Divider */}
-            <Divider
-            orientation="vertical"
-            flexItem
-            sx={{
-                borderWidth: "1px",
-                marginX: 2,
-                backgroundColor: "#E0E0E0",
-            }}
-            />
-
-            {/* Right Section */}
-            <Box sx={{ flex: 2, paddingLeft: 5 }}>
-                {activeComponent === "personalDetails" && (
-                    <PersonalDetails
-                        firstName={userDetails.firstName}
-                        lastName={userDetails.lastName}
-                        username={userDetails.username}
-                        email={userDetails.email}
-                        createdDate={userDetails.createdDate}
-                        userRole={userDetails.userRole}
-                        premiumExpiredDate=""
-                        avatarSrc={userDetails.avatarSrc}
-                    />
-                )}
-                {activeComponent === "changePassword" && <ChangePassword />}
-                {activeComponent === "subscription" && <Subscription />}
-            </Box>
+            <Footer />
         </Box>
-  );
+    );
 };
 
 export default EditAccount;

@@ -4,7 +4,7 @@ import NavBar from "../../components/NavBar";
 import VideoTransPopUp from "../../components/VideoTransPopUp";
 import ProcessedVidPopUp from "../../components/ProcessedVidPopUp";
 import TranscriptionPopup from "../../components/VideoTextGenPopup"
-import HomePage from '../../layout/HomePage';
+import HomePage from '../../layout/homepage';
 
 const Home = () => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);

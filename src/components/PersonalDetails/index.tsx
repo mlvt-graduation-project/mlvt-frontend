@@ -5,6 +5,7 @@ import { updateUser } from "../../api/user.api";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import { getPresignedImageURL } from "../../api/video.api";
+import SuccessPopup from "../SuccessPopup";
 
 interface UserDetails {
     firstName: string;
@@ -286,16 +287,21 @@ const PersonalDetails: React.FC<UserDetails> = ({firstName, lastName, username, 
             </Box>
 
             {/* Success Popup */}
-            <Snackbar
+            {/* <Snackbar
                 open={showSuccessPopup}
                 autoHideDuration={3000} // Auto-hide after 3 seconds
                 onClose={() => setShowSuccessPopup(false)} // Close on dismissal
                 anchorOrigin={{ vertical: "top", horizontal: "center" }}
             >
                 <Alert onClose={() => setShowSuccessPopup(false)} severity="success" sx={{ width: "100%" }}>
-                User details updated successfully!
+                    User details updated successfully!
                 </Alert>
-            </Snackbar>
+            </Snackbar> */}
+            <SuccessPopup
+                open={showSuccessPopup}
+                onClose={() => setShowSuccessPopup(false)}
+                message="User details updated successfully!"
+            />
         </>
     );
 };
