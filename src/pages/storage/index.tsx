@@ -1,5 +1,5 @@
 import { Box, Checkbox, FormControlLabel, Grid, IconButton, Pagination, SxProps, Typography } from "@mui/material";
-import Layout from "../../layout/homepage";
+import Layout from "../../layout/HomeUser";
 import { useTheme } from '@mui/material/styles';
 import AlignHorizontalRightIcon from '@mui/icons-material/AlignHorizontalRight';
 import React, { MouseEventHandler, useEffect, useState } from "react";
