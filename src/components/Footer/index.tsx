@@ -86,7 +86,7 @@ const Footer: React.FC = () => {
                         <img
                             src={Logo}
                             alt='MLVT'
-                            style={{ width: "10em", height: "7em", marginRight: "10px" }}
+                            style={{ width: "10em", height: "4em", marginRight: "10px" }}
                         />
                         <Typography sx={{
                             color: Theme.status.failed.fontColor,
