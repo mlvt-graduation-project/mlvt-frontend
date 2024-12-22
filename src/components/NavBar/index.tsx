@@ -5,6 +5,7 @@ import TranslateIcon from '@mui/icons-material/Translate';
 import SubtitlesIcon from '@mui/icons-material/Subtitles';
 import MicIcon from '@mui/icons-material/Mic';
 import SyncIcon from '@mui/icons-material/Sync';
+import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import { Link as RouterLink } from "react-router-dom";
 import UserProfile from './UserProfile';
 import UploadVideoButton from './UploadVideoButton';
@@ -12,6 +13,7 @@ import { useTheme } from '@mui/material/styles';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { getUser } from '../../api/user.api';
+import LipIcon from './image.png';
 
 const NavLinks = [
     {
@@ -38,7 +40,7 @@ const NavLinks = [
         link: '/'
     },
     {
-        icon: <SyncIcon />,
+        icon: <EmojiEmotionsIcon />,
         text: 'Lip sync for video',
         link: '/'
     },
@@ -60,7 +62,6 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) =>
     const [error, setError] = useState('');
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const { userId } = useAuth();
-
 
     const handleNavClick = (action?: string) => {
         if (action === 'openDialog') {
