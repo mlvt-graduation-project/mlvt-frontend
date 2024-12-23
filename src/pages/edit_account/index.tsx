@@ -75,20 +75,27 @@ const EditAccount: React.FC = () => {
                     throw new Error(`Failed to fetch user data: ${error}`);
                 }
 
-                const avatarResponse = await fetch(`http://localhost:8080/api/users/${userId}/avatar-download-url`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`, // Add token to the Authorization header
-                        'Content-Type': 'application/json'
+                try {
+                    const avatarResponse = await fetch(`http://localhost:8080/api/users/${userId}/avatar-download-url`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`, // Add token to the Authorization header
+                            'Content-Type': 'application/json'
+                        }
+                    });
+    
+                    if (avatarResponse.status !== 500) {
+                        const avatarData = await avatarResponse.json();
+                        const avatarDownloadUrl = avatarData.avatar_download_url;
+                        console.log(avatarDownloadUrl);
+                        setUserDetails((prev) => ({
+                            ...prev,
+                            avatarSrc: avatarDownloadUrl.split('?X-Amz-Algorithm')[0],
+                        }));
                     }
-                });
-
-                const avatarData = await avatarResponse.json();
-                const avatarDownloadUrl = avatarData.avatar_download_url;
-                setUserDetails((prev) => ({
-                    ...prev,
-                    avatarSrc: avatarDownloadUrl.split('?X-Amz-Algorithm')[0],
-                }));
+                } catch (avatarError) {
+                    console.error('Failed to fetch user avatar:', avatarError);
+                }
             } catch (error) {
                 console.error('Failed to fetch user data:', error);
             }
