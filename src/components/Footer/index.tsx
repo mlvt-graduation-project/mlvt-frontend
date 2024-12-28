@@ -191,9 +191,9 @@ const Footer: React.FC = () => {
                                 fontSize: "0.9em",
                                 textDecoration: "none",
                                 fontWeight: 500,
-                                listStyle: "none", // Removes default list styling
-                                padding: 0,       // Removes default padding
-                                margin: 0,        // Removes default margin
+                                listStyle: "none", 
+                                padding: 0,       
+                                margin: 0,        
                             }}
                         >
                             <li style={{ marginBottom: "0.5em" }}>HCMUS - Faculty of Information Technology</li>
