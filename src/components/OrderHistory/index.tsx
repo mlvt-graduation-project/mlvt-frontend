@@ -2,6 +2,8 @@ import React from 'react';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Chip, IconButton } from '@mui/material';
 import CircleIcon from '@mui/icons-material/Circle';
 import CancelIcon from '@mui/icons-material/Cancel';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import Theme from '../../config/theme';
 
 type Order = {
     dateIssued: string;
@@ -10,7 +12,11 @@ type Order = {
     status: 'Paid' | 'Failed'; // This line ensures `status` can only be 'Paid' or 'Failed'
 };
 
-const OrderHistory = () => {
+type OrderHistoryProps = {
+    onBackClick: () => void;
+};
+
+const OrderHistory: React.FC<OrderHistoryProps> = ({ onBackClick }) => {
     const orders: Order[] = [
         { dateIssued: '11/26/2024', description: 'Monthly premium', amount: 15.99, status: 'Paid' },
         { dateIssued: '11/26/2024', description: 'Monthly premium', amount: 15.99, status: 'Paid' },
@@ -21,7 +27,7 @@ const OrderHistory = () => {
     ];
 
     const getStatusChip = (status: 'Paid' | 'Failed') => {
-        const color = status === 'Paid' ? '#1d7948' : '#b70120';
+        const color = status === 'Paid' ? Theme.status.complete.fontColor : Theme.status.failed.fontColor;
         return (
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <CircleIcon sx={{ color: color, fontSize: 'small', marginRight: 0.5 }} />
@@ -32,9 +38,29 @@ const OrderHistory = () => {
 
     return (
         <Box sx={{ padding: 3 }}>
-            <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: "bold" }}>
-                Order History
-            </Typography>
+            <div style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                margin: '0 0 2rem 0',
+                gap: 15
+            }}>
+                <Button
+                    variant="text"
+                    sx={{ color: "primary.main", textTransform: "none", padding: 0, minWidth: '0' }}
+                    onClick={onBackClick}
+                >
+                    <ArrowBackIosIcon sx={{ 
+                        fontSize: 25,
+                        fontWeight: "900",
+                        color: Theme.fontColor.black
+                    }} />
+                    
+                </Button>
+                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                    Order History
+                </Typography>
+            </div>
             <Typography sx={{ marginBottom: 5}} >
                 Your order history is saved and displayed here
             </Typography>

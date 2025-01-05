@@ -1,19 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Avatar,
-  MenuItem,
-  Grid,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  useTheme,
-  Divider,
-  Link,
+    Box,
+    Typography,
+    TextField,
+    Button,
+    Avatar,
+    MenuItem,
+    Grid,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    useTheme,
+    Divider,
+    Link,
 } from "@mui/material";
 import { AccountCircle, Lock, Subscriptions } from "@mui/icons-material";
 import PersonalDetails from "../../components/PersonalDetails";
@@ -22,6 +22,7 @@ import { useAuth } from "../../context/AuthContext";
 import ChangePassword from "../../components/ChangePassword";
 import Subscription from "../../components/Subscription";
 import Footer from "../../components/Footer";
+import Logo from '../../assets/mlvt_logo.png';
 
 interface UserDetails {
     firstName: string;
@@ -83,7 +84,7 @@ const EditAccount: React.FC = () => {
                             'Content-Type': 'application/json'
                         }
                     });
-    
+
                     if (avatarResponse.status !== 500) {
                         const avatarData = await avatarResponse.json();
                         const avatarDownloadUrl = avatarData.avatar_download_url;
@@ -116,25 +117,37 @@ const EditAccount: React.FC = () => {
         setUserDetails((prev) => ({ ...prev, [name]: value }));
     };
 
+    const menuItems = [
+        { key: "personalDetails", label: "Personal details", Icon: AccountCircle },
+        { key: "changePassword", label: "Change password", Icon: Lock },
+        { key: "subscription", label: "Subscription", Icon: Subscriptions },
+    ];
+
     return (
         <Box>
             <Box
                 sx={{
-                    display: "flex", // Align items horizontally
-                    flexDirection: "row", // Horizontal layout
-                    paddingTop: 4,
-                    paddingBottom: 4,
-                    paddingRight: 10,
-                    paddingLeft: 10,
+                    display: "flex",
+                    flexDirection: "row",
+                    padding: "1rem",
                     height: "100vh",
+                    alignItems: "center",
+                    gap: "1rem",
                 }}
             >
                 {/* Left Section */}
-                <Box sx={{ flex: 1, maxWidth: "400px", paddingRight: 5 }}>
+                <Box sx={{
+                    flex: 1,
+                    maxWidth: "400px",
+                    borderRadius: "1rem",
+                    padding: "2rem",
+                    boxShadow: getBoxShadowStyle(),
+                    backgroundColor: theme.background.lightPurple,
+                    height: "100%"
+                }}>
                     <Box
                         sx={{
-                        width: "100%",
-                        backgroundColor: "#fff",
+                            width: "100%",
                         }}
                     >
                         {/* Logo Section */}
@@ -142,22 +155,32 @@ const EditAccount: React.FC = () => {
                             <Link href="/">
                                 <Box
                                     component="img"
-                                    src={require("./image.jpeg")}
+                                    src={Logo}
                                     alt="Logo"
                                     sx={{
-                                    width: 120,
-                                    height: 120,
-                                    marginBottom: "1rem",
-                                    borderRadius: "0.8rem",
+                                        width: 120,
+                                        height: 120,
+                                        marginBottom: "1rem",
+                                        borderRadius: "0.8rem",
                                     }}
                                 />
                             </Link>
-                            <Typography variant="h6" sx={{ fontWeight: "bold", color: theme.background.main, textAlign: "center" }}>
+                            <Typography sx={{
+                                fontFamily: theme.typography.body1,
+                                fontSize: "1.1rem",
+                                fontWeight: "600",
+                                color: theme.background.main,
+                                textAlign: "center"
+                            }}>
                                 Multi-language Video Translation
                             </Typography>
                             <Typography
-                                variant="body2"
-                                sx={{ color: "#757575", textAlign: "center", marginTop: "0.5rem" }}
+                                sx={{
+                                    fontFamily: theme.typography.body1,
+                                    fontSize: "0.9rem",
+                                    color: theme.fontColor.black,
+                                    marginTop: "0.5rem"
+                                }}
                             >
                                 Manage your personal account settings
                             </Typography>
@@ -165,10 +188,11 @@ const EditAccount: React.FC = () => {
 
                         {/* Account Settings */}
                         <Typography
-                            variant="body2"
                             sx={{
-                                fontWeight: "bold",
-                                color: "#424242",
+                                fontFamily: theme.typography.body1,
+                                fontWeight: "600",
+                                fontSize: "1rem",
+                                color: theme.fontColor.black,
                                 marginBottom: "1rem",
                             }}
                         >
@@ -177,67 +201,43 @@ const EditAccount: React.FC = () => {
 
                         {/* Options */}
                         <List>
-                            <ListItem
-                                button
-                                onClick={() => setActiveComponent("personalDetails")}
-                                sx={{
-                                    backgroundColor: activeComponent === "personalDetails" ? theme.background.main : "transparent",
-                                    borderRadius: "0.5rem",
-                                    marginBottom: "0.5rem",
-                                    "&:hover": { backgroundColor: "#D1C4E9" },
-                                }}
-                            >
-                                <ListItemIcon>
-                                    <AccountCircle sx={{ color: activeComponent === "personalDetails" ? "#FFFFFF" : "#757575" }} />
-                                </ListItemIcon>
-                                <ListItemText primary="Personal details" sx={{ color: activeComponent === "personalDetails" ? "#FFFFFF" : "#757575", fontWeight: "bold" }} />
-                            </ListItem>
-                            <ListItem
-                                button
-                                onClick={() => setActiveComponent("changePassword")}
-                                sx={{
-                                    backgroundColor: activeComponent === "changePassword" ? theme.background.main : "transparent",
-                                    borderRadius: "0.5rem",
-                                    marginBottom: "0.5rem",
-                                    "&:hover": { backgroundColor: "#D1C4E9" },
-                                }}
-                            >
-                                <ListItemIcon>
-                                    <Lock sx={{ color: activeComponent === "changePassword" ? "#FFFFFF" : "#757575" }} />
-                                </ListItemIcon>
-                                <ListItemText primary="Change password" sx={{ color: activeComponent === "changePassword" ? "#FFFFFF" : "#757575" }} />
-                            </ListItem>
-                            <ListItem
-                                button
-                                onClick={() => setActiveComponent("subscription")}
-                                sx={{
-                                    backgroundColor: activeComponent === "subscription" ? theme.background.main : "transparent",
-                                    borderRadius: "0.5rem",
-                                    "&:hover": { backgroundColor: "#D1C4E9" },
-                                }}
-                            >
-                                <ListItemIcon>
-                                    <Subscriptions sx={{ color: activeComponent === "subscription" ? "#FFFFFF" : "#757575" }} />
-                                </ListItemIcon>
-                                <ListItemText primary="Subscription" sx={{ color: activeComponent === "subscription" ? "#FFFFFF" : "#757575" }}/>
-                            </ListItem>
+                            {menuItems.map(({ key, label, Icon }) => {
+                                const isActive = activeComponent === key;
+                                return (
+                                    <ListItem
+                                        key={key}
+                                        button
+                                        onClick={() => setActiveComponent(key)}
+                                        sx={{
+                                            backgroundColor: isActive ? theme.background.main : "transparent",
+                                            borderRadius: "0.5rem",
+                                            marginBottom: "0.5rem",
+                                            color: isActive ? "white" : "#3C3D37",
+                                            "&:hover": { backgroundColor: isActive ? theme.background.main : theme.background.lightPurple },
+                                        }}
+                                    >
+                                        <ListItemIcon>
+                                            <Icon sx={{
+                                                color: isActive ? "white" : "#3C3D37",
+                                            }} />
+                                        </ListItemIcon>
+                                        <ListItemText primary={label} sx={{
+                                            fontFamily: theme.typography.body1,
+                                            color: isActive ? "white" : "#3C3D37",
+                                            fontWeight: "bold",
+                                        }} />
+                                    </ListItem>
+                                );
+                            })}
                         </List>
                     </Box>
                 </Box>
 
-                {/* Vertical Divider */}
-                <Divider
-                orientation="vertical"
-                flexItem
-                sx={{
-                    borderWidth: "1px",
-                    marginX: 2,
-                    backgroundColor: "#E0E0E0",
-                }}
-                />
-
                 {/* Right Section */}
-                <Box sx={{ flex: 2, paddingLeft: 5 }}>
+                <Box sx={{
+                    flex: 2, padding: "1rem  ", borderRadius: "1rem", overflowY: "auto", height: "100%",
+                    boxShadow: getBoxShadowStyle(),
+                }}>
                     {activeComponent === "personalDetails" && (
                         <PersonalDetails
                             firstName={userDetails.firstName}
@@ -260,3 +260,7 @@ const EditAccount: React.FC = () => {
 };
 
 export default EditAccount;
+
+const getBoxShadowStyle = () => {
+    return "5px 5px 8px rgba(0, 0, 0, 0.21)";
+}

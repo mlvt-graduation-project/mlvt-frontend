@@ -13,13 +13,18 @@ const Subscription: React.FC = () => {
     };
 
     if (currentView === 'orderHistory') {
-        return <OrderHistory />;
+        return <OrderHistory onBackClick={() => handleViewChange('subscription')} />;;
     }
 
     return (
         <Box sx={{ padding: 4 }}>
             {/* Title Section */}
-            <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: 1 }}>
+            <Typography sx={{
+                fontFamily: theme.typography.body1,
+                fontWeight: 600,
+                fontSize: "2rem",
+                marginBottom: 1
+            }}>
                 Subscription
             </Typography>
             <Typography sx={{ color: "gray", marginBottom: 3 }}>
