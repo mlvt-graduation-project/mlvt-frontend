@@ -1,14 +1,14 @@
-import React, { useEffect } from "react";
-import { Box, TextField, Button, Typography, Divider, Checkbox } from "@mui/material";
+import React, { useEffect } from 'react';
+import { Box, TextField, Button, Typography, Divider, Checkbox } from '@mui/material';
 import LoginSignup from '../../layout/LoginRegistration';
 import { useTheme } from '@mui/material/styles';
 import GoogleLoginButton from '../../components/SocialLoginButton/GoogleLoginButton';
 import FacebookLoginButton from '../../components/SocialLoginButton/FacebookLoginButton';
 import axios from 'axios';
-import { useSnackbar } from "notistack";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { isToken } from "typescript";
+import { useSnackbar } from 'notistack';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { isToken } from 'typescript';
 
 const InputStyles = (theme: any) => ({
     sx: {
@@ -17,23 +17,18 @@ const InputStyles = (theme: any) => ({
             color: theme.fontColor.gray,
         },
         borderRadius: 2.5,
-    }
+    },
 });
 
-
 const Login = () => {
-
     const navigate = useNavigate();
 
     useEffect(() => {
         const authToken = localStorage.getItem('authToken');
         if (authToken) {
-           
             navigate('/', { replace: true });
         }
     }, [navigate]);
-
-
 
     const theme = useTheme();
     const { login } = useAuth();
@@ -61,7 +56,6 @@ const Login = () => {
     const validateEmail = () => setEmailError(!email);
     const validatePassword = () => setPasswordError(!password);
 
-
     // Login handler
     const handleLogin = async () => {
         setError(''); // Clear previous errors
@@ -85,7 +79,7 @@ const Login = () => {
         try {
             const response = await axios.post('http://localhost:8080/api/users/login', {
                 email: email,
-                password: password
+                password: password,
             });
 
             if (response.status === 200) {
@@ -95,56 +89,63 @@ const Login = () => {
                 console.log(response.data.user_id);
 
                 navigate('/');
-
             }
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 // Checking for specific response status
                 if (err.response?.status === 400) {
-                    setError("Validation error. Please check your inputs.");
+                    setError('Validation error. Please check your inputs.');
                 } else if (err.response?.status === 401) {
-                    setError("Invalid credentials. Please try again.");
+                    setError('Invalid credentials. Please try again.');
                 } else {
-                    setError("Failed to login. Please try again.");
+                    setError('Failed to login. Please try again.');
                 }
             } else {
                 // Handle network errors or other unknown errors
-                setError("Failed to login. Please check your connection.");
+                setError('Failed to login. Please check your connection.');
             }
         } finally {
             setLoading(false); // Set loading state to false
         }
     };
 
-
     return (
         <LoginSignup>
-            <Typography variant="h4" gutterBottom sx={{
-                color: theme.fontColor.black,
-                fontFamily: theme.typography.h1,
-                fontWeight: theme.typography.fontWeightBold,
-                fontSize: 60,
-                marginTop: 3,
-            }}>
+            <Typography
+                variant="h4"
+                gutterBottom
+                sx={{
+                    color: theme.fontColor.black,
+                    fontFamily: theme.typography.h1,
+                    fontWeight: theme.typography.fontWeightBold,
+                    fontSize: 60,
+                    marginTop: 3,
+                }}
+            >
                 Welcome back !
             </Typography>
-            <Typography variant="body1" sx={{
-                marginBottom: 3,
-                color: theme.fontColor.black,
-                fontFamily: theme.typography.body1,
-                fontWeight: 500,
-                fontSize: 16,
-            }}>
+            <Typography
+                variant="body1"
+                sx={{
+                    marginBottom: 3,
+                    color: theme.fontColor.black,
+                    fontFamily: theme.typography.body1,
+                    fontWeight: 500,
+                    fontSize: 16,
+                }}
+            >
                 Enter your Credentials to access your account
             </Typography>
 
             {/* Email Input */}
-            <Typography sx={{
-                fontFamily: theme.typography.body1,
-                fontSize: 14,
-                fontWeight: 550,
-                marginTop: 2.5,
-            }}>
+            <Typography
+                sx={{
+                    fontFamily: theme.typography.body1,
+                    fontSize: 14,
+                    fontWeight: 550,
+                    marginTop: 2.5,
+                }}
+            >
                 Email address
             </Typography>
             <TextField
@@ -159,7 +160,7 @@ const Login = () => {
                     marginTop: 0.6,
                     '& .MuiOutlinedInput-root': {
                         '&.Mui-focused fieldset': {
-                            borderColor: theme.background.main
+                            borderColor: theme.background.main,
                         },
                     },
                 }}
@@ -168,7 +169,6 @@ const Login = () => {
                 onBlur={validateEmail} // Trigger validation on blur
                 error={emailError} // Trigger error state
                 helperText={emailError ? 'Email is required' : ''}
-
                 FormHelperTextProps={{
                     sx: {
                         fontFamily: theme.typography.body1,
@@ -177,22 +177,23 @@ const Login = () => {
                         fontSize: 12,
                     },
                 }}
-
             />
 
             {/* Password Input */}
-            <Typography sx={{
-                fontFamily: theme.typography.body1,
-                fontColor: theme.status.failed.fontColor,
-                fontSize: 14,
-                marginTop: 2,
-                fontWeight: 550,
-            }}>
+            <Typography
+                sx={{
+                    fontFamily: theme.typography.body1,
+                    fontColor: theme.status.failed.fontColor,
+                    fontSize: 14,
+                    marginTop: 2,
+                    fontWeight: 550,
+                }}
+            >
                 Password
             </Typography>
             <TextField
                 placeholder="Enter your password"
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 fullWidth
                 margin="normal"
                 size="small" // Use the small size for the input field
@@ -202,7 +203,7 @@ const Login = () => {
                     marginTop: 0.6,
                     '& .MuiOutlinedInput-root': {
                         '&.Mui-focused fieldset': {
-                            borderColor: theme.background.main
+                            borderColor: theme.background.main,
                         },
                     },
                 }}
@@ -211,7 +212,6 @@ const Login = () => {
                 onBlur={validatePassword}
                 error={passwordError}
                 helperText={passwordError ? 'Password is required' : ''}
-
                 FormHelperTextProps={{
                     sx: {
                         fontFamily: theme.typography.body1,
@@ -230,14 +230,28 @@ const Login = () => {
             )}
 
             {/* Remember Me and Forgot Password */}
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2, marginTop: 2 }}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: 2,
+                    marginTop: 2,
+                }}
+            >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Checkbox id="rememberMe" size="small" sx={{
-                        padding: 0,
-                        '&.Mui-checked': {
-                            color: theme.background.main,
-                        }
-                    }} checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} />
+                    <Checkbox
+                        id="rememberMe"
+                        size="small"
+                        sx={{
+                            padding: 0,
+                            '&.Mui-checked': {
+                                color: theme.background.main,
+                            },
+                        }}
+                        checked={rememberMe}
+                        onChange={() => setRememberMe(!rememberMe)}
+                    />
                     <Typography
                         htmlFor="rememberMe"
                         component="label"
@@ -247,24 +261,24 @@ const Login = () => {
                             color: theme.fontColor.gray,
                             display: 'flex',
                             alignItems: 'center',
-
                         }}
                     >
                         Remember for 30 days
                     </Typography>
-
                 </Box>
-                <Typography variant="body2" sx={{
-                    cursor: "pointer",
-                    color: theme.status.inProgress.fontColor,
-                    fontFamily: theme.typography.body1,
-                    fontSize: '0.8rem',
-                    '&:hover': {
-                        textDecoration: 'underline',  // Underline on hover
-                    },
-                }}>
+                <Typography
+                    variant="body2"
+                    sx={{
+                        cursor: 'pointer',
+                        color: theme.status.processing.fontColor,
+                        fontFamily: theme.typography.body1,
+                        fontSize: '0.8rem',
+                        '&:hover': {
+                            textDecoration: 'underline', // Underline on hover
+                        },
+                    }}
+                >
                     Forgot password?
-
                 </Typography>
             </Box>
 
@@ -286,7 +300,6 @@ const Login = () => {
                     '&:hover': {
                         backgroundColor: theme.background.main,
                     },
-
                 }}
                 disabled={loading} // Disable button while loading
             >
@@ -297,11 +310,13 @@ const Login = () => {
             <Divider sx={{ my: 1.5, fontFamily: theme.typography.body1, fontSize: '0.8rem' }}>Or</Divider>
 
             {/* Social Login Buttons */}
-            <Box sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginTop: 2,
-            }}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginTop: 2,
+                }}
+            >
                 <GoogleLoginButton />
                 <FacebookLoginButton />
             </Box>
@@ -314,22 +329,28 @@ const Login = () => {
                     fontSize: '0.8rem',
                     display: 'flex',
                     justifyContent: 'center',
-                }}>
-                <Typography variant="body2" sx={{
-                    marginTop: 3,
-                    alignItems: 'center',
-                    fontFamily: theme.typography.body1,
-                    fontSize: '0.9rem',
-                }}>
-                    Don’t have an account? <a href="/signup" style={{ color: theme.status.inProgress.fontColor }}>Sign Up</a>
+                }}
+            >
+                <Typography
+                    variant="body2"
+                    sx={{
+                        marginTop: 3,
+                        alignItems: 'center',
+                        fontFamily: theme.typography.body1,
+                        fontSize: '0.9rem',
+                    }}
+                >
+                    Don’t have an account?{' '}
+                    <a href="/signup" style={{ color: theme.status.processing.fontColor }}>
+                        Sign Up
+                    </a>
                 </Typography>
             </Box>
-        </LoginSignup >
+        </LoginSignup>
     );
 };
 
 export default Login;
 function isTokenExpired(authToken: string) {
-    throw new Error("Function not implemented.");
+    throw new Error('Function not implemented.');
 }
-

@@ -1,14 +1,14 @@
 import credentialAPI from './credential.api';
-import {GetPresignedURL, PostVideo, Video, VideoList} from '../types/Response/Video'
+import { GetPresignedURL, PostVideo, VideoListResponse, Video } from '../types/Response/Video';
 
 // Image request
 export const getPresignedImageURL = async (fileName: string, fileType: string) => {
     try {
         const response = await credentialAPI.post<GetPresignedURL>('/videos/generate-upload-url/image', null, {
-        params: {
-            file_name: fileName,
-            file_type: fileType,
-        },
+            params: {
+                file_name: fileName,
+                file_type: fileType,
+            },
         });
         return response;
     } catch (error) {
@@ -21,10 +21,10 @@ export const getPresignedImageURL = async (fileName: string, fileType: string) =
 export const getPresignedVideoURL = async (fileName: string, fileType: string) => {
     try {
         const response = await credentialAPI.post<GetPresignedURL>('/videos/generate-upload-url/video', null, {
-        params: {
-            file_name: fileName,
-            file_type: fileType,
-        },
+            params: {
+                file_name: fileName,
+                file_type: fileType,
+            },
         });
         return response;
     } catch (error) {
@@ -33,10 +33,12 @@ export const getPresignedVideoURL = async (fileName: string, fileType: string) =
     }
 };
 
-// Image download request 
+// Image download request
 export const getPresignedDownloadImageURL = async (videoId: string) => {
     try {
-        const response = await credentialAPI.get<{ image_download_url: string }>(`/videos/${videoId}/download-url/image`);
+        const response = await credentialAPI.get<{
+            image_download_url: string;
+        }>(`/videos/${videoId}/download-url/image`);
         return response.data.image_download_url;
     } catch (error) {
         console.error('Error generating presigned Image URL:', error);
@@ -47,13 +49,15 @@ export const getPresignedDownloadImageURL = async (videoId: string) => {
 // Video download request
 export const getPresignedDownloadVideoURL = async (videoId: string) => {
     try {
-        const response = await credentialAPI.get<{ video_download_url: string }>(`/videos/${videoId}/download-url/video`);
+        const response = await credentialAPI.get<{
+            video_download_url: string;
+        }>(`/videos/${videoId}/download-url/video`);
         return response.data.video_download_url;
     } catch (error) {
         console.error('Error generating presigned Video URL:', error);
         throw error;
     }
-}
+};
 
 export const postVideo = async (file: object) => {
     try {
@@ -65,24 +69,14 @@ export const postVideo = async (file: object) => {
     }
 };
 
-export const postVideoTranscription = async (videoId: number) => {
+export const getVideoList = async (userId: number): Promise<VideoListResponse> => {
     try {
-        const response = await credentialAPI.post(`transcriptions/process/${videoId}`);
-        return response;
+        const response = await credentialAPI.get<VideoListResponse>(`/videos/user/${userId}`);
+        return response.data;
     } catch (error) {
-        console.error('Posting Video Transcription to server', error);
-        throw error;
+        throw new Error(`Failed to fetch videos: ${error}`);
     }
-}
-
-// export const getVideoList = async (userId: number): Promise<VideoListResponse> => {
-//     try {
-//         const response = await credentialAPI.get<VideoListResponse>(`/videos/user/${userId}`);
-//         return response.data;
-//     } catch (error) {
-//         throw new Error(`Failed to fetch videos: ${error}`);
-//     }
-// };
+};
 
 export const getOneVideoById = async (videoId: number): Promise<Video> => {
     try {
@@ -91,7 +85,7 @@ export const getOneVideoById = async (videoId: number): Promise<Video> => {
     } catch (error) {
         throw new Error(`Failed to fetch videos: ${error}`);
     }
-}
+};
 
 export const getVideoStatus = async (videoId: string) => {
     try {
@@ -100,17 +94,16 @@ export const getVideoStatus = async (videoId: string) => {
     } catch (error) {
         throw new Error(`Failed to fetch videos: ${error}`);
     }
-}
+};
 
-export const getVideosByUserId = async (userId: string): Promise<VideoList> => {
+export const getVideosByUserId = async (userId: string): Promise<VideoListResponse> => {
     try {
-        const response = await credentialAPI.get<VideoList>(`/videos/user/${userId}`);
-        // console.log(response);
+        const response = await credentialAPI.get<VideoListResponse>(`/videos/user/${userId}`);
         return response.data;
     } catch (error) {
         throw new Error(`Failed to fetch videos: ${error}`);
     }
-}
+};
 
 export const uploadImageToS3 = async (uploadUrl: string, file: File) => {
     try {
@@ -124,7 +117,7 @@ export const uploadImageToS3 = async (uploadUrl: string, file: File) => {
         console.error('Error uploading image to S3:', error);
         throw error;
     }
-}
+};
 
 export const uploadVideoToS3 = async (uploadUrl: string, file: File, fileType: string) => {
     try {
@@ -138,5 +131,4 @@ export const uploadVideoToS3 = async (uploadUrl: string, file: File, fileType: s
         console.error('Error uploading video to S3:', error);
         throw error;
     }
-}
-
+};

@@ -1,20 +1,23 @@
+import { ProjectStatus } from '../ProjectStatus';
 export interface Transcription {
-    id: number,
-    video_id: number,
-    user_id: number,
-    text: string,
-    lang: string,
-    folder: string,
-    file_name: string,
-    created_at: string,
-    updated_at: string
+    id: number;
+    video_id: number;
+    user_id: number;
+    original_transcription_id: number;
+    text: string;
+    lang: string;
+    folder: string;
+    file_name: string;
+    status: ProjectStatus;
+    created_at: string | Date;
+    updated_at: string | Date;
 }
 
-export interface TranscriptionList {
-    transcriptions: Transcription[]
+export interface TranscriptionListResponse {
+    transcriptions: Transcription[];
 }
 
 export interface GetTranscriptionById {
-    transcription: Transcription,
-    download_url: string
+    transcription: Transcription;
+    download_url: string;
 }

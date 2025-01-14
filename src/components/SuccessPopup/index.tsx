@@ -17,32 +17,38 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({ open, onClose, message }) =
             aria-labelledby="success-popup-title"
             aria-describedby="success-popup-description"
         >
-            <Box sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                bgcolor: 'background.paper',
-                boxShadow: 24,
-                p: 4,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                borderRadius: 2
-            }}>
-                <CheckCircleIcon sx={{
-                    fontSize: 100,
-                    color: theme.status.complete.fontColor,
-                    alignSelf: 'center',
-                }} />
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    bgcolor: 'background.paper',
+                    boxShadow: 24,
+                    p: 4,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    borderRadius: 2,
+                }}
+            >
+                <CheckCircleIcon
+                    sx={{
+                        fontSize: 100,
+                        color: theme.status.succeeded.fontColor,
+                        alignSelf: 'center',
+                    }}
+                />
 
-                <Typography sx={{
-                    fontFamily: theme.typography.h1,
-                    fontWeight: theme.typography.fontWeightBold,
-                    fontSize: '1.5rem',
-                    marginTop: 5,
-                    color: theme.status.complete.fontColor,
-                }}>
+                <Typography
+                    sx={{
+                        fontFamily: theme.typography.h1,
+                        fontWeight: theme.typography.fontWeightBold,
+                        fontSize: '1.5rem',
+                        marginTop: 5,
+                        color: theme.status.succeeded.fontColor,
+                    }}
+                >
                     {message}
                 </Typography>
             </Box>
