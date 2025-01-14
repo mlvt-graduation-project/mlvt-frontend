@@ -3,26 +3,41 @@ import { getOneVideoById } from '../../../api/video.api';
 import { InfoNav } from './BaseComponent/InfomationNavBar/InfoNav';
 import { Box } from '@mui/material';
 import { TextView } from './BaseComponent/RelatedOutput/CustomizedTextBox';
+import { getTranscriptionById, getTranscriptionDownloadUrl } from '../../../api/transcription.api';
+import { getTextFileContent } from '../../../api/aws.api';
+import { Transcription } from '../../../types/Response/Transcription';
 
 interface ContentProps {
+    textId: number;
     hideNavBar?: boolean;
+    customSx?: object;
+    centerTittle?: boolean;
 }
 
-export const RawTextContent: React.FC<ContentProps> = ({ hideNavBar = false }) => {
-    const [videoUrl, setVideoUrl] = useState<string | null>(null);
+export const RawTextContent: React.FC<ContentProps> = ({
+    textId,
+    hideNavBar = false,
+    centerTittle = false,
+    customSx,
+}) => {
+    const [textContent, setTextContent] = useState<string>('Some text will be display here');
+    const [textInfomation, setTextInfomation] = useState<Transcription | null>(null);
 
-    // useEffect(() => {
-    //     const fetchVideoData = async () => {
-    //         try {
-    //             const response = await getOneVideoById(videoId);
-    //             setVideoUrl(response.video_url.split('?')[0]);
-    //         } catch (error) {
-    //             console.error('Error fetching video URL:', error);
-    //         }
-    //     };
+    useEffect(() => {
+        const fetchTextData = async () => {
+            try {
+                const download_url = await getTranscriptionDownloadUrl(textId);
+                const textInfomation = await getTranscriptionById(textId);
+                const text = await getTextFileContent(download_url);
+                setTextInfomation(textInfomation.data);
+                setTextContent(text);
+            } catch (error) {
+                console.error('Error fetching video URL:', error);
+            }
+        };
 
-    //     fetchVideoData();
-    // }, [videoId]);
+        fetchTextData();
+    }, [textId]);
 
     return (
         <>
@@ -31,13 +46,19 @@ export const RawTextContent: React.FC<ContentProps> = ({ hideNavBar = false }) =
                 sx={{
                     display: 'flex',
                     flexDirection: 'column',
+                    height: '90%',
                     justifyContent: 'center',
                     alignItems: 'center',
                     padding: '10px',
                     paddingTop: '0',
                 }}
             >
-                <TextView displayText="Some text will be display here" textTittle="Raw Text" />
+                <TextView
+                    displayText={textContent}
+                    textTittle="Raw Text"
+                    customizeSx={customSx}
+                    centerTittle={centerTittle}
+                />
             </Box>
         </>
     );

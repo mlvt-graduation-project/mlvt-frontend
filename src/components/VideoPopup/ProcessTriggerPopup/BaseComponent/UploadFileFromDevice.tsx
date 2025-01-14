@@ -4,7 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { useDropzone } from 'react-dropzone';
 import { useEffect, useState } from 'react';
-import { getVideoDuration } from '../../Service/VideoService';
+import { getVideoDuration } from '../../../../utils/ProjectPopup/VideoService';
 import { FileData } from '../../../../types/FileData';
 import { VideoFileType, TextFileType, AudioFileType } from '../../../../types/FileType';
 import { useTheme } from '@mui/material/styles';

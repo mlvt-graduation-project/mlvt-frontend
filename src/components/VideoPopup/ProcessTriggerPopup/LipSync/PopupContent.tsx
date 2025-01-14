@@ -245,6 +245,7 @@ export const DialogContent: React.FC = () => {
                     fontFamily: 'Inter, Araboto, Roboto, Arial, sans-serif',
                     fontWeight: 'bold',
                     marginBottom: '10px',
+                    marginTop: '10px',
                 }}
             >
                 Upload an audio

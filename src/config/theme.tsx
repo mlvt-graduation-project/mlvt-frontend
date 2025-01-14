@@ -10,7 +10,7 @@ interface StatusTheme {
 declare module '@mui/material/styles' {
     interface Theme {
         status: {
-            complete: StatusTheme;
+            succeeded: StatusTheme;
             processing: StatusTheme;
             failed: StatusTheme;
             raw: StatusTheme;
@@ -32,7 +32,7 @@ declare module '@mui/material/styles' {
 
     interface ThemeOptions {
         status: {
-            complete: StatusTheme;
+            succeeded: StatusTheme;
             processing: StatusTheme;
             failed: StatusTheme;
             raw: StatusTheme;
@@ -54,7 +54,7 @@ declare module '@mui/material/styles' {
 }
 
 interface CustomCheckBoxProps {
-    status: 'complete' | 'processing' | 'failed';
+    status: 'succeeded' | 'processing' | 'failed';
 }
 
 const CustomCheckBox = styled(CheckBox)<CustomCheckBoxProps>(({ theme, status }) => ({
@@ -63,7 +63,7 @@ const CustomCheckBox = styled(CheckBox)<CustomCheckBoxProps>(({ theme, status })
 }));
 const theme = createTheme({
     status: {
-        complete: {
+        succeeded: {
             fontColor: '#1C7947',
             backgroundColor: '#C0EBA6',
         },

@@ -11,7 +11,7 @@ import { BrowseFile } from '../BaseComponent/BrowseMLVTFile';
 import { TranslateLanguage } from '../../../../types/Translation';
 import { LoadingDots } from '../../../StaticComponent/LoadingDot/LoadingDot';
 import { VideoFileType } from '../../../../types/FileType';
-import { uploadVideoToServer, translateVideo, transcribeVideo } from '../../Service/PipelineService';
+import { uploadVideoToServer, translateVideo } from '../../../../utils/ProcessTriggerPopup/PipelineService';
 
 interface UploadNoti {
     isOpen: boolean;
@@ -144,9 +144,6 @@ export const DialogContent: React.FC = () => {
     );
 
     useEffect(() => {
-        console.log('Deivice file: ', deviceFile);
-        console.log('Language: ', sourceLanguage);
-        console.log('Voice: ', targetLanguage);
         if (viewState === 'url') {
             if (!videoUrl || !sourceLanguage || !targetLanguage) {
                 setDisableGenerate(true);

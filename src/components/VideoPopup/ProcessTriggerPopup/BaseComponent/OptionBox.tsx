@@ -43,6 +43,7 @@ export const SingleOptionBox: React.FC<SingleSelectProps> = ({
                 <Select
                     labelId="single-select-label"
                     id="single-select"
+                    name="singleOption" // Thêm thuộc tính name
                     value={selectedOption}
                     onChange={handleChange}
                     MenuProps={MenuProps}

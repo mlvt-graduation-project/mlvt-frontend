@@ -36,11 +36,18 @@ export const ProcessedVideoPopUp: React.FC<ProcessedVideoProps> = ({
             //   case ProjectType.Fullpipeline:
             // return <FullPipelineContent videoId={project.id} />; // Use project.id instead of videoId
             case ProjectType.TextGeneration:
-                return <TextGenerationContent videoId={project.original_videoId} />; // Use project.id
+                return <TextGenerationContent inputProject={project} />; // Use project.id
             case ProjectType.Video:
                 return <RawVideoContent videoId={project.id} hideNavBar={hideNavBar} />;
             case ProjectType.Text:
-                return <RawTextContent hideNavBar={true} />; // No videoId needed
+                return (
+                    <RawTextContent
+                        textId={project.id}
+                        hideNavBar={false}
+                        customSx={{ height: '25rem', width: '80%' }}
+                        centerTittle={true}
+                    />
+                ); // No videoId needed
             //   case ProjectType.AudioGeneration:
             //     return <AudioGenerationContent videoId={project.id} />; // Use project.id
             //   case ProjectType.Lipsync:
@@ -103,8 +110,8 @@ export const ProcessedVideoPopUp: React.FC<ProcessedVideoProps> = ({
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={inputObject.status}
-                // childComponent={matchingComponent?.childComponent || <></>}
                 childComponent={getChildComponent(inputObject)}
+                customSx={{ height: '49rem' }}
             />
         </>
     );

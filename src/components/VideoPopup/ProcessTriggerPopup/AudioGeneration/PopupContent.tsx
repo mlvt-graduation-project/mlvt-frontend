@@ -8,7 +8,7 @@ import UploadNotification from '../../../UploadNotification';
 import { BrowseFile } from '../BaseComponent/BrowseMLVTFile';
 import { InputTextBox } from '../BaseComponent/InputTextBox';
 import { SingleOptionBox } from '../BaseComponent/OptionBox';
-import { transcribeVideo, uploadVideoToServer } from '../../Service/PipelineService';
+import { transcribeVideo, uploadVideoToServer } from '../../../../utils/ProcessTriggerPopup/PipelineService';
 import { TranslateLanguage } from '../../../../types/Translation';
 import { LoadingDots } from '../../../StaticComponent/LoadingDot/LoadingDot';
 import { TextFileType } from '../../../../types/FileType';

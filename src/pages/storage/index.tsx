@@ -59,7 +59,7 @@ const Storage = () => {
     const [isFavorite, setIsFavorite] = React.useState(false);
 
     const statusOption = [
-        { label: 'Completed', color: theme.status.complete.fontColor },
+        { label: 'Completed', color: theme.status.succeeded.fontColor },
         { label: 'Processing', color: theme.status.processing.fontColor },
         { label: 'Failed', color: theme.status.failed.fontColor },
         { label: 'Raw', color: theme.status.raw.fontColor },

@@ -12,10 +12,13 @@ import {
     handleGetVideosProjectByUserId,
     handleGetTranscriptionProjectByUserId,
     combineAndSortProjects,
+    getSpeakToTextProjects,
 } from '../../../utils/project.utils';
+import { useProjectContext } from '../../../context/ProjectContext';
 
 const ProjectSection = () => {
     const theme = useTheme();
+    // const { projects, updateProjects } = useProjectContext();
     const { userId } = useAuth();
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         console.log();
@@ -45,16 +48,23 @@ const ProjectSection = () => {
                     return;
                 }
                 const videoProjects = await handleGetVideosProjectByUserId(userId);
-                const transcriptionProject = await handleGetTranscriptionProjectByUserId(userId, videoProjects);
-                const combinedProject = combineAndSortProjects(videoProjects, transcriptionProject);
+                const transcriptionProjects = await handleGetTranscriptionProjectByUserId(userId);
+                const STTProjects = getSpeakToTextProjects(videoProjects, transcriptionProjects);
+                const combinedProject = combineAndSortProjects(videoProjects, transcriptionProjects, STTProjects);
                 setProjects(combinedProject);
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);
             }
         };
 
-        fetchVideoData();
-    }, [userId]);
+        fetchVideoData(); // Initial fetch when the component mounts
+
+        const intervalId = setInterval(fetchVideoData, 20000); // Fetch data every 30 seconds
+
+        return () => {
+            clearInterval(intervalId); // Cleanup the interval on component unmount
+        };
+    }, [userId]); // Dependency array includes userId
 
     return (
         <Box>
@@ -181,7 +191,6 @@ const ProjectSection = () => {
 
             {selectedProject && (
                 <ProcessedVideoPopUp
-                    // videoId={videoId}
                     inputObject={selectedProject}
                     isOpen={isPopUpOpen}
                     onClose={handleClosePopUp}

@@ -1,4 +1,4 @@
-import { TranslateLanguage } from '../types/Translation';
+import { TranslateLanguage } from '../../types/Translation';
 
 const languageCodeMap: Record<TranslateLanguage, string> = {
     [TranslateLanguage.English]: 'en',

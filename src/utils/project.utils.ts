@@ -1,7 +1,7 @@
 import { getVideosByUserId } from '../api/video.api';
-import { Project, RawVideo, TextGenerationProject, RawTranscriptionText } from '../types/Project';
+import { Project, RawVideo, TextGenerationProject } from '../types/Project';
 import { mapStatusToProjectStatus, ProjectStatus } from '../types/ProjectStatus';
-import { ProjectType } from '../types/Project';
+import { ProjectType, RawTranscription } from '../types/Project';
 import { getListTranscriptionByUserId } from '../api/transcription.api';
 
 import { Transcription } from '../types/Response/Transcription';
@@ -9,7 +9,7 @@ import { Transcription } from '../types/Response/Transcription';
 export function combineAndSortProjects(...projectLists: Project[][]): Project[] {
     return projectLists
         .flat() // Combine all lists into one
-        .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()); // Sort by createdAt
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()); // Sort by createdAt
 }
 
 export const handleGetVideosProjectByUserId = async (userId: string): Promise<RawVideo[]> => {
@@ -35,40 +35,44 @@ export const handleGetVideosProjectByUserId = async (userId: string): Promise<Ra
     }
 };
 
-export const handleGetTranscriptionProjectByUserId = async (
-    userId: string,
-    videoList: RawVideo[]
-): Promise<Project[]> => {
+export const handleGetTranscriptionProjectByUserId = async (userId: string): Promise<RawTranscription[]> => {
     try {
         const response = await getListTranscriptionByUserId(parseInt(userId));
-        const transcriptionProject: TextGenerationProject[] = response.data.transcriptions.map((transcriptionData) => ({
-            id: transcriptionData.id,
-            thumbnail: videoList.find((project) => project.id === transcriptionData.video_id)?.thumbnail || '', // use image_url as thumbnail
-            original_videoId: transcriptionData.video_id,
-            title: `Text Generation - ${transcriptionData.id}`,
-            status: mapStatusToProjectStatus(transcriptionData.status),
-            createdAt: new Date(transcriptionData.created_at),
-            updatedAt: new Date(transcriptionData.updated_at),
-            type_project: ProjectType.TextGeneration,
-        }));
         const successTranscriptionProject: Transcription[] = response.data.transcriptions.filter(
-            (data) => mapStatusToProjectStatus(data.status) === ProjectStatus.Complete
+            (data) => mapStatusToProjectStatus(data.status) === ProjectStatus.Succeeded
         );
-        const textTranscriptionProject: RawTranscriptionText[] = successTranscriptionProject.map(
-            (transcriptionData) => ({
-                id: transcriptionData.id,
-                type_text: 'transcription',
-                original_videoId: transcriptionData.video_id,
-                title: `Raw Text - ${transcriptionData.id}`,
-                status: ProjectStatus.Complete,
-                createdAt: new Date(transcriptionData.updated_at),
-                updatedAt: new Date(transcriptionData.updated_at),
-                type_project: ProjectType.Text,
-            })
-        );
-        return combineAndSortProjects(transcriptionProject, textTranscriptionProject);
+        const textTranscriptionProject: RawTranscription[] = successTranscriptionProject.map((transcriptionData) => ({
+            id: transcriptionData.id,
+            type_text: 'transcription',
+            original_videoId: transcriptionData.video_id,
+            title: `Raw Text - ${transcriptionData.id}`,
+            status: ProjectStatus.Succeeded,
+            createdAt: new Date(transcriptionData.updated_at),
+            updatedAt: new Date(transcriptionData.updated_at),
+            type_project: ProjectType.Text,
+        }));
+        return textTranscriptionProject;
     } catch (error) {
         console.error('Failed to fetch transcription list: ', error);
         return [];
     }
+};
+
+export const getSpeakToTextProjects = (videoList: RawVideo[], transcriptionList: RawTranscription[]) => {
+    const isValidTranscription = (data: RawTranscription): data is RawTranscription & { original_videoId: number } => {
+        return data.original_videoId !== null;
+    };
+    const copiedTranscriptionList = JSON.parse(JSON.stringify(transcriptionList.filter(isValidTranscription)));
+
+    const modifiedList: TextGenerationProject[] = copiedTranscriptionList.map((transcription: RawTranscription) => ({
+        id: transcription.id,
+        thumbnail: videoList.find((project) => project.id === transcription.original_videoId)?.thumbnail || '', // use image_url as thumbnail
+        original_videoId: transcription.original_videoId,
+        title: `Text Generation - ${transcription.id}`,
+        status: mapStatusToProjectStatus(transcription.status),
+        createdAt: new Date(transcription.createdAt),
+        updatedAt: new Date(transcription.updatedAt),
+        type_project: ProjectType.TextGeneration,
+    }));
+    return modifiedList;
 };

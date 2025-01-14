@@ -99,7 +99,6 @@ export const getVideoStatus = async (videoId: string) => {
 export const getVideosByUserId = async (userId: string): Promise<VideoListResponse> => {
     try {
         const response = await credentialAPI.get<VideoListResponse>(`/videos/user/${userId}`);
-        console.log(response);
         return response.data;
     } catch (error) {
         throw new Error(`Failed to fetch videos: ${error}`);

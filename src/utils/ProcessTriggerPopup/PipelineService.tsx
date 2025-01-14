@@ -1,9 +1,9 @@
-import { uploadVideo, uploadVideoImage, extractFirstFrame } from './VideoService';
-import { postVideoTranscription } from '../../../api/transcription.api';
-import { TranslateLanguage } from '../../../types/Translation';
-import { FileData } from '../../../types/FileData';
-import { getLanguageCode } from '../../../utils/video_popup.utils';
-import { postVideoTranslation } from '../../../api/fullpipeline.api';
+import { uploadVideo, uploadVideoImage, extractFirstFrame } from '../ProjectPopup/VideoService';
+import { postVideoTranscription } from '../../api/transcription.api';
+import { TranslateLanguage } from '../../types/Translation';
+import { FileData } from '../../types/FileData';
+import { getLanguageCode } from './videoPopup.utils';
+import { postVideoTranslation } from '../../api/fullpipeline.api';
 
 export const uploadVideoToServer = async (file: File, fileData: FileData): Promise<number> => {
     let videoId: number | null = null;

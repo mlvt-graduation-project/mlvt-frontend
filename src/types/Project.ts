@@ -1,3 +1,4 @@
+import { None } from 'framer-motion';
 import { ProjectStatus } from './ProjectStatus';
 
 export interface BaseProject {
@@ -20,17 +21,12 @@ export interface RawVideo extends BaseProject {
     thumbnail: string;
 }
 
-export interface RawTranscriptionText extends BaseProject {
-    type_text: 'transcription';
+export interface RawTranscription extends BaseProject {
     type_project: ProjectType.Text;
+    original_videoId: null | number;
 }
 
-export interface RawTranslationText extends BaseProject {
-    type_text: 'translation';
-    type_project: ProjectType.Text;
-}
-
-export type Project = RawVideo | TextGenerationProject | RawTranscriptionText | RawTranslationText;
+export type Project = RawVideo | TextGenerationProject | RawTranscription;
 
 export enum ProjectType {
     Fullpipeline = 'fullpipeline',

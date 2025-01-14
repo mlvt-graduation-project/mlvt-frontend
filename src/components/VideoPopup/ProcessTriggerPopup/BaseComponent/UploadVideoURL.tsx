@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { checkValidUrl } from '../../Service/CheckValidUrl';
+import { checkValidUrl } from '../../../../utils/ProjectPopup/CheckValidUrl';
 
 interface UrlVideoProps {
     setURLInput: (url: string | null) => void;

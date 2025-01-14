@@ -9,8 +9,8 @@ export interface Transcription {
     folder: string;
     file_name: string;
     status: ProjectStatus;
-    created_at: string;
-    updated_at: string;
+    created_at: string | Date;
+    updated_at: string | Date;
 }
 
 export interface TranscriptionListResponse {

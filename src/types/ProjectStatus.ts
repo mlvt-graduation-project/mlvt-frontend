@@ -1,6 +1,6 @@
 // project status
 export enum ProjectStatus {
-    Complete = 'complete',
+    Succeeded = 'succeeded',
     Processing = 'processing',
     Failed = 'failed',
     Raw = 'raw',
@@ -8,8 +8,8 @@ export enum ProjectStatus {
 
 export const mapStatusToProjectStatus = (status: string) => {
     switch (status.toLowerCase()) {
-        case 'complete':
-            return ProjectStatus.Complete;
+        case 'succeeded':
+            return ProjectStatus.Succeeded;
         case 'processing': // Ensure the string matches exactly what's expected.
             return ProjectStatus.Processing;
         case 'failed':
@@ -23,8 +23,8 @@ export const mapStatusToProjectStatus = (status: string) => {
 
 export const toDisplayText = (status: ProjectStatus) => {
     switch (status) {
-        case ProjectStatus.Complete:
-            return 'Completed';
+        case ProjectStatus.Succeeded:
+            return 'Succeeded';
         case ProjectStatus.Processing:
             return 'Processing';
         case ProjectStatus.Failed:

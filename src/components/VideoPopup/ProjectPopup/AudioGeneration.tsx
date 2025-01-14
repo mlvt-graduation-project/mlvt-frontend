@@ -3,15 +3,14 @@ import ChangeViewBox from '../ProcessTriggerPopup/BaseComponent/ChangView';
 import { getOneVideoById } from '../../../api/video.api';
 import { InfoNav } from './BaseComponent/InfomationNavBar/InfoNav';
 import { RealatedOutput } from './BaseComponent/RelatedOutput';
+import { Box } from '@mui/material';
 
 interface ContentProps {
     videoId: number;
 }
 
 export const AudioGenerationContent: React.FC<ContentProps> = ({ videoId }) => {
-    const [viewState, setViewState] = useState<
-        'original' | 'translated video' | 'related output'
-    >('original');
+    const [viewState, setViewState] = useState<'original' | 'translated video' | 'related output'>('original');
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const [videoStatus, setVideoStatus] = useState<string | null>(null);
@@ -33,9 +32,7 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({ videoId }) => {
 
     const changeViewState = (view: string) => {
         if (['original', 'translated video', 'related output'].includes(view)) {
-            setViewState(
-                view as 'original' | 'translated video' | 'related output'
-            );
+            setViewState(view as 'original' | 'translated video' | 'related output');
         }
     };
 
@@ -96,6 +93,7 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({ videoId }) => {
     return (
         <>
             <InfoNav />
+
             <ChangeViewBox Views={Views} setViewState={changeViewState} />
             {ActiveComponent}
         </>

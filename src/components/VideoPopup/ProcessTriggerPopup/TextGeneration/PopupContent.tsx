@@ -4,11 +4,11 @@ import ChangeViewBox from '../BaseComponent/ChangView';
 import { UploadVideoFromDevice } from '../BaseComponent/UploadFileFromDevice';
 import { UploadVideoFromUrl } from '../BaseComponent/UploadVideoURL';
 import { FileData } from '../../../../types/FileData';
-import { checkValidUrl } from '../../Service/CheckValidUrl';
+import { checkValidUrl } from '../../../../utils/ProjectPopup/CheckValidUrl';
 import { GenerateButton } from '../BaseComponent/GenerateButton';
 import UploadNotification from '../../../UploadNotification';
 import { BrowseFile } from '../BaseComponent/BrowseMLVTFile';
-import { transcribeVideo, uploadVideoToServer } from '../../Service/PipelineService';
+import { transcribeVideo, uploadVideoToServer } from '../../../../utils/ProcessTriggerPopup/PipelineService';
 import { LoadingDots } from '../../../StaticComponent/LoadingDot/LoadingDot';
 import { VideoFileType } from '../../../../types/FileType';
 
@@ -27,12 +27,7 @@ export const DialogContent: React.FC = () => {
         isOpen: false,
         status: 'success',
     });
-    const [transcriptNoti, setTranscriptNoti] = useState<UploadNoti>({
-        isOpen: false,
-        status: 'success',
-    });
     const [isLoading, setIsLoading] = useState(false);
-    const [isValidURL, setIsValidURL] = useState<boolean>(true);
     const [fileData, setFileData] = useState<FileData>({
         title: 'My Video Title',
         duration: 300,
@@ -67,9 +62,8 @@ export const DialogContent: React.FC = () => {
                 setUploadNoti({ isOpen: true, status: 'success' });
                 try {
                     await transcribeVideo(videoId);
-                    setTranscriptNoti({ isOpen: true, status: 'success' });
                 } catch {
-                    setTranscriptNoti({ isOpen: true, status: 'fail' });
+                    console.log('Error when transcribing video');
                 }
             } catch {
                 setUploadNoti({ isOpen: true, status: 'fail' });
@@ -88,10 +82,6 @@ export const DialogContent: React.FC = () => {
 
     const handleCloseStatusPopup = () => {
         setUploadNoti((prevData) => ({ ...prevData, isOpen: false }));
-    };
-
-    const handleCloseTranscriptionPopup = () => {
-        setTranscriptNoti((prevData) => ({ ...prevData, isOpen: false }));
     };
 
     const changeViewState = (view: string) => {
@@ -177,12 +167,6 @@ export const DialogContent: React.FC = () => {
                 uploadStatus={uploadNoti['status']}
                 onClose={handleCloseStatusPopup}
                 content={null}
-            />
-            <UploadNotification
-                isOpen={transcriptNoti['isOpen']}
-                uploadStatus={transcriptNoti['status']}
-                onClose={handleCloseTranscriptionPopup}
-                content={'TRANCRIPT'}
             />
         </>
     );

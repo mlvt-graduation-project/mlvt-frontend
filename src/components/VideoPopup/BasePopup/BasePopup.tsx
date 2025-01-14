@@ -11,21 +11,36 @@ interface BasePopupProps {
     childComponent: React.ReactNode;
     statusChip: null | ProjectStatus;
     customSx?: object;
+    // customPaperPropsSx?: object;
 }
 
-export const BasePopup: FC<BasePopupProps> = ({ tittle, isOpen, onClose, childComponent, statusChip, customSx }) => {
+export const BasePopup: FC<BasePopupProps> = ({
+    tittle,
+    isOpen,
+    onClose,
+    childComponent,
+    statusChip,
+    customSx,
+    // customPaperPropsSx,
+}) => {
     const theme = useTheme();
     return (
         <Dialog
             open={isOpen}
             onClose={onClose}
-            maxWidth="sm"
-            fullWidth
+            // maxWidth="sm"
+            // fullWidth
+            container={document.body} // Đặt container là body
+            maxWidth={false}
+            fullWidth={false}
             sx={{ ...customSx }}
             PaperProps={{
                 sx: {
+                    height: '45rem',
                     minWidth: '880px',
                     borderRadius: '10px',
+                    overflow: 'hidden',
+                    // ...customPaperPropsSx,
                 },
             }}
         >
@@ -79,7 +94,18 @@ export const BasePopup: FC<BasePopupProps> = ({ tittle, isOpen, onClose, childCo
                 </IconButton>
             </DialogTitle>
             <Divider orientation="horizontal" flexItem sx={{ borderBottomWidth: 2 }} />
-            <DialogContent>{childComponent}</DialogContent>
+            <DialogContent
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflowY: 'auto', // Cuộn nội dung theo chiều dọc nếu vượt kích thước
+                    height: '100%',
+                }}
+            >
+                <Box height={'100%'} width={'100%'}>
+                    {childComponent}
+                </Box>
+            </DialogContent>
         </Dialog>
     );
 };

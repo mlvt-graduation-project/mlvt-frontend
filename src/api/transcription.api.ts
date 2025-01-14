@@ -1,5 +1,5 @@
 import credentialAPI from './credential.api';
-import { TranscriptionListResponse } from '../types/Response/Transcription';
+import { Transcription, TranscriptionListResponse } from '../types/Response/Transcription';
 import { resolveNaptr } from 'dns';
 import { Project } from '../types/Project';
 import { mapStatusToProjectStatus } from '../types/ProjectStatus';
@@ -25,10 +25,22 @@ export const getListTranscriptionByUserId = async (userId: number) => {
     }
 };
 
+export const getTranscriptionById = async (TranscriptionId: number) => {
+    try {
+        const response = await credentialAPI.get<Transcription>(`/transcriptions/${TranscriptionId}`);
+        response.data.created_at = new Date(response.data.created_at);
+        response.data.updated_at = new Date(response.data.updated_at);
+        return response;
+    } catch (error) {
+        console.log('Error getting transcription by id: ', error);
+        throw error;
+    }
+};
+
 export const getTranscriptionDownloadUrl = async (TranscriptionId: number) => {
     try {
-        const response = await credentialAPI.get<TranscriptionListResponse>(`/transcriptions/video/${TranscriptionId}`);
-        return response;
+        const response = await credentialAPI.get(`/transcriptions/${TranscriptionId}/download-url`);
+        return response.data.download_url;
     } catch (error) {
         console.error('Error generating presigned Video URL:', error);
         throw error;

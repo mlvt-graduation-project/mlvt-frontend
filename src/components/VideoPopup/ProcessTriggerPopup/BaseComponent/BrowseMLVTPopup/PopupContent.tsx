@@ -25,8 +25,8 @@ export const DialogContent: React.FC = () => {
         const fetchVideoData = async () => {
             try {
                 if (userId) {
-                    const projects = await handleGetVideosProjectByUserId(userId);
-                    setProjects(projects);
+                    const videoProjects = await handleGetVideosProjectByUserId(userId);
+                    setProjects(videoProjects);
                 }
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);

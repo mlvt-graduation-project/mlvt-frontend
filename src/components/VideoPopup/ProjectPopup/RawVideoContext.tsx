@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getOneVideoById } from '../../../api/video.api';
 import { InfoNav } from './BaseComponent/InfomationNavBar/InfoNav';
 import { OriginalVideo } from './BaseComponent/OriginalVideo/OriginalVideo';
+import { Box } from '@mui/material';
 
 interface ContentProps {
     videoId: number;
@@ -27,7 +28,19 @@ export const RawVideoContent: React.FC<ContentProps> = ({ videoId, hideNavBar = 
     return (
         <>
             {!hideNavBar && <InfoNav />}
-            <OriginalVideo videoUrl={videoUrl}></OriginalVideo>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '90%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: '10px',
+                    paddingTop: '0',
+                }}
+            >
+                <OriginalVideo videoUrl={videoUrl}></OriginalVideo>
+            </Box>
         </>
     );
 };

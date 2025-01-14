@@ -76,7 +76,11 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                 onClick={handleClick}
             >
                 <img
-                    src={project.type_project !== ProjectType.Text ? project.thumbnail : '../../assets/TextIcon.png'}
+                    src={
+                        project.type_project !== ProjectType.Text
+                            ? project.thumbnail
+                            : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAMAAACahl6sAAAAM1BMVEX///8AAAB/f38uLi6NjY0KCgrBwcEqKiq5ubkFBQXZ2dmDg4O8vLy1tbXU1NTf398yMjJlvWAlAAAAxklEQVR4nO3aWw6CMBRFUcobRXH+ozXhHwPhYrVZawY7BZKSU1UAAAAAAAAAAADAMY8hhRrGPB3PKbYjpemWJaSO7kjpLuSM+Eery/NoVWMT29HMeToAAAA4aGnrL2uXKzrmLvZiu0fXXxASfEHf53VBSPg/kz2mC0KKOZG+lHekmK8WAAAA4cyctpg5CVmZOW0xcwIAAPgTpQwGzJzOMHP6oJgTMXP6ta8WAAAA4cyctpg5CVmZOW0xcwIAAAAAAAAAAIDD3kgsEQLWfVQTAAAAAElFTkSuQmCC'
+                    }
                     alt="Project Thumbnail"
                     style={{
                         width: '100%',

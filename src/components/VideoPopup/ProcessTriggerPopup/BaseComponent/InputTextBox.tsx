@@ -51,10 +51,14 @@ export const InputTextBox: React.FC<InputTextBoxProps> = ({
                 fullWidth
                 label=""
                 placeholder="Enter your text here"
-                multiline
+                multiline // this attribute lead to issue "A form field element has neither an id nor a name attribute. This might prevent the browser from correctly autofilling the form."
                 rows={4}
                 value={inputValue}
                 onChange={handleInputChange}
+                inputProps={{
+                    id: 'textarea-input', // Định danh duy nhất cho <textarea>
+                    name: 'textareaInput', // Tên cho autofill
+                }}
                 sx={{
                     borderRadius: '0.375rem',
                     height: '2.5rem',

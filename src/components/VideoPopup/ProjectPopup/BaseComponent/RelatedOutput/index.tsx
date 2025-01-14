@@ -34,13 +34,18 @@ export const RealatedOutput: React.FC<RealatedOutputProps> = ({ childrenData, sp
               display: 'grid',
               gridTemplateColumns: 'repeat(2, 1fr)',
               padding: '0px',
+              gap: 4,
+              mt: 4,
+              paddingTop: '0',
           }
-        : {};
+        : {
+              width: '100%',
+          };
 
     const customChildSx = splitTwoColumn
         ? {}
         : {
-              width: '50%',
+              width: '80%',
               height: '100%',
           };
 
@@ -51,10 +56,6 @@ export const RealatedOutput: React.FC<RealatedOutputProps> = ({ childrenData, sp
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                gap: 4,
-                mt: 4,
-                padding: '10px',
-                paddingTop: '0',
                 ...splitTwoColumnSx,
             }}
         >
@@ -77,6 +78,7 @@ export const RealatedOutput: React.FC<RealatedOutputProps> = ({ childrenData, sp
                             displayText={child.props.displayText}
                             textTittle={child.props.textTittle}
                             customizeSx={customChildSx}
+                            centerTittle={true}
                         />
                     );
                 }

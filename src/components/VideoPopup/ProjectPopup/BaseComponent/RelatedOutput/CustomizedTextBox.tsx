@@ -4,11 +4,13 @@ export const TextView = ({
     displayText,
     textTittle,
     customizeSx,
+    centerTittle = false,
     disableDownload = false,
 }: {
     displayText: string;
     textTittle: string;
     customizeSx?: object;
+    centerTittle?: boolean;
     disableDownload?: boolean;
 }) => {
     const handleDownload = () => {
@@ -24,7 +26,7 @@ export const TextView = ({
         <Box
             sx={{
                 backgroundColor: '#F3E8FF',
-                padding: '20px',
+                padding: '2.5%',
                 borderRadius: '20px',
                 height: '100%',
                 width: '100%',
@@ -37,7 +39,8 @@ export const TextView = ({
             <Box
                 sx={{
                     display: 'flex',
-                    justifyContent: 'space-between',
+                    justifyContent: centerTittle ? 'center' : 'space-between', // Căn giữa hoặc căn đều
+                    // justifyContent: 'space-between',
                     alignItems: 'center',
                     marginBottom: '3%',
                     gap: '16px',
@@ -56,9 +59,10 @@ export const TextView = ({
                 {!disableDownload && (
                     <IconButton
                         sx={{
+                            position: 'absolute',
+                            right: '5%',
                             borderRadius: '25%',
                             padding: '5px',
-                            hegith: '100%',
                             backgroundColor: '#B800E6',
                             color: 'white',
                             '&:hover': { backgroundColor: '#9B00CC' },
@@ -69,18 +73,28 @@ export const TextView = ({
                     </IconButton>
                 )}
             </Box>
-            <p
-                style={{
-                    fontSize: '12px',
-                    maxHeight: '95%', // Set max height for scrolling area
-                    overflowY: 'auto', // Enable vertical scrolling when content overflows
-                    whiteSpace: 'pre-wrap',
-                    margin: 0, // Remove default margin
-                    scrollbarWidth: 'thin', // For Firefox: makes the scrollbar thinner
+            <Box
+                sx={{
+                    border: '1px solid black', // Viền đen
+                    borderRadius: '10px', // Bo góc 2px
+                    padding: '10px', // Khoảng cách bên trong
+                    height: '80%',
                 }}
             >
-                {displayText}
-            </p>
+                <p
+                    style={{
+                        fontSize: '13px',
+                        maxHeight: '100%', // Set max height for scrolling area
+                        overflowY: 'auto', // Enable vertical scrolling when content overflows
+                        whiteSpace: 'pre-wrap',
+                        margin: 0, // Remove default margin
+                        scrollbarWidth: 'thin', // For Firefox: makes the scrollbar thinner
+                        fontFamily: 'Times New Roman, Times, serif',
+                    }}
+                >
+                    {displayText}
+                </p>
+            </Box>
         </Box>
     );
 };
