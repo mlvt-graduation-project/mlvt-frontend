@@ -1,11 +1,11 @@
 import React, { useRef, useState } from "react";
-import { Box, Typography, TextField, Button, Avatar, Grid, Snackbar, Alert } from "@mui/material";
+import { Box, Typography, TextField, Button, Avatar, Grid } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { updateUser } from "../../api/user.api";
 import { useAuth } from "../../context/AuthContext";
-import axios from "axios";
 import { getPresignedImageURL } from "../../api/video.api";
 import SuccessPopup from "../SuccessPopup";
+import axios from "axios";
 
 interface UserDetails {
     firstName: string;
@@ -18,72 +18,81 @@ interface UserDetails {
     avatarSrc: string;
 }
 
-const s3ApiClient = axios.create({
-    // No base URL, timeouts, or headers needed here
-  });
+const s3ApiClient = axios.create();
 
-const uploadImageToS3 = async (uploadUrl: string, file: File) => {
+const uploadImageToS3 = async (uploadUrl: string, file: File): Promise<void> => {
     try {
-        console.log(uploadUrl);
-        console.log(file.type);
-        const response = await s3ApiClient.put(uploadUrl, file, {
-            headers: {
-                'Content-Type': file.type  // As needed, based on your server's presigned URL expectations
-            }
+        await s3ApiClient.put(uploadUrl, file, {
+            headers: { 'Content-Type': file.type },
         });
-        return response;
     } catch (error) {
-        console.error('Error uploading image to S3:', error);
+        console.error("Error uploading image to S3:", error);
         throw error;
     }
-}
+};
 
-const PersonalDetails: React.FC<UserDetails> = ({firstName, lastName, username, email, createdDate, userRole, premiumExpiredDate, avatarSrc}) => {
+
+
+
+const PersonalDetails: React.FC<UserDetails> = ({ firstName, lastName, username, email, createdDate, userRole, premiumExpiredDate, avatarSrc }) => {
     const [userData, setUserData] = useState<UserDetails>({
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        email: email,
-        createdDate: createdDate,
-        userRole: userRole,
-        premiumExpiredDate: premiumExpiredDate,
-        avatarSrc: avatarSrc
+        firstName,
+        lastName,
+        username,
+        email,
+        createdDate,
+        userRole,
+        premiumExpiredDate,
+        avatarSrc,
     });
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const [showSuccessPopup, setShowSuccessPopup] = useState(false); // Manage snackbar state
-
     const theme = useTheme();
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [avatar, setAvatar] = useState<string>("");
+    const [showSuccessPopup, setShowSuccessPopup] = useState<boolean>(false);
     const { userId } = useAuth();
 
-    const [avatar, setAvatar] = useState<string>("");
+    const renderTextField = (
+        label: string,
+        name: string,
+        value: string,
+        onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
+        readOnly: boolean = false
+    ) => (
+        <TextField
+            fullWidth
+            size="small"
+            label={label}
+            name={name}
+            value={value}
+            onChange={onChange}
+            InputProps={{
+                readOnly,
+                style: {
+                    borderRadius: "8px",
+                    fontFamily: theme.typography.body1.fontFamily,
+                    fontSize: "1rem",
+                },
+            }}
+            disabled={readOnly}
+            color="secondary"
+        />
+    );
 
-    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files[0]) {
-            const file = event.target.files[0];
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        const file = event.target.files?.[0];
+        if (file) {
             const reader = new FileReader();
-
-            // Read the file as a data URL to display as an image
-            reader.onload = () => {
-                if (reader.result) {
-                    setAvatar(reader.result as string);
-                }
-            };
+            reader.onload = () => setAvatar(reader.result as string);
             reader.readAsDataURL(file);
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
         const { name, value } = e.target;
         setUserData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleClick = () => {
-        if (fileInputRef.current !== null) {
-            fileInputRef.current.click();
-        }
-    };
-
-    const handleSave = async () => {
+    const handleSave = async (): Promise<void> => {
         if (!userId) {
             console.error("User ID is null. Cannot update user data.");
             return;
@@ -96,213 +105,110 @@ const PersonalDetails: React.FC<UserDetails> = ({firstName, lastName, username, 
                 username: userData.username,
                 email: userData.email,
                 premium: false,
-                role: userData.userRole
-            }
+                role: userData.userRole,
+            };
 
-            const updatedDataResponse = await updateUser(userId, updatedData);
-            
-            // if (fileInputRef.current?.files && fileInputRef.current.files[0]) {
-            //     const file = fileInputRef.current.files[0];
-            //     console.log("Uploading avatar...");
-            //     await uploadAvatar(file);
-            //     console.log("Avatar uploaded successfully!");
-            // }
-
+            await updateUser(userId, updatedData);
             setShowSuccessPopup(true);
-
-            setTimeout(() => {
-                window.location.reload();
-            }, 3000);
+            setTimeout(() => window.location.reload(), 3000);
         } catch (error) {
-            console.error('Failed to update user data:', error);
+            console.error("Failed to update user data:", error);
         }
     };
 
-    const uploadAvatar = async (file: File) => {
-        try {
-            const responseGeneratePresignedImageUpload = await getPresignedImageURL(file.name, file.type);
-            if (responseGeneratePresignedImageUpload.status === 200) {
-                console.log('Generate presigned url for image successfully:', responseGeneratePresignedImageUpload.data);
-                const avatarUploadUrl = responseGeneratePresignedImageUpload.data.upload_url.replace('video_frames', 'avatars');
-
-                const s3UploadImageResponse = await uploadImageToS3(avatarUploadUrl, file);
-                if (s3UploadImageResponse.status === 200) {
-                    console.log('Avatar uploaded to S3 successfully');
-                } else {
-                    console.error('Failed to upload avatar to S3:', s3UploadImageResponse);
-                }
-            } else {
-                console.log('Failed to generate presigned image');
-            }
-
-        } catch (e) {
-            console.error('Error uploading file: ' + e)
-        }
-    }
-
     return (
-        <>
-            <Box >
-                {/* Title */}
-                <Typography variant="h5" sx={{ marginBottom: 1, fontWeight: "bold" }}>
-                    Personal details
-                </Typography>
-                <Typography sx={{ marginBottom: 3, color: "gray" }}>
-                    MLVT use the provided information to personalize your experience
-                </Typography>
+        <Box sx={{ paddingLeft: 10, paddingRight: 20, paddingTop: 4 }}>
+            <Typography sx={{ marginBottom: 1, fontFamily: theme.typography.body1.fontFamily, fontSize: "1.8rem", fontWeight: 600 }}>
+                Personal details
+            </Typography>
+            <Typography sx={{ marginBottom: 3, fontFamily: theme.typography.body1.fontFamily, fontSize: "1rem", color: theme.palette.text.secondary }}>
+                MLVT uses the provided information to personalize your experience.
+            </Typography>
 
-                {/* Profile Avatar */}
-                <Typography sx={{ marginBottom: 2 }}>
-                    Profile Avatar
-                </Typography>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 4 }}>
-                    <Avatar
-                        src={avatar != "" ? avatar : avatarSrc} // Replace with actual image path
-                        alt="Profile Avatar"
-                        sx={{ width: 80, height: 80 }}
-                    />
-                    <input
-                        type="file"
-                        hidden
-                        accept="image/*"
-                        ref={fileInputRef}
-                        onChange={handleFileChange}
-                    />
-                    <Button
-                        variant="outlined" 
-                        size="small"
-                        onClick={handleClick}
-                        sx={{
-                            backgroundColor: "#E0E0E0",
-                            color: "#000",
-                            borderRadius: "12px",
-                            fontWeight: "bold",
-                            textTransform: "uppercase",
-                            boxShadow: "none",
-                            "&:hover": {
-                            backgroundColor: "#D6D6D6",
-                            boxShadow: "none",
-                            },
-                        }}
-                    >
-                        CHANGE
-                    </Button>
-                </Box>
-
-                {/* User Information Fields */}
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                    <TextField
-                        fullWidth
-                        label="First name"
-                        name="firstName"
-                        value={userData.firstName}
-                        onChange={handleChange}
-                    />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                    <TextField
-                        fullWidth
-                        label="Last name"
-                        name="lastName"
-                        value={userData.lastName}
-                        onChange={handleChange}
-                    />
-                    </Grid>
-                    <Grid item xs={12}>
-                    <TextField
-                        fullWidth
-                        label="User name"
-                        name="username"
-                        value={userData.username}
-                        onChange={handleChange}
-                    />
-                    </Grid>
-                    <Grid item xs={12}>
-                    <TextField
-                        fullWidth
-                        label="Email"
-                        name="email"
-                        value={userData.email}
-                        onChange={handleChange}
-                    />
-                    </Grid>
-                    <Grid item xs={12}>
-                    <TextField
-                        fullWidth
-                        label="Created date"
-                        value={userData.createdDate}
-                        InputProps={{ readOnly: true }}
-                        sx={{
-                            backgroundColor: "#dfe4e8"
-                        }}
-                    />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                    <TextField
-                        fullWidth
-                        label="User role"
-                        value={userData.userRole}
-                        InputProps={{ readOnly: true }}
-                        sx={{
-                            backgroundColor: "#dfe4e8"
-                        }}
-                    />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                    <TextField
-                        fullWidth
-                        label="Premium expired date"
-                        value={userData.premiumExpiredDate}
-                        InputProps={{ readOnly: true }}
-                        sx={{
-                            backgroundColor: "#dfe4e8"
-                        }}
-                    />
-                    </Grid>
-                </Grid>
-
-                {/* Save Button */}
+            <Typography sx={{ marginBottom: 1, fontFamily: theme.typography.body1.fontFamily, fontSize: "0.9rem" }}>
+                Profile Avatar
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2.5, marginBottom: 4 }}>
+                <Avatar src={avatar || avatarSrc} alt="Profile Avatar" sx={{ width: 85, height: 85 }} />
+                <input type="file" hidden accept="image/*" ref={fileInputRef} onChange={handleFileChange} />
                 <Button
+                    size="small"
                     variant="contained"
+                    onClick={() => fileInputRef.current?.click()}
                     sx={{
-                        backgroundColor: theme.background.main,
-                        color: "#FFFFFF",
-                        borderRadius: "10px",
-                        fontWeight: "bold",
+                        backgroundColor: "#E0E0E0",
+                        color: "#000",
+                        fontFamily: theme.typography.body1.fontFamily,
+                        borderRadius: "8px",
+                        fontSize: "0.8rem",
+                        fontWeight: 600,
                         textTransform: "uppercase",
-                        padding: "0.6rem 2rem",
-                        marginLeft: "auto",
-                        marginTop: "10px",
                         boxShadow: "none",
-                        "&:hover": {
-                        backgroundColor: "#6C1CBF",
-                        boxShadow: "none",
-                        },
+                        "&:hover": { backgroundColor: "#D6D6D6", boxShadow: "none" },
                     }}
-                    onClick={handleSave}
                 >
-                    SAVE
+                    CHANGE
                 </Button>
             </Box>
 
-            {/* Success Popup */}
-            {/* <Snackbar
-                open={showSuccessPopup}
-                autoHideDuration={3000} // Auto-hide after 3 seconds
-                onClose={() => setShowSuccessPopup(false)} // Close on dismissal
-                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            <Grid container spacing={4}>
+                <Grid item xs={12} sm={5}>
+                    {renderTextField("First name", "firstName", userData.firstName, handleChange)}
+                </Grid>
+                <Grid item xs={12} sm={7}>
+                    {renderTextField("Last name", "lastName", userData.lastName, handleChange)}
+                </Grid>
+                <Grid item xs={12} sm={5}>
+                    {renderTextField("User name", "username", userData.username, handleChange)}
+                </Grid>
+                <Grid item xs={12} sm={7}>
+                    {renderTextField("Email", "email", userData.email, handleChange)}
+                </Grid>
+
+                <Grid item xs={12} sm={5}>
+                    {renderTextField("Created date", "", userData.createdDate, handleChange, true)}
+                </Grid>
+
+                <Grid item xs={12} sm={7}>
+                    {renderTextField("Premium expired date", "", userData.premiumExpiredDate, handleChange, true)}
+                </Grid>
+
+                <Grid item xs={12} sm={5}>
+                    {renderTextField("User role", "", userData.userRole, handleChange, true)}
+                </Grid>
+            </Grid>
+
+            {/* Save Button */}
+            <Button
+                size="large"
+                variant="contained"
+                onClick={handleSave}
+                sx={{
+                    marginTop: "2rem",
+                    backgroundColor: theme.background.main,
+                    color: theme.background.white,
+                    fontFamily: theme.typography.body1,
+                    padding: "0.5rem 2rem",
+                    borderRadius: "8px",
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                    textTransform: "uppercase",
+                    boxShadow: "none",
+                    "&:hover": {
+                        backgroundColor: theme.background.lightPurple,
+                        boxShadow: "none",
+                    },
+                }}
             >
-                <Alert onClose={() => setShowSuccessPopup(false)} severity="success" sx={{ width: "100%" }}>
-                    User details updated successfully!
-                </Alert>
-            </Snackbar> */}
+                SAVE
+            </Button>
+
             <SuccessPopup
                 open={showSuccessPopup}
                 onClose={() => setShowSuccessPopup(false)}
                 message="User details updated successfully!"
             />
-        </>
+        </Box>
     );
 };
 

@@ -42,8 +42,8 @@ const EditAccount: React.FC = () => {
         username: "minhminh2703",
         email: "nguyenthiminhminh.hcm@gmail.com",
         createdDate: "2024-04-30",
-        userRole: "USER",
-        premiumExpiredDate: "",
+        userRole: "User",
+        premiumExpiredDate: "2025-05-05 12:00:00",
         avatarSrc: "image.jpeg"
     });
     const [isLoading, setIsLoading] = useState(true);
@@ -246,7 +246,7 @@ const EditAccount: React.FC = () => {
                             email={userDetails.email}
                             createdDate={userDetails.createdDate}
                             userRole={userDetails.userRole}
-                            premiumExpiredDate=""
+                            premiumExpiredDate={userDetails.premiumExpiredDate}
                             avatarSrc={userDetails.avatarSrc}
                         />
                     )}
