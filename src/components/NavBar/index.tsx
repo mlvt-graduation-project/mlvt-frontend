@@ -27,7 +27,7 @@ const NavLinks = [
         icon: <TextFieldsIcon />,
         text: 'Text Generation',
         link: '/',
-        action: 'openVideoTranscription',
+        action: 'openTextGeneration',
     },
     {
         icon: <TranslateIcon />,
@@ -35,11 +35,11 @@ const NavLinks = [
         link: '/',
         action: 'openTextTranslation',
     },
-    {
-        icon: <KeyboardIcon />,
-        text: 'Subtitle Generation',
-        link: '/',
-    },
+    // {
+    //     icon: <KeyboardIcon />,
+    //     text: 'Subtitle Generation',
+    //     link: '/',
+    // },
     {
         icon: <MicIcon />,
         text: 'Voice Generation',
@@ -56,7 +56,7 @@ const NavLinks = [
 
 interface NavbarProps {
     onOpenVideoTranslation: () => void;
-    onOpenVideoTranscription: () => void;
+    onOpenTextGeneration: () => void;
     onOpenTextTranslation: () => void;
     onOpenVoiceGeneration: () => void;
     onOpenLipsync: () => void;
@@ -64,7 +64,7 @@ interface NavbarProps {
 
 const NavBar: React.FC<NavbarProps> = ({
     onOpenVideoTranslation,
-    onOpenVideoTranscription,
+    onOpenTextGeneration,
     onOpenTextTranslation,
     onOpenLipsync,
     onOpenVoiceGeneration,
@@ -83,8 +83,8 @@ const NavBar: React.FC<NavbarProps> = ({
     const handleNavClick = (action?: string) => {
         if (action === 'openVideoTranslation') {
             onOpenVideoTranslation();
-        } else if (action === 'openVideoTranscription') {
-            onOpenVideoTranscription();
+        } else if (action === 'openTextGeneration') {
+            onOpenTextGeneration();
         } else if (action === 'openTextTranslation') {
             onOpenTextTranslation();
         } else if (action === 'openLipsync') {

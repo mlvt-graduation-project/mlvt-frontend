@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, Typography, Avatar, Box, Chip, Icon, IconButton, TextField } from '@mui/material';
 import { Project } from '../../types/Project';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import { ProjectType } from '../../types/Project';
+import { hasThumbnail } from '../../utils/project.utils';
 import moment from 'moment';
 import { useTheme } from '@mui/material/styles';
 import axios from 'axios';
 import { Bookmark, BookmarkBorder, EditSharp as EditSharpIcon, Circle as CircleIcon } from '@mui/icons-material';
 import { ProjectStatus, toDisplayText } from '../../types/ProjectStatus';
+import TextIcon from '../../assets/TextIcon.png';
+import AudioIcon from '../../assets/AudioIcon.png';
 
 interface CardFeatureProps {
     project: Project;
@@ -50,12 +53,16 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
         console.log('Bookmark clicked');
     };
 
+    useEffect(() => {
+        setTitle(project.title);
+    }, [project]);
+
     return (
         <Card
             variant="outlined"
             sx={{
-                width: '22rem',
-                height: '18rem',
+                width: '90%',
+                aspectRatio: 22 / 18,
                 borderRadius: '0.5rem',
                 boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.55)',
                 overflow: 'hidden',
@@ -77,15 +84,20 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
             >
                 <img
                     src={
-                        project.type_project !== ProjectType.Text
-                            ? project.thumbnail
-                            : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAMAAACahl6sAAAAM1BMVEX///8AAAB/f38uLi6NjY0KCgrBwcEqKiq5ubkFBQXZ2dmDg4O8vLy1tbXU1NTf398yMjJlvWAlAAAAxklEQVR4nO3aWw6CMBRFUcobRXH+ozXhHwPhYrVZawY7BZKSU1UAAAAAAAAAAADAMY8hhRrGPB3PKbYjpemWJaSO7kjpLuSM+Eery/NoVWMT29HMeToAAAA4aGnrL2uXKzrmLvZiu0fXXxASfEHf53VBSPg/kz2mC0KKOZG+lHekmK8WAAAA4cyctpg5CVmZOW0xcwIAAPgTpQwGzJzOMHP6oJgTMXP6ta8WAAAA4cyctpg5CVmZOW0xcwIAAAAAAAAAAIDD3kgsEQLWfVQTAAAAAElFTkSuQmCC'
+                        hasThumbnail(project)
+                            ? project.thumbnail.split('?')[0]
+                            : [ProjectType.Text, ProjectType.AudioGeneration, ProjectType.TextTranslation].includes(
+                                  project.type_project
+                              )
+                            ? TextIcon
+                            : AudioIcon
                     }
                     alt="Project Thumbnail"
                     style={{
                         width: '100%',
                         height: '100%',
-                        objectFit: 'fill',
+                        objectFit: 'contain', // Keeps the original aspect ratio
+                        backgroundColor: '#E9E9E9', // Prevents white background if transparency exists
                     }}
                 />
 
@@ -163,15 +175,15 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                 </Box>
 
                 {/* Created Time */}
-                <Typography
+                {/* <Typography
                     sx={{
                         fontFamily: theme.typography.body1.fontFamily,
                         color: theme.fontColor.gray,
                         fontSize: '0.9rem',
                     }}
                 >
-                    Created at: {moment(project.createdAt).format('DD/MM/YYYY')}
-                </Typography>
+                    Created at: {formatDate(project.createdAt)}
+                </Typography> */}
 
                 {/* Status and Type Chips */}
                 <Box
@@ -217,5 +229,12 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
         </Card>
     );
 };
+
+function formatDate(date: Date): string {
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear();
+    return `${day}/${month}/${year}`;
+}
 
 export default CardFeature;

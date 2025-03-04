@@ -28,19 +28,7 @@ export const RawVideoContent: React.FC<ContentProps> = ({ videoId, hideNavBar = 
     return (
         <>
             {!hideNavBar && <InfoNav />}
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: '90%',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: '10px',
-                    paddingTop: '0',
-                }}
-            >
-                <OriginalVideo videoUrl={videoUrl}></OriginalVideo>
-            </Box>
+            <OriginalVideo videoUrl={videoUrl}></OriginalVideo>
         </>
     );
 };

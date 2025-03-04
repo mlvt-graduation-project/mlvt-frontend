@@ -47,12 +47,12 @@ export const getPresignedDownloadImageURL = async (videoId: string) => {
 };
 
 // Video download request
-export const getPresignedDownloadVideoURL = async (videoId: string) => {
+export const getVideoDownloadUrl = async (videoId: number) => {
     try {
         const response = await credentialAPI.get<{
             video_download_url: string;
         }>(`/videos/${videoId}/download-url/video`);
-        return response.data.video_download_url;
+        return response.data.video_download_url.split('?')[0];
     } catch (error) {
         console.error('Error generating presigned Video URL:', error);
         throw error;

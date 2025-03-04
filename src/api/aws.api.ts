@@ -13,7 +13,7 @@ export const putImageS3 = async (URL: string, file: File) => {
         });
 };
 
-export const putVideoS3 = async (URL: string, file: File, fileType: string) => {
+export const putDynamicFileType = async (URL: string, file: File | Blob, fileType: string) => {
     return api
         .put(URL, file, {
             headers: {
@@ -24,6 +24,32 @@ export const putVideoS3 = async (URL: string, file: File, fileType: string) => {
         .catch((error) => {
             throw error;
         });
+};
+
+export const putStringTextS3 = async (
+    content: string,
+    presignedUrl: string,
+    fileName: string = 'file.txt'
+): Promise<void> => {
+    try {
+        const blob = new Blob([content], { type: 'text/plain' });
+
+        const response = await fetch(presignedUrl, {
+            method: 'PUT',
+            body: blob,
+            headers: {
+                'Content-Type': 'text/plain',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Upload failed with status: ${response.status}`);
+        }
+
+        console.log(`File "${fileName}" uploaded successfully to S3.`);
+    } catch (error) {
+        console.error('Error uploading file to S3:', error);
+    }
 };
 
 export async function getTextFileContent(downloadUrl: string): Promise<string> {

@@ -5,13 +5,14 @@ import React, { useEffect, useState } from 'react';
 // import ProcessedVidPopUp from "../../ProcessedVidPopUp";
 import { ProcessedVideoPopUp } from '../../VideoPopup/ProjectPopup';
 import CardFeature from '../../CardFeature';
-import { Project } from '../../../types/Project';
+import { Project, ProjectType } from '../../../types/Project';
 import { useAuth } from '../../../context/AuthContext';
 import {
     handleGetVideosProjectByUserId,
-    handleGetTranscriptionProjectByUserId,
+    handleGetTextProjectByUserId,
     combineAndSortProjects,
-    getSpeakToTextProjects,
+    handleGetAudioProjectByUserId,
+    getAllProgressProjects,
 } from '../../../utils/project.utils';
 import { useProjectContext } from '../../../context/ProjectContext';
 
@@ -22,16 +23,15 @@ const ProjectSection = () => {
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         console.log();
     };
+    const { projects, getProjectsByType, fetchAllProjects } = useProjectContext();
     const [selectedProject, setSelectedProject] = React.useState<Project | null>(null);
     const [isPopUpOpen, setIsPopUpOpen] = React.useState(false);
     const [dropdownValue, setDropdownValue] = React.useState('');
-    const [videoId, setVideoId] = useState<number>(0);
-    const [projects, setProjects] = useState<Project[]>([]);
+    const [displayProjects, setDisplayProjects] = useState<Project[]>([]);
 
     const handleCardClick = (project: Project) => {
         setSelectedProject(project);
         setIsPopUpOpen(true);
-        setVideoId(project.id);
     };
 
     const handleClosePopUp = () => {
@@ -46,11 +46,7 @@ const ProjectSection = () => {
                     setError('No user ID found in local storage');
                     return;
                 }
-                const videoProjects = await handleGetVideosProjectByUserId(userId);
-                const transcriptionProjects = await handleGetTranscriptionProjectByUserId(userId);
-                const STTProjects = getSpeakToTextProjects(videoProjects, transcriptionProjects);
-                const combinedProject = combineAndSortProjects(videoProjects, transcriptionProjects, STTProjects);
-                setProjects(combinedProject);
+                fetchAllProjects();
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);
             }
@@ -58,12 +54,23 @@ const ProjectSection = () => {
 
         fetchData(); // Initial fetch when the component mounts
 
-        const intervalId = setInterval(fetchData, 20000); // Fetch data every 30 seconds
+        // const intervalId = setInterval(fetchData, 20000); // Fetch data every 30 seconds
 
-        return () => {
-            clearInterval(intervalId); // Cleanup the interval on component unmount
-        };
-    }, [userId]); // Dependency array includes userId
+        // return () => {
+        //     clearInterval(intervalId); // Cleanup the interval on component unmount
+        // };
+    }, []); // Dependency array includes userId
+
+    useEffect(() => {
+        const progress = getProjectsByType([
+            ProjectType.AudioGeneration,
+            ProjectType.Fullpipeline,
+            ProjectType.Lipsync,
+            ProjectType.TextGeneration,
+            ProjectType.TextTranslation,
+        ]);
+        setDisplayProjects(progress);
+    }, [getProjectsByType, projects]);
 
     return (
         <Box>
@@ -183,8 +190,8 @@ const ProjectSection = () => {
                     rowGap: '3rem',
                 }}
             >
-                {projects.map((project) => (
-                    <CardFeature key={project.id} project={project} onclick={() => handleCardClick(project)} />
+                {displayProjects.map((project, index) => (
+                    <CardFeature key={index} project={project} onclick={() => handleCardClick(project)} />
                 ))}
             </Box>
 

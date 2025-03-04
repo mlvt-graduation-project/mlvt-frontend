@@ -4,10 +4,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { useDropzone } from 'react-dropzone';
 import { useEffect, useState } from 'react';
-import { getVideoDuration } from '../../../../utils/ProjectPopup/VideoService';
+// import { getVideoDuration } from '../../../../utils/ProcessTriggerPopup/VideoService';
+import { getMediaDuration } from '../../../../utils/ProcessTriggerPopup/VideoService';
 import { FileData } from '../../../../types/FileData';
 import { VideoFileType, TextFileType, AudioFileType } from '../../../../types/FileType';
 import { useTheme } from '@mui/material/styles';
+import { useAuth } from '../../../../context/AuthContext';
+import { CustomAudio } from './CustomAudio';
+import { CustomVideo } from './CustomVideo';
+import { CustomText } from './CustomText';
 
 type AllowedFileType = VideoFileType | TextFileType | AudioFileType;
 
@@ -27,13 +32,14 @@ const checkFileType = (fileType: string): 'video' | 'audio' | 'text' | null => {
 };
 
 // Component
-export const UploadVideoFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
+export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
     selectedFile,
     handleChangeSelectedFile,
     handleChangeFileData,
     fileTypeList,
 }) => {
     const theme = useTheme();
+    const { userId } = useAuth();
     const [isDragActive, setIsDragActive] = useState(false);
     const [localURL, setLocalURL] = useState<string | null>(null);
     const [localFileType, setLocalFileType] = useState<'video' | 'audio' | 'text' | null>(null);
@@ -73,17 +79,38 @@ export const UploadVideoFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
                 setErrorMessage(null);
                 handleChangeSelectedFile(file);
                 setIsDragActive(false);
+                const fileExtension = file.name.includes('.') ? file.name.substring(file.name.lastIndexOf('.')) : '';
+
+                // Generate new filename while preserving extension
+                const newFileName = `${userId}_${Math.floor(Date.now() / 1000)}${fileExtension}`;
 
                 if (checkFileType(file.type) === 'video') {
                     try {
-                        const duration = await getVideoDuration(file);
+                        const duration = await getMediaDuration(file);
                         handleChangeFileData({
-                            file_name: file.name,
+                            file_name: newFileName,
                             image: `${file.name.split('.')[0]}_thumbnail.jpg`,
-                            duration,
+                            duration: duration,
+                            folder: 'raw_videos',
                         });
                     } catch (error) {
-                        console.error('Error getting video duration:', error);
+                        console.error('Error getting video duration', error);
+                    }
+                } else if (checkFileType(file.type) === 'text') {
+                    handleChangeFileData({
+                        file_name: newFileName,
+                        folder: 'transcriptions',
+                    });
+                } else if (checkFileType(file.type) === 'audio') {
+                    try {
+                        const duration = await getMediaDuration(file);
+                        handleChangeFileData({
+                            file_name: newFileName,
+                            duration: duration,
+                            folder: 'audios',
+                        });
+                    } catch (error) {
+                        console.error('Error getting audio duration', error);
                     }
                 }
             } else {
@@ -131,27 +158,7 @@ export const UploadVideoFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
         }
 
         if (localFileType === 'audio' && localURL) {
-            return (
-                <Box
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                    }}
-                >
-                    <audio src={localURL} controls style={{ flex: '1', maxWidth: 'calc(100% - 50px)' }} />
-                    <IconButton
-                        onClick={handleRemoveFile}
-                        sx={{
-                            marginLeft: '10px',
-                            backgroundColor: 'grey',
-                            color: 'white',
-                        }}
-                    >
-                        <DeleteIcon />
-                    </IconButton>
-                </Box>
-            );
+            return <CustomAudio audioURL={localURL} handleRemoveFile={handleRemoveFile} />;
         }
 
         if (localFileType === 'text' && fileContent) {
@@ -240,33 +247,45 @@ export const UploadVideoFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
                     )}
                 </>
             ) : (
-                <Box sx={{ position: 'relative' }}>
-                    {renderFileContent()}
-                    {localFileType !== 'audio' && (
-                        <IconButton
-                            onClick={handleRemoveFile}
-                            sx={{
-                                position: 'absolute',
-                                top: localFileType === 'video' ? '25px' : '2px',
-                                right: '15px',
-                                backgroundColor: 'grey',
-                                color: 'white',
-                            }}
-                        >
-                            <DeleteIcon />
-                        </IconButton>
+                <>
+                    {localFileType === 'audio' && localURL && (
+                        <CustomAudio handleRemoveFile={handleRemoveFile} audioURL={localURL} />
                     )}
-                    <Typography
-                        variant="body2"
-                        align="center"
-                        sx={{
-                            marginTop: '5px',
-                            fontFamily: 'Inter, Arial, sans-serif',
-                        }}
-                    >
-                        {selectedFile?.name}
-                    </Typography>
-                </Box>
+                    {localFileType === 'video' && localURL && (
+                        <CustomVideo handleRemoveFile={handleRemoveFile} videoURL={localURL} />
+                    )}
+                    {localFileType === 'text' && fileContent && (
+                        <CustomText handleRemoveFile={handleRemoveFile} textContent={fileContent} />
+                    )}
+                </>
+
+                // <Box sx={{ position: 'relative' }}>
+                //     {renderFileContent()}
+                //     {localFileType !== 'audio' && (
+                //         <IconButton
+                //             onClick={handleRemoveFile}
+                //             sx={{
+                //                 position: 'absolute',
+                //                 top: localFileType === 'video' ? '25px' : '2px',
+                //                 right: '15px',
+                //                 backgroundColor: 'grey',
+                //                 color: 'white',
+                //             }}
+                //         >
+                //             <DeleteIcon />
+                //         </IconButton>
+                //     )}
+                //     <Typography
+                //         variant="body2"
+                //         align="center"
+                //         sx={{
+                //             marginTop: '5px',
+                //             fontFamily: 'Inter, Arial, sans-serif',
+                //         }}
+                //     >
+                //         {selectedFile?.name}
+                //     </Typography>
+                // </Box>
             )}
         </>
     );

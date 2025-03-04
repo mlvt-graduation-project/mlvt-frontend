@@ -3,46 +3,49 @@ import { getOneVideoById } from '../../../api/video.api';
 import { Box } from '@mui/material';
 import { InfoNav } from './BaseComponent/InfomationNavBar/InfoNav';
 import { CustomAudioPlayer } from './BaseComponent/RelatedOutput/CustomizedVideoBox';
+import { getAduioById } from '../../../api/audio.api';
 
 interface ContentProps {
-    videoId: number;
+    audioId: number;
     hideNavBar?: boolean;
 }
 
-export const RawAudioContent: React.FC<ContentProps> = ({ videoId, hideNavBar = false }) => {
-    const [videoUrl, setVideoUrl] = useState<string | null>(null);
+export const RawAudioContent: React.FC<ContentProps> = ({ audioId, hideNavBar = false }) => {
+    const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchVideoData = async () => {
             try {
-                const response = await getOneVideoById(videoId);
-                setVideoUrl(response.video_url.split('?')[0]);
+                const response = await getAduioById(audioId);
+                setAudioUrl(response.download_url.split('?')[0]);
             } catch (error) {
                 console.error('Error fetching video URL:', error);
             }
         };
 
         fetchVideoData();
-    }, [videoId]);
+    }, [audioId]);
 
     return (
         <>
             {!hideNavBar && <InfoNav />}
+
             <Box
                 sx={{
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    marginTop: '20px',
                     padding: '10px',
                     paddingTop: '0',
                 }}
             >
                 <CustomAudioPlayer
-                    audioSrc={videoUrl || ''}
+                    audioSrc={audioUrl || ''}
                     audioTittle={'Raw Audio'}
                     sourceType="audio"
-                    customizeSx={{ width: '50%', height: '100%' }}
+                    customizeSx={{ width: '60%', height: '100%' }}
                     disableDownload={true}
                 />
             </Box>

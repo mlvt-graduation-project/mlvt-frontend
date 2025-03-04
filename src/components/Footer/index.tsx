@@ -1,10 +1,9 @@
-
 import { Grid, Box, Typography, Link, Container } from '@mui/material';
 import { Facebook, MailOutline, LinkedIn, Phone } from '@mui/icons-material';
 import Theme from '../../config/theme';
 import Logo from '../../assets/mlvt_logo.png';
 import React from 'react';
-import HCMUSLogo from '../../assets/fithcmus.png'
+import HCMUSLogo from '../../assets/fithcmus.png';
 
 interface LinkItem {
     text: string;
@@ -12,19 +11,19 @@ interface LinkItem {
 }
 
 const LinkSection: React.FC<{ title: string; links: LinkItem[] }> = ({ title, links }) => (
-    <Box sx={{ padding: "1em 0.7em" }}>
+    <Box sx={{ padding: '1em 0.7em' }}>
         <Typography
             sx={{
                 color: Theme.status.failed.fontColor,
                 fontFamily: Theme.typography.body1,
-                fontSize: "1em",
+                fontSize: '1em',
                 fontWeight: 600,
-                paddingBottom: "0.5em",
+                paddingBottom: '0.5em',
             }}
         >
             {title}:
         </Typography>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: "0.5em" }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5em' }}>
             {links.map((item: LinkItem, index: number) => (
                 <Typography
                     key={index}
@@ -33,18 +32,18 @@ const LinkSection: React.FC<{ title: string; links: LinkItem[] }> = ({ title, li
                     sx={{
                         color: Theme.fontColor.black,
                         fontFamily: Theme.typography.body1,
-                        fontSize: "0.9em",
-                        textDecoration: "none",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5em",
-                        "&:hover": { color: Theme.background.main },
-                        "&::before": {
+                        fontSize: '0.9em',
+                        textDecoration: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5em',
+                        '&:hover': { color: Theme.background.main },
+                        '&::before': {
                             content: "'•'",
                             color: Theme.fontColor.black,
-                            fontSize: "1.5em",
-                            marginRight: "0.5em",
-                            lineHeight: "1",
+                            fontSize: '1.5em',
+                            marginRight: '0.5em',
+                            lineHeight: '1',
                         },
                         fontWeight: 500,
                     }}
@@ -56,92 +55,99 @@ const LinkSection: React.FC<{ title: string; links: LinkItem[] }> = ({ title, li
     </Box>
 );
 
-
 const Footer: React.FC = () => {
-
     const resources: LinkItem[] = [
-        { text: "Documentation", link: "/documentation" },
-        { text: "Figma design", link: "/figma-design" },
-        { text: "Sample", link: "/sample" },
-        { text: "Tutorial video", link: "/tutorial-video" },
+        { text: 'Documentation', link: '/documentation' },
+        { text: 'Figma design', link: '/figma-design' },
+        { text: 'Sample', link: '/sample' },
+        { text: 'Tutorial video', link: '/tutorial-video' },
     ];
 
     const project: LinkItem[] = [
-        { text: "About us", link: "/about-us" },
-        { text: "Terms and conditions", link: "/terms-and-condition" },
-        { text: "Privacy policy", link: "/privacy-policy" },
+        { text: 'About us', link: '/about-us' },
+        { text: 'Terms and conditions', link: '/terms-and-condition' },
+        { text: 'Privacy policy', link: '/privacy-policy' },
     ];
 
     return (
-        <Box bgcolor={Theme.background.lightPurple} p={4} sx={{paddingLeft:"3em"}}>
+        <Box bgcolor={Theme.background.lightPurple} p={4} sx={{ paddingLeft: '3em' }}>
             <Grid container px={5}>
                 {/* Logo and Description*/}
-                <Grid xs={12} md={4}>
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "flex-start",
-                        // padding: "1em",
-                    }}>
-                        <img
-                            src={Logo}
-                            alt='MLVT'
-                            style={{ width: "10em", height: "10em" }}
-                        />
-                        <Typography sx={{
-                            color: Theme.status.failed.fontColor,
-                            fontFamily: Theme.typography.body1,
-                            fontSize: "1em",
-                            fontWeight: 600,
-                        }}>
+                <Grid item xs={12} md={4}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            // padding: "1em",
+                        }}
+                    >
+                        <img src={Logo} alt="MLVT" style={{ width: '10em', height: '10em' }} />
+                        <Typography
+                            sx={{
+                                color: Theme.status.failed.fontColor,
+                                fontFamily: Theme.typography.body1,
+                                fontSize: '1em',
+                                fontWeight: 600,
+                            }}
+                        >
                             Multi-language Video Translation
                         </Typography>
 
-                        <Typography sx={{
-                            color: Theme.fontColor.black,
-                            fontFamily: Theme.typography.body1,
-                            fontSize: "0.9em",
-                        }}>
+                        <Typography
+                            sx={{
+                                color: Theme.fontColor.black,
+                                fontFamily: Theme.typography.body1,
+                                fontSize: '0.9em',
+                            }}
+                        >
                             is a graduation project at University of Science - HCM City.
                         </Typography>
 
-                        <Typography sx={{
-                            color: Theme.status.failed.fontColor,
-                            fontFamily: Theme.typography.body1,
-                            fontSize: "1em",
-                            fontWeight: 600,
-                            paddingTop: "1em",
-                        }}>
+                        <Typography
+                            sx={{
+                                color: Theme.status.failed.fontColor,
+                                fontFamily: Theme.typography.body1,
+                                fontSize: '1em',
+                                fontWeight: 600,
+                                paddingTop: '1em',
+                            }}
+                        >
                             Get in touch:
                         </Typography>
 
                         {/* icon section */}
-                        <Box mt={1} sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "0.5em",
-
-                        }}>
+                        <Box
+                            mt={1}
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '0.5em',
+                            }}
+                        >
                             <Box display="flex" gap={3}>
                                 <Link href="#" color="inherit">
-                                    <Facebook fontSize='large' />
+                                    <Facebook fontSize="large" />
                                 </Link>
                                 <Link href="mailto:example@mail.com" color="inherit">
-                                    <MailOutline fontSize='large' />
+                                    <MailOutline fontSize="large" />
                                 </Link>
                                 <Link href="#" color="inherit">
-                                    <LinkedIn fontSize='large' />
+                                    <LinkedIn fontSize="large" />
                                 </Link>
                             </Box>
                             <Box display="flex" gap={0.7}>
                                 <Link href="tel:+8489496257" color="inherit">
-                                    <Phone fontSize='large' />
+                                    <Phone fontSize="large" />
                                 </Link>
-                                <Typography mt={1} sx={{
-                                    fontFamily: Theme.typography.body1,
-                                    fontSize: "1em",
-                                    fontWeight: 600,
-                                }}>
+                                <Typography
+                                    mt={1}
+                                    sx={{
+                                        fontFamily: Theme.typography.body1,
+                                        fontSize: '1em',
+                                        fontWeight: 600,
+                                    }}
+                                >
                                     +84 89 496 257
                                 </Typography>
                             </Box>
@@ -156,14 +162,16 @@ const Footer: React.FC = () => {
                 </Grid>
 
                 {/* Powered By */}
-                <Grid item xs={12} md={4} sx={{ padding: "1em 0" }}>
-                    <Typography sx={{
-                        color: Theme.status.failed.fontColor,
-                        fontFamily: Theme.typography.body1,
-                        fontSize: "1em",
-                        fontWeight: 600,
-                        paddingBottom: "0.5em",
-                    }}>
+                <Grid item xs={12} md={4} sx={{ padding: '1em 0' }}>
+                    <Typography
+                        sx={{
+                            color: Theme.status.failed.fontColor,
+                            fontFamily: Theme.typography.body1,
+                            fontSize: '1em',
+                            fontWeight: 600,
+                            paddingBottom: '0.5em',
+                        }}
+                    >
                         Powered by:
                     </Typography>
 
@@ -171,15 +179,11 @@ const Footer: React.FC = () => {
                         <Box
                             sx={{
                                 backgroundColor: Theme.fontColor.black,
-                                padding: "0.5em",
-                                borderRadius: "1em",
+                                padding: '0.5em',
+                                borderRadius: '1em',
                             }}
                         >
-                            <img
-                                src={HCMUSLogo}
-                                alt='HCMUS'
-                                style={{ width: "auto", height: "4.65em" }}
-                            />
+                            <img src={HCMUSLogo} alt="HCMUS" style={{ width: 'auto', height: '4.65em' }} />
                         </Box>
                     </Box>
                     <Box mt={2}>
@@ -188,25 +192,23 @@ const Footer: React.FC = () => {
                             sx={{
                                 color: Theme.fontColor.black,
                                 fontFamily: Theme.typography.body1,
-                                fontSize: "0.9em",
-                                textDecoration: "none",
+                                fontSize: '0.9em',
+                                textDecoration: 'none',
                                 fontWeight: 500,
-                                listStyle: "none", 
-                                padding: 0,       
-                                margin: 0,        
+                                listStyle: 'none',
+                                padding: 0,
+                                margin: 0,
                             }}
                         >
-                            <li style={{ marginBottom: "0.5em" }}>HCMUS - Faculty of Information Technology</li>
-                            <li style={{ marginBottom: "0.5em" }}>227 Nguyen Van Cu Str., Ho Chi Minh City, Vietnam</li>
+                            <li style={{ marginBottom: '0.5em' }}>HCMUS - Faculty of Information Technology</li>
+                            <li style={{ marginBottom: '0.5em' }}>227 Nguyen Van Cu Str., Ho Chi Minh City, Vietnam</li>
                             <li>MLVT.HCMUS@gmail.com | +84 89 496 257</li>
                         </Typography>
                     </Box>
-
                 </Grid>
             </Grid>
-
         </Box>
-    )
-}
+    );
+};
 
 export default Footer;

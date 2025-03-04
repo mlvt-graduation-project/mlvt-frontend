@@ -8,19 +8,11 @@ interface MainProjectOutputProps {
     imageUrl: string | null;
 }
 
-export const MainProjectOutput: React.FC<MainProjectOutputProps> = ({
-    status,
-    videoUrl,
-    imageUrl,
-}) => {
+export const MainProjectOutput: React.FC<MainProjectOutputProps> = ({ status, videoUrl, imageUrl }) => {
     return (
         <>
-            {videoUrl !== null && status === 'complete' && (
-                <OriginalVideo videoUrl={videoUrl} />
-            )}
-            {imageUrl !== null && status !== 'complete' && (
-                <ImageInProgress imageUrl={imageUrl} progress={25} />
-            )}
+            {videoUrl !== null && status === 'succeeded' && <OriginalVideo videoUrl={videoUrl} />}
+            {imageUrl !== null && status !== 'succeeded' && <ImageInProgress imageUrl={imageUrl} progress={25} />}
         </>
     );
 };

@@ -2,39 +2,39 @@ import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import SearchBar from '../../../../SearchBar';
 import { Box, Button } from '@mui/material';
 import { handleGetVideosProjectByUserId } from '../../../../../utils/project.utils';
-import { Project } from '../../../../../types/Project';
+import { Project, ProjectType } from '../../../../../types/Project';
 import { useAuth } from '../../../../../context/AuthContext';
-import { BrowseFileCard } from '../../../../CardFeature/BrowseFileCard';
-import { ProcessedVideoPopUp } from '../../../ProjectPopup';
+import { BrowseFileCard } from '../BrowseFileCard';
 import { GenerateButton } from '../GenerateButton';
+import { useProjectContext } from '../../../../../context/ProjectContext';
 
-export const DialogContent: React.FC = () => {
+interface DialogContentProps {
+    onClosePopup: () => void;
+    handleChangeSelectedProject: (selectedProject: Project) => void;
+    allowType?: ProjectType[];
+}
+
+export const DialogContent: React.FC<DialogContentProps> = ({
+    onClosePopup,
+    allowType,
+    handleChangeSelectedProject,
+}) => {
     const { userId } = useAuth();
-    const [projects, setProjects] = useState<Project[]>([]);
+    const { getProjectsByType } = useProjectContext();
+    const projects: Project[] = allowType ? getProjectsByType(allowType) : [];
     const [selectedProject, setSelectedProject] = React.useState<Project | null>(null);
 
     const handleCardClick = (project: Project) => {
-        if (project === selectedProject) {
-            setSelectedProject(null);
-        } else {
-            setSelectedProject(project);
+        setSelectedProject((prev) => (prev?.id === project.id ? null : project));
+    };
+
+    const handleGenerate = () => {
+        if (selectedProject) {
+            handleChangeSelectedProject(selectedProject);
+            onClosePopup();
         }
     };
 
-    useEffect(() => {
-        const fetchVideoData = async () => {
-            try {
-                if (userId) {
-                    const videoProjects = await handleGetVideosProjectByUserId(userId);
-                    setProjects(videoProjects);
-                }
-            } catch (error) {
-                console.error('Failed to fetch video or image URLs:', error);
-            }
-        };
-
-        fetchVideoData();
-    }, [userId]);
     return (
         <>
             <SearchBar placeholder="Search" onChange={() => {}} searchBarWidth="40rem" />
@@ -51,9 +51,7 @@ export const DialogContent: React.FC = () => {
                     columnGap: '2px',
                     overflowY: 'scroll',
                     overflowX: 'hidden',
-                    paddingLeft: '1rem',
-                    paddingTop: '1rem',
-                    paddingBottom: '1rem',
+                    padding: '1rem',
                 }}
             >
                 {projects.map((project) => (
@@ -61,16 +59,14 @@ export const DialogContent: React.FC = () => {
                         key={project.id}
                         project={project}
                         onclick={() => handleCardClick(project)}
-                        customSx={{ width: '15rem', height: '13rem' }}
+                        customSx={{ width: '13.5rem', height: '13rem' }}
                         blueBoxOutside={selectedProject?.id === project.id}
                     />
                 ))}
             </Box>
             <GenerateButton
-                isDisable={selectedProject === null ? true : false}
-                handleGenerate={() => {
-                    console.log('test');
-                }}
+                isDisable={selectedProject === null}
+                handleGenerate={handleGenerate}
                 buttonContent="CHOOSE"
                 customSx={{ marginTop: '0px' }}
             />

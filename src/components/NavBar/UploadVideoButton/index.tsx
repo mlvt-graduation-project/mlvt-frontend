@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { useTheme } from '@mui/material/styles';
 import axios from 'axios';
-import { FileData } from '../../../types/FileData';
+import { VideoData } from '../../../types/FileData';
 import { getPresignedImageURL, getPresignedVideoURL, postVideo, uploadVideoToS3 } from '../../../api/video.api';
 
 const s3ApiClient = axios.create({
@@ -26,7 +26,7 @@ const uploadImageToS3 = async (uploadUrl: string, file: File) => {
 
 function UploadButton() {
     // Define the ref with a specific type HTMLInputElement and initialize as null
-    let ref = useRef<FileData>({
+    let ref = useRef<VideoData>({
         title: 'My Video Title',
         duration: 300,
         description: 'A description of the video',
@@ -77,7 +77,7 @@ function UploadButton() {
     //       console.log('File uploaded successfully');
     //     })
     //     .catch(error => console.error('Error uploading file:', error));
-    // }, [fileData])
+    // }, [VideoData])
 
     const saveFile = (file: File) => {
         const url = URL.createObjectURL(file);

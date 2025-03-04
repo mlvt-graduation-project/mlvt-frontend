@@ -10,7 +10,7 @@ import { VoiceGenerationPopup } from '../../components/VideoPopup/ProcessTrigger
 
 const Home = () => {
     const [isVideoTranslation, setIsVideoTranslation] = useState<boolean>(false);
-    const [isVideoTranscription, setIsVideoTranscription] = useState<boolean>(false);
+    const [isTextGeneration, setIsTextGeneration] = useState<boolean>(false);
     const [isTextTranslation, setIsTextTranslation] = useState<boolean>(false);
     const [isVoiceGeneration, setIsVoiceGeneration] = useState<boolean>(false);
     const [isLipsync, setIsLipSync] = useState<boolean>(false);
@@ -23,8 +23,8 @@ const Home = () => {
         setIsVideoTranslation(false);
     };
 
-    const handleOpenTrascriptionDialog = () => {
-        setIsVideoTranscription(true);
+    const handleOpenTextGenerationDialog = () => {
+        setIsTextGeneration(true);
     };
 
     const handleOpenLipsyncDialog = () => {
@@ -34,8 +34,8 @@ const Home = () => {
         setIsVoiceGeneration(true);
     };
 
-    const handleCloseTranscriptionDialog = () => {
-        setIsVideoTranscription(false);
+    const handleCloseTextGenerationDialog = () => {
+        setIsTextGeneration(false);
     };
 
     const handleOpenTextTranslationDialog = () => {
@@ -57,14 +57,14 @@ const Home = () => {
         <HomePage>
             <NavBar
                 onOpenVideoTranslation={handleOpenVideoTranslationDialog}
-                onOpenVideoTranscription={handleOpenTrascriptionDialog}
+                onOpenTextGeneration={handleOpenTextGenerationDialog}
                 onOpenTextTranslation={handleOpenTextTranslationDialog}
                 onOpenLipsync={handleOpenLipsyncDialog}
                 onOpenVoiceGeneration={handleOpenVoiceGenerationDialog}
             />
             <HomeContent />
             <VideoTranslationPopup isOpen={isVideoTranslation} onClose={handleCloseVideoTranslationDialog} />
-            <TextGenerationPopup isOpen={isVideoTranscription} onClose={handleCloseTranscriptionDialog} />
+            <TextGenerationPopup isOpen={isTextGeneration} onClose={handleCloseTextGenerationDialog} />
             <TextTranslationPopup isOpen={isTextTranslation} onClose={handleCloseTextTranslationDialogg} />
             <VoiceGenerationPopup isOpen={isVoiceGeneration} onClose={handleCloseVoiceGenerationDialog} />
             <LipsyncPopup isOpen={isLipsync} onClose={handleCloseLipsyncDialog} />

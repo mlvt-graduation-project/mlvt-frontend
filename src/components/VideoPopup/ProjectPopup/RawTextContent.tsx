@@ -3,15 +3,17 @@ import { getOneVideoById } from '../../../api/video.api';
 import { InfoNav } from './BaseComponent/InfomationNavBar/InfoNav';
 import { Box } from '@mui/material';
 import { TextView } from './BaseComponent/RelatedOutput/CustomizedTextBox';
-import { getTranscriptionById, getTranscriptionDownloadUrl } from '../../../api/transcription.api';
+import { getTextById } from '../../../api/text.api';
 import { getTextFileContent } from '../../../api/aws.api';
-import { Transcription } from '../../../types/Response/Transcription';
+import { Text } from '../../../types/Response/Text';
+import { getTextContent } from '../../../utils/ProcessTriggerPopup/TextService';
 
 interface ContentProps {
     textId: number;
     hideNavBar?: boolean;
     customSx?: object;
     centerTittle?: boolean;
+    hideDownloadButton?: boolean;
 }
 
 export const RawTextContent: React.FC<ContentProps> = ({
@@ -19,17 +21,17 @@ export const RawTextContent: React.FC<ContentProps> = ({
     hideNavBar = false,
     centerTittle = false,
     customSx,
+    hideDownloadButton = false,
 }) => {
     const [textContent, setTextContent] = useState<string>('Some text will be display here');
-    const [textInfomation, setTextInfomation] = useState<Transcription | null>(null);
+    const [textInfomation, setTextInfomation] = useState<Text | null>(null);
 
     useEffect(() => {
         const fetchTextData = async () => {
             try {
-                const getTranscription = await getTranscriptionById(textId);
-                const text = await getTextFileContent(getTranscription.download_url);
-                setTextInfomation(getTranscription.transcription);
-                setTextContent(text);
+                const [information, content] = await getTextContent(textId);
+                setTextInfomation(information);
+                setTextContent(content);
             } catch (error) {
                 console.error('Error fetching video URL:', error);
             }
@@ -48,15 +50,17 @@ export const RawTextContent: React.FC<ContentProps> = ({
                     height: '90%',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    marginTop: '20px',
                     padding: '10px',
                     paddingTop: '0',
                 }}
             >
                 <TextView
                     displayText={textContent}
-                    textTittle="Raw Text"
+                    textTittle="Text"
                     customizeSx={customSx}
                     centerTittle={centerTittle}
+                    disableDownload={hideDownloadButton}
                 />
             </Box>
         </>

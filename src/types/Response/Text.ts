@@ -1,5 +1,10 @@
 import { ProjectStatus } from '../ProjectStatus';
-export interface Transcription {
+
+export interface PostText {
+    message: string;
+    id: number;
+}
+export interface Text {
     id: number;
     video_id: number;
     user_id: number;
@@ -13,11 +18,11 @@ export interface Transcription {
     updated_at: string | Date;
 }
 
-export interface TranscriptionListResponse {
-    transcriptions: Transcription[];
+export interface TextListResponse {
+    transcriptions: Text[];
 }
 
-export interface GetTranscriptionById {
-    transcription: Transcription;
+export interface GetTextById {
+    transcription: Text;
     download_url: string;
 }

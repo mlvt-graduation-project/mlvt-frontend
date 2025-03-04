@@ -27,26 +27,36 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioSrc }) => {
             audio.addEventListener('timeupdate', () => {
                 setCurrentTime(audio.currentTime);
             });
+
+            audio.addEventListener('error', (e) => {
+                console.error('Lỗi khi phát audio:', e);
+            });
         }
 
         return () => {
             if (audio) {
                 audio.removeEventListener('loadedmetadata', () => {});
                 audio.removeEventListener('timeupdate', () => {});
+                audio.removeEventListener('error', () => {});
             }
         };
     }, []);
 
     const handlePlayPause = () => {
-        const audio = audioRef.current;
+        if (!audioSrc) return;
 
+        const audio = audioRef.current;
         if (audio) {
-            if (isPlaying) {
-                audio.pause();
-            } else {
-                audio.play();
+            try {
+                if (isPlaying) {
+                    audio.pause();
+                } else {
+                    audio.play().catch((e) => console.error('Không thể phát audio:', e));
+                }
+                setIsPlaying(!isPlaying);
+            } catch (e) {
+                console.error('Lỗi khi thao tác với audio:', e);
             }
-            setIsPlaying(!isPlaying);
         }
     };
 
@@ -58,15 +68,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioSrc }) => {
 
     return (
         <Box sx={{ width: '100%', padding: 2, borderRadius: 4 }}>
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'flex-start',
-                    flexDirection: 'column',
-                }}
-            >
-                <Box display="flex" alignItems="center" justifyContent="flex-start">
-                    <IconButton size="medium" sx={{ padding: '0px' }} onClick={handlePlayPause}>
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                <Box display="flex" alignItems="center">
+                    <IconButton size="medium" sx={{ padding: '0px' }} onClick={handlePlayPause} disabled={!audioSrc}>
                         {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
                     </IconButton>
 
@@ -75,14 +79,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioSrc }) => {
                     </Typography>
                 </Box>
 
-                <Box
-                    sx={{
-                        justifyContent: 'center',
-                        marginTop: '4px',
-                        boxShadow: '0px 0px 12px rgba(0, 0, 0, 0.4)',
-                        borderRadius: '4px',
-                    }}
-                >
+                <Box sx={{ marginTop: '4px', boxShadow: '0px 0px 12px rgba(0, 0, 0, 0.4)', borderRadius: '4px' }}>
                     <LinearProgress variant="determinate" value={(currentTime / duration) * 100} />
                 </Box>
             </Box>
@@ -105,8 +102,6 @@ export const CustomAudioPlayer = ({
     sourceType: 'audio' | 'video';
     disableDownload?: boolean;
 }) => {
-    console.log('Box tittle: ', audioTittle);
-    console.log('Source type: ', sourceType);
     return (
         <Box
             sx={{
@@ -114,7 +109,7 @@ export const CustomAudioPlayer = ({
                 padding: '20px',
                 borderRadius: '20px',
                 width: '100%',
-                height: '100%',
+                height: '85%',
                 position: 'relative',
                 overflow: 'visible',
                 ...customizeSx,

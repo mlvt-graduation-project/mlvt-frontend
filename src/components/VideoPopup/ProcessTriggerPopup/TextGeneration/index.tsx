@@ -11,7 +11,7 @@ export const TextGenerationPopup: React.FC<TextGenerationPopupProps> = ({ isOpen
     return (
         <>
             <BasePopup
-                tittle="Video Transcription"
+                tittle="Text Generation"
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={null}

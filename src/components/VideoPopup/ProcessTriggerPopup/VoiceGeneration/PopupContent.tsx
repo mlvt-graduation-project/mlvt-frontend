@@ -1,17 +1,24 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import ChangeViewBox from '../BaseComponent/ChangView';
-import { UploadVideoFromDevice } from '../BaseComponent/UploadFileFromDevice';
+import { UploadFileFromDevice } from '../BaseComponent/UploadFileFromDevice';
 import { FileData } from '../../../../types/FileData';
 import { GenerateButton } from '../BaseComponent/GenerateButton';
 import UploadNotification from '../../../UploadNotification';
 import { BrowseFile } from '../BaseComponent/BrowseMLVTFile';
 import { InputTextBox } from '../BaseComponent/InputTextBox';
 import { SingleOptionBox } from '../BaseComponent/OptionBox';
-import { transcribeVideo, uploadVideoToServer } from '../../../../utils/ProcessTriggerPopup/PipelineService';
+import { generateVoice } from '../../../../utils/ProcessTriggerPopup/PipelineService';
 import { TranslateLanguage } from '../../../../types/Translation';
 import { LoadingDots } from '../../../StaticComponent/LoadingDot/LoadingDot';
-import { AudioFileType } from '../../../../types/FileType';
+import { AudioFileType, TextFileType } from '../../../../types/FileType';
+import { TextData, AudioData } from '../../../../types/FileData';
+import { S3Folder } from '../../../../types/S3FolderStorage';
+import { uploadText } from '../../../../utils/ProcessTriggerPopup/TextService';
+import { useAuth } from '../../../../context/AuthContext';
+import { uploadAudio } from '../../../../utils/ProcessTriggerPopup/AudioService';
+import { ProjectType, RawText, Project } from '../../../../types/Project';
+import { getLanguageCode } from '../../../../utils/ProcessTriggerPopup/VideoPopup.utils';
 
 interface UploadNoti {
     isOpen: boolean;
@@ -21,32 +28,42 @@ interface UploadNoti {
 export const DialogContent: React.FC = () => {
     const buildinVoiceList = ['Voice 1', 'Voice 2', 'Voice 3'];
     type BuildinVoice = (typeof buildinVoiceList)[number];
+    const { userId } = useAuth();
+    const parsedUserId = userId ? parseInt(userId) : 0;
 
-    const [buildinVoice, setBuildinVoice] = useState<BuildinVoice | null>('Voice 1');
-    const [viewState, setViewState] = useState<'build-in' | 'custom'>('build-in');
-    const [deviceFile, setDeviceFile] = useState<File | null>(null);
+    const [buildinVoice, setBuildinVoice] = useState<BuildinVoice | null>(null);
+    const [audioViewState, setAudioViewState] = useState<'build-in' | 'custom'>('build-in');
+    const [textViewState, setTextViewState] = useState<'upload' | 'enter text' | 'browse'>('enter text');
+    const [deviceAudioFile, setDeviceAudioFile] = useState<File | null>(null);
+    const [deviceTextFile, setDeviceTextFile] = useState<File | null>(null);
+    const [MLVTText, setMLVTText] = useState<RawText | null>(null);
     const [inputText, setInputText] = useState<string>('');
     const [disableGenerate, setDisableGenerate] = useState<boolean>(true);
-    const [audioLanguage, setAudioLanguage] = useState<TranslateLanguage | null>(null);
+    const [textLanguage, setTextLanguage] = useState<TranslateLanguage | null>(null);
 
     const [uploadNoti, setUploadNoti] = useState<UploadNoti>({
         isOpen: false,
         status: 'success',
     });
+
     const [isLoading, setIsLoading] = useState(false);
-    const [fileData, setFileData] = useState<FileData>({
-        title: 'My Video Title',
-        duration: 300,
-        description: 'A description of the video',
+    const [textData, setTextData] = useState<TextData>({
         file_name: '',
-        folder: 'raw_videos',
-        image: 'avatar.jpg',
-        user_id: parseInt(localStorage.getItem('userId') || '0'),
+        folder: S3Folder.text,
+        user_id: parsedUserId,
+        lang: '',
     });
 
-    const handleChangeAudioLanguage = (value: string) => {
+    const [audioData, setAudioData] = useState<AudioData>({
+        file_name: '',
+        folder: S3Folder.audio,
+        user_id: parsedUserId,
+        duration: 0,
+    });
+
+    const handleChangeTextLanguage = (value: string) => {
         if (Object.values(TranslateLanguage).includes(value as TranslateLanguage)) {
-            setAudioLanguage(value as TranslateLanguage);
+            setTextLanguage(value as TranslateLanguage);
         }
     };
 
@@ -59,44 +76,144 @@ export const DialogContent: React.FC = () => {
         [buildinVoiceList]
     );
 
-    const handleChangeFileData = useCallback((update: Partial<FileData>) => {
-        setFileData((prevData) => ({
+    const handleChangeTextData = useCallback((update: Partial<TextData>) => {
+        setTextData((prevData) => ({
             ...prevData,
             ...update,
         }));
     }, []);
 
-    const handleChangeDeviceFile = (file: File | null) => {
-        setDeviceFile(file);
+    const handleChangeAudioData = useCallback((update: Partial<AudioData>) => {
+        setAudioData((prevData: AudioData) => ({
+            ...prevData,
+            ...update,
+        }));
+    }, []);
+
+    const handleChangeMLVTText = useCallback(
+        (input: Project | null) => {
+            if (input && input.type_project !== ProjectType.Text) return; // Ensure it's an audio project
+            setMLVTText(input as RawText | null);
+        },
+        [setMLVTText]
+    );
+
+    const handleChangeDeviceTextFile = (file: File | null) => {
+        setDeviceTextFile(file);
     };
 
-    const voiceGeneration = async (file: File, data: FileData) => {
-        if (file) {
-            setIsLoading(true);
-            setDisableGenerate(true);
-            try {
-                const videoId = await uploadVideoToServer(file, data);
-                setUploadNoti({ isOpen: true, status: 'success' });
-            } catch {
-                setUploadNoti({ isOpen: true, status: 'fail' });
-            } finally {
-                setIsLoading(false);
-                setDisableGenerate(false);
-            }
-        }
+    const handleChangeDeviceAudioFile = (file: File | null) => {
+        setDeviceAudioFile(file);
     };
 
     const handleCloseStatusPopup = () => {
         setUploadNoti((prevData) => ({ ...prevData, isOpen: false }));
     };
 
-    const changeViewState = (view: string) => {
+    const handleChangeAudioViewState = (view: string) => {
         if (['build-in', 'custom'].includes(view)) {
-            setViewState(view as 'build-in' | 'custom');
+            setAudioViewState(view as 'build-in' | 'custom');
         }
     };
 
-    const Views = useMemo(
+    const handleChangeTextViewState = (view: string) => {
+        if (['upload', 'enter text', 'browse'].includes(view)) {
+            setTextViewState(view as 'upload' | 'enter text' | 'browse');
+        }
+    };
+
+    const uploadTextFromDevice = useCallback(async (): Promise<number> => {
+        if (deviceTextFile && textLanguage) {
+            try {
+                handleChangeTextData({ lang: getLanguageCode(textLanguage) });
+                const textId = await uploadText(deviceTextFile, textData, TextFileType.PlainText);
+                return textId;
+            } catch (error) {
+                throw error;
+            }
+        } else {
+            throw new Error('No file provided for translation.');
+        }
+    }, [deviceTextFile, textData, textLanguage, handleChangeTextData]);
+
+    const handleGenerateEnteringText = useCallback(async (): Promise<number> => {
+        if (inputText && textLanguage) {
+            try {
+                const tmpTextData: TextData = {
+                    file_name: userId + '_' + Math.floor(Date.now() / 1000) + '.txt',
+                    folder: S3Folder.text,
+                    user_id: parsedUserId,
+                    lang: getLanguageCode(textLanguage),
+                };
+                const textId = await uploadText(inputText, tmpTextData, TextFileType.PlainText);
+                return textId;
+            } catch (error) {
+                throw error;
+            }
+        } else {
+            throw new Error('No text provided for translation.');
+        }
+    }, [inputText, parsedUserId, userId, textLanguage]);
+
+    const uploadAudioFromDevice = useCallback(async (): Promise<number> => {
+        if (deviceAudioFile) {
+            try {
+                const audioId = await uploadAudio(deviceAudioFile, audioData);
+                return audioId;
+            } catch (error) {
+                throw error;
+            }
+        } else {
+            throw new Error('Failed uploading Audio file to Server');
+        }
+    }, [deviceAudioFile, audioData]);
+
+    const TextViews = useMemo(
+        () => [
+            {
+                text: 'ENTER TEXT',
+                viewState: 'enter text',
+                handleSubmit: handleGenerateEnteringText,
+                component: <InputTextBox inputTextFromParent={inputText} handleChangeText={setInputText} />,
+            },
+            {
+                text: 'UPLOAD',
+                viewState: 'upload',
+                handleSubmit: uploadTextFromDevice,
+                component: (
+                    <UploadFileFromDevice
+                        selectedFile={deviceTextFile}
+                        handleChangeSelectedFile={handleChangeDeviceTextFile}
+                        handleChangeFileData={handleChangeTextData}
+                        fileTypeList={[TextFileType.PlainText]}
+                    />
+                ),
+            },
+            {
+                text: 'BROWSE MLVT',
+                viewState: 'browse',
+                component: (
+                    <BrowseFile
+                        allowTypes={[ProjectType.Text]}
+                        handleChangeSelectedProject={handleChangeMLVTText}
+                        selectedProject={MLVTText}
+                    />
+                ),
+                handleSubmit: MLVTText !== null ? () => Promise.resolve(MLVTText.id) : undefined,
+            },
+        ],
+        [
+            deviceTextFile,
+            handleChangeTextData,
+            handleGenerateEnteringText,
+            inputText,
+            uploadTextFromDevice,
+            handleChangeMLVTText,
+            MLVTText,
+        ]
+    );
+
+    const AudioViews = useMemo(
         () => [
             {
                 text: 'BUILD-IN VOICE',
@@ -113,30 +230,105 @@ export const DialogContent: React.FC = () => {
             {
                 text: 'CUSTOM VOICE',
                 viewState: 'custom',
-                handleSubmit: () => console.log('Browse MLVT clicked'),
+                handleSubmit: uploadAudioFromDevice,
                 component: (
-                    <UploadVideoFromDevice
-                        handleChangeFileData={handleChangeFileData}
-                        selectedFile={deviceFile}
-                        fileTypeList={[AudioFileType.WAV]}
-                        handleChangeSelectedFile={handleChangeDeviceFile}
+                    <UploadFileFromDevice
+                        handleChangeFileData={handleChangeAudioData}
+                        selectedFile={deviceAudioFile}
+                        fileTypeList={[AudioFileType.MP3]}
+                        handleChangeSelectedFile={handleChangeDeviceAudioFile}
                     />
                 ),
             },
         ],
-        [buildinVoiceList, buildinVoice, handleChangeBuildinVoice, deviceFile, handleChangeFileData]
+        [
+            buildinVoiceList,
+            buildinVoice,
+            handleChangeBuildinVoice,
+            deviceAudioFile,
+            handleChangeAudioData,
+            uploadAudioFromDevice,
+        ]
     );
 
-    useEffect(() => {}, [buildinVoice]);
+    useEffect(() => {
+        if (textViewState === 'enter text' && !inputText) {
+            setDisableGenerate(true);
+        } else if (textViewState === 'upload' && !deviceTextFile) {
+            setDisableGenerate(true);
+        } else if (textViewState === 'browse' && !MLVTText) {
+            setDisableGenerate(true);
+        } else if (!textLanguage) {
+            setDisableGenerate(true);
+        } else if (audioViewState === 'build-in' && !buildinVoice) {
+            setDisableGenerate(true);
+        } else if (audioViewState === 'custom' && !deviceAudioFile) {
+            setDisableGenerate(true);
+        } else {
+            setDisableGenerate(false);
+        }
+    }, [
+        buildinVoice,
+        textViewState,
+        textLanguage,
+        inputText,
+        deviceTextFile,
+        audioViewState,
+        deviceAudioFile,
+        MLVTText,
+    ]);
 
-    const activeView = Views.find((view) => view.viewState === viewState);
-    const ActiveComponent = activeView?.component || null;
-    const handleGenerate = activeView?.handleSubmit || (() => Promise.resolve());
+    const activeAudioView = AudioViews.find((view) => view.viewState === audioViewState);
+    const ActiveAudioComponent = activeAudioView?.component || null;
+    const handleAudioGenerate: (() => Promise<number>) | undefined = activeAudioView?.handleSubmit;
+
+    const activeTextView = TextViews.find((view) => view.viewState === textViewState);
+    const ActiveTextComponent = activeTextView?.component || null;
+    const handleTextGenerate: (() => Promise<number>) | undefined = activeTextView?.handleSubmit;
+
+    const handleGenerate = useCallback(async () => {
+        let textId: number | undefined = undefined;
+        let audioId: number | undefined = undefined;
+        try {
+            setIsLoading(true);
+            setDisableGenerate(true);
+            // Ensure handleTextGenerate is defined before calling it
+            const textPromise = handleTextGenerate ? handleTextGenerate() : Promise.resolve(undefined);
+            const audioPromise =
+                audioViewState === 'custom' && handleAudioGenerate ? handleAudioGenerate() : Promise.resolve(undefined);
+
+            // Run both promises in parallel
+            [textId, audioId] = await Promise.all([textPromise, audioPromise]);
+            // if (textId && audioId) {
+            if (textId) {
+                generateVoice(textId);
+            } else {
+                throw new Error('textId or audioId is null when receiving error');
+            }
+            setUploadNoti({ isOpen: true, status: 'success' });
+        } catch (error) {
+            console.error('Uploading files to server failed', error);
+            setUploadNoti({ isOpen: true, status: 'fail' });
+        } finally {
+            setIsLoading(false);
+            setDisableGenerate(false);
+        }
+    }, [audioViewState, handleAudioGenerate, handleTextGenerate]);
 
     return (
         <>
             {/* Box for user to enter text */}
-            <InputTextBox inputTextFromParent={inputText} handleChangeText={setInputText} />
+            <Box
+                sx={{
+                    padding: 1.5,
+                    borderRadius: 1.5,
+                    backgroundColor: '#EBEBEB',
+                    marginBottom: '10px',
+                }}
+            >
+                <ChangeViewBox Views={TextViews} setViewState={handleChangeTextViewState} />
+                {ActiveTextComponent}
+            </Box>
 
             {/* Translation to section */}
             <Typography
@@ -147,7 +339,7 @@ export const DialogContent: React.FC = () => {
                     marginTop: '20px',
                 }}
             >
-                Translate to:
+                Text Language
             </Typography>
 
             <SingleOptionBox
@@ -157,7 +349,7 @@ export const DialogContent: React.FC = () => {
                     TranslateLanguage.French,
                     TranslateLanguage.Japanese,
                 ]}
-                handleChangeOption={handleChangeAudioLanguage}
+                handleChangeOption={handleChangeTextLanguage}
                 customSx={{ width: '100%' }}
             />
 
@@ -182,8 +374,8 @@ export const DialogContent: React.FC = () => {
                     marginBottom: '10px',
                 }}
             >
-                <ChangeViewBox Views={Views} setViewState={changeViewState} />
-                {ActiveComponent}
+                <ChangeViewBox Views={AudioViews} setViewState={handleChangeAudioViewState} />
+                {ActiveAudioComponent}
             </Box>
             {isLoading && <LoadingDots content="Uploading video" />}
             <GenerateButton isDisable={disableGenerate} handleGenerate={handleGenerate} />

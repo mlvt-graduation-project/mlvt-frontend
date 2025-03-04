@@ -6,7 +6,7 @@ import { OriginalVideo } from './BaseComponent/OriginalVideo/OriginalVideo';
 import { ImageInProgress } from './BaseComponent/MainProjectOutput/ImageInProgress';
 import { RealatedOutput } from './BaseComponent/RelatedOutput';
 import { TextGenerationProject } from '../../../types/Project';
-import { getTranscriptionById, getTranscriptionDownloadUrl } from '../../../api/transcription.api';
+import { getTextDownloadUrl } from '../../../api/text.api';
 import { getTextFileContent } from '../../../api/aws.api';
 import { Box } from '@mui/material';
 
@@ -17,18 +17,18 @@ interface ContentProps {
 export const TextGenerationContent: React.FC<ContentProps> = ({ inputProject }) => {
     const [viewState, setViewState] = useState<'translated video' | 'related output'>('translated video');
     const [imageUrl, setImageUrl] = useState<string | null>(null);
-    const [transcription, setTranscription] = useState<string | null>(null);
+    const [text, setText] = useState<string | null>(null);
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchVideoData = async () => {
             try {
                 const videoResponse = await getOneVideoById(inputProject.original_videoId);
-                const download_url = await getTranscriptionDownloadUrl(inputProject.id);
-                const transcription = await getTextFileContent(download_url);
+                const download_url = await getTextDownloadUrl(inputProject.extracted_textId);
+                const text = await getTextFileContent(download_url);
                 setVideoUrl(videoResponse.video_url.split('?')[0]);
                 setImageUrl(videoResponse.image_url.split('?')[0]);
-                setTranscription(transcription);
+                setText(text);
             } catch (error) {
                 console.error('Error fetching video URL:', error);
             }
@@ -60,8 +60,8 @@ export const TextGenerationContent: React.FC<ContentProps> = ({ inputProject }) 
                             {
                                 type: 'text',
                                 props: {
-                                    textTittle: "Transcription's result",
-                                    displayText: transcription || 'No output text',
+                                    textTittle: "Text Generation's result",
+                                    displayText: text || 'No output text',
                                 },
                             },
                         ]}
@@ -69,7 +69,7 @@ export const TextGenerationContent: React.FC<ContentProps> = ({ inputProject }) 
                 ),
             },
         ],
-        [videoUrl, transcription]
+        [videoUrl, text]
     );
 
     const activeView = Views.find((view) => view.viewState === viewState);
@@ -78,20 +78,9 @@ export const TextGenerationContent: React.FC<ContentProps> = ({ inputProject }) 
     return (
         <>
             <InfoNav />
-            <ChangeViewBox Views={Views} setViewState={changeViewState} />
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: '80%',
-                    width: '100%',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: '10px',
-                    paddingTop: '0',
-                }}
-            >
-                {ActiveComponent}
+            <Box sx={{ marginTop: '15px', height: '31rem' }}>
+                <ChangeViewBox Views={Views} setViewState={changeViewState} />
+                <Box sx={{ marginTop: '20px' }}>{ActiveComponent}</Box>
             </Box>
         </>
     );

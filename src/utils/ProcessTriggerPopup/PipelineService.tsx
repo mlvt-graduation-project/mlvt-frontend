@@ -1,33 +1,64 @@
-import { uploadVideo, uploadVideoImage, extractFirstFrame } from '../ProjectPopup/VideoService';
-import { postVideoTranscription } from '../../api/transcription.api';
+import {
+    postTextGeneration,
+    postVideoTranslation,
+    postTextTranslation,
+    postAudioGeneration,
+    postLipSync,
+} from '../../api/pipeline.api';
 import { TranslateLanguage } from '../../types/Translation';
 import { FileData } from '../../types/FileData';
-import { getLanguageCode } from './videoPopup.utils';
-import { postVideoTranslation } from '../../api/fullpipeline.api';
+import { checkSuccessResponse } from '../checkResponseStatus';
+import { getLanguageCode } from './VideoPopup.utils';
 
-export const uploadVideoToServer = async (file: File, fileData: FileData): Promise<number> => {
-    let videoId: number | null = null;
-
+// Service for tranlating text to text (TextTranslation)
+export const translateText = async (
+    textId: number,
+    sourceLanguage: TranslateLanguage,
+    targetLanguage: TranslateLanguage
+) => {
+    const sourceLanguageCode = getLanguageCode(sourceLanguage);
+    const targetLanguageCode = getLanguageCode(targetLanguage);
     try {
-        if (file.type.includes('video')) {
-            const imageFile = await extractFirstFrame(file);
-            await uploadVideoImage(imageFile);
+        const postTranslationResponse = await postTextTranslation(textId, sourceLanguageCode, targetLanguageCode);
+        if (!checkSuccessResponse(postTranslationResponse.status)) {
+            throw new Error('Error when translating text');
         }
-        videoId = await uploadVideo(fileData, file, file.type);
-        if (!videoId) {
-            throw new Error('Cannot receive video when uploading video to server');
-        }
-        return videoId;
     } catch (error) {
         throw error;
     }
 };
 
-export const transcribeVideo = async (videoId: number) => {
+// Service for VoiceGeneration
+export const generateVoice = async (textId: number) => {
     try {
-        const postTranscriptionResponse = await postVideoTranscription(videoId);
+        const postVoiceGenerationResponse = await postAudioGeneration(textId);
+        if (!checkSuccessResponse(postVoiceGenerationResponse.status)) {
+            throw new Error('Error when generate voice');
+        }
+    } catch (error) {
+        throw error;
+    }
+};
 
-        if (postTranscriptionResponse.status !== 202) {
+// Service for Lipsync
+export const lipSync = async (videoId: number, audioId: number) => {
+    try {
+        const lipSyncRespsonse = await postLipSync(videoId, audioId);
+        if (!checkSuccessResponse(lipSyncRespsonse.status)) {
+            throw new Error('Error when lipSync');
+        }
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Service for extract text from video (TextGeneration)
+export const generateText = async (videoId: number, sourceLanguage: TranslateLanguage) => {
+    try {
+        const sourceLanguageCode = getLanguageCode(sourceLanguage);
+        const postTextGenerationResponse = await postTextGeneration(videoId, sourceLanguageCode);
+
+        if (!checkSuccessResponse(postTextGenerationResponse.status)) {
             throw new Error('Error when transcribing video');
         }
     } catch (error) {
@@ -35,6 +66,7 @@ export const transcribeVideo = async (videoId: number) => {
     }
 };
 
+// Service for fullpipeline (VideoTranslation)
 export const translateVideo = async (
     videoId: number,
     sourceLanguage: TranslateLanguage,
@@ -48,7 +80,7 @@ export const translateVideo = async (
             sourceLanguageCode,
             targetLanguageCode
         );
-        if (postVideoTranslationResponse.status !== 202) {
+        if (!checkSuccessResponse(postVideoTranslationResponse.status)) {
             console.log('Failed translate video');
         }
     } catch (error) {

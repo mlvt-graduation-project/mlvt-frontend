@@ -3,7 +3,7 @@ import { Project } from '../../types/Project';
 // import { getPresignedDownloadImageURL, getVideosByUserId } from '../../api/video.api';
 // import { mapStatusToProjectStatus } from '../../types/ProjectStatus';
 // import { getTranscriptionsByUserId } from '../../api/transcription.api';
-// import { getAudiosByUserId } from '../../api/audio.api';
+// import { getListAudioByUserId } from '../../api/audio.api';
 
 const useFetchProjects = (userId: string) => {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -13,7 +13,7 @@ const useFetchProjects = (userId: string) => {
             try {
                 // const videoListResponse = await getVideosByUserId(userId);
                 // const transcriptionListResponse = await getTranscriptionsByUserId(userId);
-                // const audioListResponse = await getAudiosByUserId(userId);
+                // const audioListResponse = await getListAudioByUserId(userId);
                 // let videoProjects: Project[] = [];
                 // let transcriptionProjects: Project[] = [];
                 // let audioProjects: Project[] = [];

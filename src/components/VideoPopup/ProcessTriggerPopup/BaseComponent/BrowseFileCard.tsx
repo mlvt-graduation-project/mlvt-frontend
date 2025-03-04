@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Card, CardContent, Typography, Box, Chip, Button } from '@mui/material';
-import { Project, ProjectType } from '../../types/Project';
+import { Project, ProjectType } from '../../../../types/Project';
 import moment from 'moment';
 import { useTheme } from '@mui/material/styles';
 import { Circle as CircleIcon } from '@mui/icons-material';
-import { toDisplayText } from '../../types/ProjectStatus';
-import { ProcessedVideoPopUp } from '../VideoPopup/ProjectPopup';
+import { toDisplayText } from '../../../../types/ProjectStatus';
+import { ProcessedVideoPopUp } from '../../ProjectPopup';
+import { hasThumbnail } from '../../../../utils/project.utils';
+import TextIcon from '../../../../assets/TextIcon.png';
+import AudioIcon from '../../../../assets/AudioIcon.png';
 
 interface BrowseFileCardProps {
     project: Project;
@@ -22,6 +25,7 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
 }) => {
     const theme = useTheme();
     const [viewContent, setViewContent] = useState<boolean>(false);
+    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
     const handleClick = () => {
         onclick();
@@ -58,12 +62,21 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                 }}
             >
                 <img
-                    src={project.type_project !== ProjectType.Text ? project.thumbnail : '../../assets/TextIcon.png'}
+                    src={
+                        hasThumbnail(project)
+                            ? project.thumbnail
+                            : [ProjectType.Text, ProjectType.AudioGeneration, ProjectType.TextTranslation].includes(
+                                  project.type_project
+                              )
+                            ? TextIcon
+                            : AudioIcon
+                    }
                     alt="Project Thumbnail"
                     style={{
                         width: '100%',
                         height: '100%',
-                        objectFit: 'fill',
+                        objectFit: 'contain', // Keeps the original aspect ratio
+                        backgroundColor: '#E9E9E9', // Prevents white background if transparency exists
                     }}
                 />
             </Box>
@@ -93,7 +106,7 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                             fontFamily: theme.typography.body1.fontFamily,
                             color: theme.background.main,
                             fontWeight: 550,
-                            fontSize: '0.9rem',
+                            fontSize: '0.7rem',
                         }}
                     >
                         {project.title} - {project.id}
@@ -105,7 +118,7 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                     sx={{
                         fontFamily: theme.typography.body1.fontFamily,
                         color: theme.fontColor.gray,
-                        fontSize: '0.8rem',
+                        fontSize: '0.6rem',
                     }}
                 >
                     Created at: {moment(project.createdAt).format('DD/MM/YYYY')}
@@ -124,7 +137,7 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                         icon={
                             <CircleIcon
                                 sx={{
-                                    fontSize: '0.7rem',
+                                    fontSize: '0.5rem',
                                     color: `${theme.status[project.status].fontColor} !important`,
                                     margin: '0',
                                     padding: '0',
@@ -135,7 +148,7 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                             backgroundColor: theme.status[project.status].backgroundColor,
                             color: theme.status[project.status].fontColor,
                             fontFamily: theme.typography.body1.fontFamily,
-                            fontSize: '0.7rem',
+                            fontSize: '0.5rem',
                             fontWeight: 'bold',
                             borderRadius: '0.7rem',
                         }}
@@ -147,7 +160,7 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                             backgroundColor: theme.background.lightPink,
                             color: theme.fontColor.gray,
                             fontFamily: theme.typography.body1.fontFamily,
-                            fontSize: '0.7rem',
+                            fontSize: '0.5rem',
                             borderRadius: '0.5rem',
                             textTransform: 'none',
                             fontWeight: 'bold',
@@ -165,20 +178,20 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                             backgroundColor: theme.background.lightPink,
                             color: theme.fontColor.gray,
                             fontFamily: theme.typography.body1.fontFamily,
-                            fontSize: '0.7rem',
+                            fontSize: '0.5rem',
                             borderRadius: '0.5rem',
                         }}
                     />
                 </Box>
             </CardContent>
-            {viewContent && (
+            {viewContent && !selectedProject && (
                 <ProcessedVideoPopUp
-                    // videoId={project.id}
                     inputObject={project}
                     isOpen={viewContent}
                     onClose={handleCloseViewContent}
                     type={project.type_project}
                     hideNavBar={true}
+                    hideDownloadButton={true}
                 />
             )}
         </Card>

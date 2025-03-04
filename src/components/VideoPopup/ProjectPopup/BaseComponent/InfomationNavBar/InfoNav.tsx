@@ -21,7 +21,6 @@ export const InfoNav: React.FC<InfoNavProps> = ({ CreatedAt = 'None-detected', L
                 paddingTop: '1px 10px',
                 paddingBottom: '1px 10px',
                 borderRadius: '8px',
-                marginBottom: '20px',
             }}
         >
             {/* Created section */}

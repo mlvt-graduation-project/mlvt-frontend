@@ -33,8 +33,9 @@ export const RealatedOutput: React.FC<RealatedOutputProps> = ({ childrenData, sp
         ? {
               display: 'grid',
               gridTemplateColumns: 'repeat(2, 1fr)',
-              padding: '0px',
-              gap: 4,
+              padding: '5px',
+              gap: 2,
+              height: '38px',
               mt: 4,
               paddingTop: '0',
           }
@@ -43,7 +44,9 @@ export const RealatedOutput: React.FC<RealatedOutputProps> = ({ childrenData, sp
           };
 
     const customChildSx = splitTwoColumn
-        ? {}
+        ? {
+              height: '95%',
+          }
         : {
               width: '80%',
               height: '100%',
