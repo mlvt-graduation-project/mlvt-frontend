@@ -15,6 +15,8 @@ import { useTheme } from '@mui/material/styles';
 import { useAuth } from '../../context/AuthContext';
 import { getUser } from '../../api/user.api';
 import LipIcon from './image.png';
+import { getWalletBalance } from '../../api/wallet.api';
+import { tokenToString } from 'typescript';
 
 const NavLinks = [
     {
@@ -78,7 +80,7 @@ const NavBar: React.FC<NavbarProps> = ({
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const { userId } = useAuth();
+    const { userId, SetRemainingToken } = useAuth();
 
     const handleNavClick = (action?: string) => {
         if (action === 'openVideoTranslation') {
@@ -125,6 +127,10 @@ const NavBar: React.FC<NavbarProps> = ({
                         'Content-Type': 'application/json',
                     },
                 });
+
+                const tokenPurchased = await getWalletBalance(userId);
+                // set for auth context
+                SetRemainingToken(tokenPurchased);
 
                 const avatarData = await avatarResponse.json();
                 const avatarDownloadUrl = avatarData.avatar_download_url;

@@ -1,29 +1,86 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import theme from '../../config/theme';
 import OrderHistory from '../OrderHistory'; // Ensure this is the correct import path
+import { RedeemCode } from '../RedeemCode';
+import { getWalletBalance } from '../../api/wallet.api';
+import { useAuth } from '../../context/AuthContext';
+import UploadNotification from '../UploadNotification';
 
-const Subscription: React.FC = () => {
+interface ErrNoti {
+    isOpen: boolean;
+    status: 'fail' | 'success';
+    content: string;
+}
+
+const Voucher: React.FC = () => {
     const [currentView, setCurrentView] = useState('subscription');
+    const [errNoti, setErrNoti] = useState<ErrNoti>({
+        isOpen: false,
+        status: 'success',
+        content: '',
+    });
+    const { userId, remainingToken, SetRemainingToken } = useAuth();
 
     const handleViewChange = (view: string) => {
         setCurrentView(view);
     };
 
+    const handleCloseNotiPopup = () => {
+        setErrNoti((prevData) => ({ ...prevData, isOpen: false }));
+    };
+
+    useEffect(() => {
+        const fetchWalletBalance = async () => {
+            if (userId !== null) {
+                try {
+                    const walletBalance = await getWalletBalance(userId);
+                    SetRemainingToken(walletBalance);
+                } catch (err) {
+                    setErrNoti((prevData) => ({
+                        ...prevData,
+                        status: 'fail',
+                        content: 'Cannot fetch wallet balance',
+                        isOpen: true,
+                    }));
+                }
+            }
+        };
+
+        fetchWalletBalance();
+    }, [userId]); // Add dependencies!
+
     if (currentView === 'orderHistory') {
         return <OrderHistory handleChangeView={handleViewChange} />;
     }
 
+    if (currentView === 'redeemCode') {
+        return <RedeemCode handleChangeView={handleViewChange} />;
+    }
+
+    if (errNoti['isOpen']) {
+        return (
+            <UploadNotification
+                isOpen={errNoti['isOpen']}
+                onClose={handleCloseNotiPopup}
+                uploadStatus={errNoti['status']}
+                content={errNoti['content']}
+                okButtonVisible={true}
+                navigateStorage={false}
+            />
+        );
+    }
+
     return (
-        <Box sx={{ padding: 4 }}>
+        <Box sx={{ padding: 1 }}>
             {/* Title Section */}
             <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
-                Subscription
+                Wallet
             </Typography>
             <Typography sx={{ color: 'gray', marginBottom: 3 }}>
-                Manage your plan and payment method in a convenient way.
+                Manage your token and redeem code history in convenient way
             </Typography>
 
             {/* Content Section */}
@@ -42,15 +99,14 @@ const Subscription: React.FC = () => {
                         }}
                     >
                         <Box>
-                            <Typography sx={{ fontSize: '0.85rem', color: 'gray' }}>Your plan</Typography>
                             <Typography variant="h5" sx={{ fontWeight: 'bold', color: theme.background.main }}>
-                                MONTHLY PREMIUM
+                                YOUR WALLET
                             </Typography>
-                            <Typography sx={{ fontSize: '0.9rem', color: 'gray', marginTop: 1 }}>
-                                Your next bill is for 15.99$ on 25/12/2024
+                            <Typography sx={{ fontSize: '1.3rem', color: 'gray', marginTop: 1 }}>
+                                Remaining token
                             </Typography>
-                            <Typography sx={{ fontSize: '0.9rem', color: 'gray', marginTop: 1 }}>
-                                MoMo Wallet
+                            <Typography sx={{ fontSize: '1.7rem', color: 'gray', marginTop: 1 }}>
+                                {remainingToken}
                             </Typography>
                         </Box>
                         <Typography
@@ -59,10 +115,13 @@ const Subscription: React.FC = () => {
                                 color: theme.background.main,
                                 textAlign: 'right',
                                 marginTop: 2,
-                                cursor: 'pointer',
+                                '& span:hover': {
+                                    color: 'blue',
+                                    cursor: 'pointer',
+                                },
                             }}
                         >
-                            Manage your premium plan
+                            <span>View out purchase plan</span>
                         </Typography>
                     </Box>
                 </Grid>
@@ -106,12 +165,13 @@ const Subscription: React.FC = () => {
                                     textAlign: 'center',
                                     cursor: 'pointer',
                                 }}
+                                onClick={() => handleViewChange('redeemCode')}
                             >
                                 <CreditCardIcon
                                     sx={{ fontSize: '2rem', color: theme.background.main, marginBottom: 1 }}
                                 />
                                 <Typography sx={{ fontWeight: 'bold', color: theme.background.main }}>
-                                    Payment Method
+                                    Enter Redeem Code
                                 </Typography>
                             </Box>
                         </Grid>
@@ -122,4 +182,4 @@ const Subscription: React.FC = () => {
     );
 };
 
-export default Subscription;
+export default Voucher;

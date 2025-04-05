@@ -50,7 +50,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
     const open = Boolean(anchorDropdown);
     const navigate = useNavigate();
     const [user, setUser] = useState<User | null>(null);
-    const { userId } = useAuth();
+    const { userId, remainingToken } = useAuth();
 
     useEffect(() => {
         const fetchUserDetails = async () => {
@@ -163,7 +163,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                             padding: '1rem 1.5rem',
                             marginLeft: '0.5rem',
                             marginRight: '0.5rem',
-                            marginBottom: '0.5rem',
                             alignItems: 'center',
                             borderBottom: '1px solid #E0E0E0',
                             borderRadius: '0.4rem',
@@ -193,6 +192,24 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                                 {user?.status ? 'Premium user' : 'Standard user'}
                             </Typography>
                         </Box>
+                    </Box>
+                    <Box
+                        sx={{
+                            borderBottom: '1px solid #E0E0E0',
+                            marginLeft: '0.5rem',
+                            padding: '0.5rem 1.5rem',
+                        }}
+                    >
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                color: theme.fontColor.gray,
+                                fontFamily: theme.typography.body1,
+                                fontSize: '0.77rem',
+                            }}
+                        >
+                            Remaining token: {remainingToken}
+                        </Typography>
                     </Box>
                 </Box>
 

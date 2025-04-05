@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Dialog, DialogTitle, DialogContent, IconButton, Typography, Divider, Box, Link } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, IconButton, Typography, Divider, Box, Link, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
@@ -12,9 +12,20 @@ interface UploadNotificationProps {
     uploadStatus: 'success' | 'fail';
     onClose: () => void;
     content: string | null;
+    okButtonVisible?: boolean;
+    navigateStorage?: boolean;
+    tittle?: string;
 }
 
-const UploadNotification: FC<UploadNotificationProps> = ({ isOpen, uploadStatus, onClose, content }) => {
+const UploadNotification: FC<UploadNotificationProps> = ({
+    isOpen,
+    uploadStatus,
+    onClose,
+    content,
+    okButtonVisible = false,
+    navigateStorage = true,
+    tittle = 'Video Translation',
+}) => {
     const isSuccess = uploadStatus === 'success';
     const navigate = useNavigate();
     const theme = useTheme();
@@ -31,32 +42,34 @@ const UploadNotification: FC<UploadNotificationProps> = ({ isOpen, uploadStatus,
             }}
             onClose={onClose}
         >
-            <DialogTitle
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    height: '30px',
-                    margin: '10px',
-                }}
-            >
-                <Typography
-                    variant="h6"
+            {!okButtonVisible && (
+                <DialogTitle
                     sx={{
-                        flexGrow: 1,
-                        fontWeight: 'bold',
-                        fontFamily: 'Araboto, Roboto, Arial, sans-serif',
-                        color: '#a60195',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        height: '30px',
+                        margin: '10px',
                     }}
                 >
-                    Video Translation
-                </Typography>
+                    <Typography
+                        variant="h6"
+                        sx={{
+                            flexGrow: 1,
+                            fontWeight: 'bold',
+                            fontFamily: 'Araboto, Roboto, Arial, sans-serif',
+                            color: '#a60195',
+                        }}
+                    >
+                        {tittle}
+                    </Typography>
 
-                <IconButton onClick={onClose}>
-                    <CloseIcon />
-                </IconButton>
-            </DialogTitle>
+                    <IconButton onClick={onClose}>
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+            )}
 
             <Divider orientation="horizontal" flexItem sx={{ borderBottomWidth: 2 }} />
 
@@ -78,28 +91,36 @@ const UploadNotification: FC<UploadNotificationProps> = ({ isOpen, uploadStatus,
                         }}
                     >
                         {isSuccess
-                            ? `${content !== null ? content : 'UPLOAD'} SUCESSFULLY`
-                            : `${content !== null ? content : 'UPLOAD'} FAILED`}
+                            ? `${content !== null ? content : 'UPLOAD SUCESSFULLY'}`
+                            : `${content !== null ? content : 'UPLOAD FAILED'}`}
                     </Typography>
-
-                    <Typography
-                        variant="body2"
-                        paddingTop="15px"
-                        sx={{
-                            flexGrow: 1,
-                            fontFamily: 'Araboto, Roboto, Arial, sans-serif',
-                        }}
-                    >
-                        Navigate to the video storage by{' '}
-                        <Link
-                            component="button"
-                            onClick={() => navigate('/storage')}
-                            sx={{ fontWeight: 'bold', color: 'blue' }}
+                    {navigateStorage && (
+                        <Typography
+                            variant="body2"
+                            paddingTop="15px"
+                            sx={{
+                                flexGrow: 1,
+                                fontFamily: 'Araboto, Roboto, Arial, sans-serif',
+                            }}
                         >
-                            click here
-                        </Link>
-                    </Typography>
+                            Navigate to the video storage by{' '}
+                            <Link
+                                component="button"
+                                onClick={() => navigate('/storage')}
+                                sx={{ fontWeight: 'bold', color: 'blue' }}
+                            >
+                                click here
+                            </Link>
+                        </Typography>
+                    )}
                 </Box>
+                {okButtonVisible && (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+                        <Button variant="contained" color="primary" sx={{ width: '20%', mx: 'auto' }} onClick={onClose}>
+                            Confirm
+                        </Button>
+                    </Box>
+                )}
             </DialogContent>
         </Dialog>
     );
