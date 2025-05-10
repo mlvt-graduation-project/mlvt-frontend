@@ -173,9 +173,8 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                         <EditSharpIcon fontSize="small" />
                     </IconButton>
                 </Box>
-
                 {/* Created Time */}
-                <Typography
+                {/* <Typography
                     sx={{
                         fontFamily: theme.typography.body1.fontFamily,
                         color: theme.fontColor.gray,
@@ -183,8 +182,7 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                     }}
                 >
                     Created at: {formatDate(project.createdAt)}
-                </Typography>
-
+                </Typography> */}
                 {/* Status and Type Chips */}
                 <Box
                     sx={{

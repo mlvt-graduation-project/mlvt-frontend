@@ -37,7 +37,7 @@ interface UserProfileProps {
 
 const menuItems = [
     { label: 'Edit account', icon: <AccountCircle />, path: '/edit_account' },
-    { label: 'Premium membership', icon: <WorkspacePremiumSharp /> },
+    // { label: 'Premium membership', icon: <WorkspacePremiumSharp /> },
     { label: 'Language: English', icon: <Language /> },
     { label: 'Appearance: Light', icon: <LightMode /> },
     { label: 'Help & Support', icon: <Help /> },
