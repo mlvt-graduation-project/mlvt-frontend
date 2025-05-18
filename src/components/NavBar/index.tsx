@@ -1,74 +1,98 @@
 import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Box, Link, Typography, Avatar } from '@mui/material';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+import TextFieldsIcon from '@mui/icons-material/TextFields';
 import TranslateIcon from '@mui/icons-material/Translate';
 import SubtitlesIcon from '@mui/icons-material/Subtitles';
 import MicIcon from '@mui/icons-material/Mic';
 import SyncIcon from '@mui/icons-material/Sync';
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink } from 'react-router-dom';
 import UserProfile from './UserProfile';
+import KeyboardIcon from '@mui/icons-material/Keyboard';
 import UploadVideoButton from './UploadVideoButton';
 import { useTheme } from '@mui/material/styles';
-import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { getUser } from '../../api/user.api';
 import LipIcon from './image.png';
+import { getWalletBalance } from '../../api/wallet.api';
+import { tokenToString } from 'typescript';
 
 const NavLinks = [
     {
         icon: <OndemandVideoIcon />,
         text: 'Video Translation',
         link: '/',
-        action: 'openDialog'
+        action: 'openVideoTranslation',
+    },
+    {
+        icon: <TextFieldsIcon />,
+        text: 'Text Generation',
+        link: '/',
+        action: 'openTextGeneration',
     },
     {
         icon: <TranslateIcon />,
-        text: 'Text Generation',
+        text: 'Text Translation',
         link: '/',
-        action: 'openTranscription'
-
+        action: 'openTextTranslation',
     },
-    {
-        icon: <SubtitlesIcon />,
-        text: 'Subtitle Generation',
-        link: '/'
-    },
+    // {
+    //     icon: <KeyboardIcon />,
+    //     text: 'Subtitle Generation',
+    //     link: '/',
+    // },
     {
         icon: <MicIcon />,
         text: 'Voice Generation',
-        link: '/'
+        link: '/',
+        action: 'openVoiceGeneration',
     },
     {
         icon: <EmojiEmotionsIcon />,
         text: 'Lip sync for video',
-        link: '/'
+        link: '/',
+        action: 'openLipsync',
     },
 ];
 
 interface NavbarProps {
-    onOpenDialog: () => void;
-    onOpenTranscription: () => void;
+    onOpenVideoTranslation: () => void;
+    onOpenTextGeneration: () => void;
+    onOpenTextTranslation: () => void;
+    onOpenVoiceGeneration: () => void;
+    onOpenLipsync: () => void;
 }
 
-const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) => {
+const NavBar: React.FC<NavbarProps> = ({
+    onOpenVideoTranslation,
+    onOpenTextGeneration,
+    onOpenTextTranslation,
+    onOpenLipsync,
+    onOpenVoiceGeneration,
+}) => {
     const [avatarUrl, setAvatarUrl] = useState('avatar.jpg');
     const [userData, setUserData] = useState({
         firstName: 'Minh Minh',
         lastName: 'Nguyen',
-        premium: true
-    })
+        premium: true,
+    });
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const { userId } = useAuth();
+    const { userId, SetRemainingToken } = useAuth();
 
     const handleNavClick = (action?: string) => {
-        if (action === 'openDialog') {
-            onOpenDialog();
-        }
-        else if (action === 'openTranscription') {
-            onOpenTranscription();
+        if (action === 'openVideoTranslation') {
+            onOpenVideoTranslation();
+        } else if (action === 'openTextGeneration') {
+            onOpenTextGeneration();
+        } else if (action === 'openTextTranslation') {
+            onOpenTextTranslation();
+        } else if (action === 'openLipsync') {
+            onOpenLipsync();
+        } else if (action === 'openVoiceGeneration') {
+            onOpenVoiceGeneration();
         }
     };
 
@@ -90,7 +114,7 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) =>
                     setUserData({
                         firstName: userData.user.first_name,
                         lastName: userData.user.last_name,
-                        premium: userData.user.premium
+                        premium: userData.user.premium,
                     });
                 } catch (error) {
                     throw new Error(`Failed to fetch user data: ${error}`);
@@ -99,10 +123,14 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) =>
                 const avatarResponse = await fetch(`http://localhost:8080/api/users/${userId}/avatar-download-url`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${token}`, // Add token to the Authorization header
-                        'Content-Type': 'application/json'
-                    }
+                        Authorization: `Bearer ${token}`, // Add token to the Authorization header
+                        'Content-Type': 'application/json',
+                    },
                 });
+
+                const tokenPurchased = await getWalletBalance(userId);
+                // set for auth context
+                SetRemainingToken(tokenPurchased);
 
                 const avatarData = await avatarResponse.json();
                 const avatarDownloadUrl = avatarData.avatar_download_url;
@@ -115,62 +143,81 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) =>
         };
 
         fetchUserData();
-    }, [userId])
+    }, [userId]);
 
     if (isLoading) {
-        return <div>Loading...</div>;  // or any other loading indicator
+        return <div>Loading...</div>; // or any other loading indicator
     }
 
     return (
-        <AppBar position="static" sx={{
-            backgroundColor: theme.background.white,
-            color: theme.fontColor.black,
-            boxShadow: 'none',
-            borderBottom: '2px solid' + theme.background.lightPurple
-        }}>
-            <Toolbar sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0.7rem 2.2rem'
-            }}>
+        <AppBar
+            position="static"
+            sx={{
+                backgroundColor: theme.background.white,
+                color: theme.fontColor.black,
+                boxShadow: 'none',
+                borderBottom: '2px solid' + theme.background.lightPurple,
+            }}
+        >
+            <Toolbar
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '0.7rem 2.2rem',
+                }}
+            >
                 <UploadVideoButton />
                 <Box sx={{ display: 'flex' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 3.8, marginRight: '2rem' }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 3.8,
+                            marginRight: '2rem',
+                        }}
+                    >
                         {NavLinks.map((item) => (
                             <Link
                                 component={RouterLink}
                                 key={item.text}
                                 to={item.link}
-                                style={{ textDecoration: "none", color: theme.palette.text.primary }}
+                                style={{
+                                    textDecoration: 'none',
+                                    color: theme.palette.text.primary,
+                                }}
                                 onClick={(e) => {
                                     e.preventDefault();
                                     handleNavClick(item.action);
                                 }}
                             >
-                                <Box sx={{
-                                    display: "flex",
-                                    flexDirection: {
-                                        sx: "column",
-                                        lg: "column"
-                                    },
-                                    alignItems: "center",
-                                    color: theme.palette.text.primary,
-                                    textDecoration: "none",
-                                    gap: 0.8
-                                }}>
-                                    <Box sx={{
-                                        borderRadius: '0.8rem',
-                                        width: '3.3rem',
-                                        height: '1.8rem',
+                                <Box
+                                    sx={{
                                         display: 'flex',
+                                        flexDirection: {
+                                            sx: 'column',
+                                            lg: 'column',
+                                        },
                                         alignItems: 'center',
-                                        justifyContent: 'center',
-                                        '&:hover': {
-                                            backgroundColor: theme.background.lightPurple,
-                                        }
-                                    }}>
+                                        color: theme.palette.text.primary,
+                                        textDecoration: 'none',
+                                        gap: 0.8,
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            borderRadius: '0.8rem',
+                                            width: '3.3rem',
+                                            height: '1.8rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            '&:hover': {
+                                                backgroundColor: theme.background.lightPurple,
+                                            },
+                                        }}
+                                    >
                                         <item.icon.type
                                             sx={{
                                                 color: theme.palette.text.primary,
@@ -178,8 +225,22 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) =>
                                             }}
                                         />
                                     </Box>
-                                    <Box sx={{ width: '4.5rem', textAlign: 'center' }}>
-                                        <Typography variant='body1' sx={{ fontFamily: theme.typography.body1, fontWeight: '600', fontSize: '0.75rem' }}>{item.text}</Typography>
+                                    <Box
+                                        sx={{
+                                            width: '4.5rem',
+                                            textAlign: 'center',
+                                        }}
+                                    >
+                                        <Typography
+                                            variant="body1"
+                                            sx={{
+                                                fontFamily: theme.typography.body1,
+                                                fontWeight: '600',
+                                                fontSize: '0.75rem',
+                                            }}
+                                        >
+                                            {item.text}
+                                        </Typography>
                                     </Box>
                                 </Box>
                             </Link>
@@ -190,7 +251,7 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) =>
                         first_name={userData.firstName}
                         last_name={userData.lastName}
                         status={userData.premium} // true for premium, false for standard
-                        avatarSrc={avatarUrl} 
+                        avatarSrc={avatarUrl}
                         notifications={4}
                     />
                 </Box>

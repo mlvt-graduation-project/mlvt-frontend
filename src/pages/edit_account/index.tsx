@@ -1,27 +1,28 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Avatar,
-  MenuItem,
-  Grid,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  useTheme,
-  Divider,
-  Link,
-} from "@mui/material";
-import { AccountCircle, Lock, Subscriptions } from "@mui/icons-material";
-import PersonalDetails from "../../components/PersonalDetails";
-import { getUser, updateUser } from "../../api/user.api";
-import { useAuth } from "../../context/AuthContext";
-import ChangePassword from "../../components/ChangePassword";
-import Subscription from "../../components/Subscription";
-import Footer from "../../components/Footer";
+    Box,
+    Typography,
+    TextField,
+    Button,
+    Avatar,
+    MenuItem,
+    Grid,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    useTheme,
+    Divider,
+    Link,
+} from '@mui/material';
+import { AccountCircle, Lock, Subscriptions } from '@mui/icons-material';
+import PersonalDetails from '../../components/PersonalDetails';
+import { getUser, updateUser } from '../../api/user.api';
+import { useAuth } from '../../context/AuthContext';
+import ChangePassword from '../../components/ChangePassword';
+// import Subscription from "../../components/Subscription";
+import Voucher from '../../components/Voucher';
+import Footer from '../../components/Footer';
 
 interface UserDetails {
     firstName: string;
@@ -36,17 +37,17 @@ interface UserDetails {
 
 const EditAccount: React.FC = () => {
     const [userDetails, setUserDetails] = useState<UserDetails>({
-        firstName: "Thi Minh Minh",
-        lastName: "Nguyen",
-        username: "minhminh2703",
-        email: "nguyenthiminhminh.hcm@gmail.com",
-        createdDate: "2024-04-30",
-        userRole: "USER",
-        premiumExpiredDate: "",
-        avatarSrc: "image.jpeg"
+        firstName: 'Thi Minh Minh',
+        lastName: 'Nguyen',
+        username: 'minhminh2703',
+        email: 'nguyenthiminhminh.hcm@gmail.com',
+        createdDate: '2024-04-30',
+        userRole: 'USER',
+        premiumExpiredDate: '',
+        avatarSrc: 'image.jpeg',
     });
     const [isLoading, setIsLoading] = useState(true);
-    const [activeComponent, setActiveComponent] = useState("personalDetails");
+    const [activeComponent, setActiveComponent] = useState('personalDetails');
     const theme = useTheme();
     const { userId } = useAuth();
 
@@ -76,14 +77,17 @@ const EditAccount: React.FC = () => {
                 }
 
                 try {
-                    const avatarResponse = await fetch(`http://localhost:8080/api/users/${userId}/avatar-download-url`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`, // Add token to the Authorization header
-                            'Content-Type': 'application/json'
+                    const avatarResponse = await fetch(
+                        `http://localhost:8080/api/users/${userId}/avatar-download-url`,
+                        {
+                            method: 'GET',
+                            headers: {
+                                Authorization: `Bearer ${token}`, // Add token to the Authorization header
+                                'Content-Type': 'application/json',
+                            },
                         }
-                    });
-    
+                    );
+
                     if (avatarResponse.status !== 500) {
                         const avatarData = await avatarResponse.json();
                         const avatarDownloadUrl = avatarData.avatar_download_url;
@@ -103,15 +107,13 @@ const EditAccount: React.FC = () => {
         };
 
         fetchUserData();
-    }, [userId])
+    }, [userId]);
 
     if (isLoading) {
-        return <div>Loading...</div>;  // or any other loading indicator
+        return <div>Loading...</div>; // or any other loading indicator
     }
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setUserDetails((prev) => ({ ...prev, [name]: value }));
     };
@@ -120,44 +122,54 @@ const EditAccount: React.FC = () => {
         <Box>
             <Box
                 sx={{
-                    display: "flex", // Align items horizontally
-                    flexDirection: "row", // Horizontal layout
+                    display: 'flex', // Align items horizontally
+                    flexDirection: 'row', // Horizontal layout
                     paddingTop: 4,
                     paddingBottom: 4,
                     paddingRight: 10,
                     paddingLeft: 10,
-                    height: "100vh",
+                    height: '100vh',
                 }}
             >
                 {/* Left Section */}
-                <Box sx={{ flex: 1, maxWidth: "400px", paddingRight: 5 }}>
+                <Box sx={{ flex: 1, maxWidth: '400px', paddingRight: 5 }}>
                     <Box
                         sx={{
-                        width: "100%",
-                        backgroundColor: "#fff",
+                            width: '100%',
+                            backgroundColor: '#fff',
                         }}
                     >
                         {/* Logo Section */}
-                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginBottom: "1.5rem" }}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'flex-start',
+                                marginBottom: '1.5rem',
+                            }}
+                        >
                             <Link href="/">
                                 <Box
                                     component="img"
-                                    src={require("./image.jpeg")}
+                                    src={require('./image.jpeg')}
                                     alt="Logo"
                                     sx={{
-                                    width: 120,
-                                    height: 120,
-                                    marginBottom: "1rem",
-                                    borderRadius: "0.8rem",
+                                        width: 120,
+                                        height: 120,
+                                        marginBottom: '1rem',
+                                        borderRadius: '0.8rem',
                                     }}
                                 />
                             </Link>
-                            <Typography variant="h6" sx={{ fontWeight: "bold", color: theme.background.main, textAlign: "center" }}>
+                            <Typography
+                                variant="h6"
+                                sx={{ fontWeight: 'bold', color: theme.background.main, textAlign: 'center' }}
+                            >
                                 Multi-language Video Translation
                             </Typography>
                             <Typography
                                 variant="body2"
-                                sx={{ color: "#757575", textAlign: "center", marginTop: "0.5rem" }}
+                                sx={{ color: '#757575', textAlign: 'center', marginTop: '0.5rem' }}
                             >
                                 Manage your personal account settings
                             </Typography>
@@ -167,9 +179,9 @@ const EditAccount: React.FC = () => {
                         <Typography
                             variant="body2"
                             sx={{
-                                fontWeight: "bold",
-                                color: "#424242",
-                                marginBottom: "1rem",
+                                fontWeight: 'bold',
+                                color: '#424242',
+                                marginBottom: '1rem',
                             }}
                         >
                             Account settings
@@ -179,47 +191,68 @@ const EditAccount: React.FC = () => {
                         <List>
                             <ListItem
                                 button
-                                onClick={() => setActiveComponent("personalDetails")}
+                                onClick={() => setActiveComponent('personalDetails')}
                                 sx={{
-                                    backgroundColor: activeComponent === "personalDetails" ? theme.background.main : "transparent",
-                                    borderRadius: "0.5rem",
-                                    marginBottom: "0.5rem",
-                                    "&:hover": { backgroundColor: "#D1C4E9" },
+                                    backgroundColor:
+                                        activeComponent === 'personalDetails' ? theme.background.main : 'transparent',
+                                    borderRadius: '0.5rem',
+                                    marginBottom: '0.5rem',
+                                    '&:hover': { backgroundColor: '#D1C4E9' },
                                 }}
                             >
                                 <ListItemIcon>
-                                    <AccountCircle sx={{ color: activeComponent === "personalDetails" ? "#FFFFFF" : "#757575" }} />
+                                    <AccountCircle
+                                        sx={{ color: activeComponent === 'personalDetails' ? '#FFFFFF' : '#757575' }}
+                                    />
                                 </ListItemIcon>
-                                <ListItemText primary="Personal details" sx={{ color: activeComponent === "personalDetails" ? "#FFFFFF" : "#757575", fontWeight: "bold" }} />
+                                <ListItemText
+                                    primary="Personal details"
+                                    sx={{
+                                        color: activeComponent === 'personalDetails' ? '#FFFFFF' : '#757575',
+                                        fontWeight: 'bold',
+                                    }}
+                                />
                             </ListItem>
                             <ListItem
                                 button
-                                onClick={() => setActiveComponent("changePassword")}
+                                onClick={() => setActiveComponent('changePassword')}
                                 sx={{
-                                    backgroundColor: activeComponent === "changePassword" ? theme.background.main : "transparent",
-                                    borderRadius: "0.5rem",
-                                    marginBottom: "0.5rem",
-                                    "&:hover": { backgroundColor: "#D1C4E9" },
+                                    backgroundColor:
+                                        activeComponent === 'changePassword' ? theme.background.main : 'transparent',
+                                    borderRadius: '0.5rem',
+                                    marginBottom: '0.5rem',
+                                    '&:hover': { backgroundColor: '#D1C4E9' },
                                 }}
                             >
                                 <ListItemIcon>
-                                    <Lock sx={{ color: activeComponent === "changePassword" ? "#FFFFFF" : "#757575" }} />
+                                    <Lock
+                                        sx={{ color: activeComponent === 'changePassword' ? '#FFFFFF' : '#757575' }}
+                                    />
                                 </ListItemIcon>
-                                <ListItemText primary="Change password" sx={{ color: activeComponent === "changePassword" ? "#FFFFFF" : "#757575" }} />
+                                <ListItemText
+                                    primary="Change password"
+                                    sx={{ color: activeComponent === 'changePassword' ? '#FFFFFF' : '#757575' }}
+                                />
                             </ListItem>
                             <ListItem
                                 button
-                                onClick={() => setActiveComponent("subscription")}
+                                onClick={() => setActiveComponent('voucher')}
                                 sx={{
-                                    backgroundColor: activeComponent === "subscription" ? theme.background.main : "transparent",
-                                    borderRadius: "0.5rem",
-                                    "&:hover": { backgroundColor: "#D1C4E9" },
+                                    backgroundColor:
+                                        activeComponent === 'voucher' ? theme.background.main : 'transparent',
+                                    borderRadius: '0.5rem',
+                                    '&:hover': { backgroundColor: '#D1C4E9' },
                                 }}
                             >
                                 <ListItemIcon>
-                                    <Subscriptions sx={{ color: activeComponent === "subscription" ? "#FFFFFF" : "#757575" }} />
+                                    <Subscriptions
+                                        sx={{ color: activeComponent === 'voucher' ? '#FFFFFF' : '#757575' }}
+                                    />
                                 </ListItemIcon>
-                                <ListItemText primary="Subscription" sx={{ color: activeComponent === "subscription" ? "#FFFFFF" : "#757575" }}/>
+                                <ListItemText
+                                    primary="Subscription"
+                                    sx={{ color: activeComponent === 'subscription' ? '#FFFFFF' : '#757575' }}
+                                />
                             </ListItem>
                         </List>
                     </Box>
@@ -227,18 +260,18 @@ const EditAccount: React.FC = () => {
 
                 {/* Vertical Divider */}
                 <Divider
-                orientation="vertical"
-                flexItem
-                sx={{
-                    borderWidth: "1px",
-                    marginX: 2,
-                    backgroundColor: "#E0E0E0",
-                }}
+                    orientation="vertical"
+                    flexItem
+                    sx={{
+                        borderWidth: '1px',
+                        marginX: 2,
+                        backgroundColor: '#E0E0E0',
+                    }}
                 />
 
                 {/* Right Section */}
                 <Box sx={{ flex: 2, paddingLeft: 5 }}>
-                    {activeComponent === "personalDetails" && (
+                    {activeComponent === 'personalDetails' && (
                         <PersonalDetails
                             firstName={userDetails.firstName}
                             lastName={userDetails.lastName}
@@ -250,8 +283,8 @@ const EditAccount: React.FC = () => {
                             avatarSrc={userDetails.avatarSrc}
                         />
                     )}
-                    {activeComponent === "changePassword" && <ChangePassword />}
-                    {activeComponent === "subscription" && <Subscription />}
+                    {activeComponent === 'changePassword' && <ChangePassword />}
+                    {activeComponent === 'voucher' && <Voucher />}
                 </Box>
             </Box>
             <Footer />

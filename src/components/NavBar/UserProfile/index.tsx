@@ -1,12 +1,31 @@
-import { useTheme } from "@mui/material/styles";
-import React, { useEffect, useState } from "react";
-import { Avatar, Box, Badge, Menu, MenuItem, Typography, IconButton, ListItemIcon, ListItemText, Divider } from "@mui/material";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import { AccountCircle, NavigateNext, WorkspacePremiumSharp, Help, Logout, Language, LightMode } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { getUser } from "../../../api/user.api";
-import { useAuth } from "../../../context/AuthContext";
-import { User } from "../../../types/Response/User";
+import { useTheme } from '@mui/material/styles';
+import React, { useEffect, useState } from 'react';
+import {
+    Avatar,
+    Box,
+    Badge,
+    Menu,
+    MenuItem,
+    Typography,
+    IconButton,
+    ListItemIcon,
+    ListItemText,
+    Divider,
+} from '@mui/material';
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import {
+    AccountCircle,
+    NavigateNext,
+    WorkspacePremiumSharp,
+    Help,
+    Logout,
+    Language,
+    LightMode,
+} from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { getUser } from '../../../api/user.api';
+import { useAuth } from '../../../context/AuthContext';
+import { User } from '../../../types/Response/User';
 
 interface UserProfileProps {
     first_name: string;
@@ -18,37 +37,37 @@ interface UserProfileProps {
 
 const menuItems = [
     { label: 'Edit account', icon: <AccountCircle />, path: '/edit_account' },
-    { label: 'Premium membership', icon: <WorkspacePremiumSharp /> },
+    // { label: 'Premium membership', icon: <WorkspacePremiumSharp /> },
     { label: 'Language: English', icon: <Language /> },
     { label: 'Appearance: Light', icon: <LightMode /> },
     { label: 'Help & Support', icon: <Help /> },
-    { label: 'Log out', icon: <Logout /> }
-]
+    { label: 'Log out', icon: <Logout /> },
+];
 
 const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status, avatarSrc, notifications }) => {
     const [anchorDropdown, setAnchorDropdown] = useState<null | HTMLElement>(null);
     const theme = useTheme();
     const open = Boolean(anchorDropdown);
     const navigate = useNavigate();
-    const [user, setUser] = useState<User | null>(null);    
-    const { userId } = useAuth();
+    const [user, setUser] = useState<User | null>(null);
+    const { userId, remainingToken } = useAuth();
 
     useEffect(() => {
         const fetchUserDetails = async () => {
-          try {
-            if (userId) {
-              const userData = await getUser(userId);
-              setUser(userData.user);
-            } else {
-              throw new Error("User ID is null");
+            try {
+                if (userId) {
+                    const userData = await getUser(userId);
+                    setUser(userData.user);
+                } else {
+                    throw new Error('User ID is null');
+                }
+            } catch (error) {
+                throw new Error(`Failed to fetch user data: ${error}`);
             }
-          } catch (error) {
-            throw new Error(`Failed to fetch user data: ${error}`);
-          }
         };
-    
+
         fetchUserDetails();
-      }, []);
+    }, []);
 
     const altText = `${first_name.charAt(0)}${last_name.charAt(0)}`;
 
@@ -66,7 +85,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
     const handleLogout = () => {
         localStorage.removeItem('authToken');
         navigate('/login');
-    }
+    };
 
     return (
         <>
@@ -80,19 +99,25 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                     }}
                     onClick={handleDropdownOpen}
                 >
-                    <Typography variant="body2" sx={{
-                        color: theme.fontColor.black,
-                        fontFamily: theme.typography.body1,
-                        fontWeight: 'bold',
-                        fontSize: '0.95rem'
-                    }}>
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            color: theme.fontColor.black,
+                            fontFamily: theme.typography.body1,
+                            fontWeight: 'bold',
+                            fontSize: '0.95rem',
+                        }}
+                    >
                         {`${user?.first_name} ${user?.last_name}`}
                     </Typography>
-                    <Typography variant="caption" sx={{
-                        color: theme.fontColor.gray,
-                        fontFamily: theme.typography.body1,
-                        fontSize: '0.77rem'
-                    }}>
+                    <Typography
+                        variant="caption"
+                        sx={{
+                            color: theme.fontColor.gray,
+                            fontFamily: theme.typography.body1,
+                            fontSize: '0.77rem',
+                        }}
+                    >
                         {status ? 'Premium user' : 'Standard user'}
                     </Typography>
                 </Box>
@@ -128,47 +153,73 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                     },
                 }}
             >
-
                 {/* Profile Section */}
                 <Box>
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        gap: 1.5,
-                        padding: '1rem 1.5rem',
-                        marginLeft: '0.5rem',
-                        marginRight: '0.5rem',
-                        marginBottom: '0.5rem',
-                        alignItems: 'center',
-                        borderBottom: '1px solid #E0E0E0',
-                        borderRadius: '0.4rem',
-                    }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            gap: 1.5,
+                            padding: '1rem 1.5rem',
+                            marginLeft: '0.5rem',
+                            marginRight: '0.5rem',
+                            alignItems: 'center',
+                            borderBottom: '1px solid #E0E0E0',
+                            borderRadius: '0.4rem',
+                        }}
+                    >
                         <Avatar src={avatarSrc} alt={altText} sx={{ width: '2.8rem', height: '2.5rem' }} />
                         <Box>
-                            <Typography variant="body2" sx={{
-                                color: theme.fontColor.black,
-                                fontFamily: theme.typography.body1,
-                                fontWeight: 'bold',
-                                fontSize: '0.95rem'
-                            }}>
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    color: theme.fontColor.black,
+                                    fontFamily: theme.typography.body1,
+                                    fontWeight: 'bold',
+                                    fontSize: '0.95rem',
+                                }}
+                            >
                                 {`${user?.first_name} ${user?.last_name}`}
                             </Typography>
-                            <Typography variant="caption" sx={{
-                                color: theme.fontColor.gray,
-                                fontFamily: theme.typography.body1,
-                                fontSize: '0.77rem'
-                            }}>
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    color: theme.fontColor.gray,
+                                    fontFamily: theme.typography.body1,
+                                    fontSize: '0.77rem',
+                                }}
+                            >
                                 {user?.status ? 'Premium user' : 'Standard user'}
                             </Typography>
                         </Box>
                     </Box>
+                    <Box
+                        sx={{
+                            borderBottom: '1px solid #E0E0E0',
+                            marginLeft: '0.5rem',
+                            padding: '0.5rem 1.5rem',
+                        }}
+                    >
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                color: theme.fontColor.gray,
+                                fontFamily: theme.typography.body1,
+                                fontSize: '0.77rem',
+                            }}
+                        >
+                            Remaining token: {remainingToken}
+                        </Typography>
+                    </Box>
                 </Box>
-                
+
                 {menuItems.map((item) => (
-                    <React.Fragment key={item.label}>
-                        {item.label === 'Log out' && <Divider sx={{ margin: '0.5rem 0' }} variant="middle" component="li" />}
+                    <div key={item.label}>
+                        {item.label === 'Log out' && (
+                            <Divider sx={{ margin: '0.5rem 0' }} variant="middle" component="li" />
+                        )}
                         <MenuItem
-                            onClick={()=>{
+                            onClick={() => {
                                 handleDropdownClose();
                                 if (item.label === 'Log out') {
                                     handleLogout();
@@ -188,24 +239,26 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                                 },
                             }}
                         >
-                            <ListItemIcon sx={{ minWidth: '35px' }}>
-                                {item.icon}
-                            </ListItemIcon>
-                            <ListItemText disableTypography primary={item.label} sx={{
-                                color: theme.fontColor.black,
-                                fontFamily: theme.typography.body1,
-                                fontSize: '0.8rem',
-                            }} />
+                            <ListItemIcon sx={{ minWidth: '35px' }}>{item.icon}</ListItemIcon>
+                            <ListItemText
+                                disableTypography
+                                primary={item.label}
+                                sx={{
+                                    color: theme.fontColor.black,
+                                    fontFamily: theme.typography.body1,
+                                    fontSize: '0.8rem',
+                                }}
+                            />
                             {/* Conditionally render NavigateNext icon */}
                             {['Appearance: Light', 'Language: English'].includes(item.label) && (
                                 <NavigateNext sx={{ marginLeft: 'auto', color: theme.fontColor.black }} />
                             )}
                         </MenuItem>
-                    </React.Fragment>
+                    </div>
                 ))}
             </Menu>
         </>
     );
-}
+};
 
 export default UserProfile;

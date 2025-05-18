@@ -1,40 +1,44 @@
-import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material"
-import { useTheme } from "@mui/material/styles"
-import SearchBar from "../../SearchBar";
-import React, { useEffect, useState } from "react";
-import ProcessedVidPopUp from "../../ProcessedVidPopUp";
-import CardFeature from "../../CardFeature";
-import { Project} from "../../../types/Project";
-import { useAuth } from "../../../context/AuthContext";
-import { handleGetVideosByUserId } from "../../../utils/video.utils";
-import { getAudiosByUserId } from "../../../api/audio.api";
-import { getPresignedDownloadImageURL, getVideosByUserId } from "../../../api/video.api";
-import { getTranscriptionsByUserId } from "../../../api/transcription.api";
-import { mapStatusToProjectStatus } from "../../../types/ProjectStatus";
+import { Box, FormControl, MenuItem, Select, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import SearchBar from '../../SearchBar';
+import React, { useEffect, useState } from 'react';
+// import ProcessedVidPopUp from "../../ProcessedVidPopUp";
+import { ProcessedVideoPopUp } from '../../VideoPopup/ProjectPopup';
+import CardFeature from '../../CardFeature';
+import { Project, ProjectType } from '../../../types/Project';
+import { useAuth } from '../../../context/AuthContext';
+import {
+    handleGetVideosProjectByUserId,
+    handleGetTextProjectByUserId,
+    combineAndSortProjects,
+    handleGetAudioProjectByUserId,
+    getAllProgressProjects,
+} from '../../../utils/project.utils';
+import { useProjectContext } from '../../../context/ProjectContext';
 
 const ProjectSection = () => {
     const theme = useTheme();
-    const userId = localStorage.getItem('userId');
+    // const { projects, updateProjects } = useProjectContext();
+    const { userId } = useAuth();
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log()
-    }
+        console.log();
+    };
+    const { projects, getProjectsByType, fetchAllProjects } = useProjectContext();
     const [selectedProject, setSelectedProject] = React.useState<Project | null>(null);
     const [isPopUpOpen, setIsPopUpOpen] = React.useState(false);
     const [dropdownValue, setDropdownValue] = React.useState('');
-    const [videoId, setVideoId] = useState<number>(0);
-    const [projects, setProjects] = useState<Project[]>([]);
-    
+    const [displayProjects, setDisplayProjects] = useState<Project[]>([]);
+
     const handleCardClick = (project: Project) => {
         setSelectedProject(project);
         setIsPopUpOpen(true);
-        setVideoId(parseInt(project.id))
-    }
+    };
 
     const handleClosePopUp = () => {
         setIsPopUpOpen(false);
         setSelectedProject(null);
-    }
-    
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -42,75 +46,50 @@ const ProjectSection = () => {
                     setError('No user ID found in local storage');
                     return;
                 }
-                const videoListResponse = await getVideosByUserId(userId);
-                const transcriptionListResponse = await getTranscriptionsByUserId(userId);
-                const audioListResponse = await getAudiosByUserId(userId);
-
-                // console.log(videoListResponse);
-                console.log(transcriptionListResponse);
-
-                const videoProjects = await Promise.all(
-                    videoListResponse.videos.map(async video => {
-                        const videoImageUrl = await getPresignedDownloadImageURL(video.video.id.toString());
-                        const videoLink = videoImageUrl.split('?X-Amz-Algorithm')[0].replace('raw_videos', 'video_frames'); 
-                        // console.log(video.video.id);
-                        // console.log(videoLink);
-                        return {
-                            id: video.video.id.toString(),
-                            thumbnail: videoLink || '',
-                            title: video.video.title,
-                            status: mapStatusToProjectStatus(video.video.status),
-                            createdAt: new Date(video.video.created_at),
-                            updatedAt: new Date(video.video.updated_at),
-                            type_project: 'Video Translation'
-                        };
-                    })
-                );
-
-                const transcriptionProjects = transcriptionListResponse.transcriptions.map(transcription => ({
-                    id: transcription.id.toString(),
-                    thumbnail: 'text.png',
-                    title: transcription.file_name || 'Transcription',
-                    status: mapStatusToProjectStatus('raw'),
-                    createdAt: new Date(transcription.created_at),
-                    updatedAt: new Date(transcription.updated_at),
-                    type_project: 'Transcription'
-                }));
-
-                const audioProjects = audioListResponse.audios.map(audio => ({
-                    id: audio.id.toString(),
-                    thumbnail: 'audio.png',
-                    title: audio.file_name || 'Audio',
-                    status: mapStatusToProjectStatus('raw'),
-                    createdAt: new Date(audio.created_at),
-                    updatedAt: new Date(audio.updated_at),
-                    type_project: 'Audio'
-                }))
-
-                const newProjects:Project[] = [...videoProjects, ...transcriptionProjects, ...audioProjects];
-                setProjects(newProjects);
+                fetchAllProjects();
             } catch (error) {
                 console.error('Failed to fetch video or image URLs:', error);
             }
         };
 
-        fetchData();
-    }, [userId]);
+        fetchData(); // Initial fetch when the component mounts
+
+        // const intervalId = setInterval(fetchData, 20000); // Fetch data every 30 seconds
+
+        // return () => {
+        //     clearInterval(intervalId); // Cleanup the interval on component unmount
+        // };
+    }, []); // Dependency array includes userId
+
+    useEffect(() => {
+        const progress = getProjectsByType([
+            ProjectType.AudioGeneration,
+            ProjectType.Fullpipeline,
+            ProjectType.Lipsync,
+            ProjectType.TextGeneration,
+            ProjectType.TextTranslation,
+        ]);
+        setDisplayProjects(progress);
+    }, [getProjectsByType, projects]);
 
     return (
         <Box>
             {/* YOUR PROJECT - SEARCH BAR */}
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginBottom: '1.6rem'
-            }}>
-                <Typography sx={{
-                    fontFamily: theme.typography.body1,
-                    fontWeight: 'bold',
-                    fontSize: '1.8rem'
-                }}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginBottom: '1.6rem',
+                }}
+            >
+                <Typography
+                    sx={{
+                        fontFamily: theme.typography.body1,
+                        fontWeight: 'bold',
+                        fontSize: '1.8rem',
+                    }}
+                >
                     Your Projects
                 </Typography>
                 <Box
@@ -139,14 +118,9 @@ const ProjectSection = () => {
                     </Typography>
                 </Box>
 
-
                 {/* Search bar */}
                 <Box>
-                    <SearchBar
-                        placeholder='Search'
-                        onChange={handleSearchChange}
-                        searchBarWidth='20rem'
-                    />
+                    <SearchBar placeholder="Search" onChange={handleSearchChange} searchBarWidth="20rem" />
                 </Box>
                 {/* Sort for search */}
                 <FormControl
@@ -175,7 +149,6 @@ const ProjectSection = () => {
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                 borderColor: theme.background.main,
                             },
-
                         }}
                         MenuProps={{
                             PaperProps: {
@@ -191,7 +164,7 @@ const ProjectSection = () => {
                                         },
                                         '&.Mui-selected': {
                                             backgroundColor: theme.background.lightPurple,
-                                        }
+                                        },
                                     },
                                 },
                             },
@@ -205,42 +178,37 @@ const ProjectSection = () => {
                         <MenuItem value="5">Lip Synchronization</MenuItem>
                     </Select>
                 </FormControl>
-
             </Box>
 
             {/* PROJECTS */}
-            <Box sx={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gridAutoRows: 'minmax(100px, auto)',
-                justifyItems: 'center',
-                rowGap: '3rem',
-            }}>
-                {projects.map((project) => (
-                    <CardFeature
-                        key={project.id}
-                        project={project}
-                        onclick={() => handleCardClick(project)}
-                    />
+            <Box
+                sx={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gridAutoRows: 'minmax(100px, auto)',
+                    justifyItems: 'center',
+                    rowGap: '3rem',
+                }}
+            >
+                {displayProjects.map((project, index) => (
+                    <CardFeature key={index} project={project} onclick={() => handleCardClick(project)} />
                 ))}
             </Box>
 
-            {
-                selectedProject && (
-                    <ProcessedVidPopUp
-                        videoId = {videoId}
-                        isOpen={isPopUpOpen}
-                        onClose={handleClosePopUp}
-                    />
-                )
-            }
-
+            {selectedProject && (
+                <ProcessedVideoPopUp
+                    inputObject={selectedProject}
+                    isOpen={isPopUpOpen}
+                    onClose={handleClosePopUp}
+                    type={selectedProject.type_project}
+                />
+            )}
         </Box>
-    )
-}
+    );
+};
 
-export default ProjectSection
+export default ProjectSection;
 
 function setError(arg0: string) {
-    throw new Error("Function not implemented.");
+    throw new Error('Function not implemented.');
 }
