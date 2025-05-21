@@ -18,6 +18,10 @@ const InputStyles = (theme: any) => ({
             borderRadius: 2.5,
         },
     },
+    style: {
+        fontFamily: 'Poppins, sans-serif',
+        fontSize: '0.9rem',
+    },
 });
 
 const Login = () => {
@@ -220,7 +224,7 @@ const Login = () => {
 
             {/* Error Message */}
             {error && (
-                <Typography color="error" sx={{ marginTop: 2 }}>
+                <Typography color="error" sx={{ marginTop: 2, fontSize: 14, fontFamily: 'Poppins, sans-serif' }}>
                     {error}
                 </Typography>
             )}
@@ -273,7 +277,7 @@ const Login = () => {
                         fontFamily: 'Poppins, sans-serif',
                         fontSize: '0.8rem',
                         '&:hover': {
-                            textDecoration: 'underline', 
+                            textDecoration: 'underline',
                         },
                     }}
                 >
@@ -285,7 +289,7 @@ const Login = () => {
             <Button
                 variant="contained"
                 fullWidth
-                onClick={handleLogin} 
+                onClick={handleLogin}
                 sx={{
                     marginBottom: 2,
                     marginTop: 3.5,
@@ -330,7 +334,7 @@ const Login = () => {
                     sx={{
                         marginTop: 3,
                         alignItems: 'center',
-                        fontFamily: 'Poppins, sans-serif',  
+                        fontFamily: 'Poppins, sans-serif',
                         fontSize: '0.9rem',
                     }}
                 >

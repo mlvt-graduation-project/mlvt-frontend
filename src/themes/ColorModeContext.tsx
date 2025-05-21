@@ -16,7 +16,7 @@ interface ColorModeProviderProps {
 }
 
 export const ColorModeProvider = ({
-    initialMode = 'dark',
+    initialMode = 'light',
     // initialMode = 'light', 
     children,
 }: ColorModeProviderProps) => {
