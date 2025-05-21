@@ -163,7 +163,7 @@ const EditAccount: React.FC = () => {
                             </Link>
                             <Typography
                                 variant="h6"
-                                sx={{ fontWeight: 'bold', color: theme.background.main, textAlign: 'center' }}
+                                sx={{ fontWeight: 'bold', color: theme.palette.primary.main, textAlign: 'center' }}
                             >
                                 Multi-language Video Translation
                             </Typography>
@@ -193,8 +193,9 @@ const EditAccount: React.FC = () => {
                                 button
                                 onClick={() => setActiveComponent('personalDetails')}
                                 sx={{
-                                    backgroundColor:
-                                        activeComponent === 'personalDetails' ? theme.background.main : 'transparent',
+                                    // backgroundColor:
+                                    //     activeComponent === 'personalDetails' ? theme.background.main : 'transparent',
+                                    backgroundColor: activeComponent === 'personalDetails' ? '#673AB7' : 'transparent',
                                     borderRadius: '0.5rem',
                                     marginBottom: '0.5rem',
                                     '&:hover': { backgroundColor: '#D1C4E9' },
@@ -217,8 +218,9 @@ const EditAccount: React.FC = () => {
                                 button
                                 onClick={() => setActiveComponent('changePassword')}
                                 sx={{
-                                    backgroundColor:
-                                        activeComponent === 'changePassword' ? theme.background.main : 'transparent',
+                                    // backgroundColor:
+                                    //     activeComponent === 'changePassword' ? theme.background.main : 'transparent',
+                                    backgroundColor: activeComponent === 'changePassword' ? '#673AB7' : 'transparent',
                                     borderRadius: '0.5rem',
                                     marginBottom: '0.5rem',
                                     '&:hover': { backgroundColor: '#D1C4E9' },
@@ -238,8 +240,9 @@ const EditAccount: React.FC = () => {
                                 button
                                 onClick={() => setActiveComponent('voucher')}
                                 sx={{
-                                    backgroundColor:
-                                        activeComponent === 'voucher' ? theme.background.main : 'transparent',
+                                    // backgroundColor:
+                                    //     activeComponent === 'voucher' ? theme.background.main : 'transparent',
+                                    backgroundColor: activeComponent === 'voucher' ? '#673AB7' : 'transparent',
                                     borderRadius: '0.5rem',
                                     '&:hover': { backgroundColor: '#D1C4E9' },
                                 }}

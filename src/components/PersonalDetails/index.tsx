@@ -266,7 +266,7 @@ const PersonalDetails: React.FC<UserDetails> = ({firstName, lastName, username, 
                 <Button
                     variant="contained"
                     sx={{
-                        backgroundColor: theme.background.main,
+                        backgroundColor: theme.palette.primary.main,
                         color: "#FFFFFF",
                         borderRadius: "10px",
                         fontWeight: "bold",

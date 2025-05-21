@@ -1,7 +1,6 @@
 import React from 'react';
-import { Box, Typography, Modal, Button } from '@mui/material';
+import { Box, Typography, Modal, useTheme } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import theme from '../../config/theme';
 
 interface SuccessPopupProps {
     open: boolean;
@@ -10,6 +9,7 @@ interface SuccessPopupProps {
 }
 
 const SuccessPopup: React.FC<SuccessPopupProps> = ({ open, onClose, message }) => {
+    const theme = useTheme();
     return (
         <Modal
             open={open}
@@ -35,7 +35,7 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({ open, onClose, message }) =
                 <CheckCircleIcon
                     sx={{
                         fontSize: 100,
-                        color: theme.status.succeeded.fontColor,
+                        color: theme.palette.success.main,
                         alignSelf: 'center',
                     }}
                 />
@@ -46,7 +46,7 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({ open, onClose, message }) =
                         fontWeight: theme.typography.fontWeightBold,
                         fontSize: '1.5rem',
                         marginTop: 5,
-                        color: theme.status.succeeded.fontColor,
+                        color: theme.palette.success.contrastText
                     }}
                 >
                     {message}

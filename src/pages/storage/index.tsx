@@ -10,7 +10,6 @@ import CardFeature from '../../components/CardFeature';
 import SearchBar from '../../components/SearchBar';
 import { useProjectContext } from '../../context/ProjectContext';
 import { ProcessedVideoPopUp } from '../../components/VideoPopup/ProjectPopup';
-import { Theme } from '@emotion/react';
 import { useAuth } from '../../context/AuthContext';
 
 interface categoryProjectType {
@@ -67,7 +66,7 @@ function CheckboxComponent({
             }
             sx={{
                 margin: '0',
-                color: theme.fontColor.gray,
+                color: theme.palette.text.secondary,
                 ...labelProps,
             }}
             label={<Typography sx={labelProps}>{inputOption.label}</Typography>}
@@ -130,27 +129,27 @@ const Storage = () => {
             label: 'All',
             filterList: [ProjectStatus.Failed, ProjectStatus.Processing, ProjectStatus.Raw, ProjectStatus.Succeeded],
             checkStatus: true,
-            color: theme.fontColor.gray,
+            color: theme.palette.text.secondary,
         },
         {
             label: 'Succeeded',
-            color: theme.status.succeeded.fontColor,
+            color: theme.palette.success.main,
             filterList: [ProjectStatus.Succeeded],
             checkStatus: true,
         },
         {
             label: 'Processing',
-            color: theme.status.processing.fontColor,
+            color: theme.palette.warning.main,
             filterList: [ProjectStatus.Processing],
             checkStatus: true,
         },
         {
             label: 'Failed',
-            color: theme.status.failed.fontColor,
+            color: theme.palette.error.main,
             filterList: [ProjectStatus.Failed],
             checkStatus: true,
         },
-        { label: 'Raw', color: theme.status.raw.fontColor, filterList: [ProjectStatus.Raw], checkStatus: true },
+        { label: 'Raw', color: theme.palette.neutral.main, filterList: [ProjectStatus.Raw], checkStatus: true },
     ]);
 
     const handleAddProjectTypeFilter = (inputList: ProjectType[]) => {
@@ -289,7 +288,7 @@ const Storage = () => {
                             fontFamily: theme.typography.body1,
                             fontSize: '2rem',
                             fontWeight: 'bold',
-                            color: theme.background.main,
+                            color: theme.palette.primary.main,
                             marginBottom: '30px',
                         }}
                     >
@@ -302,7 +301,7 @@ const Storage = () => {
                                 key={index}
                                 inputOption={option}
                                 labelProps={{ fontFamily: theme.typography.body1, fontSize: '0.9rem' }}
-                                color={theme.fontColor.gray}
+                                color={theme.palette.text.secondary}
                                 onCheck={() => onCheckProjectFilter(categoryOption, setCategoryOption, option)}
                                 onUncheck={() => onUnCheckProjectFilter(setCategoryOption, option)}
                             />
@@ -313,7 +312,7 @@ const Storage = () => {
                             onClick={handleFavoriteClicked}
                             sx={{
                                 marginLeft: '0',
-                                color: theme.fontColor.gray,
+                                color: theme.palette.text.secondary,
                                 height: '2.625rem',
                                 display: 'flex',
                                 flexDirection: 'row',
@@ -325,9 +324,9 @@ const Storage = () => {
                         >
                             <IconButton sx={{ padding: '5px' }}>
                                 {isFavorite ? (
-                                    <Bookmark sx={{ color: theme.fontColor.yellow, fontSize: '2rem' }} />
+                                    <Bookmark sx={{ color: theme.palette.warning.main, fontSize: '2rem' }} />
                                 ) : (
-                                    <BookmarkBorder sx={{ color: theme.fontColor.yellow, fontSize: '2rem' }} />
+                                    <BookmarkBorder sx={{ color: theme.palette.warning.main, fontSize: '2rem' }} />
                                 )}
                             </IconButton>
                             <Typography sx={{ fontFamily: theme.typography.body1, fontSize: '0.9rem' }}>
@@ -348,7 +347,7 @@ const Storage = () => {
                                     key={index}
                                     inputOption={option}
                                     labelProps={{ fontFamily: theme.typography.body1, fontSize: '0.9rem' }}
-                                    color={option.color || theme.fontColor.gray}
+                                    color={option.color || theme.palette.text.secondary}
                                     onCheck={() => onCheckProjectFilter(statusOption, setStatusOption, option)}
                                     onUncheck={() => onUnCheckProjectFilter(setStatusOption, option)}
                                 />
@@ -372,7 +371,7 @@ const Storage = () => {
                             sx={{
                                 fontFamily: 'Kablammo',
                                 fontSize: '3rem',
-                                color: theme.background.main,
+                                color: theme.palette.primary.main,
                                 fontWeight: 'bold',
                             }}
                         >

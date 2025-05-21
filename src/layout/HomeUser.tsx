@@ -1,7 +1,6 @@
-import {ReactNode} from "react";
-import {Box} from "@mui/material";
+import { ReactNode } from "react";
+import { Box, useTheme } from "@mui/material";
 import Sidebar from "../components/SideBar";
-import Theme from "../config/theme";
 import Footer from "../components/Footer";
 
 interface HomepageProps {
@@ -9,6 +8,7 @@ interface HomepageProps {
 }
 
 const HomePage = ({ children }: HomepageProps) => {
+    const theme = useTheme();
     return (
         <Box sx={{
             display: "flex",
@@ -28,7 +28,7 @@ const HomePage = ({ children }: HomepageProps) => {
                 flex: 1,
             }}>
                 <Sidebar />
-                <Box sx={{ width: "100%", overflowY: "scroll", backgroundColor: Theme.palette.background.default }}>
+                <Box sx={{ width: "100%", overflowY: "scroll", backgroundColor: theme.palette.background.default }}>
                     {children}
                 </Box>
 

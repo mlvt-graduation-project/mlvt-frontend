@@ -102,7 +102,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                     <Typography
                         variant="body2"
                         sx={{
-                            color: theme.fontColor.black,
+                            color: theme.palette.primary.contrastText,
                             fontFamily: theme.typography.body1,
                             fontWeight: 'bold',
                             fontSize: '0.95rem',
@@ -113,7 +113,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                     <Typography
                         variant="caption"
                         sx={{
-                            color: theme.fontColor.gray,
+                            color: theme.palette.primary.contrastText,
                             fontFamily: theme.typography.body1,
                             fontSize: '0.77rem',
                         }}
@@ -173,8 +173,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                             <Typography
                                 variant="body2"
                                 sx={{
-                                    color: theme.fontColor.black,
-                                    fontFamily: theme.typography.body1,
+                                    color: theme.palette.primary.contrastText,
+                                    fontFamily: 'Poppins, sans-serif',
                                     fontWeight: 'bold',
                                     fontSize: '0.95rem',
                                 }}
@@ -184,8 +184,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                             <Typography
                                 variant="caption"
                                 sx={{
-                                    color: theme.fontColor.gray,
-                                    fontFamily: theme.typography.body1,
+                                    color: theme.palette.primary.contrastText,
+                                    fontFamily: 'Poppins, sans-serif',
                                     fontSize: '0.77rem',
                                 }}
                             >
@@ -203,7 +203,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                         <Typography
                             variant="caption"
                             sx={{
-                                color: theme.fontColor.gray,
+                                color: theme.palette.primary.contrastText,
                                 fontFamily: theme.typography.body1,
                                 fontSize: '0.77rem',
                             }}
@@ -234,7 +234,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                                 alignItems: 'center',
                                 gap: '1.2rem',
                                 '&:hover': {
-                                    backgroundColor: theme.background.lightPurple,
+                                    backgroundColor: theme.palette.primary.main,
                                     color: theme.palette.primary.contrastText,
                                 },
                             }}
@@ -244,14 +244,14 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                                 disableTypography
                                 primary={item.label}
                                 sx={{
-                                    color: theme.fontColor.black,
+                                    color: theme.palette.primary.contrastText,
                                     fontFamily: theme.typography.body1,
                                     fontSize: '0.8rem',
                                 }}
                             />
                             {/* Conditionally render NavigateNext icon */}
                             {['Appearance: Light', 'Language: English'].includes(item.label) && (
-                                <NavigateNext sx={{ marginLeft: 'auto', color: theme.fontColor.black }} />
+                                <NavigateNext sx={{ marginLeft: 'auto', color: theme.palette.primary.main }} />
                             )}
                         </MenuItem>
                     </div>

@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent } from 'react';
 import { Box } from '@mui/material';
 import Background from '../../assets/background.jpg';
-import CardSlider from '../CarouselCard';
+import CardSlider from '../CardSlider';
 import ProjectSection from './ProjectSection';
 
 const HomeContent: React.FC = () => {  
@@ -22,7 +22,8 @@ const HomeContent: React.FC = () => {
                 backgroundSize: 'cover',
                 borderRadius: '15px',
                 padding: '3rem',
-                height: '45vh',
+                alignItems: 'center',
+                display: 'flex',
             }}>
                 <CardSlider />
             </Box>

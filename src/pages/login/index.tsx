@@ -14,7 +14,7 @@ const InputStyles = (theme: any) => ({
     sx: {
         '& input::placeholder': {
             fontSize: '0.9rem',
-            color: theme.fontColor.gray,
+            color: theme.palette.text.secondary,
         },
         borderRadius: 2.5,
     },
@@ -115,7 +115,7 @@ const Login = () => {
                 variant="h4"
                 gutterBottom
                 sx={{
-                    color: theme.fontColor.black,
+                    // color: theme.fontColor.black,
                     fontFamily: theme.typography.h1,
                     fontWeight: theme.typography.fontWeightBold,
                     fontSize: 60,
@@ -128,7 +128,7 @@ const Login = () => {
                 variant="body1"
                 sx={{
                     marginBottom: 3,
-                    color: theme.fontColor.black,
+                    // color: theme.fontColor.black,
                     fontFamily: theme.typography.body1,
                     fontWeight: 500,
                     fontSize: 16,
@@ -160,7 +160,7 @@ const Login = () => {
                     marginTop: 0.6,
                     '& .MuiOutlinedInput-root': {
                         '&.Mui-focused fieldset': {
-                            borderColor: theme.background.main,
+                            // borderColor: theme.background.main,
                         },
                     },
                 }}
@@ -172,7 +172,7 @@ const Login = () => {
                 FormHelperTextProps={{
                     sx: {
                         fontFamily: theme.typography.body1,
-                        fontColor: theme.status.failed.fontColor,
+                        // fontColor: theme.status.failed.fontColor,
                         marginLeft: 0,
                         fontSize: 12,
                     },
@@ -183,7 +183,7 @@ const Login = () => {
             <Typography
                 sx={{
                     fontFamily: theme.typography.body1,
-                    fontColor: theme.status.failed.fontColor,
+                    // fontColor: theme.status.failed.fontColor,
                     fontSize: 14,
                     marginTop: 2,
                     fontWeight: 550,
@@ -203,7 +203,7 @@ const Login = () => {
                     marginTop: 0.6,
                     '& .MuiOutlinedInput-root': {
                         '&.Mui-focused fieldset': {
-                            borderColor: theme.background.main,
+                            // borderColor: theme.background.main,
                         },
                     },
                 }}
@@ -215,7 +215,7 @@ const Login = () => {
                 FormHelperTextProps={{
                     sx: {
                         fontFamily: theme.typography.body1,
-                        fontColor: theme.status.failed.fontColor,
+                        // fontColor: theme.status.failed.fontColor,
                         marginLeft: 0,
                         fontSize: 12,
                     },
@@ -246,7 +246,7 @@ const Login = () => {
                         sx={{
                             padding: 0,
                             '&.Mui-checked': {
-                                color: theme.background.main,
+                                // color: theme.background.main,
                             },
                         }}
                         checked={rememberMe}
@@ -258,7 +258,7 @@ const Login = () => {
                         sx={{
                             marginLeft: 1,
                             fontSize: '0.8rem',
-                            color: theme.fontColor.gray,
+                            // color: theme.fontColor.gray,
                             display: 'flex',
                             alignItems: 'center',
                         }}
@@ -269,8 +269,8 @@ const Login = () => {
                 <Typography
                     variant="body2"
                     sx={{
-                        cursor: 'pointer',
-                        color: theme.status.processing.fontColor,
+                        // cursor: 'pointer',
+                        // color: theme.status.processing.fontColor,
                         fontFamily: theme.typography.body1,
                         fontSize: '0.8rem',
                         '&:hover': {
@@ -292,13 +292,13 @@ const Login = () => {
                     marginBottom: 2,
                     marginTop: 3.5,
                     borderRadius: 2.5,
-                    backgroundColor: theme.background.main,
+                    // backgroundColor: theme.background.main,
                     fontFamily: theme.typography.h1,
                     fontWeight: theme.typography.fontWeightBold,
                     fontSize: '1rem',
                     height: '2.5rem',
                     '&:hover': {
-                        backgroundColor: theme.background.main,
+                        // backgroundColor: theme.background.main,
                     },
                 }}
                 disabled={loading} // Disable button while loading
@@ -325,7 +325,7 @@ const Login = () => {
             <Box
                 sx={{
                     textTransform: 'none',
-                    color: theme.fontColor.gray,
+                    color: theme.palette.text.secondary,
                     fontSize: '0.8rem',
                     display: 'flex',
                     justifyContent: 'center',
@@ -341,7 +341,7 @@ const Login = () => {
                     }}
                 >
                     Don’t have an account?{' '}
-                    <a href="/signup" style={{ color: theme.status.processing.fontColor }}>
+                    <a href="/signup" style={{ color: theme.palette.warning.main }}>
                         Sign Up
                     </a>
                 </Typography>

@@ -1,6 +1,5 @@
-import { Box, Typography, Grid, TextField, Button } from '@mui/material';
+import { Box, Typography, Grid, TextField, Button, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import theme from '../../config/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import axios from 'axios';
 import UploadNotification from '../UploadNotification';
@@ -19,6 +18,7 @@ interface UploadNoti {
 }
 
 export const RedeemCode: React.FC<RedeemCodeProps> = ({ handleChangeView }) => {
+    const theme = useTheme();
     const [redeemCode, setRedeemCode] = useState('');
     const [loading, setLoading] = useState(false);
     const { userId, AddRemainingToken } = useAuth();
@@ -70,7 +70,7 @@ export const RedeemCode: React.FC<RedeemCodeProps> = ({ handleChangeView }) => {
 
     return (
         <Box sx={{ padding: 3 }}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', color: theme.background.main }}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
                 REDEEM CODE
             </Typography>
             <Typography sx={{ fontSize: '1rem', color: 'gray', marginTop: 1 }}>

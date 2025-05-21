@@ -60,7 +60,7 @@ const Sidebar: React.FC = () => {
             {/* Permanent Sidebar for Larger Screens */}
             <Box
                 sx={{
-                    backgroundColor: theme.background.lightPink,
+                    backgroundColor: theme.palette.primary.main,
                     padding: 0,
                     display: { xs: "none", lg: "flex" }, // Hidden on small screens
                     flexDirection: "column",
@@ -98,12 +98,12 @@ const Sidebar: React.FC = () => {
                     <IconButton
                         onClick={toggleDrawer(true)}
                         sx={{
-                            backgroundColor: theme.background.white,
+                            backgroundColor: theme.palette.primary.contrastText,
                             borderRadius: "20%",
                             width: "2em",
                             height: "2em",
                             "&:hover": {
-                                backgroundColor: theme.background.lightPurple,
+                                backgroundColor: theme.palette.secondary.main,
                             },
                         }}
                     >
@@ -133,13 +133,13 @@ const Sidebar: React.FC = () => {
                                     height: "2.5em",
                                     textDecoration: "none", 
                                     "&:hover": {
-                                        backgroundColor: theme.background.lightPurple,
+                                        backgroundColor: theme.palette.secondary.main,
                                     },
                                 }}
                             >
                                 {/* Increase Icon Size */}
                                 {React.cloneElement(item.icon as React.ReactElement, {
-                                    sx: { fontSize: "1.5em", color: theme.fontColor.black },
+                                    sx: { fontSize: "1.5em", color: theme.palette.text.primary },
                                 })}
                             </MuiLink>
                         ))}
@@ -149,7 +149,7 @@ const Sidebar: React.FC = () => {
                 <Box>
                     <QuizOutlinedIcon
                         sx={{
-                            color: theme.fontColor.black,
+                            color: theme.palette.text.primary,
                             fontSize: "1.8em",
                         }}
                     />
@@ -165,7 +165,7 @@ const Sidebar: React.FC = () => {
                     keepMounted: true,
                 }}
                 sx={{
-                    "& .MuiDrawer-paper": { width: "15em", backgroundColor: theme.background.lightPink },
+                    "& .MuiDrawer-paper": { width: "15em", backgroundColor: theme.palette.secondary.main },
                 }}
             >
                 <Box
@@ -196,7 +196,7 @@ const Sidebar: React.FC = () => {
                             }}
                         />
                         <Typography sx={{
-                            color: theme.background.main,
+                            color: theme.palette.primary.main,
                             fontFamily: theme.typography.body1,
                             fontSize: "2.5em",
                             fontWeight: 900,
@@ -228,7 +228,7 @@ const Sidebar: React.FC = () => {
                                         padding: "0.5em 2em",
                                         borderRadius: "8px",
                                         "&:hover": {
-                                            backgroundColor: theme.background.lightPurple,
+                                            backgroundColor: theme.palette.secondary.main,
                                         },
                                     }}
                                 >
@@ -252,20 +252,20 @@ const Sidebar: React.FC = () => {
                     position: "fixed",
                     top: "5em",
                     left: "0.5em",
-                    backgroundColor: theme.background.lightPink,
+                    backgroundColor: theme.palette.primary.contrastText,
                     borderRadius: "20%",
                     width: "2em",
                     height: "2em",
                     alignItems: "center",
                     "&:hover": {
-                        backgroundColor: theme.background.lightPurple,
+                        backgroundColor: theme.palette.secondary.main,
                     },
                     padding: "0em"
                 }}
             >
                 <MenuIcon sx={{
                     fontSize: "1.2em",
-                    color: theme.fontColor.gray
+                    color: theme.palette.text.primary,
                 }}/>
             </IconButton>
         </>

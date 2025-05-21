@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography, useTheme } from '@mui/material';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import theme from '../../config/theme';
 import OrderHistory from '../OrderHistory'; // Ensure this is the correct import path
 import { RedeemCode } from '../RedeemCode';
 import { getWalletBalance } from '../../api/wallet.api';
@@ -16,6 +15,7 @@ interface ErrNoti {
 }
 
 const Voucher: React.FC = () => {
+    const theme = useTheme();
     const [currentView, setCurrentView] = useState('subscription');
     const [errNoti, setErrNoti] = useState<ErrNoti>({
         isOpen: false,
@@ -99,7 +99,7 @@ const Voucher: React.FC = () => {
                         }}
                     >
                         <Box>
-                            <Typography variant="h5" sx={{ fontWeight: 'bold', color: theme.background.main }}>
+                            <Typography variant="h5" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
                                 YOUR WALLET
                             </Typography>
                             <Typography sx={{ fontSize: '1.3rem', color: 'gray', marginTop: 1 }}>
@@ -112,7 +112,7 @@ const Voucher: React.FC = () => {
                         <Typography
                             sx={{
                                 fontSize: '0.85rem',
-                                color: theme.background.main,
+                                color: theme.palette.primary.main,
                                 textAlign: 'right',
                                 marginTop: 2,
                                 '& span:hover': {
@@ -145,8 +145,8 @@ const Voucher: React.FC = () => {
                                 }}
                                 onClick={() => handleViewChange('orderHistory')}
                             >
-                                <ReceiptIcon sx={{ fontSize: '2rem', color: theme.background.main, marginBottom: 1 }} />
-                                <Typography sx={{ fontWeight: 'bold', color: theme.background.main }}>
+                                <ReceiptIcon sx={{ fontSize: '2rem', color: theme.palette.primary.main, marginBottom: 1 }} />
+                                <Typography sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
                                     Order History
                                 </Typography>
                             </Box>
@@ -168,9 +168,9 @@ const Voucher: React.FC = () => {
                                 onClick={() => handleViewChange('redeemCode')}
                             >
                                 <CreditCardIcon
-                                    sx={{ fontSize: '2rem', color: theme.background.main, marginBottom: 1 }}
+                                    sx={{ fontSize: '2rem', color: theme.palette.primary.main, marginBottom: 1 }}
                                 />
-                                <Typography sx={{ fontWeight: 'bold', color: theme.background.main }}>
+                                <Typography sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
                                     Enter Redeem Code
                                 </Typography>
                             </Box>

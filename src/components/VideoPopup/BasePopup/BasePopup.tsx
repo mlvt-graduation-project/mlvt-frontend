@@ -75,8 +75,8 @@ export const BasePopup: FC<BasePopupProps> = ({
                         <Chip
                             label={toDisplayText(statusChip)}
                             sx={{
-                                backgroundColor: theme.status[statusChip].backgroundColor,
-                                color: theme.status[statusChip].fontColor,
+                                // backgroundColor: theme.status[statusChip].backgroundColor,
+                                // color: theme.status[statusChip].fontColor,
                                 fontFamily: theme.typography.body1.fontFamily,
                                 fontSize: '0.8rem',
                                 fontWeight: 'bold',

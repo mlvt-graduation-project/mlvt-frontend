@@ -144,10 +144,10 @@ const ProjectSection = () => {
                             fontSize: '0.8rem',
                             borderRadius: '0.7rem',
                             '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: theme.background.main,
+                                borderColor: theme.palette.primary.main,
                             },
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: theme.background.main,
+                                borderColor: theme.palette.primary.main,
                             },
                         }}
                         MenuProps={{
@@ -160,10 +160,10 @@ const ProjectSection = () => {
                                         fontFamily: theme.typography.body1,
                                         fontSize: '0.8rem',
                                         '&:hover': {
-                                            backgroundColor: theme.background.lightPink,
+                                            backgroundColor: theme.palette.secondary.main,
                                         },
                                         '&.Mui-selected': {
-                                            backgroundColor: theme.background.lightPurple,
+                                            backgroundColor: theme.palette.secondary.main,
                                         },
                                     },
                                 },

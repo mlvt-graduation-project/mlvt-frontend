@@ -114,7 +114,7 @@ const Signup: React.FC = () => {
     const InputStyles = {
         '& input::placeholder': {
             fontSize: '0.9rem',
-            color: theme.fontColor.gray,
+            color: theme.palette.text.secondary,
         },
         borderRadius: 2.5,
     };
@@ -125,7 +125,7 @@ const Signup: React.FC = () => {
                 variant="h4"
                 gutterBottom
                 sx={{
-                    color: theme.fontColor.black,
+                    color: theme.palette.text.primary,
                     fontFamily: theme.typography.h1,
                     fontWeight: theme.typography.fontWeightBold,
                     fontSize: 60,
@@ -151,7 +151,7 @@ const Signup: React.FC = () => {
                     >
                         {nameOfField[field as keyof typeof nameOfField]}
                         <Typography
-                            sx={{ color: theme.status.failed.fontColor, fontWeight: theme.typography.fontWeightBold }}
+                            sx={{ color: theme.palette.error.contrastText, fontWeight: theme.typography.fontWeightBold }}
                         >
                             *
                         </Typography>
@@ -172,14 +172,14 @@ const Signup: React.FC = () => {
                             marginTop: 0.6,
                             '& .MuiOutlinedInput-root': {
                                 '&.Mui-focused fieldset': {
-                                    borderColor: theme.background.main,
+                                    borderColor: theme.palette.primary.main,
                                 },
                             },
                         }}
                         // Customize the error message styling
                         FormHelperTextProps={{
                             sx: {
-                                color: theme.status.failed.fontColor,
+                                color: theme.palette.error.contrastText || 'red',
                                 fontFamily: theme.typography.body1,
                                 marginLeft: '0px',
                                 fontSize: '12px',
@@ -205,7 +205,7 @@ const Signup: React.FC = () => {
                     >
                         {field === 'password' ? 'Password' : 'Confirm Password'}
                         <Typography
-                            sx={{ color: theme.status.failed.fontColor, fontWeight: theme.typography.fontWeightBold }}
+                            sx={{ color: theme.palette.error.contrastText, fontWeight: theme.typography.fontWeightBold }}
                         >
                             *
                         </Typography>
@@ -231,7 +231,7 @@ const Signup: React.FC = () => {
                         helperText={errors[field as keyof FormState]}
                         FormHelperTextProps={{
                             sx: {
-                                color: theme.status.failed.fontColor || 'red',
+                                color: theme.palette.error.contrastText || 'red',
                                 fontFamily: theme.typography.body1,
                                 marginLeft: '0px',
                                 fontSize: '12px', // Adjust font size for error message
@@ -271,7 +271,7 @@ const Signup: React.FC = () => {
                             marginTop: 0.6,
                             '& .MuiOutlinedInput-root': {
                                 '&.Mui-focused fieldset': {
-                                    borderColor: theme.background.main,
+                                    borderColor: theme.palette.primary.main,
                                 },
                             },
                         }}
@@ -281,7 +281,7 @@ const Signup: React.FC = () => {
 
             {/* Error Message */}
             {error && (
-                <Typography sx={{ color: theme.status.failed.fontColor, fontFamily: theme.typography.body1 }}>
+                <Typography sx={{ color: theme.palette.error.contrastText, fontFamily: theme.typography.body1 }}>
                     {error}
                 </Typography>
             )}
@@ -296,13 +296,13 @@ const Signup: React.FC = () => {
                     marginBottom: 2,
                     marginTop: 5.5,
                     borderRadius: 2.5,
-                    backgroundColor: theme.background.main,
+                    backgroundColor: theme.palette.primary.main,
                     fontFamily: theme.typography.h1,
                     fontWeight: theme.typography.fontWeightBold,
                     fontSize: '1rem',
                     height: '2.5rem',
                     '&:hover': {
-                        backgroundColor: theme.background.main,
+                        backgroundColor: theme.palette.primary.dark,
                     },
                 }}
                 onClick={handleSignup}
@@ -323,7 +323,7 @@ const Signup: React.FC = () => {
             <Box
                 sx={{
                     textTransform: 'none',
-                    color: theme.fontColor.gray,
+                    color: theme.palette.text.secondary,
                     fontSize: '0.8rem',
                     display: 'flex',
                     justifyContent: 'center',
@@ -339,7 +339,7 @@ const Signup: React.FC = () => {
                     }}
                 >
                     Have an account?{' '}
-                    <a href="/login" style={{ color: theme.status.processing.fontColor }}>
+                    <a href="/login" style={{ color: theme.palette.warning.main }}>
                         Log in
                     </a>
                 </Typography>

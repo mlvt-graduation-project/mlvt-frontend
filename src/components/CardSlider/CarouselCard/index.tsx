@@ -30,72 +30,36 @@ const CarouselCard: React.FC<CarouselCardProps> = ({ title, onClick }) => {
     const content = getDefaultContent(title);
 
     return (
-        <Paper elevation={3}
+        <Box
+            onClick={onClick}
             sx={{
+                width: { xs: '100%', sm: '80%', md: '60%', lg: '40%' },
+                maxWidth: 640,
+                bgcolor: theme.palette.background.paper,
+                borderRadius: 4,
+                boxShadow: 3,
                 display: 'flex',
-                alignItems: 'center',
-                padding: '1.5rem',
-                borderRadius: '1rem',
-                boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-                border: '1px solid #E0E0E0',
-                height: '30vh',
-                width: '35vw'
-            }}>
-
-            {/* Text section */}
-            <Box sx={{
-                height: '100%',
-
-            }}>
-                <Typography sx={{
-                    color: theme.background.main,
-                    fontFamily: theme.typography.body1,
-                    fontWeight: 'bold',
-                    fontSize: '1.6rem'
-                }}>
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                p: 3,
+                gap: 1,
+                cursor: 'pointer',
+                overflow: 'hidden',
+            }}
+        >
+                <Typography variant="h6" >
                     {title}
                 </Typography>
-                <Box sx={{
-                    marginTop: '1rem',
-                    width: '20rem',
-                    height: '70%',
-                    overflowY: 'auto',
-                    overflowX: 'hidden'
-                }}>
-                    <Typography align='justify' sx={{
-                        color: theme.fontColor.gray,
-                        fontFamily: theme.typography.body1,
-                        fontSize: '0.9rem',
-                    }}>
-                        {content}
-                    </Typography>
-                </Box>
-            </Box>
-
-            {/* Add Icon Button */}
-            <Button
-                variant="contained"
-                sx={{
-                    width: '8rem',
-                    height: '8rem',
-                    borderRadius: '0.75rem',
-                    backgroundColor: theme.background.main,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginLeft: 'auto',
-                    '&:hover': {
-                        backgroundColor: theme.background.main 
-                    }
-                }}>
-                <AddIcon sx={{
-                    color: theme.background.white,
-                    width: '100%',
-                    height: '100%',
-                }} />
-            </Button>
-        </Paper>
+                <Typography
+                    variant="body2"
+                    align="justify"
+                    sx={{ color: theme.palette.text.secondary }}
+                >
+                    {content}
+                </Typography>
+        </Box>
     );
-}
+};
 
 export default CarouselCard;

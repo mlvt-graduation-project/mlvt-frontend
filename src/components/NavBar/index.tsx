@@ -153,10 +153,10 @@ const NavBar: React.FC<NavbarProps> = ({
         <AppBar
             position="static"
             sx={{
-                backgroundColor: theme.background.white,
-                color: theme.fontColor.black,
+                backgroundColor: theme.palette.primary.contrastText,
+                color: theme.palette.primary.main,
                 boxShadow: 'none',
-                borderBottom: '2px solid' + theme.background.lightPurple,
+                borderBottom: '2px solid' + theme.palette.secondary.main,
             }}
         >
             <Toolbar
@@ -214,7 +214,7 @@ const NavBar: React.FC<NavbarProps> = ({
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             '&:hover': {
-                                                backgroundColor: theme.background.lightPurple,
+                                                backgroundColor: theme.palette.secondary.main,
                                             },
                                         }}
                                     >

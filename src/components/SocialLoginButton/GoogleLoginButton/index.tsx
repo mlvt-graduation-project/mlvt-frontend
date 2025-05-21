@@ -15,7 +15,7 @@ const GoogleLoginButton = () => {
       icon={<GoogleIcon style={{ 
         verticalAlign: 'middle',
         fontSize: '1.7rem',
-        color: theme.status.failed.fontColor,
+        color: '#B8001F',
       }} />}
       label="Sign in with Google"
       onClick={handleGoogleLogin}

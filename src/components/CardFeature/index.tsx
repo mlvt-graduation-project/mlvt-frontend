@@ -1,20 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, Typography, Avatar, Box, Chip, Icon, IconButton, TextField } from '@mui/material';
 import { Project } from '../../types/Project';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
 import { ProjectType } from '../../types/Project';
 import { hasThumbnail } from '../../utils/project.utils';
-import moment from 'moment';
 import { useTheme } from '@mui/material/styles';
-import axios from 'axios';
 import { Bookmark, BookmarkBorder, EditSharp as EditSharpIcon, Circle as CircleIcon } from '@mui/icons-material';
 import { ProjectStatus, toDisplayText } from '../../types/ProjectStatus';
 import TextIcon from '../../assets/TextIcon.png';
 import AudioIcon from '../../assets/AudioIcon.png';
+import { m } from 'framer-motion';
 
 interface CardFeatureProps {
     project: Project;
     onclick: () => void;
+}
+
+function mapStatusToColor(status: ProjectStatus) {
+    switch (status) {
+        case ProjectStatus.Processing:
+            return { backgroundColor: '#FFCC00', fontColor: '#000000' };
+        case ProjectStatus.Succeeded:
+            return { backgroundColor: '#00CC00', fontColor: '#FFFFFF' };
+        case ProjectStatus.Failed:
+            return { backgroundColor: '#FF0000', fontColor: '#FFFFFF' };
+        case ProjectStatus.Raw:
+            return { backgroundColor: '#CCCCCC', fontColor: '#000000' };
+        default:
+            return { backgroundColor: '#FFFFFF', fontColor: '#000000' };
+    }
 }
 
 const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
@@ -87,10 +100,10 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                         hasThumbnail(project)
                             ? project.thumbnail.split('?')[0]
                             : [ProjectType.Text, ProjectType.AudioGeneration, ProjectType.TextTranslation].includes(
-                                  project.type_project
-                              )
-                            ? TextIcon
-                            : AudioIcon
+                                project.type_project
+                            )
+                                ? TextIcon
+                                : AudioIcon
                     }
                     alt="Project Thumbnail"
                     style={{
@@ -112,9 +125,9 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                 >
                     <IconButton onClick={handleBookmarkClick} sx={{ padding: '0' }}>
                         {isBookmarked ? (
-                            <Bookmark sx={{ color: theme.fontColor.yellow, fontSize: '2rem' }} />
+                            <Bookmark sx={{ color: theme.palette.warning.main, fontSize: '2rem' }} />
                         ) : (
-                            <BookmarkBorder sx={{ color: theme.fontColor.yellow, fontSize: '2rem' }} />
+                            <BookmarkBorder sx={{ color: theme.palette.warning.main, fontSize: '2rem' }} />
                         )}
                     </IconButton>
                 </Box>
@@ -160,7 +173,7 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                         <Typography
                             sx={{
                                 fontFamily: theme.typography.body1.fontFamily,
-                                color: theme.background.main,
+                                color: theme.palette.primary.main,
                                 fontWeight: 550,
                                 fontSize: '1rem',
                             }}
@@ -169,7 +182,7 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                         </Typography>
                     )}
 
-                    <IconButton onClick={handleEditClick} sx={{ color: theme.background.main }}>
+                    <IconButton onClick={handleEditClick} sx={{ color: theme.palette.primary.main }}>
                         <EditSharpIcon fontSize="small" />
                     </IconButton>
                 </Box>
@@ -197,15 +210,15 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                             <CircleIcon
                                 sx={{
                                     fontSize: '0.8rem',
-                                    color: `${theme.status[project.status].fontColor} !important`,
+                                    color: mapStatusToColor(project.status).backgroundColor,
                                     margin: '0',
                                     padding: '0',
                                 }}
                             />
                         }
                         sx={{
-                            backgroundColor: theme.status[project.status].backgroundColor,
-                            color: theme.status[project.status].fontColor,
+                            backgroundColor: mapStatusToColor(project.status).backgroundColor,
+                            color: mapStatusToColor(project.status).fontColor,
                             fontFamily: theme.typography.body1.fontFamily,
                             fontSize: '0.8rem',
                             fontWeight: 'bold',
@@ -215,8 +228,8 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                     <Chip
                         label={project.type_project}
                         sx={{
-                            backgroundColor: theme.background.lightPink,
-                            color: theme.fontColor.gray,
+                            backgroundColor: theme.palette.primary.main,
+                            color: theme.palette.primary.contrastText,
                             fontFamily: theme.typography.body1.fontFamily,
                             fontSize: '0.8rem',
                             borderRadius: '0.5rem',

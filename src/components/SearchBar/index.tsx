@@ -15,7 +15,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ placeholder, onChange, searchBarW
         <Box sx={{
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: theme.background.lightPurple,
+            backgroundColor: theme.palette.secondary.main,
             width: '100%',
             height: '2.2rem',
             borderRadius: '0.7rem',
@@ -24,7 +24,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ placeholder, onChange, searchBarW
         }}>
             <SearchIcon sx={{
                 fontSize: '1.6rem',
-                color: theme.fontColor.gray
+                color: theme.palette.primary.main,
             }} />
             <Input
                 placeholder={placeholder}

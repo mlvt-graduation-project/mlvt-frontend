@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography, useTheme } from '@mui/material';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import theme from '../../config/theme';
 import OrderHistory from '../OrderHistory'; // Ensure this is the correct import path
 
 const Subscription: React.FC = () => {
@@ -15,6 +14,7 @@ const Subscription: React.FC = () => {
     if (currentView === 'orderHistory') {
         return <OrderHistory handleChangeView={handleViewChange} />;
     }
+    const theme = useTheme();
 
     return (
         <Box sx={{ padding: 4 }}>
@@ -43,7 +43,7 @@ const Subscription: React.FC = () => {
                     >
                         <Box>
                             <Typography sx={{ fontSize: '0.85rem', color: 'gray' }}>Your plan</Typography>
-                            <Typography variant="h5" sx={{ fontWeight: 'bold', color: theme.background.main }}>
+                            <Typography variant="h5" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
                                 MONTHLY PREMIUM
                             </Typography>
                             <Typography sx={{ fontSize: '0.9rem', color: 'gray', marginTop: 1 }}>
@@ -56,7 +56,7 @@ const Subscription: React.FC = () => {
                         <Typography
                             sx={{
                                 fontSize: '0.85rem',
-                                color: theme.background.main,
+                                color: theme.palette.primary.main,
                                 textAlign: 'right',
                                 marginTop: 2,
                                 cursor: 'pointer',
@@ -86,8 +86,8 @@ const Subscription: React.FC = () => {
                                 }}
                                 onClick={() => handleViewChange('orderHistory')}
                             >
-                                <ReceiptIcon sx={{ fontSize: '2rem', color: theme.background.main, marginBottom: 1 }} />
-                                <Typography sx={{ fontWeight: 'bold', color: theme.background.main }}>
+                                <ReceiptIcon sx={{ fontSize: '2rem', color: theme.palette.primary.main, marginBottom: 1 }} />
+                                <Typography sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
                                     Order History
                                 </Typography>
                             </Box>
@@ -108,9 +108,9 @@ const Subscription: React.FC = () => {
                                 }}
                             >
                                 <CreditCardIcon
-                                    sx={{ fontSize: '2rem', color: theme.background.main, marginBottom: 1 }}
+                                    sx={{ fontSize: '2rem', color: theme.palette.primary.contrastText, marginBottom: 1 }}
                                 />
-                                <Typography sx={{ fontWeight: 'bold', color: theme.background.main }}>
+                                <Typography sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
                                     Payment Method
                                 </Typography>
                             </Box>

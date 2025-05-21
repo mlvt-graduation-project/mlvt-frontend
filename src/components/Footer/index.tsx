@@ -1,6 +1,5 @@
-import { Grid, Box, Typography, Link, Container } from '@mui/material';
+import { Grid, Box, Typography, Link, useTheme } from '@mui/material';
 import { Facebook, MailOutline, LinkedIn, Phone } from '@mui/icons-material';
-import Theme from '../../config/theme';
 import Logo from '../../assets/mlvt_logo.png';
 import React from 'react';
 import HCMUSLogo from '../../assets/fithcmus.png';
@@ -10,50 +9,53 @@ interface LinkItem {
     link: string;
 }
 
-const LinkSection: React.FC<{ title: string; links: LinkItem[] }> = ({ title, links }) => (
-    <Box sx={{ padding: '1em 0.7em' }}>
-        <Typography
-            sx={{
-                color: Theme.status.failed.fontColor,
-                fontFamily: Theme.typography.body1,
-                fontSize: '1em',
-                fontWeight: 600,
-                paddingBottom: '0.5em',
-            }}
-        >
-            {title}:
-        </Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5em' }}>
-            {links.map((item: LinkItem, index: number) => (
-                <Typography
-                    key={index}
-                    component="a"
-                    href={item.link}
-                    sx={{
-                        color: Theme.fontColor.black,
-                        fontFamily: Theme.typography.body1,
-                        fontSize: '0.9em',
-                        textDecoration: 'none',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5em',
-                        '&:hover': { color: Theme.background.main },
-                        '&::before': {
-                            content: "'•'",
-                            color: Theme.fontColor.black,
-                            fontSize: '1.5em',
-                            marginRight: '0.5em',
-                            lineHeight: '1',
-                        },
-                        fontWeight: 500,
-                    }}
-                >
-                    {item.text}
-                </Typography>
-            ))}
+const LinkSection: React.FC<{ title: string; links: LinkItem[] }> = ({ title, links }) => {
+    const theme = useTheme();
+    return (
+        <Box sx={{ padding: '1em 0.7em' }}>
+            <Typography
+                sx={{
+                    color:'#B8001F' ,
+                    fontFamily: 'Poppins, sans-serif',
+                    fontSize: '1em',
+                    fontWeight: 600,
+                    paddingBottom: '0.5em',
+                }}
+            >
+                {title}:
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5em' }}>
+                {links.map((item: LinkItem, index: number) => (
+                    <Typography
+                        key={index}
+                        component="a"
+                        href={item.link}
+                        sx={{
+                            color: theme.palette.text.primary,
+                            fontFamily: 'Poppins, sans-serif',
+                            fontSize: '0.9em',
+                            textDecoration: 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5em',
+                            '&:hover': { color: theme.palette.primary.main },
+                            '&::before': {
+                                content: "'•'",
+                                color: theme.palette.primary.main,
+                                fontSize: '1.5em',
+                                marginRight: '0.5em',
+                                lineHeight: '1',
+                            },
+                            fontWeight: 500,
+                        }}
+                    >
+                        {item.text}
+                    </Typography>
+                ))}
+            </Box>
         </Box>
-    </Box>
-);
+    );
+};
 
 const Footer: React.FC = () => {
     const resources: LinkItem[] = [
@@ -68,9 +70,10 @@ const Footer: React.FC = () => {
         { text: 'Terms and conditions', link: '/terms-and-condition' },
         { text: 'Privacy policy', link: '/privacy-policy' },
     ];
+    const theme = useTheme();
 
     return (
-        <Box bgcolor={Theme.background.lightPurple} p={4} sx={{ paddingLeft: '3em' }}>
+        <Box bgcolor={theme.palette.secondary.main} p={4} sx={{ paddingLeft: '3em' }}>
             <Grid container px={5}>
                 {/* Logo and Description*/}
                 <Grid item xs={12} md={4}>
@@ -85,8 +88,8 @@ const Footer: React.FC = () => {
                         <img src={Logo} alt="MLVT" style={{ width: '10em', height: '10em' }} />
                         <Typography
                             sx={{
-                                color: Theme.status.failed.fontColor,
-                                fontFamily: Theme.typography.body1,
+                                color: theme.palette.primary.main,
+                                fontFamily: 'Poppins, sans-serif',
                                 fontSize: '1em',
                                 fontWeight: 600,
                             }}
@@ -96,8 +99,8 @@ const Footer: React.FC = () => {
 
                         <Typography
                             sx={{
-                                color: Theme.fontColor.black,
-                                fontFamily: Theme.typography.body1,
+                                color: theme.palette.primary.main,
+                                fontFamily: 'Poppins, sans-serif',
                                 fontSize: '0.9em',
                             }}
                         >
@@ -106,8 +109,8 @@ const Footer: React.FC = () => {
 
                         <Typography
                             sx={{
-                                color: Theme.status.failed.fontColor,
-                                fontFamily: Theme.typography.body1,
+                                color: theme.palette.primary.main,
+                                fontFamily: 'Poppins, sans-serif',
                                 fontSize: '1em',
                                 fontWeight: 600,
                                 paddingTop: '1em',
@@ -143,7 +146,7 @@ const Footer: React.FC = () => {
                                 <Typography
                                     mt={1}
                                     sx={{
-                                        fontFamily: Theme.typography.body1,
+                                        fontFamily: 'Poppins, sans-serif',
                                         fontSize: '1em',
                                         fontWeight: 600,
                                     }}
@@ -165,8 +168,8 @@ const Footer: React.FC = () => {
                 <Grid item xs={12} md={4} sx={{ padding: '1em 0' }}>
                     <Typography
                         sx={{
-                            color: Theme.status.failed.fontColor,
-                            fontFamily: Theme.typography.body1,
+                            color: theme.palette.primary.main,
+                            fontFamily: 'Poppins, San-sarif',
                             fontSize: '1em',
                             fontWeight: 600,
                             paddingBottom: '0.5em',
@@ -178,7 +181,7 @@ const Footer: React.FC = () => {
                     <Box display="flex" mt={2}>
                         <Box
                             sx={{
-                                backgroundColor: Theme.fontColor.black,
+                                backgroundColor: theme.palette.primary.main,
                                 padding: '0.5em',
                                 borderRadius: '1em',
                             }}
@@ -190,8 +193,8 @@ const Footer: React.FC = () => {
                         <Typography
                             component="ul"
                             sx={{
-                                color: Theme.fontColor.black,
-                                fontFamily: Theme.typography.body1,
+                                color: theme.palette.primary.contrastText,
+                                fontFamily: 'Poppins, sans-serif',
                                 fontSize: '0.9em',
                                 textDecoration: 'none',
                                 fontWeight: 500,

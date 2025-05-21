@@ -1,15 +1,15 @@
 import React, { useRef, useState } from "react";
 import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  IconButton,
-  InputAdornment,
-  Grid,
+    Box,
+    Typography,
+    TextField,
+    Button,
+    IconButton,
+    InputAdornment,
+    Grid,
+    useTheme,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import theme from "../../config/theme";
 import { useAuth } from "../../context/AuthContext";
 import { changePassword } from "../../api/user.api";
 import SuccessPopup from "../SuccessPopup";
@@ -97,7 +97,7 @@ const ChangePassword: React.FC = () => {
     const handleFieldChange = (
         field: "currentPassword" | "newPassword" | "confirmPassword",
         value: string
-        ) => {
+    ) => {
         // Update the field's value
         if (field === "currentPassword") setCurrentPassword(value);
         if (field === "newPassword") setNewPassword(value);
@@ -118,6 +118,8 @@ const ChangePassword: React.FC = () => {
         }));
     };
 
+    const theme = useTheme();
+
     return (
         <Box>
             <Box sx={{ padding: 4 }}>
@@ -131,125 +133,125 @@ const ChangePassword: React.FC = () => {
 
                 {/* User Information Fields */}
                 <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                    id="current-password"
-                    fullWidth
-                    label="Current password"
-                    type={showPassword.current ? "text" : "password"}
-                    value={currentPassword}
-                    onChange={(e) =>
-                        handleFieldChange("currentPassword", e.target.value)
-                    }
-                    InputProps={{
-                        endAdornment: (
-                        <InputAdornment position="end">
-                            <IconButton
-                            onClick={() => handleTogglePasswordVisibility("current")}
-                            edge="end"
-                            >
-                            {showPassword.current ? <Visibility /> : <VisibilityOff />}
-                            </IconButton>
-                        </InputAdornment>
-                        ),
-                    }}
-                    error={errors.currentPassword}
-                    helperText={errors.currentPassword && "This field is required"}
-                    required
-                    />
-                </Grid>
-                <Grid item xs={12} sm={6}></Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                    id="new-password"
-                    fullWidth
-                    label="New password"
-                    type={showPassword.new ? "text" : "password"}
-                    value={newPassword}
-                    onChange={(e) =>
-                        handleFieldChange("newPassword", e.target.value)
-                    }
-                    InputProps={{
-                        endAdornment: (
-                        <InputAdornment position="end">
-                            <IconButton
-                            onClick={() => handleTogglePasswordVisibility("new")}
-                            edge="end"
-                            >
-                            {showPassword.new ? <Visibility /> : <VisibilityOff />}
-                            </IconButton>
-                        </InputAdornment>
-                        ),
-                    }}
-                    error={errors.newPassword}
-                    helperText={errors.newPassword && "This field is required"}
-                    required
-                    />
-                </Grid>
-                <Grid item xs={12} sm={6}></Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                    id="confirm-password"
-                    fullWidth
-                    label="Confirm password"
-                    type={showPassword.confirm ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) =>
-                        handleFieldChange("confirmPassword", e.target.value)
-                    }
-                    InputProps={{
-                        endAdornment: (
-                        <InputAdornment position="end">
-                            <IconButton
-                            onClick={() => handleTogglePasswordVisibility("confirm")}
-                            edge="end"
-                            >
-                            {showPassword.confirm ? <Visibility /> : <VisibilityOff />}
-                            </IconButton>
-                        </InputAdornment>
-                        ),
-                    }}
-                    error={errors.confirmPassword || errors.passwordMismatch}
-                    helperText={
-                    errors.confirmPassword
-                        ? "This field is required"
-                        : errors.passwordMismatch
-                        ? "Passwords do not match"
-                        : ""
-                    }
-                    required
-                    />
-                </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            id="current-password"
+                            fullWidth
+                            label="Current password"
+                            type={showPassword.current ? "text" : "password"}
+                            value={currentPassword}
+                            onChange={(e) =>
+                                handleFieldChange("currentPassword", e.target.value)
+                            }
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={() => handleTogglePasswordVisibility("current")}
+                                            edge="end"
+                                        >
+                                            {showPassword.current ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                            error={errors.currentPassword}
+                            helperText={errors.currentPassword && "This field is required"}
+                            required
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}></Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            id="new-password"
+                            fullWidth
+                            label="New password"
+                            type={showPassword.new ? "text" : "password"}
+                            value={newPassword}
+                            onChange={(e) =>
+                                handleFieldChange("newPassword", e.target.value)
+                            }
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={() => handleTogglePasswordVisibility("new")}
+                                            edge="end"
+                                        >
+                                            {showPassword.new ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                            error={errors.newPassword}
+                            helperText={errors.newPassword && "This field is required"}
+                            required
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}></Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            id="confirm-password"
+                            fullWidth
+                            label="Confirm password"
+                            type={showPassword.confirm ? "text" : "password"}
+                            value={confirmPassword}
+                            onChange={(e) =>
+                                handleFieldChange("confirmPassword", e.target.value)
+                            }
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={() => handleTogglePasswordVisibility("confirm")}
+                                            edge="end"
+                                        >
+                                            {showPassword.confirm ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                            error={errors.confirmPassword || errors.passwordMismatch}
+                            helperText={
+                                errors.confirmPassword
+                                    ? "This field is required"
+                                    : errors.passwordMismatch
+                                        ? "Passwords do not match"
+                                        : ""
+                            }
+                            required
+                        />
+                    </Grid>
                 </Grid>
 
                 {/* Save Button */}
                 <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: 3,
-                }}
-                >
-                <Button
-                    variant="contained"
                     sx={{
-                    backgroundColor: theme.background.main,
-                    color: "#FFFFFF",
-                    borderRadius: "10px",
-                    fontWeight: "bold",
-                    textTransform: "uppercase",
-                    padding: "0.6rem 2rem",
-                    boxShadow: "none",
-                    "&:hover": {
-                        backgroundColor: "#6C1CBF",
-                        boxShadow: "none",
-                    },
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: 3,
                     }}
-                    onClick={handleSave}
                 >
-                    SAVE
-                </Button>
+                    <Button
+                        variant="contained"
+                        sx={{
+                            backgroundColor: theme.palette.primary.main,
+                            color: "#FFFFFF",
+                            borderRadius: "10px",
+                            fontWeight: "bold",
+                            textTransform: "uppercase",
+                            padding: "0.6rem 2rem",
+                            boxShadow: "none",
+                            "&:hover": {
+                                backgroundColor: "#6C1CBF",
+                                boxShadow: "none",
+                            },
+                        }}
+                        onClick={handleSave}
+                    >
+                        SAVE
+                    </Button>
                 </Box>
             </Box>
             <SuccessPopup
