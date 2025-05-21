@@ -1,29 +1,30 @@
 import { createTheme, ThemeOptions, responsiveFontSizes } from '@mui/material/styles';
 import { PaletteMode } from '@mui/material';
+import { light } from '@mui/material/styles/createPalette';
 
 const colorTokens = {
   light: {
     primary:   { main: '#A60195', contrastText: '#fff' },
-    secondary: { main: '#E4B1F0', contrastText: '#fff' },
+    secondary: { main: '#fff'   , contrastText: '#A60195' },
     tertiary:  { main: '#ff6f00', contrastText: '#fff' },
     accent:    { main: '#00bfa5', contrastText: '#121212' },
-    neutral:   { main: '#64748B', contrastText: '#fff' },
+    neutral:   { main: '#1E88E5', contrastText: '#fff' },
     success:   { main: '#C0EBA6', contrastText: '#1C7947' },
     warning:   { main: '#ff9800', contrastText: '#121212' },
     error:     { main: '#FF9F9F', contrastText: '#B8001F' },
     info:      { main: '#B7E0FF', contrastText: '#0C2991' },
-    background: { default: '#f4f6f8', paper: '#fff' },
+    background:{ default: '#f4f6f8', paper: '#fff' },
     text:      { primary: '#121212', secondary: '#4f4f4f' },
   },
   dark: {
-    primary:   { main: '#90caf9', contrastText: '#121212' },
-    secondary: { main: '#ce93d8', contrastText: '#121212' },
+    primary:   { main: '#E4B1F0', contrastText: '#181C14'},
+    secondary: { main: '#ce93d8', contrastText: '#ce93d8' },
     tertiary:  { main: '#ffab40', contrastText: '#121212' },
     accent:    { main: '#64ffda', contrastText: '#121212' },
-    neutral:   { main: '#A0AEC0', contrastText: '#121212' },
+    neutral:   { main: '#90CAF9', contrastText: '#121212' },
     success:   { main: '#81c784', contrastText: '#121212' },
     warning:   { main: '#ffb74d', contrastText: '#121212' },
-    error:     { main: '#e57373', contrastText: '#121212' },
+    error:     { main: '#e57373', contrastText: '#e57373' },
     info:      { main: '#64b5f6', contrastText: '#121212' },
     background: { default: '#121212', paper: '#1d1d1d' },
     text:      { primary: '#fff', secondary: '#cfcfcf' },

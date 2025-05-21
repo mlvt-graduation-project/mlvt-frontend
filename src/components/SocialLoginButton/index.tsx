@@ -35,15 +35,6 @@ const SocialLoginButton: React.FC<SocialLoginButtonProps> = ({ icon, label, onCl
         color: '#000',
         borderColor: '#ccc',
         width: '48%', 
-
-        // Use media queries for responsive behavior
-        // '@media (min-width: 600px)': {
-        //   width: '75%', // 80% width for medium screens
-        // },
-        // '@media (min-width: 900px)': {
-        //   width: '55%', // 60% width for larger screens
-        // },
-
         '&:hover': {
           borderColor: '#bbb',
         },
@@ -52,7 +43,8 @@ const SocialLoginButton: React.FC<SocialLoginButtonProps> = ({ icon, label, onCl
       <Typography
         variant="body2"
         sx={{
-          fontFamily: theme.typography.body1,
+          fontFamily: 'Poppins, sans-serif',
+          color: theme.palette.text.primary,
           fontSize: 'clamp(0.7rem, 1.5vw, 0.9rem)',
           padding: '0.2rem 0.1rem',
         }}

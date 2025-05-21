@@ -12,9 +12,10 @@ const GoogleLoginButton = () => {
 
   return (
     <SocialLoginButton
-      icon={<GoogleIcon style={{ 
+      icon={<GoogleIcon style={{
         verticalAlign: 'middle',
         fontSize: '1.7rem',
+        fontFamily: 'Poppins, sans-serif',
         color: '#B8001F',
       }} />}
       label="Sign in with Google"
