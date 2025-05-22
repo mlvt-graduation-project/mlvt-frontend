@@ -6,7 +6,7 @@ const colorTokens = {
   light: {
     primary:   { main: '#A60195', contrastText: '#fff' },
     secondary: { main: '#fff'   , contrastText: '#A60195' },
-    tertiary:  { main: '#ff6f00', contrastText: '#fff' },
+    tertiary:  { main: '#FFE1FF', contrastText: '#E4B1F0' },
     accent:    { main: '#00bfa5', contrastText: '#121212' },
     neutral:   { main: '#1E88E5', contrastText: '#fff' },
     success:   { main: '#C0EBA6', contrastText: '#1C7947' },
@@ -18,8 +18,8 @@ const colorTokens = {
   },
   dark: {
     primary:   { main: '#E4B1F0', contrastText: '#181C14'},
-    secondary: { main: '#ce93d8', contrastText: '#ce93d8' },
-    tertiary:  { main: '#ffab40', contrastText: '#121212' },
+    secondary: { main: '#272829', contrastText: '#ce93d8' },
+    tertiary:  { main: '#121212', contrastText: '#E178C5' },
     accent:    { main: '#64ffda', contrastText: '#121212' },
     neutral:   { main: '#90CAF9', contrastText: '#121212' },
     success:   { main: '#81c784', contrastText: '#121212' },
