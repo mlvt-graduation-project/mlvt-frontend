@@ -100,11 +100,10 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                     onClick={handleDropdownOpen}
                 >
                     <Typography
-                        variant="body2"
                         sx={{
-                            color: theme.palette.primary.contrastText,
-                            fontFamily: theme.typography.body1,
-                            fontWeight: 'bold',
+                            color: theme.palette.text.primary,
+                            fontFamily: 'Poppins, sans-serif',
+                            fontWeight: 600,
                             fontSize: '0.95rem',
                         }}
                     >
@@ -113,15 +112,15 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                     <Typography
                         variant="caption"
                         sx={{
-                            color: theme.palette.primary.contrastText,
-                            fontFamily: theme.typography.body1,
+                            color: theme.palette.text.secondary,
+                            fontFamily: 'Poppins, sans-serif',
                             fontSize: '0.77rem',
                         }}
                     >
                         {status ? 'Premium user' : 'Standard user'}
                     </Typography>
                 </Box>
-                <Badge badgeContent={notifications} color="error">
+                <Badge badgeContent={notifications} color="primary" sx={{ cursor: 'pointer' }}>
                     <IconButton>
                         <NotificationsNoneIcon />
                     </IconButton>
@@ -147,11 +146,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                     overflow: 'hidden',
                     borderRadius: '0.7rem',
                 }}
-                PaperProps={{
-                    style: {
-                        borderRadius: '0.6rem',
-                    },
-                }}
+                slotProps= {{ paper: { sx: { borderRadius: '0.6rem' } } }}
             >
                 {/* Profile Section */}
                 <Box>
@@ -164,18 +159,17 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                             marginLeft: '0.5rem',
                             marginRight: '0.5rem',
                             alignItems: 'center',
-                            borderBottom: '1px solid #E0E0E0',
                             borderRadius: '0.4rem',
                         }}
                     >
-                        <Avatar src={avatarSrc} alt={altText} sx={{ width: '2.8rem', height: '2.5rem' }} />
+                        <Avatar src={avatarSrc} alt={altText} sx={{ width: '2.5rem', height: '2.5rem' }} />
                         <Box>
                             <Typography
                                 variant="body2"
                                 sx={{
-                                    color: theme.palette.primary.contrastText,
+                                    color: theme.palette.text.primary,
                                     fontFamily: 'Poppins, sans-serif',
-                                    fontWeight: 'bold',
+                                    fontWeight: 600,
                                     fontSize: '0.95rem',
                                 }}
                             >
@@ -184,7 +178,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                             <Typography
                                 variant="caption"
                                 sx={{
-                                    color: theme.palette.primary.contrastText,
+                                    color: theme.palette.text.secondary,
                                     fontFamily: 'Poppins, sans-serif',
                                     fontSize: '0.77rem',
                                 }}
@@ -193,9 +187,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                             </Typography>
                         </Box>
                     </Box>
+                    <Divider variant="middle" component="li" />
                     <Box
                         sx={{
-                            borderBottom: '1px solid #E0E0E0',
                             marginLeft: '0.5rem',
                             padding: '0.5rem 1.5rem',
                         }}
@@ -203,20 +197,27 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                         <Typography
                             variant="caption"
                             sx={{
-                                color: theme.palette.primary.contrastText,
-                                fontFamily: theme.typography.body1,
+                                color: theme.palette.text.secondary,
+                                fontFamily: 'Poppins, sans-serif',
                                 fontSize: '0.77rem',
+                                gap: '0.5rem',
+                                display: 'flex',
+                                alignItems: 'space-between',
                             }}
                         >
-                            Remaining token: {remainingToken}
+                            Remaining token
+                            <span style={{
+                                fontFamily: 'Poppins, sans-serif',
+                                fontWeight: 600,
+                            }}>{remainingToken}</span>
                         </Typography>
                     </Box>
                 </Box>
-
+                <Divider variant="middle" component="li" />
                 {menuItems.map((item) => (
                     <div key={item.label}>
                         {item.label === 'Log out' && (
-                            <Divider sx={{ margin: '0.5rem 0' }} variant="middle" component="li" />
+                            <Divider variant="middle" component="li" />
                         )}
                         <MenuItem
                             onClick={() => {
@@ -224,17 +225,17 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                                 if (item.label === 'Log out') {
                                     handleLogout();
                                 } else if (item.path) {
-                                    navigate(item.path); // Navigate to the specified path
+                                    navigate(item.path); 
                                 }
                             }}
                             sx={{
                                 padding: '0.3rem 1.5rem',
                                 margin: '0.5rem 0.5rem',
-                                borderRadius: '0.4rem',
+                                borderRadius: '0.4em',
                                 alignItems: 'center',
                                 gap: '1.2rem',
                                 '&:hover': {
-                                    backgroundColor: theme.palette.primary.main,
+                                    backgroundColor: theme.palette.tertiary.main,
                                     color: theme.palette.primary.contrastText,
                                 },
                             }}
@@ -244,8 +245,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                                 disableTypography
                                 primary={item.label}
                                 sx={{
-                                    color: theme.palette.primary.contrastText,
-                                    fontFamily: theme.typography.body1,
+                                    color: theme.palette.text.primary,
+                                    fontFamily: 'Poppins, sans-serif',
                                     fontSize: '0.8rem',
                                 }}
                             />

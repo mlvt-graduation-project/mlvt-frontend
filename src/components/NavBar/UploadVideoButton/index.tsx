@@ -177,27 +177,30 @@ function UploadButton() {
             <input type="file" style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileInput} />
             <Button
                 sx={{
-                    backgroundColor: theme.palette.secondary.main,
+                    width: { xs: '100%', sm: 'auto' },
+                    maxWidth: { xs: '100%', sm: '250px' },
+                    height: { xs: '2.2rem', sm: '2.5rem' },
+                    fontSize: { xs: '0.8em', sm: '1em' },
+                    backgroundColor: theme.palette.primary.main,
                     padding: '0.5rem 1rem',
                     borderRadius: '0.8rem',
-                    height: '2.5rem',
-                    maxWidth: '250px',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     transition: 'background-color 0.3s ease',
-                    color: theme.palette.primary.main,
-                    fontFamily: theme.typography.body1,
+                    color: theme.palette.secondary.main,
+                    fontFamily: 'Poppins, sans-serif',
                     fontWeight: 'bold',
                     '&:hover': {
                         backgroundColor: theme.palette.secondary.contrastText,
                     },
+                    gap: '0.5rem',
                 }}
                 onClick={handleClick}
             >
                 <FileUploadIcon style={{ color: theme.palette.secondary.main }} />
                 {fileName ? fileName : 'Upload'}
-            </Button>
+            </Button >
         </>
     );
 }

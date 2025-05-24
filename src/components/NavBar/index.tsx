@@ -50,7 +50,7 @@ const NavLinks = [
     },
     {
         icon: <EmojiEmotionsIcon />,
-        text: 'Lip sync for video',
+        text: 'Lip Sync Video',
         link: '/',
         action: 'openLipsync',
     },
@@ -73,9 +73,9 @@ const NavBar: React.FC<NavbarProps> = ({
 }) => {
     const [avatarUrl, setAvatarUrl] = useState('avatar.jpg');
     const [userData, setUserData] = useState({
-        firstName: 'Minh Minh',
-        lastName: 'Nguyen',
-        premium: true,
+        firstName: '',
+        lastName: '',
+        premium: false, 
     });
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
@@ -129,7 +129,6 @@ const NavBar: React.FC<NavbarProps> = ({
                 });
 
                 const tokenPurchased = await getWalletBalance(userId);
-                // set for auth context
                 SetRemainingToken(tokenPurchased);
 
                 const avatarData = await avatarResponse.json();
@@ -146,14 +145,14 @@ const NavBar: React.FC<NavbarProps> = ({
     }, [userId]);
 
     if (isLoading) {
-        return <div>Loading...</div>; // or any other loading indicator
+        return <div>Loading...</div>; 
     }
 
     return (
         <AppBar
             position="static"
             sx={{
-                backgroundColor: theme.palette.primary.contrastText,
+                backgroundColor: theme.palette.background.default,
                 color: theme.palette.primary.main,
                 boxShadow: 'none',
                 borderBottom: '2px solid' + theme.palette.secondary.main,
@@ -174,7 +173,7 @@ const NavBar: React.FC<NavbarProps> = ({
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: 3.8,
+                            gap: 4,
                             marginRight: '2rem',
                         }}
                     >
@@ -208,20 +207,20 @@ const NavBar: React.FC<NavbarProps> = ({
                                     <Box
                                         sx={{
                                             borderRadius: '0.8rem',
-                                            width: '3.3rem',
-                                            height: '1.8rem',
+                                            width: '3.5rem',
+                                            height: '2rem',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             '&:hover': {
-                                                backgroundColor: theme.palette.secondary.main,
+                                                backgroundColor: theme.palette.tertiary.main,
                                             },
                                         }}
                                     >
                                         <item.icon.type
                                             sx={{
                                                 color: theme.palette.text.primary,
-                                                width: '1.25rem',
+                                                width: '1.3rem',
                                             }}
                                         />
                                     </Box>
@@ -232,11 +231,10 @@ const NavBar: React.FC<NavbarProps> = ({
                                         }}
                                     >
                                         <Typography
-                                            variant="body1"
                                             sx={{
-                                                fontFamily: theme.typography.body1,
-                                                fontWeight: '600',
-                                                fontSize: '0.75rem',
+                                                fontFamily: 'Poppins, sans-serif',
+                                                fontWeight: '500',
+                                                fontSize: '0.8rem',
                                             }}
                                         >
                                             {item.text}
@@ -250,7 +248,7 @@ const NavBar: React.FC<NavbarProps> = ({
                     <UserProfile
                         first_name={userData.firstName}
                         last_name={userData.lastName}
-                        status={userData.premium} // true for premium, false for standard
+                        status={userData.premium} 
                         avatarSrc={avatarUrl}
                         notifications={4}
                     />
