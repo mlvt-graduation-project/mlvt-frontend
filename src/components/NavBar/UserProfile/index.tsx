@@ -26,6 +26,8 @@ import { useNavigate } from 'react-router-dom';
 import { getUser } from '../../../api/user.api';
 import { useAuth } from '../../../context/AuthContext';
 import { User } from '../../../types/Response/User';
+import { serialize } from 'v8';
+import MenuDropdown from '../components/MenuDropdown';
 
 interface UserProfileProps {
     first_name: string;
@@ -35,22 +37,13 @@ interface UserProfileProps {
     notifications: number;
 }
 
-const menuItems = [
-    { label: 'Edit account', icon: <AccountCircle />, path: '/edit_account' },
-    // { label: 'Premium membership', icon: <WorkspacePremiumSharp /> },
-    { label: 'Language: English', icon: <Language /> },
-    { label: 'Appearance: Light', icon: <LightMode /> },
-    { label: 'Help & Support', icon: <Help /> },
-    { label: 'Log out', icon: <Logout /> },
-];
-
 const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status, avatarSrc, notifications }) => {
-    const [anchorDropdown, setAnchorDropdown] = useState<null | HTMLElement>(null);
     const theme = useTheme();
-    const open = Boolean(anchorDropdown);
-    const navigate = useNavigate();
-    const [user, setUser] = useState<User | null>(null);
-    const { userId, remainingToken } = useAuth();
+    const { userId } = useAuth();
+
+    const [user, setUser] = useState<User>();
+    const [anchorDropdown, setAnchorDropdown] = useState<null | HTMLElement>(null);
+
 
     useEffect(() => {
         const fetchUserDetails = async () => {
@@ -67,29 +60,24 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
         };
 
         fetchUserDetails();
-    }, []);
+    }, [userId]);
 
     const altText = `${first_name.charAt(0)}${last_name.charAt(0)}`;
 
-    // Handle dropdown open
     const handleDropdownOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorDropdown(event.currentTarget);
     };
 
-    // Handle dropdown close
-    const handleDropdownClose = () => {
-        setAnchorDropdown(null);
-    };
-
-    // Handle logout
-    const handleLogout = () => {
-        localStorage.removeItem('authToken');
-        navigate('/login');
-    };
+    if (!user) {
+        return <Typography>Loading...</Typography>;
+    }
 
     return (
         <>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }} style={{ cursor: 'pointer' }}>
+            <Box
+                sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }} style={{ cursor: 'pointer' }}
+                onClick={handleDropdownOpen}
+            >
                 <Avatar src={avatarSrc} alt={altText} sx={{ width: '3rem', height: '3rem' }} />
                 <Box
                     sx={{
@@ -97,7 +85,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                         flexDirection: 'column',
                         alignItems: 'flex-start',
                     }}
-                    onClick={handleDropdownOpen}
+
                 >
                     <Typography
                         sx={{
@@ -128,136 +116,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
             </Box>
 
             {/* Dropdown Menu */}
-            <Menu
-                anchorEl={anchorDropdown}
-                open={open}
-                onClose={handleDropdownClose}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                sx={{
-                    mt: '1.2rem',
-                    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-                    overflow: 'hidden',
-                    borderRadius: '0.7rem',
-                }}
-                slotProps= {{ paper: { sx: { borderRadius: '0.6rem' } } }}
-            >
-                {/* Profile Section */}
-                <Box>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            gap: 1.5,
-                            padding: '1rem 1.5rem',
-                            marginLeft: '0.5rem',
-                            marginRight: '0.5rem',
-                            alignItems: 'center',
-                            borderRadius: '0.4rem',
-                        }}
-                    >
-                        <Avatar src={avatarSrc} alt={altText} sx={{ width: '2.5rem', height: '2.5rem' }} />
-                        <Box>
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    color: theme.palette.text.primary,
-                                    fontFamily: 'Poppins, sans-serif',
-                                    fontWeight: 600,
-                                    fontSize: '0.95rem',
-                                }}
-                            >
-                                {`${user?.first_name} ${user?.last_name}`}
-                            </Typography>
-                            <Typography
-                                variant="caption"
-                                sx={{
-                                    color: theme.palette.text.secondary,
-                                    fontFamily: 'Poppins, sans-serif',
-                                    fontSize: '0.77rem',
-                                }}
-                            >
-                                {user?.status ? 'Premium user' : 'Standard user'}
-                            </Typography>
-                        </Box>
-                    </Box>
-                    <Divider variant="middle" component="li" />
-                    <Box
-                        sx={{
-                            marginLeft: '0.5rem',
-                            padding: '0.5rem 1.5rem',
-                        }}
-                    >
-                        <Typography
-                            variant="caption"
-                            sx={{
-                                color: theme.palette.text.secondary,
-                                fontFamily: 'Poppins, sans-serif',
-                                fontSize: '0.77rem',
-                                gap: '0.5rem',
-                                display: 'flex',
-                                alignItems: 'space-between',
-                            }}
-                        >
-                            Remaining token
-                            <span style={{
-                                fontFamily: 'Poppins, sans-serif',
-                                fontWeight: 600,
-                            }}>{remainingToken}</span>
-                        </Typography>
-                    </Box>
-                </Box>
-                <Divider variant="middle" component="li" />
-                {menuItems.map((item) => (
-                    <div key={item.label}>
-                        {item.label === 'Log out' && (
-                            <Divider variant="middle" component="li" />
-                        )}
-                        <MenuItem
-                            onClick={() => {
-                                handleDropdownClose();
-                                if (item.label === 'Log out') {
-                                    handleLogout();
-                                } else if (item.path) {
-                                    navigate(item.path); 
-                                }
-                            }}
-                            sx={{
-                                padding: '0.3rem 1.5rem',
-                                margin: '0.5rem 0.5rem',
-                                borderRadius: '0.4em',
-                                alignItems: 'center',
-                                gap: '1.2rem',
-                                '&:hover': {
-                                    backgroundColor: theme.palette.tertiary.main,
-                                    color: theme.palette.primary.contrastText,
-                                },
-                            }}
-                        >
-                            <ListItemIcon sx={{ minWidth: '35px' }}>{item.icon}</ListItemIcon>
-                            <ListItemText
-                                disableTypography
-                                primary={item.label}
-                                sx={{
-                                    color: theme.palette.text.primary,
-                                    fontFamily: 'Poppins, sans-serif',
-                                    fontSize: '0.8rem',
-                                }}
-                            />
-                            {/* Conditionally render NavigateNext icon */}
-                            {['Appearance: Light', 'Language: English'].includes(item.label) && (
-                                <NavigateNext sx={{ marginLeft: 'auto', color: theme.palette.primary.main }} />
-                            )}
-                        </MenuItem>
-                    </div>
-                ))}
-            </Menu>
+            <MenuDropdown user={user!} anchorDropdown={anchorDropdown} setAnchorDropdown={setAnchorDropdown} />
+
         </>
     );
 };

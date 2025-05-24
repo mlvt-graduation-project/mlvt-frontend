@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Button, Paper, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { hexToRgb, useTheme } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 
 interface CarouselCardProps {
@@ -35,8 +35,8 @@ const CarouselCard: React.FC<CarouselCardProps> = ({ title, onClick }) => {
             sx={{
                 width: { xs: '100%', sm: '80%', md: '60%', lg: '40%' },
                 maxWidth: 640,
-                bgcolor: theme.palette.background.paper,
-                borderRadius: 4,
+                bgcolor: 'rgba(0, 0, 0, 0.75)',
+                borderRadius: 2,
                 boxShadow: 3,
                 display: 'flex',
                 flexDirection: 'column',
@@ -48,16 +48,26 @@ const CarouselCard: React.FC<CarouselCardProps> = ({ title, onClick }) => {
                 overflow: 'hidden',
             }}
         >
-                <Typography variant="h6" >
-                    {title}
-                </Typography>
-                <Typography
-                    variant="body2"
-                    align="justify"
-                    sx={{ color: theme.palette.text.secondary }}
-                >
-                    {content}
-                </Typography>
+            <Typography sx={{
+                fontSize: { xs: '1.2rem', sm: '1.8rem' },
+                fontFamily: 'Poppins, sans-serif',
+                fontWeight: 600,
+                color: '#FF9BD2',
+                textAlign: 'left',
+                mb: 0.3,
+            }} >
+                {title}
+            </Typography>
+            <Typography
+                align="justify"
+                sx={{
+                    color: 'white',
+                    fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                    fontFamily: 'Poppins, sans-serif',
+                }}
+            >
+                {content}
+            </Typography>
         </Box>
     );
 };
