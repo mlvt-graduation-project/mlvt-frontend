@@ -6,13 +6,13 @@ import {
     Button,
     IconButton,
     InputAdornment,
-    Grid,
     useTheme,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 import { changePassword } from "../../api/user.api";
 import SuccessPopup from "../SuccessPopup";
+import { CustomButton } from "../CustomButton";
 
 const ChangePassword: React.FC = () => {
     const [currentPassword, setCurrentPassword] = useState("");
@@ -77,20 +77,35 @@ const ChangePassword: React.FC = () => {
         }
 
         try {
-            const response = await changePassword(userId, currentPassword, newPassword);
-            if (response.status === 200) {
-                console.log("Password changed successfully:", {
-                    currentPassword,
-                    newPassword,
-                });
-                setSuccessPopup(true);
+            const successMessage = await changePassword(userId, currentPassword, newPassword);
 
-                setTimeout(() => {
-                    window.location.reload();
-                }, 3000);
+            console.log("Password changed successfully:", {
+                message: successMessage,
+                currentPassword,
+                newPassword,
+            });
+            setSuccessPopup(true);
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000);
+
+        } catch (error) {
+            console.error("Error changing password:", error);
+            if (error && typeof error === 'object' && 'response' in error && error.response) {
+                const status = (error as any).response.status;
+                const errorMessage = (error as any).response.data?.message || "An unexpected error occurred.";
+
+                if (status === 400) {
+                    alert(errorMessage);
+                } else if (status === 401) {
+                    alert("Unauthorized: Please log in again.");
+                } else {
+                    alert("An error occurred while changing password. Please try again.");
+                }
+            } else {
+                alert("Network error or unknown issue. Please check your connection.");
             }
-        } catch (e) {
-            alert("Current password is wrong!");
         }
     };
 
@@ -103,7 +118,6 @@ const ChangePassword: React.FC = () => {
         if (field === "newPassword") setNewPassword(value);
         if (field === "confirmPassword") setConfirmPassword(value);
 
-        // Remove the error state if the field is no longer empty
         setErrors((prev) => ({
             ...prev,
             [field]: !value.trim(),
@@ -122,22 +136,50 @@ const ChangePassword: React.FC = () => {
 
     return (
         <Box>
-            <Box sx={{ padding: 4 }}>
-                {/* Title */}
-                <Typography variant="h4" sx={{ marginBottom: 1, fontWeight: "bold" }}>
-                    Change Password
+            <Box p={4}>
+                <Typography sx={{
+                    marginBottom: 1,
+                    fontWeight: 600,
+                    fontFamily: 'Poppins, sans-serif',
+                    fontSize: "2rem",
+                    color: theme.palette.primary.main
+                }}>
+                    Change password
                 </Typography>
-                <Typography sx={{ marginBottom: 3, color: "gray" }}>
+                <Typography sx={{
+                    marginBottom: 4,
+                    fontFamily: 'Poppins, sans-serif',
+                    fontSize: "0.9rem",
+                    fontWeight: 400,
+                    color: theme.palette.text.secondary
+                }}>
                     Change password and remember to ensure your security.
                 </Typography>
 
-                {/* User Information Fields */}
-                <Grid container spacing={3}>
-                    <Grid item xs={12} sm={6}>
+                <Box sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                    maxWidth: "50%",
+                }}>
+                    <Box sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 1,
+                        width: "100%",
+                    }}>
+                        <Typography sx={{
+                            fontFamily: 'Poppins, sans-serif',
+                            fontSize: "0.9rem",
+                            fontWeight: 450,
+                            color: theme.palette.text.primary
+                        }}>
+                            Current Password
+                        </Typography>
                         <TextField
                             id="current-password"
                             fullWidth
-                            label="Current password"
+                            size="small"
                             type={showPassword.current ? "text" : "password"}
                             value={currentPassword}
                             onChange={(e) =>
@@ -157,16 +199,45 @@ const ChangePassword: React.FC = () => {
                             }}
                             error={errors.currentPassword}
                             helperText={errors.currentPassword && "This field is required"}
+                            sx={{
+                                '& .MuiFormHelperText-root.Mui-error': {
+                                    color: theme.palette.error.contrastText,
+                                    fontFamily: 'Poppins, sans-serif',
+                                    fontWeight: 500,
+                                    mt: 0.5,
+                                    border: theme.palette.error.contrastText,
+                                },
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: "8px",
+                                    "&.Mui-error .MuiOutlinedInput-notchedOutline": {
+                                        borderColor: theme.palette.error.contrastText,
+                                        borderWidth: "1.5px",
+                                    },
+                                },
+                            }}
                             required
                         />
-                    </Grid>
-                    <Grid item xs={12} sm={6}></Grid>
-                    <Grid item xs={12} sm={6}>
+                    </Box>
+
+                    <Box sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 1,
+                        width: "100%",
+                    }}>
+                        <Typography sx={{
+                            fontFamily: 'Poppins, sans-serif',
+                            fontSize: "0.9rem",
+                            fontWeight: 450,
+                            color: theme.palette.text.primary
+                        }}>
+                            New Password
+                        </Typography>
                         <TextField
                             id="new-password"
                             fullWidth
-                            label="New password"
-                            type={showPassword.new ? "text" : "password"}
+                            size="small"
+                            type={showPassword.current ? "text" : "password"}
                             value={newPassword}
                             onChange={(e) =>
                                 handleFieldChange("newPassword", e.target.value)
@@ -178,22 +249,51 @@ const ChangePassword: React.FC = () => {
                                             onClick={() => handleTogglePasswordVisibility("new")}
                                             edge="end"
                                         >
-                                            {showPassword.new ? <Visibility /> : <VisibilityOff />}
+                                            {showPassword.current ? <Visibility /> : <VisibilityOff />}
                                         </IconButton>
                                     </InputAdornment>
                                 ),
                             }}
                             error={errors.newPassword}
                             helperText={errors.newPassword && "This field is required"}
+                            sx={{
+                                '& .MuiFormHelperText-root.Mui-error': {
+                                    color: theme.palette.error.contrastText,
+                                    fontFamily: 'Poppins, sans-serif',
+                                    fontWeight: 500,
+                                    mt: 0.5,
+                                    border: theme.palette.error.contrastText,
+                                },
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: "8px",
+                                    "&.Mui-error .MuiOutlinedInput-notchedOutline": {
+                                        borderColor: theme.palette.error.contrastText,
+                                        borderWidth: "1.5px",
+                                    },
+                                },
+                            }}
                             required
                         />
-                    </Grid>
-                    <Grid item xs={12} sm={6}></Grid>
-                    <Grid item xs={12} sm={6}>
+                    </Box>
+
+                    <Box sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 1,
+                        width: "100%",
+                    }}>
+                        <Typography sx={{
+                            fontFamily: 'Poppins, sans-serif',
+                            fontSize: "0.9rem",
+                            fontWeight: 450,
+                            color: theme.palette.text.primary
+                        }}>
+                            Confirm Password
+                        </Typography>
                         <TextField
                             id="confirm-password"
                             fullWidth
-                            label="Confirm password"
+                            size="small"
                             type={showPassword.confirm ? "text" : "password"}
                             value={confirmPassword}
                             onChange={(e) =>
@@ -219,44 +319,41 @@ const ChangePassword: React.FC = () => {
                                         ? "Passwords do not match"
                                         : ""
                             }
+                            sx={{
+                                '& .MuiFormHelperText-root.Mui-error': {
+                                    color: theme.palette.error.contrastText,
+                                    fontFamily: 'Poppins, sans-serif',
+                                    fontWeight: 500,
+                                    mt: 0.5,
+                                    border: theme.palette.error.contrastText,
+                                },
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: "8px",
+                                    "&.Mui-error .MuiOutlinedInput-notchedOutline": {
+                                        borderColor: theme.palette.error.contrastText,
+                                        borderWidth: "1.5px",
+                                    },
+                                },
+                            }}
                             required
                         />
-                    </Grid>
-                </Grid>
+                    </Box>
 
-                {/* Save Button */}
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginTop: 3,
-                    }}
-                >
-                    <Button
-                        variant="contained"
-                        sx={{
-                            backgroundColor: theme.palette.primary.main,
-                            color: "#FFFFFF",
-                            borderRadius: "10px",
-                            fontWeight: "bold",
-                            textTransform: "uppercase",
-                            padding: "0.6rem 2rem",
-                            boxShadow: "none",
-                            "&:hover": {
-                                backgroundColor: "#6C1CBF",
-                                boxShadow: "none",
-                            },
-                        }}
-                        onClick={handleSave}
-                    >
-                        SAVE
-                    </Button>
                 </Box>
+                {/* Save Button */}
+                <CustomButton
+                    text="Save Changes"
+                    onClick={handleSave}
+                    height={40}
+                    sx={{
+                        marginTop: 5,
+                        width: 'fit-contemt'
+                    }}
+                />
             </Box>
             <SuccessPopup
                 open={successPopup}
-                onClose={() => setSuccessPopup(false)}
+                onClose={() => setSuccessPopup(true)}
                 message="Your password has been successfully changed."
             />
         </Box>

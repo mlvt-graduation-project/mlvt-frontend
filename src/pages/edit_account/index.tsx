@@ -1,12 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+// src/pages/EditAccount.tsx
+import React, { useState } from 'react';
 import {
     Box,
     Typography,
-    TextField,
-    Button,
-    Avatar,
-    MenuItem,
-    Grid,
     List,
     ListItem,
     ListItemIcon,
@@ -17,277 +13,138 @@ import {
 } from '@mui/material';
 import { AccountCircle, Lock, Subscriptions } from '@mui/icons-material';
 import PersonalDetails from '../../components/PersonalDetails';
-import { getUser, updateUser } from '../../api/user.api';
-import { useAuth } from '../../context/AuthContext';
 import ChangePassword from '../../components/ChangePassword';
-// import Subscription from "../../components/Subscription";
 import Voucher from '../../components/Voucher';
 import Footer from '../../components/Footer';
+import LogoImg from '../../assets/mlvt_logo.png';
+import { useUserDetails } from '../../hooks/useUserDetails';
+import { UserWithAvatar } from '@/types/Response/User';
 
-interface UserDetails {
-    firstName: string;
-    lastName: string;
-    username: string;
-    email: string;
-    createdDate: string;
-    userRole: string;
-    premiumExpiredDate: string;
-    avatarSrc: string;
-}
+type TabKey = 'personal' | 'password' | 'subscription';
+
+const TABS: {
+    key: TabKey;
+    label: string;
+    icon: React.ReactNode;
+}[] = [
+        { key: 'personal', label: 'Personal details', icon: <AccountCircle /> },
+        { key: 'password', label: 'Change password', icon: <Lock /> },
+        { key: 'subscription', label: 'Subscription', icon: <Subscriptions /> },
+    ];
+
+const listItemCommonSx = {
+    cursor: 'pointer',
+    borderRadius: '0.5rem',
+    marginBottom: '0.5rem',
+    fontFamily: 'Poppins, sans-serif',
+};
 
 const EditAccount: React.FC = () => {
-    const [userDetails, setUserDetails] = useState<UserDetails>({
-        firstName: 'Thi Minh Minh',
-        lastName: 'Nguyen',
-        username: 'minhminh2703',
-        email: 'nguyenthiminhminh.hcm@gmail.com',
-        createdDate: '2024-04-30',
-        userRole: 'USER',
-        premiumExpiredDate: '',
-        avatarSrc: 'image.jpeg',
-    });
-    const [isLoading, setIsLoading] = useState(true);
-    const [activeComponent, setActiveComponent] = useState('personalDetails');
     const theme = useTheme();
-    const { userId } = useAuth();
+    const { user, loading } = useUserDetails();
+    const [activeTab, setActiveTab] = useState<TabKey>('personal');
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            if (!userId) {
-                setIsLoading(false);
-                return;
-            }
-            try {
-                const token = localStorage.getItem('authToken');
-
-                try {
-                    const userData = await getUser(userId);
-                    console.log(userData);
-                    setUserDetails((prev) => ({
-                        ...prev,
-                        firstName: userData.user.first_name,
-                        lastName: userData.user.last_name,
-                        username: userData.user.username,
-                        email: userData.user.email,
-                        createdDate: userData.user.created_at,
-                        userRole: userData.user.role,
-                    }));
-                } catch (error) {
-                    throw new Error(`Failed to fetch user data: ${error}`);
-                }
-
-                try {
-                    const avatarResponse = await fetch(
-                        `http://localhost:8080/api/users/${userId}/avatar-download-url`,
-                        {
-                            method: 'GET',
-                            headers: {
-                                Authorization: `Bearer ${token}`, // Add token to the Authorization header
-                                'Content-Type': 'application/json',
-                            },
-                        }
-                    );
-
-                    if (avatarResponse.status !== 500) {
-                        const avatarData = await avatarResponse.json();
-                        const avatarDownloadUrl = avatarData.avatar_download_url;
-                        console.log(avatarDownloadUrl);
-                        setUserDetails((prev) => ({
-                            ...prev,
-                            avatarSrc: avatarDownloadUrl.split('?X-Amz-Algorithm')[0],
-                        }));
-                    }
-                } catch (avatarError) {
-                    console.error('Failed to fetch user avatar:', avatarError);
-                }
-            } catch (error) {
-                console.error('Failed to fetch user data:', error);
-            }
-            setIsLoading(false);
-        };
-
-        fetchUserData();
-    }, [userId]);
-
-    if (isLoading) {
-        return <div>Loading...</div>; // or any other loading indicator
+    if (loading) {
+        return <div>Loading...</div>;
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setUserDetails((prev) => ({ ...prev, [name]: value }));
+    const renderContent = () => {
+        switch (activeTab) {
+            case 'personal':
+                return (
+                    <PersonalDetails
+                        user={user as UserWithAvatar}
+                    />
+                );
+            case 'password':
+                return <ChangePassword />;
+            case 'subscription':
+                return <Voucher />;
+        }
     };
 
     return (
         <Box>
-            <Box
-                sx={{
-                    display: 'flex', // Align items horizontally
-                    flexDirection: 'row', // Horizontal layout
-                    paddingTop: 4,
-                    paddingBottom: 4,
-                    paddingRight: 10,
-                    paddingLeft: 10,
-                    height: '100vh',
-                }}
-            >
-                {/* Left Section */}
-                <Box sx={{ flex: 1, maxWidth: '400px', paddingRight: 5 }}>
-                    <Box
+            <Box sx={{ display: 'flex', padding: 4, height: '100vh' }}>
+                {/* Left Sidebar */}
+                <Box sx={{ flex: 1, maxWidth: 400, pr: 5 }}>
+                    <Link href="/">
+                        <Box
+                            component="img"
+                            src={LogoImg}
+                            alt="Logo"
+                            sx={{ width: 150, height: 150, mb: 2, borderRadius: '0.8rem' }}
+                        />
+                    </Link>
+                    <Typography
                         sx={{
-                            width: '100%',
-                            backgroundColor: '#fff',
+                            fontWeight: 650,
+                            color: theme.palette.primary.main,
+                            fontSize: '1.23rem',
+                            fontFamily: 'Poppins, sans-serif',
                         }}
                     >
-                        {/* Logo Section */}
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'flex-start',
-                                marginBottom: '1.5rem',
-                            }}
-                        >
-                            <Link href="/">
-                                <Box
-                                    component="img"
-                                    src={require('./image.jpeg')}
-                                    alt="Logo"
-                                    sx={{
-                                        width: 120,
-                                        height: 120,
-                                        marginBottom: '1rem',
-                                        borderRadius: '0.8rem',
-                                    }}
-                                />
-                            </Link>
-                            <Typography
-                                variant="h6"
-                                sx={{ fontWeight: 'bold', color: theme.palette.primary.main, textAlign: 'center' }}
-                            >
-                                Multi-language Video Translation
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: '#757575', textAlign: 'center', marginTop: '0.5rem' }}
-                            >
-                                Manage your personal account settings
-                            </Typography>
-                        </Box>
+                        Multi-language Video Translation
+                    </Typography>
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            color: theme.palette.text.secondary,
+                            mt: 0.5,
+                            fontFamily: 'Poppins, sans-serif',
+                        }}
+                    >
+                        Manage your personal account settings
+                    </Typography>
 
-                        {/* Account Settings */}
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                fontWeight: 'bold',
-                                color: '#424242',
-                                marginBottom: '1rem',
-                            }}
-                        >
-                            Account settings
-                        </Typography>
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            fontWeight: 600,
+                            color: theme.palette.text.primary,
+                            mt: 3,
+                            mb: 1,
+                            fontFamily: 'Poppins, sans-serif',
+                        }}
+                    >
+                        Account settings
+                    </Typography>
 
-                        {/* Options */}
-                        <List>
-                            <ListItem
-                                button
-                                onClick={() => setActiveComponent('personalDetails')}
-                                sx={{
-                                    // backgroundColor:
-                                    //     activeComponent === 'personalDetails' ? theme.background.main : 'transparent',
-                                    backgroundColor: activeComponent === 'personalDetails' ? '#673AB7' : 'transparent',
-                                    borderRadius: '0.5rem',
-                                    marginBottom: '0.5rem',
-                                    '&:hover': { backgroundColor: '#D1C4E9' },
-                                }}
-                            >
-                                <ListItemIcon>
-                                    <AccountCircle
-                                        sx={{ color: activeComponent === 'personalDetails' ? '#FFFFFF' : '#757575' }}
-                                    />
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary="Personal details"
+                    <List>
+                        {TABS.map(({ key, label, icon }) => {
+                            const isActive = activeTab === key;
+                            return (
+                                <ListItem
+                                    key={key}
+                                    onClick={() => setActiveTab(key)}
                                     sx={{
-                                        color: activeComponent === 'personalDetails' ? '#FFFFFF' : '#757575',
-                                        fontWeight: 'bold',
+                                        ...listItemCommonSx,
+                                        backgroundColor: isActive ? theme.palette.primary.main : 'transparent',
                                     }}
-                                />
-                            </ListItem>
-                            <ListItem
-                                button
-                                onClick={() => setActiveComponent('changePassword')}
-                                sx={{
-                                    // backgroundColor:
-                                    //     activeComponent === 'changePassword' ? theme.background.main : 'transparent',
-                                    backgroundColor: activeComponent === 'changePassword' ? '#673AB7' : 'transparent',
-                                    borderRadius: '0.5rem',
-                                    marginBottom: '0.5rem',
-                                    '&:hover': { backgroundColor: '#D1C4E9' },
-                                }}
-                            >
-                                <ListItemIcon>
-                                    <Lock
-                                        sx={{ color: activeComponent === 'changePassword' ? '#FFFFFF' : '#757575' }}
+                                >
+                                    <ListItemIcon>
+                                        {React.cloneElement(icon as React.ReactElement, {
+                                            sx: { color: isActive ? theme.palette.secondary.main : theme.palette.text.disabled }
+                                        })}
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={label}
+                                        sx={{
+                                            color: isActive ? theme.palette.secondary.main : theme.palette.text.disabled,
+                                            '& .MuiTypography-root': { fontFamily: 'inherit' },
+                                        }}
                                     />
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary="Change password"
-                                    sx={{ color: activeComponent === 'changePassword' ? '#FFFFFF' : '#757575' }}
-                                />
-                            </ListItem>
-                            <ListItem
-                                button
-                                onClick={() => setActiveComponent('voucher')}
-                                sx={{
-                                    // backgroundColor:
-                                    //     activeComponent === 'voucher' ? theme.background.main : 'transparent',
-                                    backgroundColor: activeComponent === 'voucher' ? '#673AB7' : 'transparent',
-                                    borderRadius: '0.5rem',
-                                    '&:hover': { backgroundColor: '#D1C4E9' },
-                                }}
-                            >
-                                <ListItemIcon>
-                                    <Subscriptions
-                                        sx={{ color: activeComponent === 'voucher' ? '#FFFFFF' : '#757575' }}
-                                    />
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary="Subscription"
-                                    sx={{ color: activeComponent === 'subscription' ? '#FFFFFF' : '#757575' }}
-                                />
-                            </ListItem>
-                        </List>
-                    </Box>
+                                </ListItem>
+                            );
+                        })}
+                    </List>
                 </Box>
 
-                {/* Vertical Divider */}
-                <Divider
-                    orientation="vertical"
-                    flexItem
-                    sx={{
-                        borderWidth: '1px',
-                        marginX: 2,
-                        backgroundColor: '#E0E0E0',
-                    }}
-                />
+                <Divider orientation="vertical" flexItem sx={{ mx: 2, bgcolor: theme.palette.divider }} />
 
-                {/* Right Section */}
-                <Box sx={{ flex: 2, paddingLeft: 5 }}>
-                    {activeComponent === 'personalDetails' && (
-                        <PersonalDetails
-                            firstName={userDetails.firstName}
-                            lastName={userDetails.lastName}
-                            username={userDetails.username}
-                            email={userDetails.email}
-                            createdDate={userDetails.createdDate}
-                            userRole={userDetails.userRole}
-                            premiumExpiredDate=""
-                            avatarSrc={userDetails.avatarSrc}
-                        />
-                    )}
-                    {activeComponent === 'changePassword' && <ChangePassword />}
-                    {activeComponent === 'voucher' && <Voucher />}
+                {/* Content Area */}
+                <Box sx={{ flex: 2, pl: 5 }}>
+                    {renderContent()}
                 </Box>
             </Box>
             <Footer />

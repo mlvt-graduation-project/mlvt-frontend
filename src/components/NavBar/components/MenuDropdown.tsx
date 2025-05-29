@@ -35,13 +35,11 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
 }) => {
     const theme = useTheme();
     const navigate = useNavigate();
-    const { userId, remainingToken } = useAuth();
-
+    const { remainingToken } = useAuth();
     const open = Boolean(anchorDropdown);
 
 
     const [anchorSubMenu, setAnchorSubMenu] = useState<HTMLElement | null>(null);
-    const altText = `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`;
     const { toggle } = useColorMode();
 
     const menuItems = [
@@ -131,7 +129,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                                 `,
                         }}
                     >
-                        <Avatar src={user.avatar} alt={altText} sx={{ width: '2.5rem', height: '2.5rem' }} />
+                        <Avatar src={user.avatar} sx={{ width: '2.5rem', height: '2.5rem' }} />
                         <Box>
                             <Typography
                                 variant="body2"

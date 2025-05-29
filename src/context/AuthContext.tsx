@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [userId, setUserId] = useState<string | null>(localStorage.getItem('userId'));
     const [remainingToken, setRemainingToken] = useState<number>(0);
 
-    // method to save token, and user id in local storage
     const login = (token: string, userId: string) => {
         setAuthToken(token);
         setUserId(userId);
@@ -30,7 +29,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const logout = () => {
         setAuthToken(null);
         localStorage.removeItem('authToken');
-        // navigate("/login"); // Only navigate if useNavigate is available
         <Navigate to="/login" replace />;
     };
 

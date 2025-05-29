@@ -4,35 +4,19 @@ import {
     Avatar,
     Box,
     Badge,
-    Menu,
-    MenuItem,
     Typography,
     IconButton,
-    ListItemIcon,
-    ListItemText,
-    Divider,
 } from '@mui/material';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import {
-    AccountCircle,
-    NavigateNext,
-    WorkspacePremiumSharp,
-    Help,
-    Logout,
-    Language,
-    LightMode,
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
 import { getUser } from '../../../api/user.api';
 import { useAuth } from '../../../context/AuthContext';
 import { User } from '../../../types/Response/User';
-import { serialize } from 'v8';
 import MenuDropdown from '../components/MenuDropdown';
 
 interface UserProfileProps {
     first_name: string;
     last_name: string;
-    status: boolean; // User status: premium or standard
+    status?: boolean; 
     avatarSrc: string;
     notifications: number;
 }
@@ -62,8 +46,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
         fetchUserDetails();
     }, [userId]);
 
-    const altText = `${first_name.charAt(0)}${last_name.charAt(0)}`;
-
     const handleDropdownOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorDropdown(event.currentTarget);
     };
@@ -78,7 +60,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ first_name, last_name, status
                 sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }} style={{ cursor: 'pointer' }}
                 onClick={handleDropdownOpen}
             >
-                <Avatar src={avatarSrc} alt={altText} sx={{ width: '3rem', height: '3rem' }} />
+                <Avatar src={avatarSrc} sx={{ width: '3rem', height: '3rem' }} />
                 <Box
                     sx={{
                         display: 'flex',
