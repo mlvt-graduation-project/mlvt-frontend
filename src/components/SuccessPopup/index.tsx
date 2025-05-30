@@ -46,7 +46,7 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({ open, onClose, message }) =
                         fontWeight: theme.typography.fontWeightBold,
                         fontSize: '1.5rem',
                         marginTop: 5,
-                        color: theme.palette.success.contrastText
+                        color: theme.palette.success.main
                     }}
                 >
                     {message}

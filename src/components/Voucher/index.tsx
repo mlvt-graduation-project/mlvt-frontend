@@ -1,5 +1,5 @@
 import React, { useEffect, useState, ReactNode } from 'react';
-import { Box, Grid, Typography, useTheme } from '@mui/material';
+import { Box, List, ListItem, ListItemIcon, ListItemText, Typography, useTheme } from '@mui/material';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import OrderHistory from '../OrderHistory';
@@ -8,6 +8,9 @@ import { getWalletBalance } from '../../api/wallet.api';
 import { useAuth } from '../../context/AuthContext';
 import UploadNotification from '../UploadNotification';
 import SubscriptionPlanCard from './components/SubscriptionPlanCard';
+import PlanSummaryCard from '../PlanSummaryCard';
+import PaymentPlan from '../PaymentPlan';
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 
 interface ErrNoti {
     isOpen: boolean;
@@ -19,6 +22,13 @@ interface ActionCardProps {
     label: string;
     onClick: () => void;
 }
+
+const listItemCommonSx = {
+    cursor: 'pointer',
+    borderRadius: '0.5rem',
+    marginBottom: '0.5rem',
+    fontFamily: 'Poppins, sans-serif',
+};
 
 const ActionCard: React.FC<ActionCardProps> = ({ icon, label, onClick }) => {
     const theme = useTheme();
@@ -54,10 +64,23 @@ const ActionCard: React.FC<ActionCardProps> = ({ icon, label, onClick }) => {
     );
 };
 
+type PlanManagementTabKey = 'planSummary' | 'paymentPlan' | 'backToVoucher';
+
+const PLAN_MANAGEMENT_TABS: {
+    key: PlanManagementTabKey;
+    label: string;
+    icon: React.ReactNode;
+}[] = [
+        { key: 'planSummary', label: 'Plan Summary', icon: <ReceiptIcon /> },
+        { key: 'paymentPlan', label: 'Payment Plan', icon: <CreditCardIcon /> },
+        { key: 'backToVoucher', label: 'Back to Voucher', icon: <KeyboardReturnIcon /> },
+    ];
+
 const Voucher: React.FC = () => {
     const theme = useTheme();
-    type ViewType = 'subscription' | 'orderHistory' | 'redeemCode';
-    const [currentView, setCurrentView] = useState<'subscription' | 'orderHistory' | 'redeemCode'>('subscription');
+    type ViewType = 'subscription' | 'orderHistory' | 'redeemCode' | 'planManagement';
+    const [currentView, setCurrentView] = useState<ViewType>('subscription');
+    const [activePlanTab, setActivePlanTab] = useState<PlanManagementTabKey>('planSummary');
     const [errNoti, setErrNoti] = useState<ErrNoti>({
         isOpen: false,
         status: 'success',
@@ -67,16 +90,25 @@ const Voucher: React.FC = () => {
     const { userId, remainingToken, SetRemainingToken } = useAuth();
 
     /* ------------------ callbacks ------------------ */
-    const handleViewChange = (view: string) => {
-        if (
-            view === 'subscription' ||
-            view === 'orderHistory' ||
-            view === 'redeemCode'
-        ) {
-            setCurrentView(view);      // OK: view is one of the union
+    const handleViewChange = (view: ViewType) => {
+        setCurrentView(view);
+        if (view === 'planManagement') {
+            setActivePlanTab('planSummary'); // Default to summary when entering this view
         }
     };
     const handleCloseNotiPopup = () => setErrNoti(prev => ({ ...prev, isOpen: false }));
+
+    const handlePlanTabClick = (tabKey: PlanManagementTabKey) => {
+        if (tabKey === 'backToVoucher') {
+            setCurrentView('subscription');
+        } else {
+            setActivePlanTab(tabKey);
+        }
+    };
+
+    const handleUpdatePaymentMethod = () => {
+        setActivePlanTab('paymentPlan');
+    };
 
     /* ------------------ data load ------------------ */
     useEffect(() => {
@@ -94,14 +126,107 @@ const Voucher: React.FC = () => {
                 }
             }
         };
-        fetchWalletBalance();
-    }, [userId, SetRemainingToken]);
+        if (currentView === 'subscription' && userId) {
+            fetchWalletBalance();
+        }
+    }, [userId, SetRemainingToken, currentView]);
 
     /* ------------------ early-returns ------------------ */
 
 
-    if (currentView === 'orderHistory') return <OrderHistory handleChangeView={handleViewChange} />;
-    if (currentView === 'redeemCode') return <RedeemCode handleChangeView={handleViewChange} />;
+    if (currentView === 'orderHistory') return <OrderHistory handleChangeView={() => handleViewChange('subscription')} />;
+    if (currentView === 'redeemCode') return <RedeemCode handleChangeView={() => handleViewChange('subscription')} />;
+
+    if (currentView === 'planManagement') {
+        return (
+            <Box sx={{ display: 'flex', flexDirection: 'column', paddingX: 4, height: '100%', gap: 2, width: '90%' }}>
+                <Box>
+                    <Typography
+                        sx={{
+                            fontWeight: 600,
+                            color: theme.palette.primary.main,
+                            fontSize: '2rem',
+                            fontFamily: 'Poppins, sans-serif',
+                            mt: 5,
+                            mb: 0.5,
+                        }}
+                    >
+                        Manage Subscription
+                    </Typography>
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            color: theme.palette.text.secondary,
+                            mt: 0.5,
+                            mb: 4,
+                            fontFamily: 'Poppins, sans-serif',
+                        }}
+                    >
+                        View details or return to wallet.
+                    </Typography>
+
+                    <List sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: theme.spacing(1.5),
+                        padding: 0,
+                        width: '100%',
+                        overflowX: 'auto',
+                        marginBottom: theme.spacing(2),
+                    }}>
+                        {PLAN_MANAGEMENT_TABS.map(({ key, label, icon }) => {
+                            const isActive = activePlanTab === key && key !== 'backToVoucher';
+
+                            return (
+                                <ListItem
+                                    key={key}
+                                    onClick={() => handlePlanTabClick(key)}
+                                    sx={{
+                                        ...listItemCommonSx,
+                                        backgroundColor: isActive ? theme.palette.primary.main : 'transparent',
+                                        ...(key === 'backToVoucher' && { marginTop: 'auto' }) // Push back button down if desired, or style differently
+                                    }}
+                                >
+                                    <ListItemIcon>
+                                        {React.cloneElement(icon as React.ReactElement, {
+                                            sx: { color: isActive ? theme.palette.secondary.main : theme.palette.text.disabled }
+                                        })}
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={label}
+                                        sx={{
+                                            color: isActive ? theme.palette.secondary.main : theme.palette.text.disabled,
+                                            '& .MuiTypography-root': { fontFamily: 'inherit' },
+                                        }}
+                                    />
+                                </ListItem>
+                            );
+                        })}
+                    </List>
+                </Box>
+
+                <Box sx={{ flex: 1, overflowY: 'auto' }}>
+                    {activePlanTab === 'planSummary' && (
+                        <>
+                            <PlanSummaryCard
+                                planType="MONTHLY PREMIUM"
+                                nextChargeDate={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)}
+                                nextChargeAmount={remainingToken}
+                                benefits={['Benefit 1', 'Benefit 2', 'Benefit 3']}
+                                paymentMethod='Credit Card'
+                                paymentLogo={<CreditCardIcon sx={{ fontSize: '2rem', color: theme.palette.primary.main }} />}
+                                onUpdatePaymentClick={handleUpdatePaymentMethod}
+                            />
+                        </>
+                    )}
+                    {activePlanTab === 'paymentPlan' && (
+                        <PaymentPlan />
+                    )}
+                </Box>
+            </Box>
+        );
+    }
     if (errNoti.isOpen) {
         return (
             <UploadNotification
@@ -144,12 +269,11 @@ const Voucher: React.FC = () => {
 
             {/* content */}
             <Box sx={{ display: 'flex', gap: 2 }}>
-                {/* left : plan card */}
                 <Box width="75%">
                     <SubscriptionPlanCard
-                        planType="MONTHLY PREMIUM"            
+                        planType="MONTHLY PREMIUM"
                         remainingToken={remainingToken}
-                        onViewPurchasePlan={() => handleViewChange('subscription')}
+                        onManagePlanClick={() => handleViewChange('planManagement')}
                     />
                 </Box>
 

@@ -13,6 +13,7 @@ const colorTokens = {
     error: { main: '#e57373', contrastText: '#CF0A0A' },
     info: { main: '#B7E0FF', contrastText: '#0C2991' },
     background: { default: '#f4f6f8', paper: '#fff' },
+    action: { active: '#FFCEFE', hover: '#E4B1F0' },
     text: { primary: '#121212', secondary: '#4f4f4f' },
   },
   dark: {
@@ -26,6 +27,7 @@ const colorTokens = {
     error: { main: '#e57373', contrastText: '#FF1E00' },
     info: { main: '#64b5f6', contrastText: '#121212' },
     background: { default: '#121212', paper: '#1d1d1d' },
+    action: { active: '#272727', hover: '#272829' },
     text: { primary: '#fff', secondary: '#cfcfcf' },
   },
 };
@@ -65,6 +67,13 @@ export const getThemeOptions = (mode: PaletteMode): ThemeOptions => {
       error: paletteTokens.error,
       info: paletteTokens.info,
       background: paletteTokens.background,
+      action: {
+        active: paletteTokens.action.active,
+        hover: paletteTokens.action.hover,
+        selected: paletteTokens.action.hover,
+        disabled: paletteTokens.action.hover,
+        disabledBackground: paletteTokens.action.hover,
+      },
       text: paletteTokens.text,
     },
     typography: {

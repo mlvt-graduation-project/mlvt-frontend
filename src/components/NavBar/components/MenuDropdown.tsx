@@ -200,7 +200,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                             },
                         }}
                     >
-                        <ListItemIcon sx={{ minWidth: '35px' }}>{item.icon}</ListItemIcon>
+                        <ListItemIcon sx={{ minWidth: '35px', color: theme.palette.text.secondary }}>{item.icon}</ListItemIcon>
                         <ListItemText
                             disableTypography
                             primary={item.label}
@@ -254,7 +254,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                             color: theme.palette.primary.contrastText,
                         },
                     }}>
-                        <ListItemIcon sx={{ minWidth: '35px' }}>{opt.icon}</ListItemIcon>
+                        <ListItemIcon sx={{ minWidth: '35px', color: theme.palette.text.primary }}>{opt.icon}</ListItemIcon>
                         <ListItemText disableTypography sx={{
                             color: theme.palette.text.primary,
                             fontFamily: 'Poppins, sans-serif',

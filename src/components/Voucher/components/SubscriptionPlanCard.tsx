@@ -2,17 +2,19 @@ import React from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 
 export type PlanType = 'MONTHLY PREMIUM' | 'ANNUAL PREMIUM';
-
+export type SubscriptionSubView = 'planSummary' | 'purchasePlan' | null;
 interface SubscriptionPlanCardProps {
     planType: PlanType;
     remainingToken: number;
-    onViewPurchasePlan?: () => void;
+    onClick?: () => void;
+    onManagePlanClick?: () => void;
 }
 
 const SubscriptionPlanCard: React.FC<SubscriptionPlanCardProps> = ({
     planType,
     remainingToken,
-    onViewPurchasePlan,
+    onClick = () => {},
+    onManagePlanClick = () => {},
 }) => {
     const theme = useTheme();
 
@@ -30,14 +32,16 @@ const SubscriptionPlanCard: React.FC<SubscriptionPlanCardProps> = ({
         >
             <Box>
                 <Typography
+                    onClick={onManagePlanClick}
                     sx={{
                         color: theme.palette.text.secondary,
                         fontSize: '0.8rem',
                         fontFamily: 'Poppins, sans-serif',
                         paddingBottom: 1,
+                        '&:hover': { cursor: 'pointer', textDecoration: 'underline' }
                     }}
                 >
-                    Your plan – Token wallet
+                    Manage your Plan – Token wallet
                 </Typography>
 
                 <Typography
@@ -80,7 +84,6 @@ const SubscriptionPlanCard: React.FC<SubscriptionPlanCardProps> = ({
                     marginTop: 2,
                     '& span:hover': { cursor: 'pointer', textDecoration: 'underline' },
                 }}
-                onClick={onViewPurchasePlan}
             >
                 <span>View our purchase plan</span>
             </Typography>

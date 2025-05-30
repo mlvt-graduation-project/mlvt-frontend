@@ -1,9 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import {
     Box,
     Typography,
     TextField,
-    Button,
     IconButton,
     InputAdornment,
     useTheme,
@@ -14,346 +13,251 @@ import { changePassword } from "../../api/user.api";
 import SuccessPopup from "../SuccessPopup";
 import { CustomButton } from "../CustomButton";
 
+type FieldKey = "current" | "new" | "confirm";
+
+const labels: Record<FieldKey, string> = {
+    current: "Current Password",
+    new: "New Password",
+    confirm: "Confirm Password",
+};
+
+const ids: Record<FieldKey, string> = {
+    current: "current-password",
+    new: "new-password",
+    confirm: "confirm-password",
+};
+
 const ChangePassword: React.FC = () => {
-    const [currentPassword, setCurrentPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [showPassword, setShowPassword] = useState({
+    const theme = useTheme();
+    const { userId } = useAuth();
+
+    const [values, setValues] = useState<Record<FieldKey, string>>({
+        current: "",
+        new: "",
+        confirm: "",
+    });
+    const [show, setShow] = useState<Record<FieldKey, boolean>>({
         current: false,
         new: false,
         confirm: false,
     });
-    const [successPopup, setSuccessPopup] = useState(false)
-    const { userId } = useAuth();
-
-    const [errors, setErrors] = useState({
-        currentPassword: false,
-        newPassword: false,
-        confirmPassword: false,
-        passwordMismatch: false
+    const [errors, setErrors] = useState<Record<FieldKey, boolean>>({
+        current: false,
+        new: false,
+        confirm: false,
     });
+    const [passwordMismatch, setPasswordMismatch] = useState(false);
+    const [successPopup, setSuccessPopup] = useState(false);
 
-    const firstInvalidField = useRef<HTMLElement | null>(null);
+    const handleToggleShow = useCallback((key: FieldKey) => {
+        setShow((s) => ({ ...s, [key]: !s[key] }));
+    }, []);
 
-    const validateFields = () => {
-        const newErrors = {
-            currentPassword: !currentPassword,
-            newPassword: !newPassword,
-            confirmPassword: !confirmPassword,
-            passwordMismatch: confirmPassword !== newPassword,
+    const handleChange = useCallback(
+        (key: FieldKey, v: string) => {
+            setValues((prev) => ({ ...prev, [key]: v }));
+            setErrors((e) => ({ ...e, [key]: !v.trim() }));
+            if (key === "confirm" || key === "new") {
+                setPasswordMismatch(
+                    key === "confirm"
+                        ? v !== values.new
+                        : values.confirm !== v
+                );
+            }
+        },
+        [values.confirm, values.new]
+    );
+
+    const currentRef = useRef<HTMLInputElement>(null);
+    const newRef = useRef<HTMLInputElement>(null);
+    const confirmRef = useRef<HTMLInputElement>(null);
+
+    const validate = useCallback((): boolean => {
+        const newErrs: Record<FieldKey, boolean> = {
+            current: !values.current.trim(),
+            new: !values.new.trim(),
+            confirm: !values.confirm.trim(),
         };
+        setErrors(newErrs);
+        setPasswordMismatch(values.new !== values.confirm);
 
-        setErrors(newErrors);
+        if (newErrs.current) currentRef.current?.focus();
+        else if (newErrs.new) newRef.current?.focus();
+        else if (newErrs.confirm || values.new !== values.confirm)
+            confirmRef.current?.focus();
 
-        // Set focus to the first invalid field
-        if (newErrors.currentPassword) {
-            firstInvalidField.current = document.getElementById("current-password");
-        } else if (newErrors.newPassword) {
-            firstInvalidField.current = document.getElementById("new-password");
-        } else if (newErrors.confirmPassword || newErrors.passwordMismatch) {
-            firstInvalidField.current = document.getElementById("confirm-password");
-        } else {
-            firstInvalidField.current = null;
-        }
+        return (
+            !newErrs.current &&
+            !newErrs.new &&
+            !newErrs.confirm &&
+            values.new === values.confirm
+        );
+    }, [values]);
 
-        return !Object.values(newErrors).includes(true);
-    };
 
-    const handleSave = async () => {
-        if (!validateFields()) {
-            // Move focus to the first invalid field
-            firstInvalidField.current?.focus();
-            return;
-        }
-
-        if (newPassword !== confirmPassword) {
-            alert("New password and confirm password do not match.");
-            return;
-        }
-
+    const handleSave = useCallback(async () => {
+        if (!validate()) return;
         if (!userId) {
             console.error("User ID is null. Cannot change password.");
             return;
         }
-
         try {
-            const successMessage = await changePassword(userId, currentPassword, newPassword);
-
-            console.log("Password changed successfully:", {
-                message: successMessage,
-                currentPassword,
-                newPassword,
-            });
+            await changePassword(
+                userId,
+                values.current,
+                values.new
+            );
             setSuccessPopup(true);
-
             setTimeout(() => {
                 window.location.reload();
             }, 3000);
-
-        } catch (error) {
-            console.error("Error changing password:", error);
-            if (error && typeof error === 'object' && 'response' in error && error.response) {
-                const status = (error as any).response.status;
-                const errorMessage = (error as any).response.data?.message || "An unexpected error occurred.";
-
-                if (status === 400) {
-                    alert(errorMessage);
-                } else if (status === 401) {
-                    alert("Unauthorized: Please log in again.");
-                } else {
-                    alert("An error occurred while changing password. Please try again.");
-                }
-            } else {
-                alert("Network error or unknown issue. Please check your connection.");
-            }
+        } catch (err: any) {
+            console.error("Error changing password:", err);
+            const status = err?.response?.status;
+            const msg =
+                err?.response?.data?.message || "An unexpected error occurred.";
+            if (status === 400) alert(msg);
+            else if (status === 401) alert("Unauthorized: Please log in again.");
+            else alert("An error occurred while changing password. Please try again.");
         }
-    };
-
-    const handleFieldChange = (
-        field: "currentPassword" | "newPassword" | "confirmPassword",
-        value: string
-    ) => {
-        // Update the field's value
-        if (field === "currentPassword") setCurrentPassword(value);
-        if (field === "newPassword") setNewPassword(value);
-        if (field === "confirmPassword") setConfirmPassword(value);
-
-        setErrors((prev) => ({
-            ...prev,
-            [field]: !value.trim(),
-            passwordMismatch: field === "confirmPassword" && value !== newPassword,
-        }));
-    };
-
-    const handleTogglePasswordVisibility = (field: "current" | "new" | "confirm") => {
-        setShowPassword((prev) => ({
-            ...prev,
-            [field]: !prev[field],
-        }));
-    };
-
-    const theme = useTheme();
+    }, [userId, validate, values]);
 
     return (
         <Box>
             <Box p={4}>
-                <Typography sx={{
-                    marginBottom: 1,
-                    fontWeight: 600,
-                    fontFamily: 'Poppins, sans-serif',
-                    fontSize: "2rem",
-                    color: theme.palette.primary.main
-                }}>
+                <Typography
+                    sx={{
+                        mb: 1,
+                        fontWeight: 600,
+                        fontFamily: "Poppins, sans-serif",
+                        fontSize: "2rem",
+                        color: theme.palette.primary.main,
+                    }}
+                >
                     Change password
                 </Typography>
-                <Typography sx={{
-                    marginBottom: 4,
-                    fontFamily: 'Poppins, sans-serif',
-                    fontSize: "0.9rem",
-                    fontWeight: 400,
-                    color: theme.palette.text.secondary
-                }}>
+                <Typography
+                    sx={{
+                        mb: 4,
+                        fontFamily: "Poppins, sans-serif",
+                        fontSize: "0.9rem",
+                        fontWeight: 400,
+                        color: theme.palette.text.secondary,
+                    }}
+                >
                     Change password and remember to ensure your security.
                 </Typography>
 
-                <Box sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 2,
-                    maxWidth: "50%",
-                }}>
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 1,
-                        width: "100%",
-                    }}>
-                        <Typography sx={{
-                            fontFamily: 'Poppins, sans-serif',
-                            fontSize: "0.9rem",
-                            fontWeight: 450,
-                            color: theme.palette.text.primary
-                        }}>
-                            Current Password
-                        </Typography>
-                        <TextField
-                            id="current-password"
-                            fullWidth
-                            size="small"
-                            type={showPassword.current ? "text" : "password"}
-                            value={currentPassword}
-                            onChange={(e) =>
-                                handleFieldChange("currentPassword", e.target.value)
-                            }
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            onClick={() => handleTogglePasswordVisibility("current")}
-                                            edge="end"
-                                        >
-                                            {showPassword.current ? <Visibility /> : <VisibilityOff />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                            error={errors.currentPassword}
-                            helperText={errors.currentPassword && "This field is required"}
-                            sx={{
-                                '& .MuiFormHelperText-root.Mui-error': {
-                                    color: theme.palette.error.contrastText,
-                                    fontFamily: 'Poppins, sans-serif',
-                                    fontWeight: 500,
-                                    mt: 0.5,
-                                    border: theme.palette.error.contrastText,
-                                },
-                                "& .MuiOutlinedInput-root": {
-                                    borderRadius: "8px",
-                                    "&.Mui-error .MuiOutlinedInput-notchedOutline": {
-                                        borderColor: theme.palette.error.contrastText,
-                                        borderWidth: "1.5px",
-                                    },
-                                },
-                            }}
-                            required
-                        />
-                    </Box>
-
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 1,
-                        width: "100%",
-                    }}>
-                        <Typography sx={{
-                            fontFamily: 'Poppins, sans-serif',
-                            fontSize: "0.9rem",
-                            fontWeight: 450,
-                            color: theme.palette.text.primary
-                        }}>
-                            New Password
-                        </Typography>
-                        <TextField
-                            id="new-password"
-                            fullWidth
-                            size="small"
-                            type={showPassword.current ? "text" : "password"}
-                            value={newPassword}
-                            onChange={(e) =>
-                                handleFieldChange("newPassword", e.target.value)
-                            }
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            onClick={() => handleTogglePasswordVisibility("new")}
-                                            edge="end"
-                                        >
-                                            {showPassword.current ? <Visibility /> : <VisibilityOff />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                            error={errors.newPassword}
-                            helperText={errors.newPassword && "This field is required"}
-                            sx={{
-                                '& .MuiFormHelperText-root.Mui-error': {
-                                    color: theme.palette.error.contrastText,
-                                    fontFamily: 'Poppins, sans-serif',
-                                    fontWeight: 500,
-                                    mt: 0.5,
-                                    border: theme.palette.error.contrastText,
-                                },
-                                "& .MuiOutlinedInput-root": {
-                                    borderRadius: "8px",
-                                    "&.Mui-error .MuiOutlinedInput-notchedOutline": {
-                                        borderColor: theme.palette.error.contrastText,
-                                        borderWidth: "1.5px",
-                                    },
-                                },
-                            }}
-                            required
-                        />
-                    </Box>
-
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 1,
-                        width: "100%",
-                    }}>
-                        <Typography sx={{
-                            fontFamily: 'Poppins, sans-serif',
-                            fontSize: "0.9rem",
-                            fontWeight: 450,
-                            color: theme.palette.text.primary
-                        }}>
-                            Confirm Password
-                        </Typography>
-                        <TextField
-                            id="confirm-password"
-                            fullWidth
-                            size="small"
-                            type={showPassword.confirm ? "text" : "password"}
-                            value={confirmPassword}
-                            onChange={(e) =>
-                                handleFieldChange("confirmPassword", e.target.value)
-                            }
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            onClick={() => handleTogglePasswordVisibility("confirm")}
-                                            edge="end"
-                                        >
-                                            {showPassword.confirm ? <Visibility /> : <VisibilityOff />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                            error={errors.confirmPassword || errors.passwordMismatch}
-                            helperText={
-                                errors.confirmPassword
-                                    ? "This field is required"
-                                    : errors.passwordMismatch
-                                        ? "Passwords do not match"
-                                        : ""
-                            }
-                            sx={{
-                                '& .MuiFormHelperText-root.Mui-error': {
-                                    color: theme.palette.error.contrastText,
-                                    fontFamily: 'Poppins, sans-serif',
-                                    fontWeight: 500,
-                                    mt: 0.5,
-                                    border: theme.palette.error.contrastText,
-                                },
-                                "& .MuiOutlinedInput-root": {
-                                    borderRadius: "8px",
-                                    "&.Mui-error .MuiOutlinedInput-notchedOutline": {
-                                        borderColor: theme.palette.error.contrastText,
-                                        borderWidth: "1.5px",
-                                    },
-                                },
-                            }}
-                            required
-                        />
-                    </Box>
-
-                </Box>
-                {/* Save Button */}
-                <CustomButton
-                    text="Save Changes"
-                    onClick={handleSave}
-                    height={40}
+                <Box
                     sx={{
-                        marginTop: 5,
-                        width: 'fit-contemt'
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
+                        maxWidth: "50%",
                     }}
-                />
+                >
+                    {(["current", "new", "confirm"] as FieldKey[]).map((key) => {
+                        const isConfirm = key === "confirm";
+                        const showError = errors[key] || (isConfirm && passwordMismatch);
+                        const helperText = errors[key]
+                            ? "This field is required"
+                            : isConfirm && passwordMismatch
+                                ? "Passwords do not match"
+                                : "";
+
+                        return (
+                            <Box
+                                key={key}
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    gap: 1,
+                                    width: "100%",
+                                }}
+                            >
+                                <Typography
+                                    sx={{
+                                        fontFamily: "Poppins, sans-serif",
+                                        fontSize: "0.9rem",
+                                        fontWeight: 450,
+                                        color: theme.palette.text.primary,
+                                    }}
+                                >
+                                    {labels[key]}
+                                </Typography>
+                                <TextField
+                                    id={ids[key]}
+                                    inputRef={currentRef}
+                                    fullWidth
+                                    size="small"
+                                    type={show[key] ? "text" : "password"}
+                                    value={values[key]}
+                                    onChange={(e) =>
+                                        handleChange(key, e.target.value)
+                                    }
+                                    InputProps={{
+                                        style: {
+                                            fontFamily: "Poppins, sans-serif",
+                                            fontSize: "0.9rem",
+                                        },
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    onClick={() => handleToggleShow(key)}
+                                                    edge="end"
+                                                    sx={{
+                                                        color: theme.palette.text.secondary,
+                                                        "&:hover": {
+                                                            color: theme.palette.primary.main,
+                                                        },
+                                                    }}
+                                                >
+                                                    {show[key] ? (
+                                                        <Visibility />
+                                                    ) : (
+                                                        <VisibilityOff />
+                                                    )}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    error={showError}
+                                    helperText={helperText}
+                                    sx={{
+                                        "& .MuiFormHelperText-root.Mui-error": {
+                                            color: theme.palette.error.contrastText,
+                                            fontFamily: "Poppins, sans-serif",
+                                            fontWeight: 500,
+                                            mt: 0.5,
+                                            border: theme.palette.error.contrastText,
+                                        },
+                                        "& .MuiOutlinedInput-root": {
+                                            borderRadius: "8px",
+                                            "&.Mui-error .MuiOutlinedInput-notchedOutline": {
+                                                borderColor: theme.palette.error.contrastText,
+                                                borderWidth: "1.5px",
+                                            },
+                                        },
+                                    }}
+                                    required
+                                />
+                            </Box>
+                        );
+                    })}
+                </Box>
+
+                <Box mt={5} width="fit-content">
+                    <CustomButton
+                        text="Save Changes"
+                        onClick={handleSave}
+                        height={40}
+                    />
+                </Box>
             </Box>
+
             <SuccessPopup
                 open={successPopup}
-                onClose={() => setSuccessPopup(true)}
+                onClose={() => setSuccessPopup(false)}
                 message="Your password has been successfully changed."
             />
         </Box>

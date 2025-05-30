@@ -1,4 +1,3 @@
-// src/pages/EditAccount.tsx
 import React, { useState } from 'react';
 import {
     Box,
@@ -67,7 +66,7 @@ const EditAccount: React.FC = () => {
         <Box>
             <Box sx={{ display: 'flex', padding: 4, height: '100vh' }}>
                 {/* Left Sidebar */}
-                <Box sx={{ flex: 1, maxWidth: 400, pr: 5 }}>
+                <Box sx={{ flex: 1, maxWidth: 380, pr: 5 }}>
                     <Link href="/">
                         <Box
                             component="img"
@@ -80,7 +79,7 @@ const EditAccount: React.FC = () => {
                         sx={{
                             fontWeight: 650,
                             color: theme.palette.primary.main,
-                            fontSize: '1.23rem',
+                            fontSize: '1.2rem',
                             fontFamily: 'Poppins, sans-serif',
                         }}
                     >
@@ -143,7 +142,7 @@ const EditAccount: React.FC = () => {
                 <Divider orientation="vertical" flexItem sx={{ mx: 2, bgcolor: theme.palette.divider }} />
 
                 {/* Content Area */}
-                <Box sx={{ flex: 2, pl: 5 }}>
+                <Box sx={{ flex: 2, pl: 3 }}>
                     {renderContent()}
                 </Box>
             </Box>
