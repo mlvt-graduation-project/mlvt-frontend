@@ -10,6 +10,7 @@ import Storage from "./pages/storage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PersonalDetails from "./pages/edit_account";
 import EditAccount from "./pages/edit_account";
+import LandingPage from "./pages/landing";
 
 export const router = createBrowserRouter([
     {
@@ -55,6 +56,11 @@ export const router = createBrowserRouter([
     {
         path: '/edit_account',
         element: <EditAccount />,
+        errorElement: <Error />,
+    },
+    {
+        path: '/landing',
+        element: <LandingPage />,
         errorElement: <Error />,
     }
 ])

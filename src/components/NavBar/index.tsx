@@ -92,21 +92,25 @@ const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) =>
                         lastName: userData.user.last_name,
                         premium: userData.user.premium
                     });
+                    const avatarUrl = userData.user.avatar || '';
+                    const avatarCorrectUrl = avatarUrl.split('?X-Amz-Algorithm')[0];
+                    setAvatarUrl(avatarCorrectUrl);
+                    console.log("USER DATA: ", userData);
                 } catch (error) {
                     throw new Error(`Failed to fetch user data: ${error}`);
                 }
 
-                const avatarResponse = await fetch(`http://localhost:8080/api/users/${userId}/avatar-download-url`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`, // Add token to the Authorization header
-                        'Content-Type': 'application/json'
-                    }
-                });
+                // const avatarResponse = await fetch(`http://localhost:8080/api/users/${userId}/avatar-download-url`, {
+                //     method: 'GET',
+                //     headers: {
+                //         'Authorization': `Bearer ${token}`, // Add token to the Authorization header
+                //         'Content-Type': 'application/json'
+                //     }
+                // });
 
-                const avatarData = await avatarResponse.json();
-                const avatarDownloadUrl = avatarData.avatar_download_url;
-                setAvatarUrl(avatarDownloadUrl.split('?X-Amz-Algorithm')[0]);
+                // const avatarData = await avatarResponse.json();
+                // const avatarDownloadUrl = avatarData.avatar_download_url;
+                // setAvatarUrl(avatarDownloadUrl.split('?X-Amz-Algorithm')[0]);
             } catch (error) {
                 console.error('Failed to fetch user data:', error);
                 setError('Failed to fetch data');
