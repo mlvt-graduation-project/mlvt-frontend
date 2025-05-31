@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, TextField, Button, Typography, Divider, Checkbox } from '@mui/material';
+import { Box, TextField, Typography, Divider, Checkbox } from '@mui/material';
 import LoginSignup from '../../layout/LoginRegistration';
 import { useTheme } from '@mui/material/styles';
 import GoogleLoginButton from '../../components/SocialLoginButton/GoogleLoginButton';
@@ -8,6 +8,8 @@ import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { CustomButton } from '../../components/CustomButton';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const InputStyles = (theme: any) => ({
     sx: {
@@ -198,7 +200,24 @@ const Login = () => {
                 margin="normal"
                 size="small"
                 required
-                InputProps={InputStyles(theme)}
+                InputProps={{
+                    ...InputStyles(theme),
+                    endAdornment: (
+                        <Box
+                            sx={{
+                                cursor: 'pointer',
+                                color: theme.palette.text.secondary,
+                                marginRight: 1,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? (<VisibilityOff />) : (<Visibility />)}
+                        </Box>
+                    ),
+                }}
                 sx={{
                     marginTop: 1.5,
                     '& .MuiOutlinedInput-root': {
@@ -286,24 +305,17 @@ const Login = () => {
             </Box>
 
             {/* Login Button */}
-            <Button
-                variant="contained"
-                fullWidth
+            <CustomButton
+                text='LOG IN'
                 onClick={handleLogin}
+                loading={loading}
                 sx={{
                     marginBottom: 2,
-                    marginTop: 3.5,
-                    borderRadius: 1,
-                    backgroundColor: theme.palette.primary.main,
-                    fontFamily: 'Poppins, sans-serif',
-                    fontWeight: '600',
-                    fontSize: '1rem',
-                    height: '2.5rem',
+                    marginTop: 2,
+                    borderRadius: 1.25,
+                    width: '100%',
                 }}
-                disabled={loading}
-            >
-                {loading ? 'Logging in...' : 'LOG IN'}
-            </Button>
+            />
 
             {/* Divider */}
             <Divider sx={{ my: 1.5, fontFamily: 'Poppins, sans-serif', fontSize: '0.8rem' }}>Or</Divider>
@@ -349,6 +361,6 @@ const Login = () => {
 };
 
 export default Login;
-function isTokenExpired(authToken: string) {
-    throw new Error('Function not implemented.');
-}
+// function isTokenExpired(authToken: string) {
+//     throw new Error('Function not implemented.');
+// }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, TextField, Button, Typography, Divider, IconButton, InputAdornment } from '@mui/material';
+import { Box, TextField, Typography, Divider, IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import LoginSignup from '../../layout/LoginRegistration';
 import { useTheme } from '@mui/material/styles';
@@ -7,7 +7,7 @@ import GoogleLoginButton from '../../components/SocialLoginButton/GoogleLoginBut
 import FacebookLoginButton from '../../components/SocialLoginButton/FacebookLoginButton';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useSnackbar } from 'notistack';
+import { CustomButton } from '../../components/CustomButton'
 
 const nameOfField = {
     firstName: 'First Name',
@@ -48,7 +48,6 @@ interface FormState {
 const Signup: React.FC = () => {
     const theme = useTheme();
     const navigate = useNavigate();
-    const { enqueueSnackbar } = useSnackbar();
 
     const [formData, setFormData] = useState<FormState>({
         firstName: '',
@@ -97,7 +96,7 @@ const Signup: React.FC = () => {
         try {
             const response = await axios.post('http://localhost:8080/api/users/register', requestData);
             console.log(response.data);
-            navigate('/login', { state: { successMessage: 'Sign up successful!' } }); // Navigate and pass the success message
+            navigate('/login', { state: { successMessage: 'Sign up successful!' } }); 
         } catch (error) {
             console.error(error);
             setError('Failed to register. Please try again.');
@@ -253,6 +252,9 @@ const Signup: React.FC = () => {
                                                 : toggleConfirmPasswordVisibility
                                         }
                                         edge="end"
+                                        sx={{
+                                            color: theme.palette.text.secondary
+                                        }}
                                         aria-label={`toggle ${field} visibility`}
                                     >
                                         {field === 'password' ? (
@@ -294,28 +296,17 @@ const Signup: React.FC = () => {
             )}
 
             {/* Sign Up Button */}
-            <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                disabled={loading}
+            <CustomButton 
+                text='SIGN UP'
+                onClick={handleSignup}
+                loading={loading}
                 sx={{
                     marginBottom: 2,
-                    marginTop: 5.5,
-                    borderRadius: 2.5,
-                    backgroundColor: theme.palette.primary.main,
-                    fontFamily: 'Poppins, sans-serif',
-                    fontWeight: theme.typography.fontWeightBold,
-                    fontSize: '1rem',
-                    height: '2.5rem',
-                    '&:hover': {
-                        backgroundColor: theme.palette.primary.dark,
-                    },
+                    marginTop: 2,
+                    borderRadius: 1.25,
+                    width: '100%',
                 }}
-                onClick={handleSignup}
-            >
-                {loading ? 'Signing up...' : 'SIGN UP'}
-            </Button>
+            />
 
             {/* Divider */}
             <Divider sx={{ my: 1.5, fontFamily: 'Poppins, sans-serif', fontSize: '0.8rem' }}>Or</Divider>

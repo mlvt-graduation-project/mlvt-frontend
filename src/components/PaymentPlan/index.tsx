@@ -8,34 +8,16 @@ import {
     FormControlLabel,
     Typography,
     Avatar,
-    Grid,
-    TextField,
     Stack,
     useTheme,
 } from '@mui/material';
-import CreditCardIcon from '@mui/icons-material/CreditCard';
 import momoLogo from '../../assets/momo_logo.png';
 import visaCard from '../../assets/visa_card.jpg';
 import masterCard from '../../assets/master_card.jpg';
 import { CustomButton } from '../CustomButton';
+import CardDetailsForm from '../CardDetailForm';
 
 type Method = 'momo' | 'card';
-
-const labelSX = {
-    fontSize: '0.9rem',
-    fontWeight: 500,
-    fontFamily: 'Poppins, sans-serif',
-    mb: 0.8,
-};
-
-const inputBaseSX = {
-    '& .MuiInputBase-input': {
-        padding: '10px 14px',
-        fontFamily: 'Poppins, sans-serif',
-        fontSize: '1rem',
-    },
-};
-
 
 const PaymentPlan: React.FC = () => {
     const theme = useTheme();
@@ -43,8 +25,14 @@ const PaymentPlan: React.FC = () => {
 
     // State to manage payment method selection
     const [cardNumber, setCardNumber] = useState('');
+    const [cardHolderName, setCardHolderName] = useState('');
     const [expiryDate, setExpiryDate] = useState('');
     const [securityCode, setSecurityCode] = useState('');
+
+    const handleCardHolderNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+        setCardHolderName(value);
+    };
 
     const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const rawValue = e.target.value.replace(/\D/g, ''); // Remove non-digits
@@ -101,8 +89,8 @@ const PaymentPlan: React.FC = () => {
     };
 
     const handleSecurityCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const inputValue = event.target.value.replace(/\D/g, ''); 
-        setSecurityCode(inputValue.substring(0, 3)); 
+        const inputValue = event.target.value.replace(/\D/g, '');
+        setSecurityCode(inputValue.substring(0, 3));
     };
 
     return (
@@ -182,69 +170,16 @@ const PaymentPlan: React.FC = () => {
                                 </Stack>
                             </Box>
                             {method === 'card' && (
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12}>
-                                        <Typography sx={labelSX}>
-                                            Card Number
-                                        </Typography>
-                                        <TextField
-                                            fullWidth
-                                            placeholder="XXXX XXXX XXXX XXXX"
-                                            inputProps={{
-                                                style: {
-                                                    fontFamily: 'Poppins, sans-serif',
-                                                    fontSize: '1rem',
-                                                },
-                                            }}
-                                            value={cardNumber}
-                                            sx={inputBaseSX}
-                                            InputProps={{
-                                                startAdornment: (
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', mr: 1 }}>
-                                                        <CreditCardIcon sx={{ color: theme.palette.text.secondary }} />
-                                                    </Box>
-                                                ),
-                                            }}
-                                            onChange={handleCardNumberChange}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography sx={labelSX}>
-                                            Expiry Date
-                                        </Typography>
-                                        <TextField
-                                            fullWidth
-                                            placeholder="MM/YY"
-                                            inputProps={{
-                                                style: {
-                                                    fontFamily: 'Poppins, sans-serif',
-                                                    fontSize: '1rem',
-                                                },
-                                            }}
-                                            sx={inputBaseSX}
-                                            value={expiryDate}
-                                            onChange={handleExpiryDateChange}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography sx={labelSX}>
-                                            Security Code
-                                        </Typography>
-                                        <TextField
-                                            fullWidth
-                                            placeholder="CVV"
-                                            inputProps={{
-                                                style: {
-                                                    fontFamily: 'Poppins, sans-serif',
-                                                    fontSize: '1rem',
-                                                },
-                                            }}
-                                            sx={inputBaseSX}
-                                            value={securityCode}
-                                            onChange={handleSecurityCodeChange}
-                                        />
-                                    </Grid>
-                                </Grid>
+                                <CardDetailsForm
+                                    cardHolderName={cardHolderName}
+                                    cardNumber={cardNumber}
+                                    expiryDate={expiryDate}
+                                    securityCode={securityCode}
+                                    onCardHolderNameChange={handleCardHolderNameChange}
+                                    onCardNumberChange={handleCardNumberChange}
+                                    onExpiryDateChange={handleExpiryDateChange}
+                                    onSecurityCodeChange={handleSecurityCodeChange}
+                                />
                             )}
                         </CardContent>
                     </Card>

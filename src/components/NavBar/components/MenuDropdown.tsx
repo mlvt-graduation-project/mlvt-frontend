@@ -44,7 +44,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
 
     const menuItems = [
         { type: MenuItemType.ACCOUNT_EDIT, label: 'Edit account', icon: <AccountCircle />, path: '/edit_account' },
-        { type: MenuItemType.PREMIUM, label: 'Premium membership', icon: <WorkspacePremiumSharp />, path: '/premium' },
+        { type: MenuItemType.PREMIUM, label: 'Premium membership', icon: <WorkspacePremiumSharp />, path: '/premium_membership' },
         {
             type: MenuItemType.APPEARANCE,
             label: `Appearance: ${theme.palette.mode === 'light' ? 'Light' : 'Dark'}`,

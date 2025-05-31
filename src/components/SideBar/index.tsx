@@ -7,7 +7,7 @@ import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import MenuIcon from "@mui/icons-material/Menu";
 import MLVTLogo from "../../assets/mlvt_logo.png";
 
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import {
     Box,
     Typography,
@@ -37,7 +37,7 @@ const navLinks: NavLink[] = [
     {
         name: "Premium",
         icon: <LocalActivityOutlinedIcon />,
-        link: "/",
+        link: "/premium_membership",
     },
     {
         name: "About us",
@@ -52,7 +52,6 @@ const navLinks: NavLink[] = [
 ];
 
 const Sidebar: React.FC = () => {
-    const { pathname } = useLocation();
     const theme = useTheme();
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 

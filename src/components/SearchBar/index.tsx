@@ -15,7 +15,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ placeholder, onChange, searchBarW
         <Box sx={{
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: theme.palette.secondary.main,
+            backgroundColor: theme.palette.tertiary.main,
             width: '100%',
             height: '2.2rem',
             borderRadius: '0.7rem',
@@ -31,7 +31,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ placeholder, onChange, searchBarW
                 onChange={onChange}
                 sx={{
                     width: searchBarWidth,
-                    fontSize: '0.9rem'
+                    fontSize: '0.9rem',
+                    fontFamily: 'Poppins, sans-serif',
                 }}
                 disableUnderline
             />

@@ -35,7 +35,8 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({ open, onClose, message }) =
                 <CheckCircleIcon
                     sx={{
                         fontSize: 100,
-                        color: theme.palette.success.main,
+                        // color: theme.palette.success.main,
+                        color: '#4CAF50',
                         alignSelf: 'center',
                     }}
                 />
@@ -46,7 +47,7 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({ open, onClose, message }) =
                         fontWeight: theme.typography.fontWeightBold,
                         fontSize: '1.5rem',
                         marginTop: 5,
-                        color: theme.palette.success.main
+                        color: '#4CAF50'
                     }}
                 >
                     {message}
