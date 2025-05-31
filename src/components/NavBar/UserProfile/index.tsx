@@ -21,7 +21,7 @@ const menuItems = [
     { label: 'Premium membership', icon: <WorkspacePremiumSharp /> },
     { label: 'Language: English', icon: <Language /> },
     { label: 'Appearance: Light', icon: <LightMode /> },
-    { label: 'Help & Support', icon: <Help /> },
+    { label: 'Help & Support', icon: <Help />, path: '/help_and_support' },
     { label: 'Log out', icon: <Logout /> }
 ]
 
