@@ -20,7 +20,7 @@ const SignupSuccess = () => {
                 <Typography
                     variant="h4"
                     sx={{
-                        color: theme.fontColor.black,
+                        // color: theme.fontColor.black,
                         fontFamily: theme.typography.h1,
                         fontWeight: theme.typography.fontWeightBold,
                         fontSize: 60,
@@ -32,7 +32,7 @@ const SignupSuccess = () => {
                 <CheckCircleIcon
                     sx={{
                         fontSize: 200,
-                        color: theme.status.succeeded.fontColor,
+                        // color: theme.status.succeeded.fontColor,
                         alignSelf: 'center',
                     }}
                 />
@@ -43,7 +43,7 @@ const SignupSuccess = () => {
                         fontWeight: theme.typography.fontWeightBold,
                         fontSize: '2rem',
                         marginTop: 5,
-                        color: theme.status.succeeded.fontColor,
+                        // color: theme.status.succeeded.fontColor,
                     }}
                 >
                     REGISTRATION SUCCESSFULLY
@@ -63,7 +63,7 @@ const SignupSuccess = () => {
                     <Typography
                         component="span"
                         sx={{
-                            color: theme.background.main,
+                            // color: theme.background.main,
                             cursor: 'pointer',
                             textDecoration: 'underline',
                         }}

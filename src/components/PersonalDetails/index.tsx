@@ -1,26 +1,26 @@
 import React, { useRef, useState } from "react";
-import { Box, Typography, TextField, Button, Avatar, Grid, Snackbar, Alert } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { Box, Typography, TextField, Button, Avatar, Grid } from "@mui/material";
+import { alpha, useTheme } from "@mui/material/styles";
 import { updateUser } from "../../api/user.api";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import { getPresignedImageURL } from "../../api/video.api";
 import SuccessPopup from "../SuccessPopup";
+import { Edit } from "@mui/icons-material";
+import { UserUpdateData, UserWithAvatar } from "../../types/Response/User";
+import { CustomButton } from "../CustomButton";
 
 interface UserDetails {
+    user: UserWithAvatar;
+}
+interface EditableUserData {
     firstName: string;
     lastName: string;
-    username: string;
-    email: string;
-    createdDate: string;
-    userRole: string;
-    premiumExpiredDate: string;
-    avatarSrc: string;
 }
 
 const s3ApiClient = axios.create({
     // No base URL, timeouts, or headers needed here
-  });
+});
 
 const uploadImageToS3 = async (uploadUrl: string, file: File) => {
     try {
@@ -28,7 +28,7 @@ const uploadImageToS3 = async (uploadUrl: string, file: File) => {
         console.log(file.type);
         const response = await s3ApiClient.put(uploadUrl, file, {
             headers: {
-                'Content-Type': file.type  // As needed, based on your server's presigned URL expectations
+                'Content-Type': file.type
             }
         });
         return response;
@@ -38,37 +38,31 @@ const uploadImageToS3 = async (uploadUrl: string, file: File) => {
     }
 }
 
-const PersonalDetails: React.FC<UserDetails> = ({firstName, lastName, username, email, createdDate, userRole, premiumExpiredDate, avatarSrc}) => {
-    const [userData, setUserData] = useState<UserDetails>({
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        email: email,
-        createdDate: createdDate,
-        userRole: userRole,
-        premiumExpiredDate: premiumExpiredDate,
-        avatarSrc: avatarSrc
+const PersonalDetails: React.FC<UserDetails> = ({
+    user
+}) => {
+
+    const [userData, setUserData] = useState<EditableUserData>({
+        firstName: user.first_name,
+        lastName: user.last_name,
     });
+
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [showSuccessPopup, setShowSuccessPopup] = useState(false); // Manage snackbar state
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
     const theme = useTheme();
     const { userId } = useAuth();
 
-    const [avatar, setAvatar] = useState<string>("");
+    const [avatarPreview, setAvatarPreview] = useState<string>("");
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
             const file = event.target.files[0];
             const reader = new FileReader();
-
-            // Read the file as a data URL to display as an image
-            reader.onload = () => {
-                if (reader.result) {
-                    setAvatar(reader.result as string);
-                }
-            };
+            reader.onload = () => reader.result && setAvatarPreview(reader.result as string);
             reader.readAsDataURL(file);
+            // optionally upload immediately:
+            await uploadAvatar(file);
         }
     };
 
@@ -77,46 +71,33 @@ const PersonalDetails: React.FC<UserDetails> = ({firstName, lastName, username, 
         setUserData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleClick = () => {
-        if (fileInputRef.current !== null) {
-            fileInputRef.current.click();
-        }
-    };
+    const handleClick = () => fileInputRef.current?.click();
 
     const handleSave = async () => {
         if (!userId) {
             console.error("User ID is null. Cannot update user data.");
             return;
         }
-
         try {
-            const updatedData = {
+            const updatedData: UserUpdateData = {
                 first_name: userData.firstName,
                 last_name: userData.lastName,
-                username: userData.username,
-                email: userData.email,
-                premium: false,
-                role: userData.userRole
-            }
+                // avatar: avatarPreview || avatarSrc, 
+            };
 
             const updatedDataResponse = await updateUser(userId, updatedData);
-            
-            // if (fileInputRef.current?.files && fileInputRef.current.files[0]) {
-            //     const file = fileInputRef.current.files[0];
-            //     console.log("Uploading avatar...");
-            //     await uploadAvatar(file);
-            //     console.log("Avatar uploaded successfully!");
-            // }
+            console.log('Updated user data:', updatedDataResponse);
 
             setShowSuccessPopup(true);
 
             setTimeout(() => {
                 window.location.reload();
             }, 3000);
-        } catch (error) {
+        }
+        catch (error) {
             console.error('Failed to update user data:', error);
         }
-    };
+    }
 
     const uploadAvatar = async (file: File) => {
         try {
@@ -142,24 +123,30 @@ const PersonalDetails: React.FC<UserDetails> = ({firstName, lastName, username, 
 
     return (
         <>
-            <Box >
-                {/* Title */}
-                <Typography variant="h5" sx={{ marginBottom: 1, fontWeight: "bold" }}>
+            <Box p={4}>
+                <Typography sx={{
+                    marginBottom: 1,
+                    fontWeight: 600,
+                    fontFamily: 'Poppins, sans-serif',
+                    fontSize: "2rem",
+                    color: theme.palette.primary.main
+                }}>
                     Personal details
                 </Typography>
-                <Typography sx={{ marginBottom: 3, color: "gray" }}>
-                    MLVT use the provided information to personalize your experience
+                <Typography sx={{
+                    marginBottom: 4,
+                    fontFamily: 'Poppins, sans-serif',
+                    fontSize: "0.9rem",
+                    fontWeight: 400,
+                    color: theme.palette.text.secondary
+                }}>
+                    Update your personal information and profile settings
                 </Typography>
-
-                {/* Profile Avatar */}
-                <Typography sx={{ marginBottom: 2 }}>
-                    Profile Avatar
-                </Typography>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 4 }}>
+                <Box sx={{ position: 'relative', width: 130, height: 130, mb: 4 }}>
                     <Avatar
-                        src={avatar != "" ? avatar : avatarSrc} // Replace with actual image path
+                        src={avatarPreview}
                         alt="Profile Avatar"
-                        sx={{ width: 80, height: 80 }}
+                        sx={{ width: '100%', height: '100%' }}
                     />
                     <input
                         type="file"
@@ -168,135 +155,248 @@ const PersonalDetails: React.FC<UserDetails> = ({firstName, lastName, username, 
                         ref={fileInputRef}
                         onChange={handleFileChange}
                     />
-                    <Button
-                        variant="outlined" 
-                        size="small"
+                    <Box
                         onClick={handleClick}
                         sx={{
-                            backgroundColor: "#E0E0E0",
-                            color: "#000",
-                            borderRadius: "12px",
-                            fontWeight: "bold",
-                            textTransform: "uppercase",
-                            boxShadow: "none",
-                            "&:hover": {
-                            backgroundColor: "#D6D6D6",
-                            boxShadow: "none",
-                            },
+                            position: 'absolute', inset: 0,
+                            bgcolor: 'rgba(0,0,0,0.5)',
+                            borderRadius: '50%',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            color: '#fff',
+                            opacity: 0,
+                            transition: 'opacity 0.3s',
+                            cursor: 'pointer',
+                            '&:hover': { opacity: 1 },
+                            gap: 0.7,
                         }}
                     >
-                        CHANGE
-                    </Button>
+                        <Edit sx={{ fontSize: '1.2rem' }} />
+                        <Typography sx={{ fontWeight: 500, fontFamily: 'Poppins, sans-serif', fontSize: '0.85rem' }}>
+                            Edit Avatar
+                        </Typography>
+                    </Box>
                 </Box>
 
                 {/* User Information Fields */}
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                    <TextField
-                        fullWidth
-                        label="First name"
-                        name="firstName"
-                        value={userData.firstName}
-                        onChange={handleChange}
-                    />
+                <Grid container rowSpacing={2} columnSpacing={3} paddingRight={20}>
+                    <Grid item xs={12} sm={6} sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                        <Typography sx={{
+                            fontWeight: 400,
+                            fontFamily: 'Poppins, sans-serif',
+                            fontSize: "0.8rem",
+                            color: theme.palette.text.primary,
+                        }}>
+                            First name
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            name="firstName"
+                            value={userData.firstName}
+                            onChange={handleChange}
+                            sx={{
+                                '& .MuiInputBase-input': {
+                                    color: theme.palette.text.primary,
+                                    fontFamily: 'Poppins, sans-serif',
+                                }
+                            }}
+                        />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                    <TextField
-                        fullWidth
-                        label="Last name"
-                        name="lastName"
-                        value={userData.lastName}
-                        onChange={handleChange}
-                    />
+                    <Grid item xs={12} sm={6} sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                        <Typography sx={{
+                            fontWeight: 400,
+                            fontFamily: 'Poppins, sans-serif',
+                            fontSize: "0.8rem",
+                            color: theme.palette.text.primary,
+                        }}>
+                            Last name
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            name="lastName"
+                            value={userData.lastName}
+                            onChange={handleChange}
+                            sx={{
+                                '& .MuiInputBase-input': {
+                                    color: theme.palette.text.primary,
+                                    fontFamily: 'Poppins, sans-serif',
+                                }
+                            }}
+                        />
                     </Grid>
-                    <Grid item xs={12}>
-                    <TextField
-                        fullWidth
-                        label="User name"
-                        name="username"
-                        value={userData.username}
-                        onChange={handleChange}
-                    />
+                    <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                        <Typography sx={{
+                            fontWeight: 400,
+                            fontFamily: 'Poppins, sans-serif',
+                            fontSize: "0.8rem",
+                            color: theme.palette.text.primary,
+                        }}>
+                            Email address
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            name="email"
+                            variant="outlined"
+                            InputProps={{ readOnly: true }}
+                            value={user.email}
+                            onChange={handleChange}
+                            sx={{
+                                backgroundColor: alpha(theme.palette.text.disabled, 0.15),
+                                borderRadius: '8px',
+                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'transparent',
+                                    borderWidth: '0px',
+                                },
+                                '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'transparent',
+                                    borderWidth: '0px',
+                                },
+                                '& .MuiInputBase-input': {
+                                    color: theme.palette.text.primary,
+                                    fontFamily: 'Poppins, sans-serif',
+                                }
+                            }}
+                        />
                     </Grid>
-                    <Grid item xs={12}>
-                    <TextField
-                        fullWidth
-                        label="Email"
-                        name="email"
-                        value={userData.email}
-                        onChange={handleChange}
-                    />
+                    <Grid item xs={12} sm={6} sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                        <Typography sx={{
+                            fontWeight: 400,
+                            fontFamily: 'Poppins, sans-serif',
+                            fontSize: "0.8rem",
+                            color: theme.palette.text.primary,
+                        }}>
+                            Username
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            name="username"
+                            value={user.username}
+                            onChange={handleChange}
+                            sx={{
+                                '& .MuiInputBase-input': {
+                                    color: theme.palette.text.primary,
+                                    fontFamily: 'Poppins, sans-serif',
+                                }
+                            }}
+                        />
                     </Grid>
-                    <Grid item xs={12}>
-                    <TextField
-                        fullWidth
-                        label="Created date"
-                        value={userData.createdDate}
-                        InputProps={{ readOnly: true }}
-                        sx={{
-                            backgroundColor: "#dfe4e8"
-                        }}
-                    />
+
+                    <Grid item xs={12} sm={6} sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                        <Typography sx={{
+                            fontWeight: 400,
+                            fontFamily: 'Poppins, sans-serif',
+                            fontSize: "0.8rem",
+                            color: theme.palette.text.primary,
+                        }}>
+                            Created date
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            value={user.created_at}
+                            // value={dayjs(userData.createdDate).format('DD MMM YYYY HH:mm')}
+                            InputProps={{ readOnly: true }}
+                            sx={{
+                                backgroundColor: alpha(theme.palette.text.disabled, 0.15),
+                                borderRadius: '8px',
+                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'transparent',
+                                    borderWidth: '0px',
+                                },
+                                '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'transparent',
+                                    borderWidth: '0px',
+                                },
+                                '& .MuiInputBase-input': {
+                                    color: theme.palette.text.primary,
+                                    fontFamily: 'Poppins, sans-serif',
+                                }
+                            }}
+                        />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                    <TextField
-                        fullWidth
-                        label="User role"
-                        value={userData.userRole}
-                        InputProps={{ readOnly: true }}
-                        sx={{
-                            backgroundColor: "#dfe4e8"
-                        }}
-                    />
+                    <Grid item xs={12} sm={6} sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                        <Typography sx={{
+                            fontWeight: 400,
+                            fontFamily: 'Poppins, sans-serif',
+                            fontSize: "0.8rem",
+                            color: theme.palette.text.primary,
+                        }}>
+                            User role
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            value={user.role}
+                            InputProps={{ readOnly: true }}
+                            sx={{
+                                backgroundColor: alpha(theme.palette.text.disabled, 0.15),
+                                borderRadius: '8px',
+                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'transparent',
+                                    borderWidth: '0px',
+                                },
+                                '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'transparent',
+                                    borderWidth: '0px',
+                                },
+                                '& .MuiInputBase-input': {
+                                    color: theme.palette.text.primary,
+                                    fontFamily: 'Poppins, sans-serif',
+                                }
+                            }}
+                        />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                    <TextField
-                        fullWidth
-                        label="Premium expired date"
-                        value={userData.premiumExpiredDate}
-                        InputProps={{ readOnly: true }}
-                        sx={{
-                            backgroundColor: "#dfe4e8"
-                        }}
-                    />
+                    <Grid item xs={12} sm={6} sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                        <Typography sx={{
+                            fontWeight: 400,
+                            fontFamily: 'Poppins, sans-serif',
+                            fontSize: "0.8rem",
+                            color: theme.palette.text.primary,
+                        }}>
+                            Premium expired date
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            variant="outlined"
+                            value={user.premium}
+                            InputProps={{ readOnly: true }}
+                            sx={{
+                                backgroundColor: alpha(theme.palette.text.disabled, 0.15),
+                                borderRadius: '8px',
+                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'transparent',
+                                    borderWidth: '0px',
+                                },
+                                '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'transparent',
+                                    borderWidth: '0px',
+                                },
+                                '& .MuiInputBase-input': {
+                                    color: theme.palette.text.primary,
+                                    fontFamily: 'Poppins, sans-serif',
+                                }
+                            }}
+                        />
                     </Grid>
                 </Grid>
 
                 {/* Save Button */}
-                <Button
-                    variant="contained"
-                    sx={{
-                        backgroundColor: theme.background.main,
-                        color: "#FFFFFF",
-                        borderRadius: "10px",
-                        fontWeight: "bold",
-                        textTransform: "uppercase",
-                        padding: "0.6rem 2rem",
-                        marginLeft: "auto",
-                        marginTop: "10px",
-                        boxShadow: "none",
-                        "&:hover": {
-                        backgroundColor: "#6C1CBF",
-                        boxShadow: "none",
-                        },
-                    }}
+                <CustomButton
+                    text="Save Changes"
+                    height={40}
                     onClick={handleSave}
-                >
-                    SAVE
-                </Button>
+                    sx={{
+                        marginTop: 5,
+                        width: 'fit-content',
+                    }}
+                />
             </Box>
 
             {/* Success Popup */}
-            {/* <Snackbar
-                open={showSuccessPopup}
-                autoHideDuration={3000} // Auto-hide after 3 seconds
-                onClose={() => setShowSuccessPopup(false)} // Close on dismissal
-                anchorOrigin={{ vertical: "top", horizontal: "center" }}
-            >
-                <Alert onClose={() => setShowSuccessPopup(false)} severity="success" sx={{ width: "100%" }}>
-                    User details updated successfully!
-                </Alert>
-            </Snackbar> */}
             <SuccessPopup
                 open={showSuccessPopup}
                 onClose={() => setShowSuccessPopup(false)}

@@ -1,183 +1,296 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Grid, Typography } from '@mui/material';
+import React, { useEffect, useState, ReactNode } from 'react';
+import { Box, List, ListItem, ListItemIcon, ListItemText, Typography, useTheme } from '@mui/material';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import theme from '../../config/theme';
-import OrderHistory from '../OrderHistory'; // Ensure this is the correct import path
+import OrderHistory from '../OrderHistory';
 import { RedeemCode } from '../RedeemCode';
 import { getWalletBalance } from '../../api/wallet.api';
 import { useAuth } from '../../context/AuthContext';
 import UploadNotification from '../UploadNotification';
+import SubscriptionPlanCard from './components/SubscriptionPlanCard';
+import PlanSummaryCard from '../PlanSummaryCard';
+import PaymentPlan from '../PaymentPlan';
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 
 interface ErrNoti {
     isOpen: boolean;
     status: 'fail' | 'success';
     content: string;
 }
+interface ActionCardProps {
+    icon: ReactNode;
+    label: string;
+    onClick: () => void;
+}
+
+const listItemCommonSx = {
+    cursor: 'pointer',
+    borderRadius: '0.5rem',
+    marginBottom: '0.5rem',
+    fontFamily: 'Poppins, sans-serif',
+};
+
+const ActionCard: React.FC<ActionCardProps> = ({ icon, label, onClick }) => {
+    const theme = useTheme();
+
+    return (
+        <Box
+            sx={{
+                backgroundColor: theme.palette.tertiary.main,
+                padding: 3,
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                height: '100%',
+                textAlign: 'center',
+                cursor: 'pointer',
+            }}
+            onClick={onClick}
+        >
+            {/* icon is passed in already sized & colored */}
+            {icon}
+            <Typography
+                sx={{
+                    fontWeight: 600,
+                    color: theme.palette.primary.main,
+                    fontFamily: 'Poppins, sans-serif',
+                }}
+            >
+                {label}
+            </Typography>
+        </Box>
+    );
+};
+
+type PlanManagementTabKey = 'planSummary' | 'paymentPlan' | 'backToVoucher';
+
+const PLAN_MANAGEMENT_TABS: {
+    key: PlanManagementTabKey;
+    label: string;
+    icon: React.ReactNode;
+}[] = [
+        { key: 'planSummary', label: 'Plan Summary', icon: <ReceiptIcon /> },
+        { key: 'paymentPlan', label: 'Payment Plan', icon: <CreditCardIcon /> },
+        { key: 'backToVoucher', label: 'Back to Voucher', icon: <KeyboardReturnIcon /> },
+    ];
 
 const Voucher: React.FC = () => {
-    const [currentView, setCurrentView] = useState('subscription');
+    const theme = useTheme();
+    type ViewType = 'subscription' | 'orderHistory' | 'redeemCode' | 'planManagement';
+    const [currentView, setCurrentView] = useState<ViewType>('subscription');
+    const [activePlanTab, setActivePlanTab] = useState<PlanManagementTabKey>('planSummary');
     const [errNoti, setErrNoti] = useState<ErrNoti>({
         isOpen: false,
         status: 'success',
         content: '',
     });
+
     const { userId, remainingToken, SetRemainingToken } = useAuth();
 
-    const handleViewChange = (view: string) => {
+    /* ------------------ callbacks ------------------ */
+    const handleViewChange = (view: ViewType) => {
         setCurrentView(view);
+        if (view === 'planManagement') {
+            setActivePlanTab('planSummary'); // Default to summary when entering this view
+        }
+    };
+    const handleCloseNotiPopup = () => setErrNoti(prev => ({ ...prev, isOpen: false }));
+
+    const handlePlanTabClick = (tabKey: PlanManagementTabKey) => {
+        if (tabKey === 'backToVoucher') {
+            setCurrentView('subscription');
+        } else {
+            setActivePlanTab(tabKey);
+        }
     };
 
-    const handleCloseNotiPopup = () => {
-        setErrNoti((prevData) => ({ ...prevData, isOpen: false }));
+    const handleUpdatePaymentMethod = () => {
+        setActivePlanTab('paymentPlan');
     };
 
+    /* ------------------ data load ------------------ */
     useEffect(() => {
         const fetchWalletBalance = async () => {
-            if (userId !== null) {
+            if (userId) {
                 try {
                     const walletBalance = await getWalletBalance(userId);
                     SetRemainingToken(walletBalance);
-                } catch (err) {
-                    setErrNoti((prevData) => ({
-                        ...prevData,
+                } catch {
+                    setErrNoti({
+                        isOpen: true,
                         status: 'fail',
                         content: 'Cannot fetch wallet balance',
-                        isOpen: true,
-                    }));
+                    });
                 }
             }
         };
+        if (currentView === 'subscription' && userId) {
+            fetchWalletBalance();
+        }
+    }, [userId, SetRemainingToken, currentView]);
 
-        fetchWalletBalance();
-    }, [userId]); // Add dependencies!
+    /* ------------------ early-returns ------------------ */
 
-    if (currentView === 'orderHistory') {
-        return <OrderHistory handleChangeView={handleViewChange} />;
+
+    if (currentView === 'orderHistory') return <OrderHistory handleChangeView={() => handleViewChange('subscription')} />;
+    if (currentView === 'redeemCode') return <RedeemCode handleChangeView={() => handleViewChange('subscription')} />;
+
+    if (currentView === 'planManagement') {
+        return (
+            <Box sx={{ display: 'flex', flexDirection: 'column', paddingX: 4, height: '100%', gap: 2, width: '90%' }}>
+                <Box>
+                    <Typography
+                        sx={{
+                            fontWeight: 600,
+                            color: theme.palette.primary.main,
+                            fontSize: '2rem',
+                            fontFamily: 'Poppins, sans-serif',
+                            mt: 5,
+                            mb: 0.5,
+                        }}
+                    >
+                        Manage Subscription
+                    </Typography>
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            color: theme.palette.text.secondary,
+                            mt: 0.5,
+                            mb: 4,
+                            fontFamily: 'Poppins, sans-serif',
+                        }}
+                    >
+                        View details or return to wallet.
+                    </Typography>
+
+                    <List sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: theme.spacing(1.5),
+                        padding: 0,
+                        width: '100%',
+                        overflowX: 'auto',
+                        marginBottom: theme.spacing(2),
+                    }}>
+                        {PLAN_MANAGEMENT_TABS.map(({ key, label, icon }) => {
+                            const isActive = activePlanTab === key && key !== 'backToVoucher';
+
+                            return (
+                                <ListItem
+                                    key={key}
+                                    onClick={() => handlePlanTabClick(key)}
+                                    sx={{
+                                        ...listItemCommonSx,
+                                        backgroundColor: isActive ? theme.palette.primary.main : 'transparent',
+                                        ...(key === 'backToVoucher' && { marginTop: 'auto' }) // Push back button down if desired, or style differently
+                                    }}
+                                >
+                                    <ListItemIcon>
+                                        {React.cloneElement(icon as React.ReactElement, {
+                                            sx: { color: isActive ? theme.palette.secondary.main : theme.palette.text.disabled }
+                                        })}
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={label}
+                                        sx={{
+                                            color: isActive ? theme.palette.secondary.main : theme.palette.text.disabled,
+                                            '& .MuiTypography-root': { fontFamily: 'inherit' },
+                                        }}
+                                    />
+                                </ListItem>
+                            );
+                        })}
+                    </List>
+                </Box>
+
+                <Box sx={{ flex: 1, overflowY: 'auto' }}>
+                    {activePlanTab === 'planSummary' && (
+                        <>
+                            <PlanSummaryCard
+                                planType="MONTHLY PREMIUM"
+                                nextChargeDate={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)}
+                                nextChargeAmount={remainingToken}
+                                benefits={['Benefit 1', 'Benefit 2', 'Benefit 3']}
+                                paymentMethod='Credit Card'
+                                paymentLogo={<CreditCardIcon sx={{ fontSize: '2rem', color: theme.palette.primary.main }} />}
+                                onUpdatePaymentClick={handleUpdatePaymentMethod}
+                            />
+                        </>
+                    )}
+                    {activePlanTab === 'paymentPlan' && (
+                        <PaymentPlan />
+                    )}
+                </Box>
+            </Box>
+        );
     }
-
-    if (currentView === 'redeemCode') {
-        return <RedeemCode handleChangeView={handleViewChange} />;
-    }
-
-    if (errNoti['isOpen']) {
+    if (errNoti.isOpen) {
         return (
             <UploadNotification
-                isOpen={errNoti['isOpen']}
+                isOpen={errNoti.isOpen}
                 onClose={handleCloseNotiPopup}
-                uploadStatus={errNoti['status']}
-                content={errNoti['content']}
-                okButtonVisible={true}
+                uploadStatus={errNoti.status}
+                content={errNoti.content}
+                okButtonVisible
                 navigateStorage={false}
             />
         );
     }
 
+    /* ------------------ render ------------------ */
     return (
-        <Box sx={{ padding: 1 }}>
-            {/* Title Section */}
-            <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
-                Wallet
+        <Box sx={{ padding: 4 }}>
+            {/* header */}
+            <Typography
+                sx={{
+                    mb: 1,
+                    fontWeight: 600,
+                    fontFamily: 'Poppins, sans-serif',
+                    fontSize: '2rem',
+                    color: theme.palette.primary.main,
+                }}
+            >
+                Subscription Plan – Wallet
             </Typography>
-            <Typography sx={{ color: 'gray', marginBottom: 3 }}>
-                Manage your token and redeem code history in convenient way
+            <Typography
+                sx={{
+                    mb: 4,
+                    fontFamily: 'Poppins, sans-serif',
+                    fontSize: '0.9rem',
+                    fontWeight: 400,
+                    color: theme.palette.text.secondary,
+                }}
+            >
+                Manage your token and redeem-code history in a convenient way
             </Typography>
 
-            {/* Content Section */}
-            <Grid container spacing={2}>
-                {/* Left Section: Plan Details */}
-                <Grid item xs={9}>
-                    <Box
-                        sx={{
-                            backgroundColor: '#F3E5F5',
-                            padding: 3,
-                            borderRadius: '12px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            height: '100%',
-                        }}
-                    >
-                        <Box>
-                            <Typography variant="h5" sx={{ fontWeight: 'bold', color: theme.background.main }}>
-                                YOUR WALLET
-                            </Typography>
-                            <Typography sx={{ fontSize: '1.3rem', color: 'gray', marginTop: 1 }}>
-                                Remaining token
-                            </Typography>
-                            <Typography sx={{ fontSize: '1.7rem', color: 'gray', marginTop: 1 }}>
-                                {remainingToken}
-                            </Typography>
-                        </Box>
-                        <Typography
-                            sx={{
-                                fontSize: '0.85rem',
-                                color: theme.background.main,
-                                textAlign: 'right',
-                                marginTop: 2,
-                                '& span:hover': {
-                                    color: 'blue',
-                                    cursor: 'pointer',
-                                },
-                            }}
-                        >
-                            <span>View out purchase plan</span>
-                        </Typography>
-                    </Box>
-                </Grid>
+            {/* content */}
+            <Box sx={{ display: 'flex', gap: 2 }}>
+                <Box width="75%">
+                    <SubscriptionPlanCard
+                        planType="MONTHLY PREMIUM"
+                        remainingToken={remainingToken}
+                        onManagePlanClick={() => handleViewChange('planManagement')}
+                    />
+                </Box>
 
-                {/* Right Section: Order History & Payment Method */}
-                <Grid item xs={12} sm={3}>
-                    <Grid container spacing={2} direction={'column'}>
-                        <Grid item xs={6} sm={6}>
-                            <Box
-                                sx={{
-                                    backgroundColor: '#F3E5F5',
-                                    padding: 3,
-                                    borderRadius: '12px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    flexDirection: 'column',
-                                    height: '100%',
-                                    textAlign: 'center',
-                                    cursor: 'pointer',
-                                }}
-                                onClick={() => handleViewChange('orderHistory')}
-                            >
-                                <ReceiptIcon sx={{ fontSize: '2rem', color: theme.background.main, marginBottom: 1 }} />
-                                <Typography sx={{ fontWeight: 'bold', color: theme.background.main }}>
-                                    Order History
-                                </Typography>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={6} sm={6}>
-                            <Box
-                                sx={{
-                                    backgroundColor: '#F3E5F5',
-                                    padding: 3,
-                                    borderRadius: '12px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    flexDirection: 'column',
-                                    height: '100%',
-                                    textAlign: 'center',
-                                    cursor: 'pointer',
-                                }}
-                                onClick={() => handleViewChange('redeemCode')}
-                            >
-                                <CreditCardIcon
-                                    sx={{ fontSize: '2rem', color: theme.background.main, marginBottom: 1 }}
-                                />
-                                <Typography sx={{ fontWeight: 'bold', color: theme.background.main }}>
-                                    Enter Redeem Code
-                                </Typography>
-                            </Box>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </Grid>
+                {/* right : two action cards */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, flexGrow: 1 }}>
+                    <ActionCard
+                        icon={<ReceiptIcon sx={{ fontSize: '2rem', color: theme.palette.primary.main, mb: 1 }} />}
+                        label="Order History"
+                        onClick={() => handleViewChange('orderHistory')}
+                    />
+                    <ActionCard
+                        icon={<CreditCardIcon sx={{ fontSize: '2rem', color: theme.palette.primary.main, mb: 1 }} />}
+                        label="Redeem Code"
+                        onClick={() => handleViewChange('redeemCode')}
+                    />
+                </Box>
+            </Box>
         </Box>
     );
 };

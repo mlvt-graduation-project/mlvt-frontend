@@ -1,10 +1,11 @@
 import React, { FC } from 'react';
-import { Dialog, DialogTitle, DialogContent, IconButton, Typography, Divider, Box, Link, Button } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, IconButton, Typography, Divider, Box, Link } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
+import { CustomButton } from '../CustomButton';
 // import VideoTransPopUp from '../VideoTransPopUp';
 
 interface UploadNotificationProps {
@@ -14,7 +15,7 @@ interface UploadNotificationProps {
     content: string | null;
     okButtonVisible?: boolean;
     navigateStorage?: boolean;
-    tittle?: string;
+    title?: string;
 }
 
 const UploadNotification: FC<UploadNotificationProps> = ({
@@ -24,7 +25,7 @@ const UploadNotification: FC<UploadNotificationProps> = ({
     content,
     okButtonVisible = false,
     navigateStorage = true,
-    tittle = 'Video Translation',
+    title = 'Video Translation',
 }) => {
     const isSuccess = uploadStatus === 'success';
     const navigate = useNavigate();
@@ -35,10 +36,11 @@ const UploadNotification: FC<UploadNotificationProps> = ({
             open={isOpen}
             maxWidth="sm"
             fullWidth
-            sx={{
-                zIndex: theme.zIndex.modal + 2,
-                padding: theme.spacing(2),
-                borderRadius: theme.spacing(1),
+            PaperProps={{
+                sx: {
+                    backgroundColor: 'transparent',
+                    borderRadius: '15px',
+                },
             }}
             onClose={onClose}
         >
@@ -54,15 +56,14 @@ const UploadNotification: FC<UploadNotificationProps> = ({
                     }}
                 >
                     <Typography
-                        variant="h6"
                         sx={{
                             flexGrow: 1,
                             fontWeight: 'bold',
-                            fontFamily: 'Araboto, Roboto, Arial, sans-serif',
+                            fontFamily: 'Poppins, sans-serif',
                             color: '#a60195',
                         }}
                     >
-                        {tittle}
+                        {title}
                     </Typography>
 
                     <IconButton onClick={onClose}>
@@ -73,21 +74,24 @@ const UploadNotification: FC<UploadNotificationProps> = ({
 
             <Divider orientation="horizontal" flexItem sx={{ borderBottomWidth: 2 }} />
 
-            <DialogContent>
-                <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
+            <DialogContent sx={{
+                bgcolor: theme.palette.background.paper,
+                paddingY: 4,     
+            }}>
+                <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" >
                     {isSuccess ? (
-                        <CheckCircleIcon sx={{ color: (theme) => theme.palette.success.main, fontSize: 80 }} />
+                        <CheckCircleIcon sx={{ color: theme.palette.success.contrastText, fontSize: 100 }} />
                     ) : (
-                        <CancelRoundedIcon sx={{ color: (theme) => theme.palette.error.main, fontSize: 80 }} />
+                        <CancelRoundedIcon sx={{ color: theme.palette.error.main, fontSize: 100 }} />
                     )}
 
                     <Typography
-                        variant="h6"
                         sx={{
                             flexGrow: 1,
-                            fontWeight: 'bold',
-                            fontFamily: 'Araboto, Roboto, Arial, sans-serif',
-                            color: (theme) => (isSuccess ? theme.palette.success.main : theme.palette.error.main),
+                            fontWeight: 600,
+                            fontFamily: 'Poppins, sans-serif',
+                            fontSize: '1.8rem',
+                            color: (theme) => (isSuccess ? theme.palette.success.contrastText : theme.palette.error.main),
                         }}
                     >
                         {isSuccess
@@ -116,9 +120,13 @@ const UploadNotification: FC<UploadNotificationProps> = ({
                 </Box>
                 {okButtonVisible && (
                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-                        <Button variant="contained" color="primary" sx={{ width: '20%', mx: 'auto' }} onClick={onClose}>
-                            Confirm
-                        </Button>
+                        <CustomButton
+                            text='Continue'
+                            onClick={onClose}
+                            sx={{
+                                fontSize: '1rem',
+                            }}
+                        />
                     </Box>
                 )}
             </DialogContent>

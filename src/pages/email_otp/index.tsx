@@ -41,7 +41,7 @@ const EmailOTP = () => {
             <Typography
                 variant="h4"
                 sx={{
-                    color: theme.fontColor.black,
+                    // color: theme.fontColor.black,
                     fontFamily: theme.typography.h1,
                     fontWeight: theme.typography.fontWeightBold,
                     fontSize: '4rem',
@@ -82,7 +82,7 @@ const EmailOTP = () => {
                     marginTop: 0.6,
                     "& .MuiOutlinedInput-root": {
                         "&.Mui-focused fieldset": {
-                            borderColor: theme.background.main,
+                            // borderColor: theme.background.main,
                         },
                     },
                 }}
@@ -94,7 +94,7 @@ const EmailOTP = () => {
                 FormHelperTextProps={{
                     sx: {
                         fontFamily: theme.typography.body1,
-                        color: theme.status.failed.fontColor,
+                        // color: theme.status.failed.fontColor,
                         marginLeft: 0,
                         fontSize: 12,
                     },
@@ -116,13 +116,13 @@ const EmailOTP = () => {
                     marginTop: 3.5,
                     marginBottom: 20,
                     borderRadius: 2.5,
-                    backgroundColor: theme.background.main,
+                    // backgroundColor: theme.background.main,
                     fontFamily: theme.typography.h1,
                     fontWeight: theme.typography.fontWeightBold,
                     fontSize: '1rem',
                     height: '2.5rem',
                     '&:hover': {
-                        backgroundColor: theme.background.main,
+                        // backgroundColor: theme.background.main,
                     },
                 }}
             >

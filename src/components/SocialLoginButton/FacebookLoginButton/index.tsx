@@ -14,7 +14,7 @@ const FacebookLoginButton = () => {
         <SocialLoginButton
             icon={
                 <FacebookRoundedIcon
-                    style={{ verticalAlign: 'middle', color: theme.status.processing.fontColor, fontSize: '2rem' }}
+                    style={{ verticalAlign: 'middle', color: '#4A90E2', fontSize: '2rem' }}
                 />
             }
             label="Sign in with Facebook"

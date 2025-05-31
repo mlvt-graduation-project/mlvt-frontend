@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, TextField, Button, Typography, Divider, IconButton, InputAdornment, Snackbar } from '@mui/material';
+import { Box, TextField, Typography, Divider, IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import LoginSignup from '../../layout/LoginRegistration';
 import { useTheme } from '@mui/material/styles';
@@ -7,9 +7,8 @@ import GoogleLoginButton from '../../components/SocialLoginButton/GoogleLoginBut
 import FacebookLoginButton from '../../components/SocialLoginButton/FacebookLoginButton';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useSnackbar } from 'notistack';
+import { CustomButton } from '../../components/CustomButton'
 
-// a map to map form fields to their names in UI
 const nameOfField = {
     firstName: 'First Name',
     lastName: 'Last Name',
@@ -19,7 +18,6 @@ const nameOfField = {
     confirmPassword: 'Confirm Password',
 };
 
-// a map to map form fields to placeholder text
 const placeholderText = {
     firstName: 'Enter your first name',
     lastName: 'Enter your last name',
@@ -29,7 +27,6 @@ const placeholderText = {
     confirmPassword: 'Confirm your password',
 };
 
-// Utility function to convert camelCase to snake_case
 const toSnakeCase = (obj: any) => {
     const newObj: any = {};
     for (const key in obj) {
@@ -39,7 +36,6 @@ const toSnakeCase = (obj: any) => {
     return newObj;
 };
 
-// Define types for the component's state
 interface FormState {
     firstName: string;
     lastName: string;
@@ -50,11 +46,9 @@ interface FormState {
 }
 
 const Signup: React.FC = () => {
-    const theme = useTheme(); // Access the theme object
-    const navigate = useNavigate(); // React Router's navigation hook
-    const { enqueueSnackbar } = useSnackbar(); // Notistack hook for notifications
+    const theme = useTheme();
+    const navigate = useNavigate();
 
-    // State hooks to capture form input and errors
     const [formData, setFormData] = useState<FormState>({
         firstName: '',
         lastName: '',
@@ -102,7 +96,7 @@ const Signup: React.FC = () => {
         try {
             const response = await axios.post('http://localhost:8080/api/users/register', requestData);
             console.log(response.data);
-            navigate('/login', { state: { successMessage: 'Sign up successful!' } }); // Navigate and pass the success message
+            navigate('/login', { state: { successMessage: 'Sign up successful!' } }); 
         } catch (error) {
             console.error(error);
             setError('Failed to register. Please try again.');
@@ -114,23 +108,27 @@ const Signup: React.FC = () => {
     const InputStyles = {
         '& input::placeholder': {
             fontSize: '0.9rem',
-            color: theme.fontColor.gray,
+            color: theme.palette.text.secondary,
+            fontFamily: 'Poppins, sans-serif',
+            borderRadius: 2.5,
         },
-        borderRadius: 2.5,
     };
 
     return (
         <LoginSignup>
             <Typography
-                variant="h4"
                 gutterBottom
                 sx={{
-                    color: theme.fontColor.black,
-                    fontFamily: theme.typography.h1,
-                    fontWeight: theme.typography.fontWeightBold,
-                    fontSize: 60,
-                    marginTop: 3,
-                    marginBottom: 5,
+                    color: theme.palette.text.primary,
+                    fontFamily: 'Poppins, sans-serif',
+                    fontWeight: 600,
+                    fontSize: {
+                        xs: '1.8rem',
+                        sm: '2.5rem',
+                        md: '3rem',
+                        lg: '3.5rem',
+                    },
+                    mt: 3,
                 }}
             >
                 Get Started Now!
@@ -141,17 +139,17 @@ const Signup: React.FC = () => {
                 <Box key={field} marginBottom={2}>
                     <Typography
                         sx={{
-                            fontFamily: theme.typography.body1,
+                            fontFamily: 'Poppins, sans-serif',
                             fontSize: 14,
                             display: 'flex',
                             flexDirection: 'row',
                             gap: 0.7,
-                            fontWeight: 550,
+                            fontWeight: 500,
                         }}
                     >
                         {nameOfField[field as keyof typeof nameOfField]}
                         <Typography
-                            sx={{ color: theme.status.failed.fontColor, fontWeight: theme.typography.fontWeightBold }}
+                            sx={{ color: theme.palette.error.contrastText, fontWeight: 550 }}
                         >
                             *
                         </Typography>
@@ -167,20 +165,24 @@ const Signup: React.FC = () => {
                         onChange={handleChange(field as keyof FormState)}
                         error={!!errors[field as keyof FormState]}
                         helperText={errors[field as keyof FormState]}
-                        InputProps={{ sx: InputStyles }}
+                        InputProps={{
+                            sx: InputStyles, style: {
+                                fontFamily: 'Poppins, sans-serif',
+                                fontSize: '0.9rem',
+                            },
+                        }}
                         sx={{
                             marginTop: 0.6,
                             '& .MuiOutlinedInput-root': {
                                 '&.Mui-focused fieldset': {
-                                    borderColor: theme.background.main,
+                                    borderColor: theme.palette.text.primary,
                                 },
                             },
                         }}
-                        // Customize the error message styling
                         FormHelperTextProps={{
                             sx: {
-                                color: theme.status.failed.fontColor,
-                                fontFamily: theme.typography.body1,
+                                color: theme.palette.error.contrastText || 'red',
+                                fontFamily: 'Poppins, sans-serif',
                                 marginLeft: '0px',
                                 fontSize: '12px',
                                 marginTop: '4px',
@@ -195,7 +197,7 @@ const Signup: React.FC = () => {
                 <Box key={field} marginBottom={2}>
                     <Typography
                         sx={{
-                            fontFamily: theme.typography.body1,
+                            fontFamily: 'Poppins, sans-serif',
                             fontSize: 14,
                             display: 'flex',
                             flexDirection: 'row',
@@ -205,7 +207,7 @@ const Signup: React.FC = () => {
                     >
                         {field === 'password' ? 'Password' : 'Confirm Password'}
                         <Typography
-                            sx={{ color: theme.status.failed.fontColor, fontWeight: theme.typography.fontWeightBold }}
+                            sx={{ color: theme.palette.error.contrastText, fontWeight: 550 }}
                         >
                             *
                         </Typography>
@@ -218,8 +220,8 @@ const Signup: React.FC = () => {
                                     ? 'text'
                                     : 'password'
                                 : showConfirmPassword
-                                ? 'text'
-                                : 'password'
+                                    ? 'text'
+                                    : 'password'
                         }
                         fullWidth
                         margin="normal"
@@ -231,12 +233,12 @@ const Signup: React.FC = () => {
                         helperText={errors[field as keyof FormState]}
                         FormHelperTextProps={{
                             sx: {
-                                color: theme.status.failed.fontColor || 'red',
-                                fontFamily: theme.typography.body1,
+                                color: theme.palette.error.contrastText || 'red',
+                                fontFamily: 'Poppins, sans-serif',
                                 marginLeft: '0px',
-                                fontSize: '12px', // Adjust font size for error message
+                                fontSize: '12px',
                                 marginTop: '4px',
-                                lineHeight: '1.5', // Adjust line height for readability
+                                lineHeight: '1.5',
                             },
                         }}
                         InputProps={{
@@ -250,6 +252,9 @@ const Signup: React.FC = () => {
                                                 : toggleConfirmPasswordVisibility
                                         }
                                         edge="end"
+                                        sx={{
+                                            color: theme.palette.text.secondary
+                                        }}
                                         aria-label={`toggle ${field} visibility`}
                                     >
                                         {field === 'password' ? (
@@ -266,12 +271,16 @@ const Signup: React.FC = () => {
                                     </IconButton>
                                 </InputAdornment>
                             ),
+                            style: {
+                                fontFamily: 'Poppins, sans-serif',
+                                fontSize: '0.9rem',
+                            },
                         }}
                         sx={{
                             marginTop: 0.6,
                             '& .MuiOutlinedInput-root': {
                                 '&.Mui-focused fieldset': {
-                                    borderColor: theme.background.main,
+                                    borderColor: theme.palette.text.primary,
                                 },
                             },
                         }}
@@ -281,37 +290,26 @@ const Signup: React.FC = () => {
 
             {/* Error Message */}
             {error && (
-                <Typography sx={{ color: theme.status.failed.fontColor, fontFamily: theme.typography.body1 }}>
+                <Typography sx={{ color: theme.palette.error.contrastText, fontFamily: 'Poppins, sans-serif' }}>
                     {error}
                 </Typography>
             )}
 
             {/* Sign Up Button */}
-            <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                disabled={loading}
+            <CustomButton 
+                text='SIGN UP'
+                onClick={handleSignup}
+                loading={loading}
                 sx={{
                     marginBottom: 2,
-                    marginTop: 5.5,
-                    borderRadius: 2.5,
-                    backgroundColor: theme.background.main,
-                    fontFamily: theme.typography.h1,
-                    fontWeight: theme.typography.fontWeightBold,
-                    fontSize: '1rem',
-                    height: '2.5rem',
-                    '&:hover': {
-                        backgroundColor: theme.background.main,
-                    },
+                    marginTop: 2,
+                    borderRadius: 1.25,
+                    width: '100%',
                 }}
-                onClick={handleSignup}
-            >
-                {loading ? 'Signing up...' : 'SIGN UP'}
-            </Button>
+            />
 
             {/* Divider */}
-            <Divider sx={{ my: 1.5, fontFamily: theme.typography.body1, fontSize: '0.8rem' }}>Or</Divider>
+            <Divider sx={{ my: 1.5, fontFamily: 'Poppins, sans-serif', fontSize: '0.8rem' }}>Or</Divider>
 
             {/* Social Login Buttons */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
@@ -323,7 +321,7 @@ const Signup: React.FC = () => {
             <Box
                 sx={{
                     textTransform: 'none',
-                    color: theme.fontColor.gray,
+                    color: theme.palette.text.secondary,
                     fontSize: '0.8rem',
                     display: 'flex',
                     justifyContent: 'center',
@@ -334,12 +332,12 @@ const Signup: React.FC = () => {
                     sx={{
                         marginTop: 3,
                         alignItems: 'center',
-                        fontFamily: theme.typography.body1,
+                        fontFamily: 'Poppins, sans-serif',
                         fontSize: '0.9rem',
                     }}
                 >
                     Have an account?{' '}
-                    <a href="/login" style={{ color: theme.status.processing.fontColor }}>
+                    <a href="/login" style={{ color: theme.palette.secondary.contrastText, fontFamily: 'Poppins, san-serif', fontWeight: 600 }}>
                         Log in
                     </a>
                 </Typography>

@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { Box } from "@mui/material";
-import img from '../assets/background.jpg';
+import img from '../assets/login_background.png';
 import Footer from "../components/Footer";
 
 interface LayoutProps {

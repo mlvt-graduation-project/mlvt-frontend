@@ -3,11 +3,11 @@ import LocalActivityOutlinedIcon from '@mui/icons-material/LocalActivityOutlined
 import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import WorkspacesOutlinedIcon from '@mui/icons-material/WorkspacesOutlined';
-import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined';
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import MenuIcon from "@mui/icons-material/Menu";
 import MLVTLogo from "../../assets/mlvt_logo.png";
 
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import {
     Box,
     Typography,
@@ -37,17 +37,21 @@ const navLinks: NavLink[] = [
     {
         name: "Premium",
         icon: <LocalActivityOutlinedIcon />,
-        link: "/",
+        link: "/premium_membership",
     },
     {
         name: "About us",
         icon: <WorkspacesOutlinedIcon />,
         link: "/",
     },
+    {
+        name: "FAQ",
+        icon: <HelpOutlineOutlinedIcon />,
+        link: "/",
+    },
 ];
 
 const Sidebar: React.FC = () => {
-    const { pathname } = useLocation();
     const theme = useTheme();
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
@@ -60,12 +64,11 @@ const Sidebar: React.FC = () => {
             {/* Permanent Sidebar for Larger Screens */}
             <Box
                 sx={{
-                    backgroundColor: theme.background.lightPink,
+                    backgroundColor: theme.palette.tertiary.main,
                     padding: 0,
-                    display: { xs: "none", lg: "flex" }, // Hidden on small screens
+                    display: { xs: "none", lg: "flex" },
                     flexDirection: "column",
                     alignItems: "center",
-                    width: "4em",
                 }}
             >
                 <Box
@@ -78,6 +81,7 @@ const Sidebar: React.FC = () => {
                         alignItems: "center",
                         width: "100%",
                         flexGrow: 1,
+                        paddingX: "0.8em",
                     }}
                 >
                     {/* MLVT Logo */}
@@ -89,6 +93,7 @@ const Sidebar: React.FC = () => {
                             height: "4em",
                             borderRadius: "10%",
                             cursor: "pointer",
+                            marginBottom: "2.5em",
                         }}
                         onClick={() => window.location.href = "/"}
                         role="button"
@@ -98,61 +103,50 @@ const Sidebar: React.FC = () => {
                     <IconButton
                         onClick={toggleDrawer(true)}
                         sx={{
-                            backgroundColor: theme.background.white,
+                            backgroundColor: theme.palette.secondary.contrastText,
                             borderRadius: "20%",
                             width: "2em",
                             height: "2em",
                             "&:hover": {
-                                backgroundColor: theme.background.lightPurple,
+                                backgroundColor: theme.palette.background.default,
+                                "& .MuiSvgIcon-root": {
+                                    color: theme.palette.primary.main,
+                                },
                             },
                         }}
                     >
-                        <MenuIcon sx={{ color: theme.palette.text.primary }} />
+                        <MenuIcon sx={{
+                            color: theme.palette.background.default,
+                        }} />
                     </IconButton>
 
-                    <Box
-                        sx={{
-                            display: "flex",
-                            flexDirection: "column", 
-                            gap: "0.9em", 
-                            alignItems: "center",
-                        }}
-                    >
-                        {navLinks.map((item) => (
-                            <MuiLink
-                                key={item.name}
-                                component={RouterLink}
-                                to={item.link}
-                                underline="none" 
-                                sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    borderRadius: "20%",
-                                    width: "3em",
-                                    height: "2.5em",
-                                    textDecoration: "none", 
-                                    "&:hover": {
-                                        backgroundColor: theme.background.lightPurple,
-                                    },
-                                }}
-                            >
-                                {/* Increase Icon Size */}
-                                {React.cloneElement(item.icon as React.ReactElement, {
-                                    sx: { fontSize: "1.5em", color: theme.fontColor.black },
-                                })}
-                            </MuiLink>
-                        ))}
-                    </Box>
 
-                </Box>
-                <Box>
-                    <QuizOutlinedIcon
-                        sx={{
-                            color: theme.fontColor.black,
-                            fontSize: "1.8em",
-                        }}
-                    />
+                    {navLinks.map((item) => (
+                        <MuiLink
+                            key={item.name}
+                            component={RouterLink}
+                            to={item.link}
+                            underline="none"
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                borderRadius: "20%",
+                                width: "3em",
+                                height: "2.5em",
+                                textDecoration: "none",
+                                "&:hover": {
+                                    backgroundColor: theme.palette.secondary.main,
+                                },
+                            }}
+                        >
+                            {/* Increase Icon Size */}
+                            {React.cloneElement(item.icon as React.ReactElement, {
+                                sx: { fontSize: "1.5em", color: theme.palette.text.primary },
+                            })}
+                        </MuiLink>
+                    ))}
+
                 </Box>
             </Box>
 
@@ -165,7 +159,7 @@ const Sidebar: React.FC = () => {
                     keepMounted: true,
                 }}
                 sx={{
-                    "& .MuiDrawer-paper": { width: "15em", backgroundColor: theme.background.lightPink },
+                    "& .MuiDrawer-paper": { width: "15em", backgroundColor: theme.palette.tertiary.main },
                 }}
             >
                 <Box
@@ -181,8 +175,8 @@ const Sidebar: React.FC = () => {
                         sx={{
                             display: "flex",
                             flexDirection: "column",
-                            justifyContent: "center", 
-                            alignItems: "center", 
+                            justifyContent: "center",
+                            alignItems: "center",
                             marginBottom: "1em",
                         }}
                     >
@@ -196,10 +190,10 @@ const Sidebar: React.FC = () => {
                             }}
                         />
                         <Typography sx={{
-                            color: theme.background.main,
-                            fontFamily: theme.typography.body1,
+                            color: theme.palette.secondary.contrastText,
+                            fontFamily: 'Poppins, sans-serif',
                             fontSize: "2.5em",
-                            fontWeight: 900,
+                            fontWeight: 800,
                         }}>MLVT</Typography>
                     </Box>
 
@@ -208,7 +202,7 @@ const Sidebar: React.FC = () => {
                         sx={{
                             display: "flex",
                             flexDirection: "column",
-                            gap: 1, 
+                            gap: 1,
                         }}
                     >
                         {navLinks.map((item) => (
@@ -216,24 +210,27 @@ const Sidebar: React.FC = () => {
                                 component={RouterLink}
                                 key={item.name}
                                 to={item.link}
-                                style={{ textDecoration: "none", color: theme.palette.text.primary }}
+                                style={{ textDecoration: "none", color: theme.palette.text.primary, gap: 1 }}
                             >
                                 <Box
                                     sx={{
                                         display: "flex",
                                         flexDirection: "row",
-                                        alignItems: "center", 
+                                        alignItems: "center",
                                         justifyContent: "flex-start",
-                                        gap: 2.5,
+                                        gap: 3,
                                         padding: "0.5em 2em",
-                                        borderRadius: "8px",
+                                        fontSize: "1.2em",
                                         "&:hover": {
-                                            backgroundColor: theme.background.lightPurple,
+                                            backgroundColor: theme.palette.secondary.main,
                                         },
                                     }}
                                 >
                                     {item.icon}
-                                    <Typography sx={{ fontWeight: "bold", fontFamily: theme.typography.body1, fontSize: "0.9em" }}>
+                                    <Typography sx={{
+                                        fontFamily: 'Poppins, sans-serif',
+                                        fontSize: "0.8em"
+                                    }}>
                                         {item.name}
                                     </Typography>
                                 </Box>
@@ -248,25 +245,28 @@ const Sidebar: React.FC = () => {
             <IconButton
                 onClick={toggleDrawer(true)}
                 sx={{
-                    display: { xs: "block", lg: "none" }, 
+                    display: { xs: "block", lg: "none" },
                     position: "fixed",
                     top: "5em",
                     left: "0.5em",
-                    backgroundColor: theme.background.lightPink,
+                    backgroundColor: theme.palette.secondary.contrastText,
                     borderRadius: "20%",
                     width: "2em",
                     height: "2em",
                     alignItems: "center",
                     "&:hover": {
-                        backgroundColor: theme.background.lightPurple,
+                        backgroundColor: theme.palette.background.default,
+                        "& .MuiSvgIcon-root": {
+                            color: theme.palette.primary.main,
+                        },
                     },
                     padding: "0em"
                 }}
             >
                 <MenuIcon sx={{
                     fontSize: "1.2em",
-                    color: theme.fontColor.gray
-                }}/>
+                    color: theme.palette.text.primary,
+                }} />
             </IconButton>
         </>
     );
