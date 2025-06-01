@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 import ChangeViewBox from "../BaseComponent/ChangeView";
 import { UploadFileFromDevice } from "../BaseComponent/UploadFileFromDevice";
 import { UploadVideoFromUrl } from "../BaseComponent/UploadVideoURL";
-import { FileData, VideoData } from "../../../../types/FileData";
+import { VideoData } from "../../../../types/FileData";
 import { GenerateButton } from "../BaseComponent/GenerateButton";
 import UploadNotification from "../../../UploadNotification";
 import { SingleOptionBox } from "../BaseComponent/OptionBox";

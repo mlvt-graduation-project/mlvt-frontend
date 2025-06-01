@@ -253,8 +253,7 @@ export const DialogContent: React.FC = () => {
         sx={{
           padding: 1.5,
           borderRadius: 1.5,
-          backgroundColor: "#EBEBEB",
-          marginBottom: "10px",
+          backgroundColor: (theme) => theme.palette.background.paper,
         }}
       >
         <ChangeViewBox Views={Views} setViewState={changeViewState} />
@@ -264,19 +263,19 @@ export const DialogContent: React.FC = () => {
       <Box
         marginTop="10px"
         sx={{
-          display: "flex", // Corrected typo here
-          justifyContent: "space-between", // Push elements to opposite ends
-          alignItems: "center", // Vertically align items
-          width: "100%", // Ensure full width for alignment
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
         }}
       >
         {/* Choosing audio language seciton */}
-        <Box>
+        <Box paddingX={2}>
           <Typography
-            variant="body2"
             sx={{
-              fontFamily: "Inter, Araboto, Roboto, Arial, sans-serif",
-              fontWeight: "bold",
+              fontFamily: "Poppins, sans-serif",
+              fontWeight: 500,
+              fontSize: "0.9rem",
             }}
           >
             Text language:
@@ -290,15 +289,16 @@ export const DialogContent: React.FC = () => {
             ]}
             customSx={{}}
             handleChangeOption={handleChangeSourceLanguage}
+            initChoice={TranslateLanguage.English}
           />
         </Box>
         {/* choosing model section */}
         <Box>
           <Typography
-            variant="body2"
             sx={{
-              fontFamily: "Inter, Araboto, Roboto, Arial, sans-serif",
-              fontWeight: "bold",
+              fontFamily: "Poppins, sans-serif",
+              fontWeight: 500,
+              fontSize: "0.9rem",
             }}
           >
             Translate to Language:
@@ -311,6 +311,7 @@ export const DialogContent: React.FC = () => {
               TranslateLanguage.Japanese,
             ]}
             handleChangeOption={handleChangeTargetLanguage}
+            initChoice={TranslateLanguage.Vietnamese}
           />
         </Box>
       </Box>

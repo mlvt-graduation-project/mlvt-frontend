@@ -113,7 +113,7 @@ export const DialogContent: React.FC = () => {
 
   const handleChangeMLVTAudio = useCallback(
     (input: Project | null) => {
-      if (input && input.type_project !== ProjectType.Audio) return; // Ensure it's an audio project
+      if (input && input.type_project !== ProjectType.Audio) return;
       setMLVTAudio(input as RawAudio | null);
     },
     [setMLVTAudio]
@@ -121,7 +121,7 @@ export const DialogContent: React.FC = () => {
 
   const handleChangeMLVTVideo = useCallback(
     (input: Project | null) => {
-      if (input && input.type_project !== ProjectType.Video) return; // Ensure it's an audio project
+      if (input && input.type_project !== ProjectType.Video) return;
       setMLVTVideo(input as RawVideo | null);
     },
     [setMLVTVideo]
@@ -351,10 +351,10 @@ export const DialogContent: React.FC = () => {
     <>
       {/* Upload video section */}
       <Typography
-        variant="body1"
+        variant="body2"
         sx={{
-          fontFamily: "Inter, Araboto, Roboto, Arial, sans-serif",
-          fontWeight: "bold",
+          fontFamily: "Poppins, Inter, Araboto, Roboto, Arial, sans-serif",
+          fontWeight: 500,
           marginBottom: "10px",
         }}
       >
@@ -364,7 +364,7 @@ export const DialogContent: React.FC = () => {
         sx={{
           padding: 1.5,
           borderRadius: 1.5,
-          backgroundColor: "#EBEBEB",
+          backgroundColor: (theme) => theme.palette.background.paper,
         }}
       >
         <ChangeViewBox Views={videoViews} setViewState={changeVideoViewState} />
@@ -373,10 +373,10 @@ export const DialogContent: React.FC = () => {
 
       {/* Upload audio section */}
       <Typography
-        variant="body1"
+        variant="body2"
         sx={{
-          fontFamily: "Inter, Araboto, Roboto, Arial, sans-serif",
-          fontWeight: "bold",
+          fontFamily: "Poppins, Inter, Araboto, Roboto, Arial, sans-serif",
+          fontWeight: 500,
           marginBottom: "10px",
           marginTop: "10px",
         }}
@@ -387,7 +387,7 @@ export const DialogContent: React.FC = () => {
         sx={{
           padding: 1.5,
           borderRadius: 1.5,
-          backgroundColor: "#EBEBEB",
+          backgroundColor: (theme) => theme.palette.background.paper,
         }}
       >
         <ChangeViewBox Views={audioViews} setViewState={changeAudioViewState} />
@@ -398,19 +398,20 @@ export const DialogContent: React.FC = () => {
       <Box
         marginTop="10px"
         sx={{
-          display: "flex", // Corrected typo here
-          justifyContent: "space-between", // Push elements to opposite ends
-          alignItems: "center", // Vertically align items
-          width: "100%", // Ensure full width for alignment
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
         }}
       >
         {/* Choosing audio language seciton */}
-        <Box>
+        <Box paddingX={1.5}>
           <Typography
             variant="body2"
             sx={{
-              fontFamily: "Inter, Araboto, Roboto, Arial, sans-serif",
-              fontWeight: "bold",
+              marginBottom: "10px",
+              marginTop: "15px",
+              fontFamily: "Poppins, sans-serif",
             }}
           >
             Audio language:
@@ -423,6 +424,7 @@ export const DialogContent: React.FC = () => {
               TranslateLanguage.Japanese,
             ]}
             handleChangeOption={handleChangeAudioLanguage}
+            initChoice={TranslateLanguage.English}
           />
         </Box>
         {/* choosing model section */}
@@ -430,8 +432,9 @@ export const DialogContent: React.FC = () => {
           <Typography
             variant="body2"
             sx={{
-              fontFamily: "Inter, Araboto, Roboto, Arial, sans-serif",
-              fontWeight: "bold",
+              marginBottom: "10px",
+              marginTop: "15px",
+              fontFamily: "Poppins, sans-serif",
             }}
           >
             Model:
@@ -439,6 +442,7 @@ export const DialogContent: React.FC = () => {
           <SingleOptionBox
             choices={modelList}
             handleChangeOption={handleChangeModel}
+            initChoice={modelList[0]}
           />
         </Box>
       </Box>

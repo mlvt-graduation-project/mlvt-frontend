@@ -200,7 +200,7 @@ export const DialogContent: React.FC = () => {
         sx={{
           padding: 1.5,
           borderRadius: 1.5,
-          backgroundColor: "#EBEBEB",
+          backgroundColor: (theme) => theme.palette.background.paper,
         }}
       >
         <ChangeViewBox Views={Views} setViewState={changeViewState} />
