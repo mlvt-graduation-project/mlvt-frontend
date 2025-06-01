@@ -1,17 +1,18 @@
 export interface User {
-    avatar: string;
+    avatar?: string;
     avatar_folder: string;
+    id: number;
     created_at: string;
     email: string;
     first_name: string;
-    id: number;
     last_name: string;
     password: string;
-    premium: boolean;
     role: string;
     status: number;
     updated_at: string;
     username: string;
+    wallet_balance: number;
+    premium?: boolean;
 }
 
 export interface GetUserResponse {
@@ -21,8 +22,7 @@ export interface GetUserResponse {
 export interface UserUpdateData {
     first_name: string;
     last_name: string;
-    username: string;
-    email: string;
-    premium: boolean;
-    role: string;
+    avatar?: string;
 }
+
+export type UserWithAvatar = User & { avatarSrc: string };
