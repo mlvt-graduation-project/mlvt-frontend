@@ -8,11 +8,15 @@ const FacebookLoginButton = () => {
         // Add Facebook login logic here
     };
 
-    const theme = useTheme(); 
+    const theme = useTheme();
 
     return (
         <SocialLoginButton
-            icon={<FacebookRoundedIcon style={{ verticalAlign: 'middle', color: theme.status.inProgress.fontColor, fontSize: '2rem' }} />}
+            icon={
+                <FacebookRoundedIcon
+                    style={{ verticalAlign: 'middle', color: '#4A90E2', fontSize: '2rem' }}
+                />
+            }
             label="Sign in with Facebook"
             onClick={handleFacebookLogin}
         />

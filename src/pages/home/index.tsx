@@ -1,40 +1,73 @@
-import React, {useState} from 'react';
-import HomeContent from "../../components/HomeContent";
-import NavBar from "../../components/NavBar";
-import VideoTransPopUp from "../../components/VideoTransPopUp";
-import ProcessedVidPopUp from "../../components/ProcessedVidPopUp";
-import TranscriptionPopup from "../../components/VideoTextGenPopup"
+import React, { useState } from 'react';
 import HomePage from '../../layout/HomeUser';
+import HomeContent from '../../components/HomeContent';
+import NavBar from '../../components/NavBar';
+import { TextGenerationPopup } from '../../components/VideoPopup/ProcessTriggerPopup/TextGeneration';
+import { TextTranslationPopup } from '../../components/VideoPopup/ProcessTriggerPopup/TextTranslation';
+import { VideoTranslationPopup } from '../../components/VideoPopup/ProcessTriggerPopup/VideoTranslation';
+import { LipsyncPopup } from '../../components/VideoPopup/ProcessTriggerPopup/LipSync';
+import { VoiceGenerationPopup } from '../../components/VideoPopup/ProcessTriggerPopup/VoiceGeneration';
 
 const Home = () => {
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [isTranscription, setTranscription] = useState(false);
+    const [isVideoTranslation, setIsVideoTranslation] = useState<boolean>(false);
+    const [isTextGeneration, setIsTextGeneration] = useState<boolean>(false);
+    const [isTextTranslation, setIsTextTranslation] = useState<boolean>(false);
+    const [isVoiceGeneration, setIsVoiceGeneration] = useState<boolean>(false);
+    const [isLipsync, setIsLipSync] = useState<boolean>(false);
 
-    const handleOpenDialog = () => {
-        setIsDialogOpen(true);
+    const handleOpenVideoTranslationDialog = () => {
+        setIsVideoTranslation(true);
     };
 
-    const handleCloseDialog = () => {
-        setIsDialogOpen(false);
+    const handleCloseVideoTranslationDialog = () => {
+        setIsVideoTranslation(false);
     };
 
-    const handleOpenTrascriptionDialog = () => {
-        setTranscription(true);
-    }
+    const handleOpenTextGenerationDialog = () => {
+        setIsTextGeneration(true);
+    };
 
-    const handleCloseTranscriptionDialog = () => {
-        setTranscription(false);
-    }
+    const handleOpenLipsyncDialog = () => {
+        setIsLipSync(true);
+    };
+    const handleOpenVoiceGenerationDialog = () => {
+        setIsVoiceGeneration(true);
+    };
+
+    const handleCloseTextGenerationDialog = () => {
+        setIsTextGeneration(false);
+    };
+
+    const handleOpenTextTranslationDialog = () => {
+        setIsTextTranslation(true);
+    };
+
+    const handleCloseTextTranslationDialogg = () => {
+        setIsTextTranslation(false);
+    };
+
+    const handleCloseLipsyncDialog = () => {
+        setIsLipSync(false);
+    };
+    const handleCloseVoiceGenerationDialog = () => {
+        setIsVoiceGeneration(false);
+    };
 
     return (
-        <HomePage>   
-            <NavBar 
-                onOpenDialog={handleOpenDialog} 
-                onOpenTranscription={handleOpenTrascriptionDialog} 
+        <HomePage>
+            <NavBar
+                onOpenVideoTranslation={handleOpenVideoTranslationDialog}
+                onOpenTextGeneration={handleOpenTextGenerationDialog}
+                onOpenTextTranslation={handleOpenTextTranslationDialog}
+                onOpenLipsync={handleOpenLipsyncDialog}
+                onOpenVoiceGeneration={handleOpenVoiceGenerationDialog}
             />
             <HomeContent />
-            <VideoTransPopUp isOpen={isDialogOpen} onClose={handleCloseDialog} />
-            <TranscriptionPopup isOpen={isTranscription} onClose={handleCloseTranscriptionDialog} />
+            <VideoTranslationPopup isOpen={isVideoTranslation} onClose={handleCloseVideoTranslationDialog} />
+            <TextGenerationPopup isOpen={isTextGeneration} onClose={handleCloseTextGenerationDialog} />
+            <TextTranslationPopup isOpen={isTextTranslation} onClose={handleCloseTextTranslationDialogg} />
+            <VoiceGenerationPopup isOpen={isVoiceGeneration} onClose={handleCloseVoiceGenerationDialog} />
+            <LipsyncPopup isOpen={isLipsync} onClose={handleCloseLipsyncDialog} />
         </HomePage>
     );
 };

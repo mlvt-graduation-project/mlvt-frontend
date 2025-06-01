@@ -1,206 +1,187 @@
-import React, { useEffect, useState } from 'react';
-import { AppBar, Toolbar, Box, Link, Typography, Avatar } from '@mui/material';
-import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
-import TranslateIcon from '@mui/icons-material/Translate';
-import SubtitlesIcon from '@mui/icons-material/Subtitles';
-import MicIcon from '@mui/icons-material/Mic';
-import SyncIcon from '@mui/icons-material/Sync';
-import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
+import React, { useCallback, useMemo } from "react";
+import { AppBar, Toolbar, Box, Link, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { Link as RouterLink } from "react-router-dom";
-import UserProfile from './UserProfile';
-import UploadVideoButton from './UploadVideoButton';
-import { useTheme } from '@mui/material/styles';
-import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
-import { getUser } from '../../api/user.api';
-import LipIcon from './image.png';
 
-const NavLinks = [
-    {
-        icon: <OndemandVideoIcon />,
-        text: 'Video Translation',
-        link: '/',
-        action: 'openDialog'
-    },
-    {
-        icon: <TranslateIcon />,
-        text: 'Text Generation',
-        link: '/',
-        action: 'openTranscription'
+import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
+import TextFieldsIcon from "@mui/icons-material/TextFields";
+import TranslateIcon from "@mui/icons-material/Translate";
+import MicIcon from "@mui/icons-material/Mic";
+import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 
-    },
-    {
-        icon: <SubtitlesIcon />,
-        text: 'Subtitle Generation',
-        link: '/'
-    },
-    {
-        icon: <MicIcon />,
-        text: 'Voice Generation',
-        link: '/'
-    },
-    {
-        icon: <EmojiEmotionsIcon />,
-        text: 'Lip sync for video',
-        link: '/'
-    },
-];
+import UploadVideoButton from "./UploadVideoButton";
+import UserProfile from "./UserProfile";
+import { useUserDetails } from "../../hooks/useUserDetails";
 
 interface NavbarProps {
-    onOpenDialog: () => void;
-    onOpenTranscription: () => void;
+  onOpenVideoTranslation: () => void;
+  onOpenTextGeneration: () => void;
+  onOpenTextTranslation: () => void;
+  onOpenVoiceGeneration: () => void;
+  onOpenLipsync: () => void;
 }
 
-const NavBar: React.FC<NavbarProps> = ({ onOpenDialog, onOpenTranscription }) => {
-    const [avatarUrl, setAvatarUrl] = useState('avatar.jpg');
-    const [userData, setUserData] = useState({
-        firstName: 'Minh Minh',
-        lastName: 'Nguyen',
-        premium: true
-    })
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState('');
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const { userId } = useAuth();
+/* --------  navigation config  -------- */
+const NAV_LINKS = [
+  {
+    icon: <OndemandVideoIcon />,
+    text: "Video Translation",
+    action: "onOpenVideoTranslation",
+  },
+  {
+    icon: <TextFieldsIcon />,
+    text: "Text Generation",
+    action: "onOpenTextGeneration",
+  },
+  {
+    icon: <TranslateIcon />,
+    text: "Text Translation",
+    action: "onOpenTextTranslation",
+  },
+  {
+    icon: <MicIcon />,
+    text: "Voice Generation",
+    action: "onOpenVoiceGeneration",
+  },
+  {
+    icon: <EmojiEmotionsIcon />,
+    text: "Lip Sync Video",
+    action: "onOpenLipsync",
+  },
+] as const;
 
-    const handleNavClick = (action?: string) => {
-        if (action === 'openDialog') {
-            onOpenDialog();
-        }
-        else if (action === 'openTranscription') {
-            onOpenTranscription();
-        }
-    };
+/* ------------------------------------- */
 
-    const theme = useTheme();
-    useEffect(() => {
-        const fetchUserData = async () => {
-            if (!userId) {
-                setError('No user ID found in local storage');
-                setIsLoading(false);
-                return;
-            }
-            try {
-                // Retrieve user_id from local storage
-                // const userId = localStorage.getItem('user_id');
-                const token = localStorage.getItem('authToken');
+const NavBar: React.FC<NavbarProps> = (callbacks) => {
+  const theme = useTheme();
+  const { user } = useUserDetails();
 
-                try {
-                    const userData = await getUser(userId);
-                    setUserData({
-                        firstName: userData.user.first_name,
-                        lastName: userData.user.last_name,
-                        premium: userData.user.premium
-                    });
-                    const avatarUrl = userData.user.avatar || '';
-                    const avatarCorrectUrl = avatarUrl.split('?X-Amz-Algorithm')[0];
-                    setAvatarUrl(avatarCorrectUrl);
-                    console.log("USER DATA: ", userData);
-                } catch (error) {
-                    throw new Error(`Failed to fetch user data: ${error}`);
-                }
+  const actionMap = useMemo(
+    () => ({
+      onOpenVideoTranslation: callbacks.onOpenVideoTranslation,
+      onOpenTextGeneration: callbacks.onOpenTextGeneration,
+      onOpenTextTranslation: callbacks.onOpenTextTranslation,
+      onOpenVoiceGeneration: callbacks.onOpenVoiceGeneration,
+      onOpenLipsync: callbacks.onOpenLipsync,
+    }),
+    [callbacks]
+  );
 
-                // const avatarResponse = await fetch(`http://localhost:8080/api/users/${userId}/avatar-download-url`, {
-                //     method: 'GET',
-                //     headers: {
-                //         'Authorization': `Bearer ${token}`, // Add token to the Authorization header
-                //         'Content-Type': 'application/json'
-                //     }
-                // });
+  const handleNavClick = useCallback(
+    (action: keyof typeof actionMap) =>
+      actionMap[action] && actionMap[action](),
+    [actionMap]
+  );
 
-                // const avatarData = await avatarResponse.json();
-                // const avatarDownloadUrl = avatarData.avatar_download_url;
-                // setAvatarUrl(avatarDownloadUrl.split('?X-Amz-Algorithm')[0]);
-            } catch (error) {
-                console.error('Failed to fetch user data:', error);
-                setError('Failed to fetch data');
-            }
-            setIsLoading(false);
-        };
+  const {
+    first_name = "",
+    last_name = "",
+    premium = false,
+    avatarSrc = "",
+  } = user ?? {};
 
-        fetchUserData();
-    }, [userId])
+  return (
+    <AppBar
+      position="static"
+      sx={{
+        backgroundColor: theme.palette.background.default,
+        color: theme.palette.primary.main,
+        boxShadow: "none",
+        borderBottom: "2px solid" + theme.palette.secondary.main,
+      }}
+    >
+      <Toolbar
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "0.7rem 2.2rem",
+        }}
+      >
+        <UploadVideoButton />
 
-    if (isLoading) {
-        return <div>Loading...</div>;  // or any other loading indicator
-    }
+        {/* ----------------  centre nav links  ---------------- */}
+        <Box sx={{ display: "flex" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              marginRight: "2rem",
+            }}
+          >
+            {NAV_LINKS.map(({ icon, text, action }) => (
+              <Link
+                key={text}
+                component={RouterLink}
+                to="/"
+                underline="none"
+                color="inherit"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(action);
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: { sx: "column", lg: "column" },
+                    alignItems: "center",
+                    color: theme.palette.text.primary,
+                    textDecoration: "none",
+                    gap: 0.8,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      borderRadius: "0.8rem",
+                      width: "3.5rem",
+                      height: "2rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      "&:hover": {
+                        backgroundColor: theme.palette.tertiary.main,
+                      },
+                    }}
+                  >
+                    {React.cloneElement(icon, {
+                      sx: {
+                        color: theme.palette.text.primary,
+                        width: "1.3rem",
+                      },
+                    })}
+                  </Box>
 
-    return (
-        <AppBar position="static" sx={{
-            backgroundColor: theme.background.white,
-            color: theme.fontColor.black,
-            boxShadow: 'none',
-            borderBottom: '2px solid' + theme.background.lightPurple
-        }}>
-            <Toolbar sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0.7rem 2.2rem'
-            }}>
-                <UploadVideoButton />
-                <Box sx={{ display: 'flex' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 3.8, marginRight: '2rem' }}>
-                        {NavLinks.map((item) => (
-                            <Link
-                                component={RouterLink}
-                                key={item.text}
-                                to={item.link}
-                                style={{ textDecoration: "none", color: theme.palette.text.primary }}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleNavClick(item.action);
-                                }}
-                            >
-                                <Box sx={{
-                                    display: "flex",
-                                    flexDirection: {
-                                        sx: "column",
-                                        lg: "column"
-                                    },
-                                    alignItems: "center",
-                                    color: theme.palette.text.primary,
-                                    textDecoration: "none",
-                                    gap: 0.8
-                                }}>
-                                    <Box sx={{
-                                        borderRadius: '0.8rem',
-                                        width: '3.3rem',
-                                        height: '1.8rem',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        '&:hover': {
-                                            backgroundColor: theme.background.lightPurple,
-                                        }
-                                    }}>
-                                        <item.icon.type
-                                            sx={{
-                                                color: theme.palette.text.primary,
-                                                width: '1.25rem',
-                                            }}
-                                        />
-                                    </Box>
-                                    <Box sx={{ width: '4.5rem', textAlign: 'center' }}>
-                                        <Typography variant='body1' sx={{ fontFamily: theme.typography.body1, fontWeight: '600', fontSize: '0.75rem' }}>{item.text}</Typography>
-                                    </Box>
-                                </Box>
-                            </Link>
-                        ))}
-                    </Box>
-                    {/* Replace the hardcoded user section with the UserProfile component */}
-                    <UserProfile
-                        first_name={userData.firstName}
-                        last_name={userData.lastName}
-                        status={userData.premium} // true for premium, false for standard
-                        avatarSrc={avatarUrl} 
-                        notifications={4}
-                    />
+                  <Box sx={{ width: "4.5rem", textAlign: "center" }}>
+                    <Typography
+                      sx={{
+                        fontFamily: "Poppins, sans-serif",
+                        fontWeight: 500,
+                        fontSize: "0.8rem",
+                      }}
+                    >
+                      {text}
+                    </Typography>
+                  </Box>
                 </Box>
-            </Toolbar>
-        </AppBar>
-    );
+              </Link>
+            ))}
+          </Box>
+
+          {/* ----------------  user profile  ---------------- */}
+          <UserProfile
+            first_name={first_name}
+            last_name={last_name}
+            status={premium}
+            avatarSrc={avatarSrc}
+            notifications={10}
+          />
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
 };
 
 export default NavBar;
