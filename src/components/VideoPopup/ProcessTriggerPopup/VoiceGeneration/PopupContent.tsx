@@ -2,7 +2,6 @@ import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import ChangeViewBox from "../BaseComponent/ChangeView";
 import { UploadFileFromDevice } from "../BaseComponent/UploadFileFromDevice";
-import { FileData } from "../../../../types/FileData";
 import { GenerateButton } from "../BaseComponent/GenerateButton";
 import UploadNotification from "../../../UploadNotification";
 import { BrowseFile } from "../BaseComponent/BrowseMLVTFile";
@@ -26,7 +25,21 @@ interface UploadNoti {
 }
 
 export const DialogContent: React.FC = () => {
-  const buildinVoiceList = ["Voice 1", "Voice 2", "Voice 3"];
+  const buildinVoiceList = useMemo(
+    () => [
+      "en-US-Wavenet-A",
+      "en-US-Wavenet-B",
+      "en-US-Wavenet-C",
+      "en-US-Wavenet-D",
+      "vi-VN-Wavenet-A",
+      "vi-VN-Wavenet-B",
+      "fr-FR-Wavenet-A",
+      "fr-FR-Wavenet-B",
+      "ja-JP-Wavenet-A",
+      "ja-JP-Wavenet-B",
+    ],
+    []
+  );
   type BuildinVoice = (typeof buildinVoiceList)[number];
   const { userId } = useAuth();
   const parsedUserId = userId ? parseInt(userId) : 0;
@@ -329,7 +342,6 @@ export const DialogContent: React.FC = () => {
 
       // Run both promises in parallel
       [textId, audioId] = await Promise.all([textPromise, audioPromise]);
-      // if (textId && audioId) {
       if (textId) {
         generateVoice(textId);
       } else {
@@ -352,7 +364,7 @@ export const DialogContent: React.FC = () => {
         sx={{
           padding: 1.5,
           borderRadius: 1.5,
-          backgroundColor: "#EBEBEB",
+          backgroundColor: (theme) => theme.palette.background.paper,
           marginBottom: "10px",
         }}
       >
@@ -364,35 +376,37 @@ export const DialogContent: React.FC = () => {
       </Box>
 
       {/* Translation to section */}
+      <Box paddingInline={1.5}>
+        <Typography
+          variant="body2"
+          sx={{
+            fontFamily: "Poppins, Araboto, Roboto, Arial, sans-serif",
+            fontWeight: 500,
+            marginTop: "10px",
+          }}
+        >
+          Text Language
+        </Typography>
+        <SingleOptionBox
+          choices={[
+            TranslateLanguage.English,
+            TranslateLanguage.Vietnamese,
+            TranslateLanguage.French,
+            TranslateLanguage.Japanese,
+          ]}
+          handleChangeOption={handleChangeTextLanguage}
+          customSx={{ width: "100%" }}
+          initChoice={TranslateLanguage.English}
+        />
+      </Box>
+
       <Typography
         variant="body2"
         sx={{
-          fontFamily: "Inter, Araboto, Roboto, Arial, sans-serif",
-          fontWeight: "bold",
+          fontFamily: "Poppins, Araboto, Roboto, Arial, sans-serif",
+          fontWeight: 500,
+          paddingLeft: 1.5,
           marginTop: "20px",
-        }}
-      >
-        Text Language
-      </Typography>
-
-      <SingleOptionBox
-        choices={[
-          TranslateLanguage.English,
-          TranslateLanguage.Vietnamese,
-          TranslateLanguage.French,
-          TranslateLanguage.Japanese,
-        ]}
-        handleChangeOption={handleChangeTextLanguage}
-        customSx={{ width: "100%" }}
-      />
-
-      <Typography
-        variant="body2"
-        sx={{
-          fontFamily: "Inter, Araboto, Roboto, Arial, sans-serif",
-          fontWeight: "bold",
-          marginTop: "15px",
-          marginBottom: "10px",
         }}
       >
         Voice Generation option:
@@ -402,8 +416,7 @@ export const DialogContent: React.FC = () => {
         sx={{
           padding: 1.5,
           borderRadius: 1.5,
-          backgroundColor: "#EBEBEB",
-
+          backgroundColor: (theme) => theme.palette.background.paper,
           marginBottom: "10px",
         }}
       >

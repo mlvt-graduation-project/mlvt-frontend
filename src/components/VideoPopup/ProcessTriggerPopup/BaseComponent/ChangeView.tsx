@@ -35,8 +35,8 @@ const ChangeViewBox: React.FC<ChangeViewBoxProps> = ({ Views, setViewState }) =>
             sx={{
                 backgroundColor: activeTab === subView.text ? (theme) => theme.palette.secondary.contrastText : "none",
                 color: activeTab === subView.text ? (theme) => theme.palette.background.paper : (theme) => theme.palette.text.primary,
-                fontFamily: "Inter, Araboto, Roboto, Arial, sans-serif",
-                fontWeight: "bold",
+                fontFamily: "Poppins, sans-serif",
+                fontWeight: 500,
                 flex: 1,
                 borderRadius: 1.5,
             }}
