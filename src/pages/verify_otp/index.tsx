@@ -79,8 +79,8 @@ const VerifyOtp: React.FC = () => {
                                 height: 60,
                                 textAlign: 'center',
                                 borderRadius: 5,
-                                border: '2px solid ' + theme.background.main,
-                                color: theme.background.main,
+                                border: '2px solid ' + theme.palette.primary.main,
+                                color: theme.palette.primary.main,
                                 fontFamily: theme.typography.body1.fontFamily,
                                 fontWeight: theme.typography.fontWeightBold,
                                 fontSize: '1.5rem',
@@ -98,13 +98,13 @@ const VerifyOtp: React.FC = () => {
                         marginTop: 5.5,
                         marginBottom: 20,
                         borderRadius: 2.5,
-                        backgroundColor: theme.background.main,
+                        backgroundColor: theme.palette.primary.main,
                         fontFamily: theme.typography.h1,
                         fontWeight: theme.typography.fontWeightBold,
                         fontSize: '1rem',
                         height: '2.5rem',
                         '&:hover': {
-                            backgroundColor: theme.background.main,
+                            backgroundColor: theme.palette.primary.dark,
                         },
 
                     }}

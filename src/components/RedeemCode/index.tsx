@@ -1,12 +1,10 @@
-import { Box, Typography, Grid, TextField, Button } from '@mui/material';
+import { Box, Typography, Grid, TextField, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import theme from '../../config/theme';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import axios from 'axios';
 import UploadNotification from '../UploadNotification';
-import { upload } from '@testing-library/user-event/dist/upload';
 import { UseRedeemCode } from '../../api/voucher.api';
 import { useAuth } from '../../context/AuthContext';
+import { CustomButton } from '../CustomButton';
 
 interface RedeemCodeProps {
     handleChangeView: (view: string) => void;
@@ -19,6 +17,7 @@ interface UploadNoti {
 }
 
 export const RedeemCode: React.FC<RedeemCodeProps> = ({ handleChangeView }) => {
+    const theme = useTheme();
     const [redeemCode, setRedeemCode] = useState('');
     const [loading, setLoading] = useState(false);
     const { userId, AddRemainingToken } = useAuth();
@@ -69,11 +68,23 @@ export const RedeemCode: React.FC<RedeemCodeProps> = ({ handleChangeView }) => {
     }
 
     return (
-        <Box sx={{ padding: 3 }}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', color: theme.background.main }}>
-                REDEEM CODE
+        <Box p={4}>
+            <Typography sx={{
+                mb: 1,
+                fontWeight: 600,
+                fontFamily: 'Poppins, sans-serif',
+                fontSize: '2rem',
+                color: theme.palette.primary.main
+            }}>
+                Redeem Code
             </Typography>
-            <Typography sx={{ fontSize: '1rem', color: 'gray', marginTop: 1 }}>
+            <Typography sx={{
+                mb: 3,
+                fontFamily: 'Poppins, sans-serif',
+                fontSize: '0.9rem',
+                fontWeight: 400,
+                color: theme.palette.text.secondary,
+            }}>
                 Enter redeem code to receive token
             </Typography>
             <Grid container spacing={2}>
@@ -81,7 +92,7 @@ export const RedeemCode: React.FC<RedeemCodeProps> = ({ handleChangeView }) => {
                     <Box
                         sx={{
                             marginTop: '2rem',
-                            backgroundColor: '#F3E5F5',
+                            backgroundColor: theme.palette.tertiary.main,
                             padding: 3,
                             borderRadius: '12px',
                             display: 'flex',
@@ -89,27 +100,49 @@ export const RedeemCode: React.FC<RedeemCodeProps> = ({ handleChangeView }) => {
                             gap: 2,
                         }}
                     >
-                        <Typography sx={{ fontSize: '1rem', color: 'gray' }}>Enter redeem code here</Typography>
+                        <Typography sx={{
+                            fontSize: '1rem',
+                            color: theme.palette.text.primary,
+                            fontWeight: 450,
+                            fontFamily: 'Poppins, sans-serif',
+                        }}>
+                            Enter redeem code here</Typography>
                         <TextField
                             variant="outlined"
                             placeholder="Enter code"
                             value={redeemCode}
                             onChange={(e) => setRedeemCode(e.target.value)}
                             fullWidth
+                            sx={{
+                                '& input::placeholder': {
+                                    fontFamily: 'Poppins, sans-serif',
+                                    fontSize: '1rem',
+                                    color: theme.palette.text.secondary,
+                                },
+                                marginBottom: '1rem',
+                            }}
+                            inputProps={{
+                                style: {
+                                    textTransform: 'uppercase',
+                                    fontFamily: 'Poppins, sans-serif',
+                                }
+                            }}
                         />
-                        <Button
-                            variant="contained"
+                        <CustomButton
+                            text='Redeem Code'
                             onClick={handleSubmit}
-                            disabled={loading}
-                            sx={{ width: '25%', mx: 'auto', borderRadius: '8px' }}
-                        >
-                            {loading ? 'Submitting...' : 'Submit'}
-                        </Button>
+                            loading={loading}
+                            sx={{
+                                width: '25%',
+                                mx: 'auto',
+                                fontSize: '0.9rem',
+                            }}
+                        />
                     </Box>
                 </Grid>
             </Grid>
             <Typography
-                onClick={() => handleChangeView('wallet')}
+                onClick={() => handleChangeView('subscription')}
                 sx={{
                     marginTop: '2rem',
                     display: 'flex',
@@ -117,9 +150,14 @@ export const RedeemCode: React.FC<RedeemCodeProps> = ({ handleChangeView }) => {
                     cursor: 'pointer',
                     fontWeight: '500',
                     mb: 2,
+                    fontFamily: 'Poppins, sans-serif',
+                    '&:hover': {
+                        textDecoration: 'underline',
+                        color: theme.palette.primary.main,
+                    },
                 }}
             >
-                <ArrowBackIcon sx={{ mr: 1 }} />
+                <ArrowBackIcon sx={{ mr: 1, fontSize: '1.1rem' }} />
                 Back
             </Typography>
         </Box>

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, TextField, Button, Typography, Divider, Checkbox } from '@mui/material';
+import { Box, TextField, Typography, Divider, Checkbox } from '@mui/material';
 import LoginSignup from '../../layout/LoginRegistration';
 import { useTheme } from '@mui/material/styles';
 import GoogleLoginButton from '../../components/SocialLoginButton/GoogleLoginButton';
@@ -8,15 +8,21 @@ import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { isToken } from 'typescript';
+import { CustomButton } from '../../components/CustomButton';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const InputStyles = (theme: any) => ({
     sx: {
         '& input::placeholder': {
             fontSize: '0.9rem',
-            color: theme.fontColor.gray,
+            color: theme.palette.text.primary,
+            fontFamily: 'Poppins, sans-serif',
+            borderRadius: 2.5,
         },
-        borderRadius: 2.5,
+    },
+    style: {
+        fontFamily: 'Poppins, sans-serif',
+        fontSize: '0.9rem',
     },
 });
 
@@ -42,26 +48,21 @@ const Login = () => {
     const [loading, setLoading] = React.useState(false);
     const [rememberMe, setRememberMe] = React.useState(false);
     const [showPassword, setShowPassword] = React.useState(false);
-
     const location = useLocation();
 
     useEffect(() => {
-        // Check if there's a success message passed through state
         if (location.state?.successMessage) {
             enqueueSnackbar(location.state.successMessage, { variant: 'success' });
         }
     }, [location.state, enqueueSnackbar]);
 
-    // Validate email and password
     const validateEmail = () => setEmailError(!email);
     const validatePassword = () => setPasswordError(!password);
 
-    // Login handler
     const handleLogin = async () => {
-        setError(''); // Clear previous errors
+        setError('');
         let valid = true;
 
-        // Validate email and password before submitting
         if (!email) {
             setEmailError(true);
             valid = false;
@@ -72,9 +73,9 @@ const Login = () => {
             valid = false;
         }
 
-        if (!valid) return; // Stop if validation fails
+        if (!valid) return;
 
-        setLoading(true); // Set loading state to true
+        setLoading(true);
 
         try {
             const response = await axios.post('http://localhost:8080/api/users/login', {
@@ -92,7 +93,6 @@ const Login = () => {
             }
         } catch (err) {
             if (axios.isAxiosError(err)) {
-                // Checking for specific response status
                 if (err.response?.status === 400) {
                     setError('Validation error. Please check your inputs.');
                 } else if (err.response?.status === 401) {
@@ -101,37 +101,40 @@ const Login = () => {
                     setError('Failed to login. Please try again.');
                 }
             } else {
-                // Handle network errors or other unknown errors
                 setError('Failed to login. Please check your connection.');
             }
         } finally {
-            setLoading(false); // Set loading state to false
+            setLoading(false);
         }
     };
 
     return (
         <LoginSignup>
             <Typography
-                variant="h4"
                 gutterBottom
                 sx={{
-                    color: theme.fontColor.black,
-                    fontFamily: theme.typography.h1,
-                    fontWeight: theme.typography.fontWeightBold,
-                    fontSize: 60,
-                    marginTop: 3,
+                    color: theme.palette.text.primary,
+                    fontFamily: 'Poppins, sans-serif',
+                    fontWeight: 600,
+                    fontSize: {
+                        xs: '1.8rem',
+                        sm: '2.5rem',
+                        md: '3rem',
+                        lg: '3.5rem',
+                    },
+                    mt: 3,
                 }}
             >
                 Welcome back !
             </Typography>
             <Typography
-                variant="body1"
                 sx={{
-                    marginBottom: 3,
-                    color: theme.fontColor.black,
-                    fontFamily: theme.typography.body1,
+                    marginBottom: 5,
+                    color: theme.palette.text.primary,
+                    fontFamily: 'Poppins, sans-serif',
                     fontWeight: 500,
                     fontSize: 16,
+                    textAlign: 'center',
                 }}
             >
                 Enter your Credentials to access your account
@@ -140,9 +143,9 @@ const Login = () => {
             {/* Email Input */}
             <Typography
                 sx={{
-                    fontFamily: theme.typography.body1,
+                    fontFamily: 'Poppins, sans-serif',
                     fontSize: 14,
-                    fontWeight: 550,
+                    fontWeight: 500,
                     marginTop: 2.5,
                 }}
             >
@@ -153,28 +156,28 @@ const Login = () => {
                 type="email"
                 fullWidth
                 margin="normal"
-                size="small" // Use the small size for the input field
+                size="small"
                 required
                 InputProps={InputStyles(theme)}
                 sx={{
-                    marginTop: 0.6,
+                    marginTop: 1.5,
                     '& .MuiOutlinedInput-root': {
                         '&.Mui-focused fieldset': {
-                            borderColor: theme.background.main,
+                            borderColor: theme.palette.text.primary,
                         },
                     },
                 }}
                 value={email}
-                onChange={(e) => setEmail(e.target.value)} // Capture email input
-                onBlur={validateEmail} // Trigger validation on blur
-                error={emailError} // Trigger error state
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={validateEmail}
+                error={emailError}
                 helperText={emailError ? 'Email is required' : ''}
                 FormHelperTextProps={{
                     sx: {
-                        fontFamily: theme.typography.body1,
-                        fontColor: theme.status.failed.fontColor,
+                        fontFamily: 'Poppins, sans-serif',
                         marginLeft: 0,
                         fontSize: 12,
+                        color: `${theme.palette.error.contrastText} !important`,
                     },
                 }}
             />
@@ -182,11 +185,10 @@ const Login = () => {
             {/* Password Input */}
             <Typography
                 sx={{
-                    fontFamily: theme.typography.body1,
-                    fontColor: theme.status.failed.fontColor,
+                    fontFamily: 'Poppins, sans-serif',
                     fontSize: 14,
-                    marginTop: 2,
-                    fontWeight: 550,
+                    fontWeight: 500,
+                    marginTop: 1.5,
                 }}
             >
                 Password
@@ -196,14 +198,31 @@ const Login = () => {
                 type={showPassword ? 'text' : 'password'}
                 fullWidth
                 margin="normal"
-                size="small" // Use the small size for the input field
+                size="small"
                 required
-                InputProps={InputStyles(theme)}
+                InputProps={{
+                    ...InputStyles(theme),
+                    endAdornment: (
+                        <Box
+                            sx={{
+                                cursor: 'pointer',
+                                color: theme.palette.text.secondary,
+                                marginRight: 1,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? (<VisibilityOff />) : (<Visibility />)}
+                        </Box>
+                    ),
+                }}
                 sx={{
-                    marginTop: 0.6,
+                    marginTop: 1.5,
                     '& .MuiOutlinedInput-root': {
                         '&.Mui-focused fieldset': {
-                            borderColor: theme.background.main,
+                            borderColor: theme.palette.text.primary,
                         },
                     },
                 }}
@@ -214,8 +233,8 @@ const Login = () => {
                 helperText={passwordError ? 'Password is required' : ''}
                 FormHelperTextProps={{
                     sx: {
-                        fontFamily: theme.typography.body1,
-                        fontColor: theme.status.failed.fontColor,
+                        fontFamily: 'Poppins, sans-serif',
+                        color: `${theme.palette.error.contrastText} !important`,
                         marginLeft: 0,
                         fontSize: 12,
                     },
@@ -224,7 +243,7 @@ const Login = () => {
 
             {/* Error Message */}
             {error && (
-                <Typography color="error" sx={{ marginTop: 2 }}>
+                <Typography color="error" sx={{ marginTop: 2, fontSize: 14, fontFamily: 'Poppins, sans-serif' }}>
                     {error}
                 </Typography>
             )}
@@ -242,13 +261,15 @@ const Login = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Checkbox
                         id="rememberMe"
-                        size="small"
+                        size="medium"
                         sx={{
+                            color: theme.palette.secondary.contrastText,
                             padding: 0,
                             '&.Mui-checked': {
-                                color: theme.background.main,
+                                color: theme.palette.secondary.contrastText
                             },
                         }}
+
                         checked={rememberMe}
                         onChange={() => setRememberMe(!rememberMe)}
                     />
@@ -258,7 +279,8 @@ const Login = () => {
                         sx={{
                             marginLeft: 1,
                             fontSize: '0.8rem',
-                            color: theme.fontColor.gray,
+                            color: theme.palette.text.secondary,
+                            fontFamily: 'Poppins, sans-serif',
                             display: 'flex',
                             alignItems: 'center',
                         }}
@@ -270,11 +292,11 @@ const Login = () => {
                     variant="body2"
                     sx={{
                         cursor: 'pointer',
-                        color: theme.status.processing.fontColor,
-                        fontFamily: theme.typography.body1,
+                        color: theme.palette.neutral.main,
+                        fontFamily: 'Poppins, sans-serif',
                         fontSize: '0.8rem',
                         '&:hover': {
-                            textDecoration: 'underline', // Underline on hover
+                            textDecoration: 'underline',
                         },
                     }}
                 >
@@ -283,31 +305,20 @@ const Login = () => {
             </Box>
 
             {/* Login Button */}
-            <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={handleLogin} // Add onClick event
+            <CustomButton
+                text='LOG IN'
+                onClick={handleLogin}
+                loading={loading}
                 sx={{
                     marginBottom: 2,
-                    marginTop: 3.5,
-                    borderRadius: 2.5,
-                    backgroundColor: theme.background.main,
-                    fontFamily: theme.typography.h1,
-                    fontWeight: theme.typography.fontWeightBold,
-                    fontSize: '1rem',
-                    height: '2.5rem',
-                    '&:hover': {
-                        backgroundColor: theme.background.main,
-                    },
+                    marginTop: 2,
+                    borderRadius: 1.25,
+                    width: '100%',
                 }}
-                disabled={loading} // Disable button while loading
-            >
-                {loading ? 'Logging in...' : 'LOG IN'}
-            </Button>
+            />
 
             {/* Divider */}
-            <Divider sx={{ my: 1.5, fontFamily: theme.typography.body1, fontSize: '0.8rem' }}>Or</Divider>
+            <Divider sx={{ my: 1.5, fontFamily: 'Poppins, sans-serif', fontSize: '0.8rem' }}>Or</Divider>
 
             {/* Social Login Buttons */}
             <Box
@@ -325,23 +336,22 @@ const Login = () => {
             <Box
                 sx={{
                     textTransform: 'none',
-                    color: theme.fontColor.gray,
+                    color: theme.palette.text.secondary,
                     fontSize: '0.8rem',
                     display: 'flex',
                     justifyContent: 'center',
                 }}
             >
                 <Typography
-                    variant="body2"
                     sx={{
                         marginTop: 3,
                         alignItems: 'center',
-                        fontFamily: theme.typography.body1,
+                        fontFamily: 'Poppins, sans-serif',
                         fontSize: '0.9rem',
                     }}
                 >
                     Don’t have an account?{' '}
-                    <a href="/signup" style={{ color: theme.status.processing.fontColor }}>
+                    <a href="/signup" style={{ color: theme.palette.secondary.contrastText, fontFamily: 'Poppins, san-serif', fontWeight: 600 }}>
                         Sign Up
                     </a>
                 </Typography>
@@ -351,6 +361,6 @@ const Login = () => {
 };
 
 export default Login;
-function isTokenExpired(authToken: string) {
-    throw new Error('Function not implemented.');
-}
+// function isTokenExpired(authToken: string) {
+//     throw new Error('Function not implemented.');
+// }

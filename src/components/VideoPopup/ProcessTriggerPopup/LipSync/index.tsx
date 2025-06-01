@@ -15,7 +15,7 @@ export const LipsyncPopup: React.FC<LipsyncPopupProps> = ({ isOpen, onClose }) =
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={null}
-                childComponent=<DialogContent />
+                childComponent={<DialogContent />}
             />
         </>
     );

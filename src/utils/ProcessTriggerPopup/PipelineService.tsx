@@ -8,7 +8,7 @@ import {
 import { TranslateLanguage } from '../../types/Translation';
 import { FileData } from '../../types/FileData';
 import { checkSuccessResponse } from '../checkResponseStatus';
-import { getLanguageCode } from './VideoPopup.utils';
+import { getLanguageCode } from './VideoPopup.utils'
 
 // Service for tranlating text to text (TextTranslation)
 export const translateText = async (

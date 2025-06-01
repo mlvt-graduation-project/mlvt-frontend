@@ -23,8 +23,9 @@ const ChangeViewBox: React.FC<ChangeViewBoxProps> = ({ Views, setViewState }) =>
         outline: 2,
         borderRadius: 1.5,
         padding: 0.5,
-        outlineColor: "#CCCCCC",
-        backgroundColor: "white",
+        outlineColor: (theme) => theme.palette.primary.main,
+        outlineWidth: 1.5,
+        backgroundColor: (theme) => theme.palette.background.paper,
       }}
     >
         {Views.map((subView, index) => (
@@ -32,17 +33,12 @@ const ChangeViewBox: React.FC<ChangeViewBoxProps> = ({ Views, setViewState }) =>
             key={index}
             variant={activeTab === subView.text ? "contained" : "text"}
             sx={{
-                backgroundColor: activeTab === subView.text ? "#a60195" : "white",
-                color: activeTab === subView.text ? "white" : "#000",
-                fontFamily: "Inter, Araboto, Roboto, Arial, sans-serif",
-                fontWeight: "bold",
+                backgroundColor: activeTab === subView.text ? (theme) => theme.palette.secondary.contrastText : "none",
+                color: activeTab === subView.text ? (theme) => theme.palette.background.paper : (theme) => theme.palette.text.primary,
+                fontFamily: "Poppins, sans-serif",
+                fontWeight: 500,
                 flex: 1,
                 borderRadius: 1.5,
-                "&:hover": {
-                backgroundColor:
-                    activeTab === subView.text ? "#F075AA" : "white",
-                boxShadow: "none",
-                },
             }}
             onClick={() => {
                 setActiveTab(subView.text)

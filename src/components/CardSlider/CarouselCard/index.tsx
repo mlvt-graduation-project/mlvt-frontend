@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Button, Paper, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { hexToRgb, useTheme } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 
 interface CarouselCardProps {
@@ -30,72 +30,46 @@ const CarouselCard: React.FC<CarouselCardProps> = ({ title, onClick }) => {
     const content = getDefaultContent(title);
 
     return (
-        <Paper elevation={3}
+        <Box
+            onClick={onClick}
             sx={{
+                width: { xs: '100%', sm: '80%', md: '60%', lg: '40%' },
+                maxWidth: 640,
+                bgcolor: 'rgba(0, 0, 0, 0.75)',
+                borderRadius: 2,
+                boxShadow: 3,
                 display: 'flex',
-                alignItems: 'center',
-                padding: '1.5rem',
-                borderRadius: '1rem',
-                boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-                border: '1px solid #E0E0E0',
-                height: '30vh',
-                width: '35vw'
-            }}>
-
-            {/* Text section */}
-            <Box sx={{
-                height: '100%',
-
-            }}>
-                <Typography sx={{
-                    color: theme.background.main,
-                    fontFamily: theme.typography.body1,
-                    fontWeight: 'bold',
-                    fontSize: '1.6rem'
-                }}>
-                    {title}
-                </Typography>
-                <Box sx={{
-                    marginTop: '1rem',
-                    width: '20rem',
-                    height: '70%',
-                    overflowY: 'auto',
-                    overflowX: 'hidden'
-                }}>
-                    <Typography align='justify' sx={{
-                        color: theme.fontColor.gray,
-                        fontFamily: theme.typography.body1,
-                        fontSize: '0.9rem',
-                    }}>
-                        {content}
-                    </Typography>
-                </Box>
-            </Box>
-
-            {/* Add Icon Button */}
-            <Button
-                variant="contained"
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                p: 3,
+                gap: 1,
+                cursor: 'pointer',
+                overflow: 'hidden',
+            }}
+        >
+            <Typography sx={{
+                fontSize: { xs: '1.2rem', sm: '1.8rem' },
+                fontFamily: 'Poppins, sans-serif',
+                fontWeight: 600,
+                color: '#FF9BD2',
+                textAlign: 'left',
+                mb: 0.3,
+            }} >
+                {title}
+            </Typography>
+            <Typography
+                align="justify"
                 sx={{
-                    width: '8rem',
-                    height: '8rem',
-                    borderRadius: '0.75rem',
-                    backgroundColor: theme.background.main,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginLeft: 'auto',
-                    '&:hover': {
-                        backgroundColor: theme.background.main 
-                    }
-                }}>
-                <AddIcon sx={{
-                    color: theme.background.white,
-                    width: '100%',
-                    height: '100%',
-                }} />
-            </Button>
-        </Paper>
+                    color: 'white',
+                    fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                    fontFamily: 'Poppins, sans-serif',
+                }}
+            >
+                {content}
+            </Typography>
+        </Box>
     );
-}
+};
 
 export default CarouselCard;

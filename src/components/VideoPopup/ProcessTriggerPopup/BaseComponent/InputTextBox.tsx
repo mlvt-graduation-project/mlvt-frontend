@@ -1,5 +1,6 @@
 import { useState, useEffect, ChangeEvent } from 'react';
 import { Box, Typography, TextField } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 interface InputTextBoxProps {
     inputTextFromParent: string;
@@ -13,6 +14,7 @@ export const InputTextBox: React.FC<InputTextBoxProps> = ({
     // handleChangeDisableGenerate,
 }) => {
     const [inputValue, setInputValue] = useState<string>(inputTextFromParent);
+    const theme = useTheme();
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const url = event.target.value;
@@ -39,9 +41,9 @@ export const InputTextBox: React.FC<InputTextBoxProps> = ({
             <Typography
                 variant="body2"
                 sx={{
-                    marginBottom: '10px',
-                    fontFamily: 'Inter, Araboto, Roboto, Arial, sans-serif',
-                    fontWeight: 'bold',
+                    marginY: '10px',
+                    fontFamily: 'Poppins, sans-serif',
+                    fontWeight: 600,
                 }}
             >
                 Enter text:
@@ -51,23 +53,25 @@ export const InputTextBox: React.FC<InputTextBoxProps> = ({
                 fullWidth
                 label=""
                 placeholder="Enter your text here"
-                multiline // this attribute lead to issue "A form field element has neither an id nor a name attribute. This might prevent the browser from correctly autofilling the form."
+                multiline 
                 rows={4}
                 value={inputValue}
                 onChange={handleInputChange}
                 inputProps={{
-                    id: 'textarea-input', // Định danh duy nhất cho <textarea>
-                    name: 'textareaInput', // Tên cho autofill
+                    id: 'textarea-input', 
+                    name: 'textareaInput', 
                 }}
                 sx={{
                     borderRadius: '0.375rem',
                     height: '2.5rem',
                     padding: '0',
-                    marginBottom: '80px',
+                    marginBottom: '4rem',
                 }}
                 InputProps={{
                     style: {
-                        backgroundColor: '#ffffffff', // Background color for the input area
+                        backgroundColor: theme.palette.background.paper,
+                        fontFamily: 'Poppins, sans-serif',
+                        fontSize: '0.875rem',
                     },
                 }}
             />

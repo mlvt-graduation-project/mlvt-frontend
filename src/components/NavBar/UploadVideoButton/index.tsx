@@ -1,20 +1,19 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import { useTheme } from '@mui/material/styles';
 import axios from 'axios';
 import { VideoData } from '../../../types/FileData';
 import { getPresignedImageURL, getPresignedVideoURL, postVideo, uploadVideoToS3 } from '../../../api/video.api';
+import { useTheme } from '@mui/material/styles';
 
 const s3ApiClient = axios.create({
-    // No base URL, timeouts, or headers needed here
 });
 
 const uploadImageToS3 = async (uploadUrl: string, file: File) => {
     try {
         const response = await s3ApiClient.put(uploadUrl, file, {
             headers: {
-                'Content-Type': file.type, // As needed, based on your server's presigned URL expectations
+                'Content-Type': file.type,
             },
         });
         return response;
@@ -57,27 +56,6 @@ function UploadButton() {
             }
         }
     };
-
-    // useEffect(() => {
-    //   // Assuming extractFirstFrame and uploadVideoImage return promises
-    //   if (selectedFile.type === "video/mp4") {
-    //     extractFirstFrame(selectedFile)
-    //       .then(imageFile => {
-    //         uploadVideoImage(imageFile)
-    //           .then(() => {
-    //             console.log('Video image uploaded successfully');
-    //           })
-    //           .catch(error => console.error('Error uploading video image:', error));
-    //       })
-    //       .catch(error => console.error('Error extracting first frame:', error));
-    //   }
-
-    //   uploadFile(selectedFile, selectedFile.type)
-    //     .then(() => {
-    //       console.log('File uploaded successfully');
-    //     })
-    //     .catch(error => console.error('Error uploading file:', error));
-    // }, [VideoData])
 
     const saveFile = (file: File) => {
         const url = URL.createObjectURL(file);
@@ -199,27 +177,30 @@ function UploadButton() {
             <input type="file" style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileInput} />
             <Button
                 sx={{
-                    backgroundColor: theme.background.lightPurple,
+                    width: { xs: '100%', sm: 'auto' },
+                    maxWidth: { xs: '100%', sm: '250px' },
+                    height: { xs: '2.2rem', sm: '2.5rem' },
+                    fontSize: { xs: '0.8em', sm: '1em' },
+                    backgroundColor: theme.palette.primary.main,
                     padding: '0.5rem 1rem',
                     borderRadius: '0.8rem',
-                    height: '2.5rem',
-                    maxWidth: '250px',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     transition: 'background-color 0.3s ease',
-                    color: theme.background.main,
-                    fontFamily: theme.typography.body1,
+                    color: theme.palette.secondary.main,
+                    fontFamily: 'Poppins, sans-serif',
                     fontWeight: 'bold',
                     '&:hover': {
-                        backgroundColor: theme.background.lightPink,
+                        backgroundColor: theme.palette.secondary.contrastText,
                     },
+                    gap: '0.5rem',
                 }}
                 onClick={handleClick}
             >
-                <FileUploadIcon style={{ color: theme.background.main }} />
+                <FileUploadIcon style={{ color: theme.palette.secondary.main }} />
                 {fileName ? fileName : 'Upload'}
-            </Button>
+            </Button >
         </>
     );
 }

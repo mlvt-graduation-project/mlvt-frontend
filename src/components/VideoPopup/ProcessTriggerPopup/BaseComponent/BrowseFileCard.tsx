@@ -103,8 +103,8 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                 >
                     <Typography
                         sx={{
-                            fontFamily: theme.typography.body1.fontFamily,
-                            color: theme.background.main,
+                            fontFamily: 'Poppins, sans-serif',
+                            color: theme.palette.text.secondary,
                             fontWeight: 550,
                             fontSize: '0.7rem',
                         }}
@@ -116,8 +116,8 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                 {/* Created Time */}
                 <Typography
                     sx={{
-                        fontFamily: theme.typography.body1.fontFamily,
-                        color: theme.fontColor.gray,
+                        fontFamily: 'Poppins, sans-serif',
+                        color: theme.palette.text.secondary,
                         fontSize: '0.6rem',
                     }}
                 >
@@ -138,15 +138,15 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                             <CircleIcon
                                 sx={{
                                     fontSize: '0.5rem',
-                                    color: `${theme.status[project.status].fontColor} !important`,
+                                    // color: `${theme.status[project.status].fontColor} !important`,
                                     margin: '0',
                                     padding: '0',
                                 }}
                             />
                         }
                         sx={{
-                            backgroundColor: theme.status[project.status].backgroundColor,
-                            color: theme.status[project.status].fontColor,
+                            // backgroundColor: theme.status[project.status].backgroundColor,
+                            // color: theme.status[project.status].fontColor,
                             fontFamily: theme.typography.body1.fontFamily,
                             fontSize: '0.5rem',
                             fontWeight: 'bold',
@@ -157,8 +157,8 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                         aria-label="view"
                         data-ignore="true"
                         sx={{
-                            backgroundColor: theme.background.lightPink,
-                            color: theme.fontColor.gray,
+                            backgroundColor: theme.palette.secondary.main,
+                            color: theme.palette.primary.contrastText,
                             fontFamily: theme.typography.body1.fontFamily,
                             fontSize: '0.5rem',
                             borderRadius: '0.5rem',
@@ -175,8 +175,8 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                     <Chip
                         label={project.type_project}
                         sx={{
-                            backgroundColor: theme.background.lightPink,
-                            color: theme.fontColor.gray,
+                            backgroundColor: theme.palette.primary.main,
+                            color: theme.palette.primary.contrastText,
                             fontFamily: theme.typography.body1.fontFamily,
                             fontSize: '0.5rem',
                             borderRadius: '0.5rem',

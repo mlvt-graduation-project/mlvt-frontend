@@ -15,7 +15,7 @@ export const VoiceGenerationPopup: React.FC<VoiceGenerationPopupProps> = ({ isOp
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={null}
-                childComponent=<DialogContent />
+                childComponent={<DialogContent />}
             />
         </>
     );
