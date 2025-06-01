@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import PersonalDetails from "./pages/edit_account";
 import EditAccount from "./pages/edit_account";
 import HelpAndSupportPage from "./pages/help_and_support";
+import AboutPage from "./pages/about_us";
 
 export const router = createBrowserRouter([
     {
@@ -61,6 +62,11 @@ export const router = createBrowserRouter([
     {
         path: '/help_and_support',
         element: <HelpAndSupportPage />,
+        errorElement: <Error />,
+    },
+    {
+        path: '/about_us',
+        element: <AboutPage />,
         errorElement: <Error />,
     }
 ])
