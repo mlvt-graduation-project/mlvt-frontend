@@ -38,7 +38,6 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
     const { remainingToken } = useAuth();
     const open = Boolean(anchorDropdown);
 
-
     const [anchorSubMenu, setAnchorSubMenu] = useState<HTMLElement | null>(null);
     const { toggle } = useColorMode();
 
@@ -129,7 +128,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                                 `,
                         }}
                     >
-                        <Avatar src={user.avatar} sx={{ width: '2.5rem', height: '2.5rem' }} />
+                        <Avatar src={user.avatar ? user.avatar.split('?X-Amz-Algorithm')[0] : ''} sx={{ width: '2.5rem', height: '2.5rem' }} />
                         <Box>
                             <Typography
                                 variant="body2"

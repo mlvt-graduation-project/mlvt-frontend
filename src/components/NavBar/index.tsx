@@ -76,9 +76,11 @@ const NavBar: React.FC<NavbarProps> = (callbacks) => {
   const {
     first_name = "",
     last_name = "",
-    premium = false,
-    avatarSrc = "",
+    premium = false
   } = user ?? {};
+
+  const avatarSrc = user?.avatar ? user?.avatar.split('?X-Amz-Algorithm')[0] : '';
+  console.log("Avatar Source:", avatarSrc);
 
   return (
     <AppBar

@@ -24,6 +24,7 @@ import BuildIcon from '@mui/icons-material/Build'; // Generic icon for "Our Valu
 import HomePage from '../../layout/HomeUser';
 import NavBar from '../../components/NavBar';
 import AboutUsImage from './about_us.png';
+import OurMission from './our_mission.png';
 
 // --- Data Interfaces ---
 interface ValueItem {
@@ -100,53 +101,91 @@ const teamData: TeamMember[] = [
     {
         name: 'Alice Wonderland',
         role: 'CEO & Founder',
-        imageUrl: 'https://source.unsplash.com/random/300x300?woman,portrait',
+        imageUrl: '', // Using imported local image
     },
     {
         name: 'Bob The Builder',
         role: 'Head of Technology',
-        imageUrl: 'https://source.unsplash.com/random/300x300?man,portrait',
+        imageUrl: '', // Using imported local image
     },
     {
         name: 'Charlie Chaplin',
         role: 'Creative Director',
-        imageUrl: 'https://source.unsplash.com/random/300x300?person,portrait',
+        imageUrl: 'https://source.unsplash.com/random/300x300?person,portrait,creative',
     },
     {
         name: 'Diana Prince',
         role: 'Marketing Lead',
-        imageUrl: 'https://source.unsplash.com/random/300x300?female,portrait',
+        imageUrl: 'https://source.unsplash.com/random/300x300?female,portrait,marketing',
+    },
+    {
+        name: 'Edward Elric',
+        role: 'Lead Developer',
+        imageUrl: 'https://source.unsplash.com/random/300x300?man,portrait,developer',
+    },
+    {
+        name: 'Fiona Gallagher',
+        role: 'Project Manager',
+        imageUrl: 'https://source.unsplash.com/random/300x300?woman,portrait,manager',
     },
 ];
 
 const AboutPage: React.FC = () => {
     const theme = useTheme();
 
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [isTranscription, setTranscription] = useState(false);
+    const [isVideoTranslation, setIsVideoTranslation] = useState<boolean>(false);
+    const [isTextGeneration, setIsTextGeneration] = useState<boolean>(false);
+    const [isTextTranslation, setIsTextTranslation] = useState<boolean>(false);
+    const [isVoiceGeneration, setIsVoiceGeneration] = useState<boolean>(false);
+    const [isLipsync, setIsLipSync] = useState<boolean>(false);
 
-    const handleOpenDialog = () => {
-        setIsDialogOpen(true);
+    const handleOpenVideoTranslationDialog = () => {
+        setIsVideoTranslation(true);
     };
 
-    const handleCloseDialog = () => {
-        setIsDialogOpen(false);
+    const handleCloseVideoTranslationDialog = () => {
+        setIsVideoTranslation(false);
     };
 
-    const handleOpenTrascriptionDialog = () => {
-        setTranscription(true);
-    }
+    const handleOpenTextGenerationDialog = () => {
+        setIsTextGeneration(true);
+    };
 
-    const handleCloseTranscriptionDialog = () => {
-        setTranscription(false);
-    }
+    const handleOpenLipsyncDialog = () => {
+        setIsLipSync(true);
+    };
+    const handleOpenVoiceGenerationDialog = () => {
+        setIsVoiceGeneration(true);
+    };
+
+    const handleCloseTextGenerationDialog = () => {
+        setIsTextGeneration(false);
+    };
+
+    const handleOpenTextTranslationDialog = () => {
+        setIsTextTranslation(true);
+    };
+
+    const handleCloseTextTranslationDialogg = () => {
+        setIsTextTranslation(false);
+    };
+
+    const handleCloseLipsyncDialog = () => {
+        setIsLipSync(false);
+    };
+    const handleCloseVoiceGenerationDialog = () => {
+        setIsVoiceGeneration(false);
+    };
 
     return (
         <HomePage>
             <Box>
-                <NavBar 
-                    onOpenDialog={handleOpenDialog} 
-                    onOpenTranscription={handleOpenTrascriptionDialog} 
+                <NavBar
+                    onOpenVideoTranslation={handleOpenVideoTranslationDialog}
+                    onOpenTextGeneration={handleOpenTextGenerationDialog}
+                    onOpenTextTranslation={handleOpenTextTranslationDialog}
+                    onOpenLipsync={handleOpenLipsyncDialog}
+                    onOpenVoiceGeneration={handleOpenVoiceGenerationDialog}
                 />
                 {/* 1. Hero Section - Using Box with sx prop */}
                 <Box
@@ -162,7 +201,7 @@ const AboutPage: React.FC = () => {
                     }}
                 >
                     <Container maxWidth="md">
-                    <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
+                    <Typography variant="h3" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
                         About Us
                     </Typography>
                     <Typography variant="h5" component="p" sx={{ mb: 3 }}>
@@ -209,99 +248,72 @@ const AboutPage: React.FC = () => {
                         </Typography>
                         </Grid>
                         <Grid item xs={12} md={6}>
-                        <SectionImage src="https://source.unsplash.com/random/800x600?mission,vision" alt="Our mission vision" />
+                        <SectionImage src={OurMission} alt="Our mission vision" />
                         </Grid>
                     </Grid>
                     </Container>
                 </Section>
 
-                {/* 4. Our Values Section */}
-                <Section>
-                    <Container maxWidth="lg">
-                    <Typography variant="h3" component="h2" textAlign="center" gutterBottom sx={{ fontWeight: 'bold', mb: 6 }}>
-                        Our Core Values
-                    </Typography>
-                    <Grid container spacing={4} justifyContent="center">
-                        {valuesData.map((value) => (
-                        <Grid item xs={12} sm={6} md={4} key={value.title}>
-                            <Paper
-                            elevation={3}
-                            sx={{
-                                p: 3,
-                                textAlign: 'center',
-                                height: '100%',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                            }}
-                            >
-                            <Avatar sx={{ bgcolor: theme.palette.primary.main, width: 56, height: 56, mb: 2 }}>
-                                <value.icon fontSize="large" />
-                            </Avatar>
-                            <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 500 }}>
-                                {value.title}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                {value.description}
-                            </Typography>
-                            </Paper>
-                        </Grid>
-                        ))}
-                    </Grid>
-                    </Container>
-                </Section>
-
-                {/* 5. Meet The Team Section */}
+                {/* 5. Meet The Team Section - MODIFIED FOR SCROLLING */}
                 <Section sx={{ backgroundColor: theme.palette.grey[100] }}>
                     <Container maxWidth="lg">
                     <Typography variant="h3" component="h2" textAlign="center" gutterBottom sx={{ fontWeight: 'bold', mb: 6 }}>
                         Meet The Team
                     </Typography>
-                    <Grid container spacing={4} justifyContent="center">
+                    <Box
+                        sx={{
+                        display: 'flex',
+                        overflowX: 'auto', // Enable horizontal scrolling
+                        flexWrap: 'nowrap', // Prevent items from wrapping to the next line
+                        py: 2, // Some padding for the scrollbar area
+                        gap: theme.spacing(3), // Spacing between cards
+                        // Hide scrollbar visually (optional, works in Webkit/Blink based browsers)
+                        '&::-webkit-scrollbar': {
+                            display: 'none',
+                        },
+                        '-ms-overflow-style': 'none',  // IE and Edge
+                        'scrollbar-width': 'none',  // Firefox
+                        }}
+                    >
                         {teamData.map((member) => (
-                        <Grid item xs={12} sm={6} md={3} key={member.name}>
-                            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                        <Card
+                            key={member.name}
+                            sx={{
+                            minWidth: { xs: 260, sm: 280, md: 300 }, // Adjust minWidth to fit roughly 4 items on wider screens
+                                                                    // On xs, maybe 1-2 items are visible, which is fine for scroll.
+                            height: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            flexShrink: 0, // Prevent cards from shrinking
+                            }}
+                        >
                             <CardMedia
-                                component="img"
-                                height="250" // Adjust as needed
-                                image={member.imageUrl}
-                                alt={member.name}
+                            component="img"
+                            height="250"
+                            image={member.imageUrl}
+                            alt={member.name}
+                            sx={{ objectFit: 'cover' }}
                             />
                             <CardContent sx={{ textAlign: 'center', flexGrow: 1 }}>
-                                <Typography variant="h6" component="div" sx={{ fontWeight: 500 }}>
+                            <Typography variant="h6" component="div" sx={{ fontWeight: 500 }}>
                                 {member.name}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
                                 {member.role}
-                                </Typography>
+                            </Typography>
                             </CardContent>
-                            </Card>
-                        </Grid>
+                        </Card>
                         ))}
-                    </Grid>
+                    </Box>
                     </Container>
                 </Section>
 
-                {/* 6. Call to Action Section */}
+                {/* 5. Call to Action Section */}
                 <Box
                     sx={{
-                    py: 10,
-                    textAlign: 'center',
-                    backgroundColor: theme.palette.primary.main, // Or use another background image
-                    color: theme.palette.common.white,
-                    // Example with background image:
-                    // backgroundImage: 'url(https://source.unsplash.com/random/1600x600?collaboration,office)',
-                    // backgroundSize: 'cover',
-                    // backgroundPosition: 'center',
-                    // position: 'relative',
-                    // '&::before': { // Overlay if using background image
-                    //   content: '""',
-                    //   position: 'absolute',
-                    //   top: 0, left: 0, right: 0, bottom: 0,
-                    //   backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                    //   zIndex: 1,
-                    // },
-                    // '& > *': { position: 'relative', zIndex: 2 }
+                        py: 10,
+                        textAlign: 'center',
+                        backgroundColor: '#E4B1F0'
                     }}
                 >
                     <Container maxWidth="md">
@@ -311,7 +323,7 @@ const AboutPage: React.FC = () => {
                     <Typography variant="body1" sx={{ mb: 4 }}>
                         Let's discuss how our expertise can help you achieve your digital goals. Get in touch today!
                     </Typography>
-                    <Button variant="contained" color="secondary" size="large" href="/contact">
+                    <Button variant="contained" color="secondary" size="large">
                         Contact Us
                     </Button>
                     </Container>

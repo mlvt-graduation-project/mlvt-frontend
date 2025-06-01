@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Box, Typography, TextField, Button, Avatar, Grid } from "@mui/material";
 import { alpha, useTheme } from "@mui/material/styles";
-import { updateUser } from "../../api/user.api";
+import { updateAvatar, updateUser } from "../../api/user.api";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import { getPresignedImageURL } from "../../api/video.api";
@@ -16,6 +16,12 @@ interface UserDetails {
 interface EditableUserData {
     firstName: string;
     lastName: string;
+    username?: string;
+    email?: string;
+    status?: number;
+    role?: string;
+    premium?: boolean;
+    avatar?: string;
 }
 
 const s3ApiClient = axios.create({
@@ -45,7 +51,15 @@ const PersonalDetails: React.FC<UserDetails> = ({
     const [userData, setUserData] = useState<EditableUserData>({
         firstName: user.first_name,
         lastName: user.last_name,
+        username: user.username,
+        email: user.email,
+        status: user.status,
+        role: user.role,
+        premium: user.premium,
+        avatar: user.avatar?.split('?X-Amz-Algorithm')[0] || ""
     });
+
+    console.log('User Data:', userData);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
@@ -53,16 +67,20 @@ const PersonalDetails: React.FC<UserDetails> = ({
     const theme = useTheme();
     const { userId } = useAuth();
 
-    const [avatarPreview, setAvatarPreview] = useState<string>("");
+    const [avatarPreview, setAvatarPreview] = useState<string>(user.avatar?.split('?X-Amz-Algorithm')[0] || "");
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
             const file = event.target.files[0];
             const reader = new FileReader();
-            reader.onload = () => reader.result && setAvatarPreview(reader.result as string);
+
+            // Read the file as a data URL to display as an image
+            reader.onload = () => {
+                if (reader.result) {
+                    setAvatarPreview(reader.result as string);
+                }
+            };
             reader.readAsDataURL(file);
-            // optionally upload immediately:
-            await uploadAvatar(file);
         }
     };
 
@@ -82,11 +100,23 @@ const PersonalDetails: React.FC<UserDetails> = ({
             const updatedData: UserUpdateData = {
                 first_name: userData.firstName,
                 last_name: userData.lastName,
-                // avatar: avatarPreview || avatarSrc, 
+                username: userData.username,
+                email: userData.email,
+                status: userData.status,
+                premium: false,
+                role: userData.role
             };
 
             const updatedDataResponse = await updateUser(userId, updatedData);
             console.log('Updated user data:', updatedDataResponse);
+
+            const file = fileInputRef.current?.files?.[0];
+            console.log('File Name: ', file?.name);
+            if (file) {
+                await uploadAvatar(file);
+                const updateAvatarDb = await updateAvatar(String(userId), file.name);
+                console.log('Update avatar in DB response: ', updateAvatarDb);
+            }
 
             setShowSuccessPopup(true);
 
@@ -104,7 +134,8 @@ const PersonalDetails: React.FC<UserDetails> = ({
             const responseGeneratePresignedImageUpload = await getPresignedImageURL(file.name, file.type);
             if (responseGeneratePresignedImageUpload.status === 200) {
                 console.log('Generate presigned url for image successfully:', responseGeneratePresignedImageUpload.data);
-                const avatarUploadUrl = responseGeneratePresignedImageUpload.data.upload_url.replace('video_frames', 'avatars');
+                const avatarUploadUrl = responseGeneratePresignedImageUpload.data.upload_url.split('?X-Amz-Algorithm')[0].replace('video_frames', 'avatars');
+                console.log('Avatar upload URL:', avatarUploadUrl);
 
                 const s3UploadImageResponse = await uploadImageToS3(avatarUploadUrl, file);
                 if (s3UploadImageResponse.status === 200) {
@@ -114,6 +145,7 @@ const PersonalDetails: React.FC<UserDetails> = ({
                 }
             } else {
                 console.log('Failed to generate presigned image');
+                console.log(responseGeneratePresignedImageUpload);
             }
 
         } catch (e) {

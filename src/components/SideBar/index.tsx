@@ -42,7 +42,7 @@ const navLinks: NavLink[] = [
     {
         name: "About us",
         icon: <WorkspacesOutlinedIcon />,
-        link: "/",
+        link: "/about_us",
     },
     {
         name: "FAQ",
