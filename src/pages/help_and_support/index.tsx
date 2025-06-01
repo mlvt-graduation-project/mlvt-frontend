@@ -72,29 +72,31 @@ const commonTopicsData: TopicCardProps[] = [
 
 const HelpAndSupportPage: React.FC = () => {
     return (
-        <Box sx={{ backgroundColor: 'background.default', minHeight: '100vh' }}>
-            <HelpNavbar />
-            <HelpHeader />
+        <HomePage>
+            <Box sx={{ backgroundColor: 'background.default', minHeight: '100vh' }}>
+                <HelpNavbar />
+                <HelpHeader />
 
-            {/* Prominent Links Section */}
-            <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
-                <Grid container spacing={3}>
-                {prominentLinksData.map((link, index) => (
-                    <Grid item xs={12} md={6} key={index}>
-                    <ProminentLinkCard
-                        icon={link.icon}
-                        title={link.title}
-                        linkText={link.linkText}
-                        href={link.href}
-                    />
+                {/* Prominent Links Section */}
+                <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
+                    <Grid container spacing={3}>
+                    {prominentLinksData.map((link, index) => (
+                        <Grid item xs={12} md={6} key={index}>
+                        <ProminentLinkCard
+                            icon={link.icon}
+                            title={link.title}
+                            linkText={link.linkText}
+                            href={link.href}
+                        />
+                        </Grid>
+                    ))}
                     </Grid>
-                ))}
-                </Grid>
-            </Container>
+                </Container>
 
-            {/* Common Topics Section */}
-            <CommonTopicsSection topics={commonTopicsData} />
-        </Box>
+                {/* Common Topics Section */}
+                <CommonTopicsSection topics={commonTopicsData} />
+            </Box>
+        </HomePage>
     );
 };
 

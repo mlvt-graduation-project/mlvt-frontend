@@ -24,31 +24,6 @@ const HelpNavbar: React.FC = () => {
         >
             <Container maxWidth="lg">
                 <Toolbar disableGutters sx={{ minHeight: { xs: 56, sm: 64 } }}> {/* Standard MUI toolbar heights */}
-                    {/* Left Section: Logo and Title */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 0 }}>
-                        {/* Replace with your actual logo SVG or Image component */}
-                        <IconButton
-                        edge="start"
-                        color="inherit"
-                        aria-label="Overflow Home"
-                        href="/" // Link to home or main site
-                        sx={{ mr: 1, p: 0.5 }} // Adjust padding if needed
-                        >
-                        <BubbleChartIcon sx={{ fontSize: 32, color: 'primary.main' }} /> {/* Placeholder Logo */}
-                        </IconButton>
-                        <Typography
-                        variant="h6"
-                        component="div"
-                        sx={{
-                            fontWeight: 'bold',
-                            color: 'text.primary', // Or a specific brand color
-                            display: { xs: 'none', sm: 'block' } // Hide "Help Center" on very small screens if needed
-                        }}
-                        >
-                            Help Center
-                        </Typography>
-                    </Box>
-
                     {/* Spacer to push right items to the end */}
                     <Box sx={{ flexGrow: 1 }} />
 
