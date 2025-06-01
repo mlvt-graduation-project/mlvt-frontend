@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom"
+import { createBrowserRouter } from "react-router-dom";
 import Home from "./pages/home";
 import Error from "./pages/error";
 import Login from "./pages/login";
@@ -8,59 +8,67 @@ import EmailOTP from "./pages/email_otp";
 import VerifyOTP from "./pages/verify_otp";
 import Storage from "./pages/storage";
 import ProtectedRoute from "./components/ProtectedRoute";
-import PersonalDetails from "./pages/edit_account";
 import EditAccount from "./pages/edit_account";
 import HelpAndSupportPage from "./pages/help_and_support";
+import MembershipPremium from "./pages/membership_premium";
 
 export const router = createBrowserRouter([
-    {
-        path: '/login',
-        element: <Login />,
-        errorElement: <Error />,
-    },
-    {
-        path: '/',
-        element: (  
-            <ProtectedRoute>
-                <Home />
-            </ProtectedRoute>
-        ),
-        errorElement: <Error />,
-    },
-
-    {
-        path: '/signup',
-        element: <Signup />,
-        errorElement: <Error />,
-    },
-    {
-        path: '/signup_success',
-        element: <SignupSuccess />,
-        errorElement: <Error />,
-    },
-    {
-        path: '/email_otp',
-        element: <EmailOTP />,
-        errorElement: <Error />,
-    },
-    {
-        path: '/verify_otp',
-        element: <VerifyOTP />,
-        errorElement: <Error />,
-    },
-    {
-        path: '/storage',
-        element: <Storage />,
-        errorElement: <Error />,
-    },
-    {
-        path: '/edit_account',
-        element: <EditAccount />,
-        errorElement: <Error />,
-    },
-    {
-        path: '/help_and_support',
-        element: <HelpAndSupportPage />,
-        errorElement: <Error />,
-    }
-])
+  {
+    path: "/login",
+    element: <Login />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/",
+    element: (
+      <ProtectedRoute>
+        <Home />
+      </ProtectedRoute>
+    ),
+    errorElement: <Error />,
+  },
+  {
+    path: "/premium_membership",
+    element: (
+      <ProtectedRoute>
+        <MembershipPremium />
+      </ProtectedRoute>
+    ),
+    errorElement: <Error />,
+  },
+  {
+    path: "/signup",
+    element: <Signup />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/signup_success",
+    element: <SignupSuccess />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/email_otp",
+    element: <EmailOTP />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/verify_otp",
+    element: <VerifyOTP />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/storage",
+    element: <Storage />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/edit_account",
+    element: <EditAccount />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/help_and_support",
+    element: <HelpAndSupportPage />,
+    errorElement: <Error />,
+  }
+]);

@@ -8,17 +8,19 @@ const SignupSuccess = () => {
 
     return (
         <LoginSignup>
-            <Box sx={{
-                paddingTop: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                margin: 0,
-            }}>
+            <Box
+                sx={{
+                    paddingTop: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    margin: 0,
+                }}
+            >
                 <Typography
                     variant="h4"
                     sx={{
-                        color: theme.fontColor.black,
+                        // color: theme.fontColor.black,
                         fontFamily: theme.typography.h1,
                         fontWeight: theme.typography.fontWeightBold,
                         fontSize: 60,
@@ -27,37 +29,43 @@ const SignupSuccess = () => {
                 >
                     Get Started Now!
                 </Typography>
-                <CheckCircleIcon sx={{
-                    fontSize: 200,
-                    color: theme.status.complete.fontColor,
-                    alignSelf: 'center',
-                }} />
+                <CheckCircleIcon
+                    sx={{
+                        fontSize: 200,
+                        // color: theme.status.succeeded.fontColor,
+                        alignSelf: 'center',
+                    }}
+                />
 
-                <Typography sx={{
-                    fontFamily: theme.typography.h1,
-                    fontWeight: theme.typography.fontWeightBold,
-                    fontSize: '2rem',
-                    marginTop: 5,
-                    color: theme.status.complete.fontColor,
-                }}>
+                <Typography
+                    sx={{
+                        fontFamily: theme.typography.h1,
+                        fontWeight: theme.typography.fontWeightBold,
+                        fontSize: '2rem',
+                        marginTop: 5,
+                        // color: theme.status.succeeded.fontColor,
+                    }}
+                >
                     REGISTRATION SUCCESSFULLY
                 </Typography>
             </Box>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'left',
-                marginTop: 5,
-                marginBottom: 10
-            }}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'left',
+                    marginTop: 5,
+                    marginBottom: 10,
+                }}
+            >
                 <Typography sx={{ display: 'inline-flex', flexDirection: 'row' }}>
                     Thank you! We have sent you an email to&nbsp;
                     <Typography
                         component="span"
                         sx={{
-                            color: theme.background.main,
+                            // color: theme.background.main,
                             cursor: 'pointer',
-                            textDecoration: 'underline'
+                            textDecoration: 'underline',
                         }}
                         onClick={() => window.open('https://mail.google.com', '_blank')}
                     >
@@ -65,13 +73,10 @@ const SignupSuccess = () => {
                     </Typography>
                 </Typography>
 
-
-                <Typography>
-                    Please click the link in the email to activate your account.
-                </Typography>
+                <Typography>Please click the link in the email to activate your account.</Typography>
             </Box>
         </LoginSignup>
     );
-}
+};
 
 export default SignupSuccess;
