@@ -23,11 +23,11 @@ export const BrowseMLVTPopup: React.FC<BrowseMLVTPopupProps> = ({
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={null}
-                childComponent=<DialogContent
+                childComponent={<DialogContent
                     onClosePopup={onClose}
                     allowType={allowType}
                     handleChangeSelectedProject={handleChangeSelectedProject}
-                />
+                />}
                 customSx={{ maxHeight: '80%' }}
             />
         </>

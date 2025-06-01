@@ -10,7 +10,7 @@ import MicIcon from "@mui/icons-material/Mic";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 
 import UploadVideoButton from "./UploadVideoButton";
-import UserProfile from "./UserProfile"; 
+import UserProfile from "./UserProfile";
 import { useUserDetails } from "../../hooks/useUserDetails";
 
 interface NavbarProps {

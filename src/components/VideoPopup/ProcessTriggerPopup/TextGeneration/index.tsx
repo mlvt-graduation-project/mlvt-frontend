@@ -15,7 +15,7 @@ export const TextGenerationPopup: React.FC<TextGenerationPopupProps> = ({ isOpen
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={null}
-                childComponent=<DialogContent />
+                childComponent={<DialogContent />}
             />
         </>
     );
