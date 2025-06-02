@@ -40,7 +40,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, subtitle }) => {
             </Box>
 
             {/* Title */}
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
+            <Typography variant="h6" fontWeight="650" fontFamily="Poppins, sans-serif" textAlign="left" gutterBottom>
                 {title}
             </Typography>
 
@@ -57,8 +57,9 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, subtitle }) => {
                 right: 20,
                 color: "#A259FF",
                 textTransform: "none",
-                fontWeight: "bold",
+                fontWeight: 550,
                 fontSize: "0.9rem",
+                fontFamily: "Poppins, sans-serif",
                 }}
             >
                 View Sample

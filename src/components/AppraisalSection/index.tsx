@@ -102,7 +102,7 @@ const AppraisalSection: React.FC = () => {
 
   return (
     <Box sx={{ backgroundColor: 'transparent', color: textColor, py: { xs: 6, md: 8 }, px: { xs: 2, md: 4 }, overflow: 'hidden' }}>
-      <Typography variant="h3" component="h2" fontWeight="bold" textAlign="left" sx={{ mb: 3, ml: { xs: 0, md: 2 }, fontSize: { xs: '2rem', md: '2.5rem' } }}>
+      <Typography variant="h3" component="h2" fontWeight="600" textAlign="left" sx={{ mb: 3, ml: { xs: 0, md: 2 }, fontSize: { xs: '2rem', md: '2.5rem' }, fontFamily: 'Poppins, sans-serif' }}>
         Appraisal
       </Typography>
       <Box sx={{ maxWidth: { xs: '100%', sm: '90%', md: '800px' }, mx: 'auto', position: 'relative' /* Removed pb for dots */ }}>

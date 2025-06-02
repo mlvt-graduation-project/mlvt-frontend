@@ -1,10 +1,8 @@
 import React from "react";
-import { Box, Button, Typography, Card, CardContent, Grid, IconButton } from "@mui/material";
-import TranslateIcon from "@mui/icons-material/Translate";
+import { Box, Typography, Grid } from "@mui/material";
 import MicIcon from "@mui/icons-material/Mic";
 import FaceRetouchingNaturalIcon from "@mui/icons-material/FaceRetouchingNatural";
 import LanguageIcon from "@mui/icons-material/Language";
-import StarIcon from "@mui/icons-material/Star";
 import LandingPageNavbar from "../../components/LandingPageNavBar";
 import bgImage from './landing_page_background.png';
 import FeatureCard from "../../components/LandingPageFeatureCard";
@@ -13,15 +11,16 @@ import PurposeShowcase from "../../components/PurposeShowcase";
 import AppraisalSection from "../../components/AppraisalSection";
 import CallToActionSection from "../../components/CallToAction";
 import LandingPageFooter from "../../components/LandingPageFooter";
-import HomePage from "../../layout/HomeUser";
 
 const LandingPage = () => {
     return (
-        <HomePage>
+
             <Box 
                 sx={{ 
                     backgroundImage: `url(${bgImage})`, 
                     backgroundSize: "cover",
+                    backgroundPosition: "right center",
+                    backgroundRepeat: "repeat-y",
                     color: "white", 
                     minHeight: "100vh", 
                     fontFamily: 'Poppins, sans-serif' 
@@ -38,16 +37,17 @@ const LandingPage = () => {
                     backgroundImage: 'url(/mnt/data/0f00f995-3f56-472b-b5c8-859f0e76f7d1.png)',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
+                    gap: 2,
                     }}
                 >
-                    <Typography variant="h6" sx={{ color: '#DDCCFF' }}>
+                    <Typography variant="h6" sx={{ color: '#DDCCFF', fontFamily: 'Poppins, sans-serif' }}>
                         Welcome to <b>MLVT@HCMUS</b>
                     </Typography>
-                    <Typography variant="h3" fontWeight="bold" sx={{ mt: 1 }}>
-                        Multi-Language <br /> Video Translation
+                    <Typography variant="h3" fontWeight="650" sx={{ mt: 1, fontFamily: 'Poppins, sans-serif' }}>
+                        Multi-Language Video Translation
                     </Typography>
-                    <Typography variant="subtitle1" sx={{ mt: 2, color: 'white' }}>
-                        Empowering You to Share Your Story Across Languages, <br />
+                    <Typography variant="subtitle1" sx={{ mt: 2, color: 'white', fontFamily: 'Poppins, sans-serif' }}>
+                        Empowering You to Share Your Story Across Languages <br />
                         Connecting Audiences Around the World Through Video Translation
                     </Typography>
                 </Box>
@@ -94,9 +94,9 @@ const LandingPage = () => {
 
                 <CallToActionSection />
 
-                {/* <LandingPageFooter /> */}
+                <LandingPageFooter />
             </Box>
-        </HomePage>
+
     );
 };
 

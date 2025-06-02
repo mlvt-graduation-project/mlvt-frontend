@@ -24,7 +24,7 @@ const CallToActionSection: React.FC = () => {
                 fontWeight="bold"
                 sx={{
                 mb: 4, // Margin bottom to space from button
-                fontSize: { xs: '2.2rem', sm: '2.5rem', md: '2.8rem' },
+                fontSize: { xs: '2.2rem', sm: '2.5rem', md: '2.8rem', fontFamily: 'Poppins, sans-serif' },
                 }}
             >
                 So, are you ready to join with us?
@@ -43,6 +43,7 @@ const CallToActionSection: React.FC = () => {
                     textTransform: 'none', // Keep the text casing as is
                     boxShadow: '0px 4px 15px rgba(106, 13, 173, 0.4)', // Subtle shadow with button color
                     transition: 'background-color 0.3s ease, transform 0.2s ease',
+                    fontFamily: 'Poppins, sans-serif',
                 '&:hover': {
                     backgroundColor: buttonHoverBgColor,
                     transform: 'translateY(-2px)', // Slight lift on hover

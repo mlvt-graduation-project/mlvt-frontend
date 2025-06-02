@@ -11,21 +11,22 @@ const audioWaveHeights2 = [10, 12, 8, 10, 15, 18, 10, 5, 30, 50, 70, 60, 40, 80,
 const LanguagesShowcase: React.FC = () => {
     return (
         <Box sx={{ 
-            backgroundColor: 'transparent', // Was background.default
+            backgroundColor: 'transparent',
             py: { xs: 4, md: 8 }, 
-            color: '#E0E0E0' // Was text.primary
+            color: '#E0E0E0' 
         }}>
             <Container maxWidth="lg">
                 <Typography 
-                    variant="h1" // Will use default h1 styling unless overridden by sx or parent theme
+                    variant="h1" 
                     component="h2" 
                     textAlign="center" 
                     gutterBottom 
                     sx={{ 
                         mb: { xs: 4, md: 6 },
-                        fontSize: { xs: '2.2rem', sm: '2.5rem', md: '2.8rem' }, // Example of manual font sizing
+                        fontSize: { xs: '2.2rem', sm: '2.5rem', md: '2.8rem' }, 
                         fontWeight: 600,
-                        color: '#FFFFFF' // Explicitly white for the title
+                        color: '#FFFFFF',
+                        fontFamily: 'Poppins, sans-serif',
                     }}
                 >
                     Various languages, Intended for all audiences
