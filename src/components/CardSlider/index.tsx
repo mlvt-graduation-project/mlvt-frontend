@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Box } from '@mui/material';
 import CarouselCard from './CarouselCard';
 import { motion, AnimatePresence } from 'framer-motion';
 

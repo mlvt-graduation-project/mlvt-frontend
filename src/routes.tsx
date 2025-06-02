@@ -9,6 +9,7 @@ import VerifyOTP from "./pages/verify_otp";
 import Storage from "./pages/storage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import EditAccount from "./pages/edit_account";
+import LandingPage from "./pages/landing";
 import HelpAndSupportPage from "./pages/help_and_support";
 import MembershipPremium from "./pages/membership_premium";
 
@@ -66,9 +67,4 @@ export const router = createBrowserRouter([
     element: <EditAccount />,
     errorElement: <Error />,
   },
-  {
-    path: "/help_and_support",
-    element: <HelpAndSupportPage />,
-    errorElement: <Error />,
-  }
 ]);
