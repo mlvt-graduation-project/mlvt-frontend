@@ -42,6 +42,9 @@ const LandingPageNavbar = () => {
               fontFamily: "Poppins, sans-serif",
             }}
             variant="text"
+            onClick={() => {
+              if (item === "Help") navigate("/help_and_support");
+            }}
           >
             {item}
           </Button>

@@ -50,7 +50,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
             label: `Appearance: ${theme.palette.mode === 'light' ? 'Light' : 'Dark'}`,
             icon: theme.palette.mode === 'light' ? <LightMode /> : <DarkMode />,
         },
-        { type: MenuItemType.HELP, label: 'Help & Support', icon: <Help /> },
+        { type: MenuItemType.HELP, label: 'Help & Support', icon: <Help />, path: '/help_and_support' },
         { type: MenuItemType.LOGOUT, label: 'Log out', icon: <Logout /> },
     ];
 
