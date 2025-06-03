@@ -31,8 +31,9 @@ const HelpNavbar: React.FC = () => {
               sx={{
                 fontWeight: "600",
                 mr: { xs: 1.5, sm: 3 },
+                color: "white",
                 "&:hover": {
-                  color: "primary.main",
+                  color: "#DDCCFF",
                 },
                 fontFamily: "Poppins, sans-serif",
               }}

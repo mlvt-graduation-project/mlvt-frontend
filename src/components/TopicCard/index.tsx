@@ -43,13 +43,14 @@ const TopicCard: React.FC<TopicCardProps> = ({
           fontWeight="600"
           sx={{
             fontFamily: "Poppins, sans-serif",
+            color: "#E0E0E0",
           }}
         >
           {title}
         </Typography>
         <Typography
           variant="body2"
-          color="text.secondary"
+          color="#B0B0B0"
           paragraph
           sx={{
             fontFamily: "Poppins, sans-serif",
@@ -66,7 +67,7 @@ const TopicCard: React.FC<TopicCardProps> = ({
           sx={{
             display: "inline-flex",
             alignItems: "center",
-            color: "primary.main",
+            color: "#DDCCFF",
             fontWeight: "medium",
             fontFamily: "Poppins, sans-serif",
           }}

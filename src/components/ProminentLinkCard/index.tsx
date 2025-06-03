@@ -42,7 +42,7 @@ const ProminentLinkCard: React.FC<ProminentLinkCardProps> = ({
     >
       <SvgIcon
         component={IconComponent}
-        sx={{ fontSize: 40, color: "text.secondary" }}
+        sx={{ fontSize: 40, color: "#DDDDDD" }}
       />
       <Box>
         <Typography
@@ -50,6 +50,7 @@ const ProminentLinkCard: React.FC<ProminentLinkCardProps> = ({
           fontWeight="600"
           sx={{
             fontFamily: "Poppins, sans-serif",
+            color: "#DDDDDD"
           }}
         >
           {title}
@@ -61,7 +62,7 @@ const ProminentLinkCard: React.FC<ProminentLinkCardProps> = ({
           sx={{
             display: "inline-flex",
             alignItems: "center",
-            color: "primary.main",
+            color: "#DDCCFF",
             fontFamily: "Poppins, sans-serif",
           }}
         >
