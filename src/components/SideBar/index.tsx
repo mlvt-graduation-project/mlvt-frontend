@@ -47,7 +47,7 @@ const navLinks: NavLink[] = [
   {
     name: "FAQ",
     icon: <HelpOutlineOutlinedIcon />,
-    link: "/",
+    link: "/help_and_support",
   },
 ];
 
