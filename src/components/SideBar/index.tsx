@@ -24,11 +24,10 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-<<<<<<< HEAD
     {
         name: "Explore",
         icon: <ExploreOutlinedIcon />,
-        link: "/",
+        link: "/landing",
     },
     {
         name: "Storage",
@@ -48,35 +47,8 @@ const navLinks: NavLink[] = [
     {
         name: "FAQ",
         icon: <HelpOutlineOutlinedIcon />,
-        link: "/",
+        link: "/help_and_support",
     },
-=======
-  {
-    name: "Explore",
-    icon: <ExploreOutlinedIcon />,
-    link: "/landing",
-  },
-  {
-    name: "Storage",
-    icon: <Inventory2OutlinedIcon />,
-    link: "/storage",
-  },
-  {
-    name: "Premium",
-    icon: <LocalActivityOutlinedIcon />,
-    link: "/premium_membership",
-  },
-  {
-    name: "About us",
-    icon: <WorkspacesOutlinedIcon />,
-    link: "/",
-  },
-  {
-    name: "FAQ",
-    icon: <HelpOutlineOutlinedIcon />,
-    link: "/",
-  },
->>>>>>> main
 ];
 
 const Sidebar: React.FC = () => {
