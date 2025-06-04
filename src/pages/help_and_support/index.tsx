@@ -8,7 +8,7 @@ import { TopicCardProps } from "../../components/TopicCard";
 import SettingsIcon from "@mui/icons-material/Settings";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import bgImage from "../../assets/landing_page_background.png";
-import HelpNavbar from "../../components/HelpNavBar";
+import NavBar from "../../components/LandingPageNavBar"
 import LandingPageFooter from "../../components/LandingPageFooter";
 
 const prominentLinksData = [
@@ -81,7 +81,7 @@ const HelpAndSupportPage: React.FC = () => {
         minHeight: "100vh",
       }}
     >
-      <HelpNavbar />
+      <NavBar />
       <HelpHeader />
 
       {/* Prominent Links Section */}

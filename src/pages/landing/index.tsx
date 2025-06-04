@@ -10,6 +10,7 @@ import PurposeShowcase from "../../components/PurposeShowcase";
 import AppraisalSection from "../../components/AppraisalSection";
 import CallToActionSection from "../../components/CallToAction";
 import LandingPageFooter from "../../components/LandingPageFooter";
+import UpButton from "../../components/UpButton";
 
 const LandingPage = () => {
   return (
@@ -115,6 +116,7 @@ const LandingPage = () => {
       <AppraisalSection />
 
       <CallToActionSection />
+      <UpButton />
 
       <LandingPageFooter />
     </Box>
