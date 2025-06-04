@@ -22,6 +22,11 @@ export interface GetUserResponse {
 export interface UserUpdateData {
     first_name: string;
     last_name: string;
+    username?: string;
+    email?: string;
+    role?: string;
+    status?: number;
+    premium?: boolean;
     avatar?: string;
 }
 

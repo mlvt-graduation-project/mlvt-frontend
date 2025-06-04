@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -27,12 +26,13 @@ const LandingPageNavbar = () => {
       <Typography
         variant="h6"
         fontWeight="bold"
-        sx={{ color: "white", fontFamily: "Poppins, sans-serif" }}
+        sx={{ color: "white", fontFamily: "Poppins, sans-serif", cursor: "pointer" }}
+        onClick={() => navigate("/")}
       >
         MLVT@HCMUS
       </Typography>
       <Box gap={2}>
-        {["Sample", "Document", "Resource", "Help"].map((item) => (
+        {["Explore", "Document", "About us", "Help"].map((item) => (
           <Button
             key={item}
             sx={{
@@ -44,6 +44,9 @@ const LandingPageNavbar = () => {
             variant="text"
             onClick={() => {
               if (item === "Help") navigate("/help_and_support");
+              else if (item === "About us") navigate("/about_us");
+              else if (item === "Document") navigate("/document");
+              else if (item === "Explore") navigate("/landing");
             }}
           >
             {item}

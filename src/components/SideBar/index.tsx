@@ -24,31 +24,31 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-  {
-    name: "Explore",
-    icon: <ExploreOutlinedIcon />,
-    link: "/landing",
-  },
-  {
-    name: "Storage",
-    icon: <Inventory2OutlinedIcon />,
-    link: "/storage",
-  },
-  {
-    name: "Premium",
-    icon: <LocalActivityOutlinedIcon />,
-    link: "/premium_membership",
-  },
-  {
-    name: "About us",
-    icon: <WorkspacesOutlinedIcon />,
-    link: "/",
-  },
-  {
-    name: "FAQ",
-    icon: <HelpOutlineOutlinedIcon />,
-    link: "/help_and_support",
-  },
+    {
+        name: "Explore",
+        icon: <ExploreOutlinedIcon />,
+        link: "/landing",
+    },
+    {
+        name: "Storage",
+        icon: <Inventory2OutlinedIcon />,
+        link: "/storage",
+    },
+    {
+        name: "Premium",
+        icon: <LocalActivityOutlinedIcon />,
+        link: "/premium_membership",
+    },
+    {
+        name: "About us",
+        icon: <WorkspacesOutlinedIcon />,
+        link: "/about_us",
+    },
+    {
+        name: "FAQ",
+        icon: <HelpOutlineOutlinedIcon />,
+        link: "/help_and_support",
+    },
 ];
 
 const Sidebar: React.FC = () => {

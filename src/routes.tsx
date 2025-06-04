@@ -10,6 +10,7 @@ import Storage from "./pages/storage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import EditAccount from "./pages/edit_account";
 import HelpAndSupportPage from "./pages/help_and_support";
+import AboutPage from "./pages/about_us";
 import LandingPage from "./pages/landing";
 import MembershipPremium from "./pages/membership_premium";
 
@@ -70,6 +71,11 @@ export const router = createBrowserRouter([
   {
     path: "/help_and_support",
     element: <HelpAndSupportPage />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/about_us",
+    element: <AboutPage />,
     errorElement: <Error />,
   },
   {

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import Slider from "react-slick";
 import { Box, Typography, Pagination } from "@mui/material";
 

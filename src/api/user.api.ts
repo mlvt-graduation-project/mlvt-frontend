@@ -43,3 +43,18 @@ export const getAvatarDownloadUrl = async (userId: string): Promise<string> => {
     throw error;
   }
 }
+
+export const updateAvatar = async (userId: string, fileName: string) => {
+  try {
+    const response = await put<string>(`/users/${userId}/update-avatar`, null, {
+        params: {
+          user_id: userId,
+          file_name: fileName,
+        }
+    });
+    return response;       
+  } catch (error) {
+    console.error('Error cannot update user avatar:', error);
+    throw error;
+  }
+}
