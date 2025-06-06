@@ -1,7 +1,7 @@
-import api from './base.api';
+import axios from 'axios';
 
 export const putImageS3 = async (URL: string, file: File) => {
-    return api
+    return axios
         .put(URL, file, {
             headers: {
                 'Content-Type': 'image/jpg',
@@ -14,7 +14,7 @@ export const putImageS3 = async (URL: string, file: File) => {
 };
 
 export const putDynamicFileType = async (URL: string, file: File | Blob, fileType: string) => {
-    return api
+    return axios
         .put(URL, file, {
             headers: {
                 'Content-Type': fileType,
