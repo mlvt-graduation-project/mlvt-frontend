@@ -15,9 +15,7 @@ const ProjectSection = () => {
     console.log();
   };
   const { projects, getProjectsByType, fetchAllProjects } = useProjectContext();
-  const [selectedProject, setSelectedProject] = React.useState<Project | null>(
-    null
-  );
+  const [selectedProject, setSelectedProject] = React.useState<Project | null>(null);
   const [isPopUpOpen, setIsPopUpOpen] = React.useState(false);
   const [dropdownValue, setDropdownValue] = React.useState("");
   const [displayProjects, setDisplayProjects] = useState<Project[]>([]);
@@ -52,7 +50,7 @@ const ProjectSection = () => {
     // return () => {
     //     clearInterval(intervalId); // Cleanup the interval on component unmount
     // };
-  }, [userId, fetchAllProjects]); 
+  }, [userId, fetchAllProjects]);
 
   useEffect(() => {
     const progress = getProjectsByType([
@@ -114,11 +112,7 @@ const ProjectSection = () => {
 
         {/* Search bar */}
         <Box>
-          <SearchBar
-            placeholder="Search"
-            onChange={handleSearchChange}
-            searchBarWidth="20rem"
-          />
+          <SearchBar placeholder="Search" onChange={handleSearchChange} searchBarWidth="20rem" />
         </Box>
         {/* Sort for search */}
         <FormControl
@@ -163,7 +157,7 @@ const ProjectSection = () => {
                     },
                     "&.Mui-selected": {
                       backgroundColor: theme.palette.secondary.main,
-                    },                    
+                    },
                   },
                 },
               },
@@ -190,11 +184,7 @@ const ProjectSection = () => {
         }}
       >
         {displayProjects.map((project, index) => (
-          <CardFeature
-            key={index}
-            project={project}
-            onclick={() => handleCardClick(project)}
-          />
+          <CardFeature key={index} project={project} onclick={() => handleCardClick(project)} />
         ))}
       </Box>
 

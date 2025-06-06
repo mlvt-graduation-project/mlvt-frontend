@@ -7,11 +7,7 @@ import { useEffect, useState } from "react";
 // import { getVideoDuration } from '../../../../utils/ProcessTriggerPopup/VideoService';
 import { getMediaDuration } from "../../../../utils/ProcessTriggerPopup/VideoService";
 import { FileData } from "../../../../types/FileData";
-import {
-  VideoFileType,
-  TextFileType,
-  AudioFileType,
-} from "../../../../types/FileType";
+import { VideoFileType, TextFileType, AudioFileType } from "../../../../types/FileType";
 import { useTheme } from "@mui/material/styles";
 import { useAuth } from "../../../../context/AuthContext";
 import { CustomAudio } from "./CustomAudio";
@@ -29,12 +25,9 @@ interface UploadVideoFromDeviceProps {
 
 // Utility Function
 const checkFileType = (fileType: string): "video" | "audio" | "text" | null => {
-  if (Object.values(VideoFileType).includes(fileType as VideoFileType))
-    return "video";
-  if (Object.values(TextFileType).includes(fileType as TextFileType))
-    return "text";
-  if (Object.values(AudioFileType).includes(fileType as AudioFileType))
-    return "audio";
+  if (Object.values(VideoFileType).includes(fileType as VideoFileType)) return "video";
+  if (Object.values(TextFileType).includes(fileType as TextFileType)) return "text";
+  if (Object.values(AudioFileType).includes(fileType as AudioFileType)) return "audio";
   return null;
 };
 
@@ -49,9 +42,7 @@ export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
   const { userId } = useAuth();
   const [isDragActive, setIsDragActive] = useState(false);
   const [localURL, setLocalURL] = useState<string | null>(null);
-  const [localFileType, setLocalFileType] = useState<
-    "video" | "audio" | "text" | null
-  >(null);
+  const [localFileType, setLocalFileType] = useState<"video" | "audio" | "text" | null>(null);
   const [fileContent, setFileContent] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const joinedFileTypes = fileTypeList.map((fileType) => fileType).join(", ");
@@ -88,21 +79,19 @@ export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
         setErrorMessage(null);
         handleChangeSelectedFile(file);
         setIsDragActive(false);
-        const fileExtension = file.name.includes(".")
-          ? file.name.substring(file.name.lastIndexOf("."))
-          : "";
+        const fileExtension = file.name.includes(".") ? file.name.substring(file.name.lastIndexOf(".")) : "";
 
         // Generate new filename while preserving extension
-        const newFileName = `${userId}_${Math.floor(
-          Date.now() / 1000
-        )}${fileExtension}`;
+        const newFileName = `${userId}_${Math.floor(Date.now() / 1000)}`;
+        const newVideoName = newFileName + fileExtension;
 
         if (checkFileType(file.type) === "video") {
           try {
             const duration = await getMediaDuration(file);
+
             handleChangeFileData({
-              file_name: newFileName,
-              image: `${file.name.split(".")[0]}_thumbnail.jpg`,
+              file_name: newVideoName,
+              image: `${newFileName}_thumbnail.jpg`,
               duration: duration,
               folder: "raw_videos",
             });
@@ -171,9 +160,7 @@ export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
     }
 
     if (localFileType === "audio" && localURL) {
-      return (
-        <CustomAudio audioURL={localURL} handleRemoveFile={handleRemoveFile} />
-      );
+      return <CustomAudio audioURL={localURL} handleRemoveFile={handleRemoveFile} />;
     }
 
     if (localFileType === "text" && fileContent) {
@@ -272,22 +259,13 @@ export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
       ) : (
         <>
           {localFileType === "audio" && localURL && (
-            <CustomAudio
-              handleRemoveFile={handleRemoveFile}
-              audioURL={localURL}
-            />
+            <CustomAudio handleRemoveFile={handleRemoveFile} audioURL={localURL} />
           )}
           {localFileType === "video" && localURL && (
-            <CustomVideo
-              handleRemoveFile={handleRemoveFile}
-              videoURL={localURL}
-            />
+            <CustomVideo handleRemoveFile={handleRemoveFile} videoURL={localURL} />
           )}
           {localFileType === "text" && fileContent && (
-            <CustomText
-              handleRemoveFile={handleRemoveFile}
-              textContent={fileContent}
-            />
+            <CustomText handleRemoveFile={handleRemoveFile} textContent={fileContent} />
           )}
         </>
       )}
