@@ -6,6 +6,7 @@ import { getUser } from "../../../api/user.api";
 import { useAuth } from "../../../context/AuthContext";
 import { User } from "../../../types/Response/User";
 import MenuDropdown from "../components/MenuDropdown";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface UserProfileProps {
   first_name: string;
@@ -52,7 +53,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
   };
 
   if (!user) {
-    return <Typography>Loading...</Typography>;
+    return <CircularProgress sx={{ color: theme.palette.text.secondary }} />;
   }
 
   return (
