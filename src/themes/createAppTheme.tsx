@@ -1,51 +1,55 @@
-import { createTheme, ThemeOptions, responsiveFontSizes } from '@mui/material/styles';
-import { PaletteMode } from '@mui/material';
+import {
+  createTheme,
+  ThemeOptions,
+  responsiveFontSizes,
+} from "@mui/material/styles";
+import { PaletteMode } from "@mui/material";
 
 const colorTokens = {
   light: {
-    primary: { main: '#A60195', contrastText: '#fff' },
-    secondary: { main: '#fff', contrastText: '#A60195' },
-    tertiary: { main: '#FFE1FF', contrastText: '#E4B1F0' },
-    accent: { main: '#00bfa5', contrastText: '#121212' },
-    neutral: { main: '#1E88E5', contrastText: '#fff' },
-    success: { main: '#C0EBA6', contrastText: '#1C7947' },
-    warning: { main: '#ff9800', contrastText: '#121212' },
-    error: { main: '#e57373', contrastText: '#CF0A0A' },
-    info: { main: '#B7E0FF', contrastText: '#0C2991' },
-    background: { default: '#f4f6f8', paper: '#fff' },
-    action: { active: '#FFCEFE', hover: '#E4B1F0' },
-    text: { primary: '#121212', secondary: '#4f4f4f' },
+    primary: { main: "#A60195", contrastText: "#fff" },
+    secondary: { main: "#fff", contrastText: "#A60195" },
+    tertiary: { main: "#FFE1FF", contrastText: "#E4B1F0" },
+    accent: { main: "#00bfa5", contrastText: "#121212" },
+    neutral: { main: "#1E88E5", contrastText: "#fff" },
+    success: { main: "#C0EBA6", contrastText: "#1C7947" },
+    warning: { main: "#ff9800", contrastText: "#121212" },
+    error: { main: "#e57373", contrastText: "#CF0A0A" },
+    info: { main: "#B7E0FF", contrastText: "#0C2991" },
+    background: { default: "#f4f6f8", paper: "#fff" },
+    action: { active: "#FFCEFE", hover: "#E4B1F0" },
+    text: { primary: "#121212", secondary: "#4f4f4f" },
   },
   dark: {
-    primary: { main: '#E4B1F0', contrastText: '#181C14' },
-    secondary: { main: '#272829', contrastText: '#ce93d8' },
-    tertiary: { main: '#1d1d1d', contrastText: '#E178C5' },
-    accent: { main: '#64ffda', contrastText: '#121212' },
-    neutral: { main: '#90CAF9', contrastText: '#121212' },
-    success: { main: '#81c784', contrastText: '#16FF00' },
-    warning: { main: '#ffb74d', contrastText: '#121212' },
-    error: { main: '#e57373', contrastText: '#FF1E00' },
-    info: { main: '#64b5f6', contrastText: '#121212' },
-    background: { default: '#121212', paper: '#1d1d1d' },
-    action: { active: '#272727', hover: '#272829' },
-    text: { primary: '#fff', secondary: '#cfcfcf' },
+    primary: { main: "#E4B1F0", contrastText: "#181C14" },
+    secondary: { main: "#272829", contrastText: "#ce93d8" },
+    tertiary: { main: "#1d1d1d", contrastText: "#E178C5" },
+    accent: { main: "#64ffda", contrastText: "#121212" },
+    neutral: { main: "#90CAF9", contrastText: "#121212" },
+    success: { main: "#81c784", contrastText: "#16FF00" },
+    warning: { main: "#ffb74d", contrastText: "#121212" },
+    error: { main: "#e57373", contrastText: "#FF1E00" },
+    info: { main: "#64b5f6", contrastText: "#121212" },
+    background: { default: "#121212", paper: "#1d1d1d" },
+    action: { active: "#272727", hover: "#272829" },
+    text: { primary: "#fff", secondary: "#cfcfcf" },
   },
 };
 
-declare module '@mui/material/styles' {
+declare module "@mui/material/styles" {
   interface Palette {
-    tertiary: Palette['primary'];
-    accent: Palette['primary'];
-    neutral: Palette['primary'];
+    tertiary: Palette["primary"];
+    accent: Palette["primary"];
+    neutral: Palette["primary"];
   }
   interface PaletteOptions {
-    tertiary?: PaletteOptions['primary'];
-    accent?: PaletteOptions['primary'];
-    neutral?: PaletteOptions['primary'];
+    tertiary?: PaletteOptions["primary"];
+    accent?: PaletteOptions["primary"];
+    neutral?: PaletteOptions["primary"];
   }
 }
 
-declare module '@mui/material/Button' {
+declare module "@mui/material/Button" {
   interface ButtonPropsColorOverrides {
     tertiary: true;
     accent: true;
@@ -77,21 +81,21 @@ export const getThemeOptions = (mode: PaletteMode): ThemeOptions => {
       text: paletteTokens.text,
     },
     typography: {
-      fontFamily: ['Roboto', 'Helvetica', 'Arial', 'sans-serif'].join(','),
-      h1: { fontSize: '2.5rem', fontWeight: 700 },
-      h2: { fontSize: '2rem', fontWeight: 700 },
-      body1: { fontSize: '1rem' },
-      button: { textTransform: 'none' },
+      fontFamily: ["Roboto", "Helvetica", "Arial", "sans-serif"].join(","),
+      h1: { fontSize: "2.5rem", fontWeight: 700 },
+      h2: { fontSize: "2rem", fontWeight: 700 },
+      body1: { fontSize: "1rem" },
+      button: { textTransform: "none" },
     },
     shape: { borderRadius: 8 },
     components: {
       MuiCssBaseline: {
         styleOverrides: {
-          'body, #root': {
-            transition: 'background-color 0.4s ease, color 0.4s ease',
+          "body, #root": {
+            transition: "background-color 0.4s ease, color 0.4s ease",
           },
-          '*, *::before, *::after': {
-            transition: 'background-color 0.4s ease, color 0.4s ease',
+          "*, *::before, *::after": {
+            transition: "background-color 0.4s ease, color 0.4s ease",
           },
         },
       },

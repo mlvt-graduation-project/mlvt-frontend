@@ -1,4 +1,3 @@
-import { None } from 'framer-motion';
 import { ProjectStatus } from './ProjectStatus';
 
 export interface BaseProject {

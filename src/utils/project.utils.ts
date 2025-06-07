@@ -21,8 +21,8 @@ import { getProjectProgress } from '../api/pipeline.api';
 
 export function combineAndSortProjects(...projectLists: Project[][]): Project[] {
   return projectLists
-    .flat() // Combine all lists into one
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()); // Sort by createdAt
+    .flat()
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 
 export const handleGetVideosProjectByUserId = async (userId: string): Promise<RawVideo[]> => {
@@ -35,7 +35,7 @@ export const handleGetVideosProjectByUserId = async (userId: string): Promise<Ra
 
     return videoListResponse.videos.map((videoData) => ({
       id: videoData.video.id,
-      thumbnail: videoData.image_url, // use image_url as thumbnail
+      thumbnail: videoData.image_url, 
       title: `Video - ${videoData.video.id}`,
       status: mapStatusToProjectStatus(videoData.video.status),
       createdAt: new Date(videoData.video.created_at),
@@ -44,7 +44,7 @@ export const handleGetVideosProjectByUserId = async (userId: string): Promise<Ra
     }));
   } catch (error) {
     console.error('Failed to fetch video or image URLs:', error);
-    return []; // Return an empty array to handle errors gracefully
+    return []; 
   }
 };
 
@@ -182,8 +182,8 @@ export const getAllProgressProjects = async (userId: number): Promise<Project[]>
         id: Number(progress.id),
         title,
         status: progress.status,
-        createdAt: new Date(progress.create_at),
-        updatedAt: new Date(progress.update_at),
+        createdAt: new Date(progress.created_at),
+        updatedAt: new Date(progress.updated_at),
       };
 
       switch (progress.progress_type) {
