@@ -30,11 +30,11 @@ export function useUserDetails() {
 
                 /* run both requests together */
                 const [{ user: apiUser }, avatarUrl] = await Promise.all([
-                    getUser(userId),        // MUST succeed
-                    avatarPromise,          // never throws
+                    getUser(userId),        
+                    avatarPromise,          
                 ]);
 
-                if (!active) return;      // guard against unmounts
+                if (!active) return;      
 
                 const avatarSrc = avatarUrl
                     ? avatarUrl.split('?X-Amz-Algorithm')[0]

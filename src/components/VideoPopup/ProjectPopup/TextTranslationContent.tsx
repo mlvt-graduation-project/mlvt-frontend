@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import ChangeViewBox from "../ProcessTriggerPopup/BaseComponent/ChangeView";
 import { InfoNav } from "./BaseComponent/InfomationNavBar/InfoNav";
-import { RealatedOutput } from "./BaseComponent/RelatedOutput";
+import { RelatedOutput } from "./BaseComponent/RelatedOutput";
 import { Box } from "@mui/material";
 import { TextTranslationProject } from "../../../types/Project";
 import { getTextById } from "../../../api/text.api";
@@ -57,10 +57,10 @@ export const TextTranslationContent: React.FC<ContentProps> = ({
   const Views = useMemo(
     () => [
       {
-        text: "ORGINAL INPUT",
+        text: "ORIGINAL INPUT",
         viewState: "original",
         component: (
-          <RealatedOutput
+          <RelatedOutput
             splitTwoColumn={false}
             childrenData={[
               {
@@ -78,7 +78,7 @@ export const TextTranslationContent: React.FC<ContentProps> = ({
         text: "RELATED OUTPUT",
         viewState: "related output",
         component: (
-          <RealatedOutput
+          <RelatedOutput
             splitTwoColumn={false}
             childrenData={[
               {

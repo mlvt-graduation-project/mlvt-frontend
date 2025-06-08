@@ -74,8 +74,6 @@ const PersonalDetails: React.FC<UserDetails> = ({ user }) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       const reader = new FileReader();
-
-      // Read the file as a data URL to display as an image
       reader.onload = () => {
         if (reader.result) {
           setAvatarPreview(reader.result as string);

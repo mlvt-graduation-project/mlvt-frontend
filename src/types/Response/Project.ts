@@ -11,8 +11,8 @@ export interface GetAllProjectResponse {
         audio_id: number;
         progressed_video_id: number;
         status: ProjectStatus;
-        create_at: string | Date;
-        update_at: string | Date;
+        created_at: string | Date;
+        updated_at: string | Date;
         thumbnail_url: string;
     }[];
 }

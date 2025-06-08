@@ -12,6 +12,7 @@ import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 import UploadVideoButton from "./UploadVideoButton";
 import UserProfile from "./UserProfile";
 import { useUserDetails } from "../../hooks/useUserDetails";
+import LoadingBackdrop from "../LoadingBackdrop";
 
 interface NavbarProps {
   onOpenVideoTranslation: () => void;
@@ -54,7 +55,7 @@ const NAV_LINKS = [
 
 const NavBar: React.FC<NavbarProps> = (callbacks) => {
   const theme = useTheme();
-  const { user } = useUserDetails();
+  const { user, loading } = useUserDetails();
 
   const actionMap = useMemo(
     () => ({
@@ -73,116 +74,117 @@ const NavBar: React.FC<NavbarProps> = (callbacks) => {
     [actionMap]
   );
 
-  const {
-    first_name = "",
-    last_name = "",
-    premium = false
-  } = user ?? {};
+  const { first_name = "", last_name = "", premium = false } = user ?? {};
 
-  const avatarSrc = user?.avatar ? user?.avatar.split('?X-Amz-Algorithm')[0] : '';
+  const avatarSrc = user?.avatar
+    ? user?.avatar.split("?X-Amz-Algorithm")[0]
+    : "";
   console.log("Avatar Source:", avatarSrc);
 
   return (
-    <AppBar
-      position="static"
-      sx={{
-        backgroundColor: theme.palette.background.default,
-        color: theme.palette.primary.main,
-        boxShadow: "none",
-        borderBottom: "2px solid" + theme.palette.secondary.main,
-      }}
-    >
-      <Toolbar
+    <>
+      <LoadingBackdrop open={loading} />
+      <AppBar
+        position="static"
         sx={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0.7rem 2.2rem",
+          backgroundColor: theme.palette.background.default,
+          color: theme.palette.primary.main,
+          boxShadow: "none",
+          borderBottom: "2px solid" + theme.palette.secondary.main,
         }}
       >
-        <UploadVideoButton />
+        <Toolbar
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "0.7rem 2.2rem",
+          }}
+        >
+          <UploadVideoButton />
 
-        {/* ----------------  centre nav links  ---------------- */}
-        <Box sx={{ display: "flex" }}>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-              marginRight: "2rem",
-            }}
-          >
-            {NAV_LINKS.map(({ icon, text, action }) => (
-              <Link
-                key={text}
-                component={RouterLink}
-                to="/"
-                underline="none"
-                color="inherit"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavClick(action);
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: { sx: "column", lg: "column" },
-                    alignItems: "center",
-                    color: theme.palette.text.primary,
-                    textDecoration: "none",
-                    gap: 0.8,
+          {/* ----------------  centre nav links  ---------------- */}
+          <Box sx={{ display: "flex" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+                marginRight: "2rem",
+              }}
+            >
+              {NAV_LINKS.map(({ icon, text, action }) => (
+                <Link
+                  key={text}
+                  component={RouterLink}
+                  to="/"
+                  underline="none"
+                  color="inherit"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavClick(action);
                   }}
                 >
                   <Box
                     sx={{
-                      borderRadius: "0.8rem",
-                      width: "3.5rem",
-                      height: "2rem",
                       display: "flex",
+                      flexDirection: { sx: "column", lg: "column" },
                       alignItems: "center",
-                      justifyContent: "center",
-                      "&:hover": {
-                        backgroundColor: theme.palette.tertiary.main,
-                      },
+                      color: theme.palette.text.primary,
+                      textDecoration: "none",
+                      gap: 0.8,
                     }}
                   >
-                    {React.cloneElement(icon, {
-                      sx: {
-                        color: theme.palette.text.primary,
-                        width: "1.3rem",
-                      },
-                    })}
-                  </Box>
-
-                  <Box sx={{ width: "4.5rem", textAlign: "center" }}>
-                    <Typography
+                    <Box
                       sx={{
-                        fontFamily: "Poppins, sans-serif",
-                        fontWeight: 500,
-                        fontSize: "0.8rem",
+                        borderRadius: "0.8rem",
+                        width: "3.5rem",
+                        height: "2rem",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        "&:hover": {
+                          backgroundColor: theme.palette.tertiary.main,
+                        },
                       }}
                     >
-                      {text}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Link>
-            ))}
-          </Box>
+                      {React.cloneElement(icon, {
+                        sx: {
+                          color: theme.palette.text.primary,
+                          width: "1.3rem",
+                        },
+                      })}
+                    </Box>
 
-          {/* ----------------  user profile  ---------------- */}
-          <UserProfile
-            first_name={first_name}
-            last_name={last_name}
-            status={premium}
-            avatarSrc={avatarSrc}
-            notifications={10}
-          />
-        </Box>
-      </Toolbar>
-    </AppBar>
+                    <Box sx={{ width: "4.5rem", textAlign: "center" }}>
+                      <Typography
+                        sx={{
+                          fontFamily: "Poppins, sans-serif",
+                          fontWeight: 500,
+                          fontSize: "0.8rem",
+                        }}
+                      >
+                        {text}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Link>
+              ))}
+            </Box>
+
+            {/* ----------------  user profile  ---------------- */}
+            <UserProfile
+              first_name={first_name}
+              last_name={last_name}
+              status={premium}
+              avatarSrc={avatarSrc}
+              notifications={10}
+            />
+          </Box>
+        </Toolbar>
+      </AppBar>
+    </>
   );
 };
 

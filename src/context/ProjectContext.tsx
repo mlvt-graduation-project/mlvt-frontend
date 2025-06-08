@@ -17,11 +17,18 @@ const ProjectContext = createContext<{
   addProject: (newProject: Project) => void;
   updateProjects: (updatedProjects: Project[]) => void;
   getProjectsByType: (types: ProjectType[]) => Project[];
-  getProjectByTypeAndStatus: (types: ProjectType[], status: ProjectStatus[]) => Project[];
+  getProjectByTypeAndStatus: (
+    types: ProjectType[],
+    status: ProjectStatus[]
+  ) => Project[];
   fetchAllProjects: () => void;
 } | null>(null);
 
-export const ProjectProvider = ({ children }: { children: React.ReactNode }) => {
+export const ProjectProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const { userId } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
 
@@ -32,7 +39,12 @@ export const ProjectProvider = ({ children }: { children: React.ReactNode }) => 
         const textProjects = await handleGetTextProjectByUserId(userId);
         const audioProjects = await handleGetAudioProjectByUserId(userId);
         const progressProjects = await getAllProgressProjects(parseInt(userId));
-        const combinedProject = combineAndSortProjects(videoProjects, textProjects, audioProjects, progressProjects);
+        const combinedProject = combineAndSortProjects(
+          videoProjects,
+          textProjects,
+          audioProjects,
+          progressProjects
+        );
         setProjects(combinedProject);
       }
     } catch (error) {
@@ -46,14 +58,20 @@ export const ProjectProvider = ({ children }: { children: React.ReactNode }) => 
 
   const updateProjects = (updatedProjects: Project[]) => {
     setProjects(updatedProjects);
-  };
+  };	
 
   const getProjectsByType = (types: ProjectType[]) => {
     return projects.filter((project) => types.includes(project.type_project));
   };
 
-  const getProjectByTypeAndStatus = (types: ProjectType[], status: ProjectStatus[]) => {
-    return projects.filter((project) => types.includes(project.type_project) && status.includes(project.status));
+  const getProjectByTypeAndStatus = (
+    types: ProjectType[],
+    status: ProjectStatus[]
+  ) => {
+    return projects.filter(
+      (project) =>
+        types.includes(project.type_project) && status.includes(project.status)
+    );
   };
 
   return (
@@ -74,6 +92,7 @@ export const ProjectProvider = ({ children }: { children: React.ReactNode }) => 
 
 export const useProjectContext = () => {
   const context = useContext(ProjectContext);
-  if (!context) throw new Error("useProjectContext must be used within a ProjectProvider");
+  if (!context)
+    throw new Error("useProjectContext must be used within a ProjectProvider");
   return context;
 };

@@ -1,14 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, Typography, Avatar, Box, Chip, Icon, IconButton, TextField } from '@mui/material';
-import { Project } from '../../types/Project';
-import { ProjectType } from '../../types/Project';
-import { hasThumbnail } from '../../utils/project.utils';
-import { useTheme } from '@mui/material/styles';
-import { Bookmark, BookmarkBorder, EditSharp as EditSharpIcon, Circle as CircleIcon } from '@mui/icons-material';
-import { ProjectStatus, toDisplayText } from '../../types/ProjectStatus';
-import TextIcon from '../../assets/TextIcon.png';
-import AudioIcon from '../../assets/AudioIcon.png';
-import { m } from 'framer-motion';
+import React, { useEffect, useState } from "react";
+import {
+    Card,
+    CardContent,
+    Typography,
+    Box,
+    Chip,
+    IconButton,
+    TextField,
+} from "@mui/material";
+import { Project } from "../../types/Project";
+import { ProjectType } from "../../types/Project";
+import { hasThumbnail } from "../../utils/project.utils";
+import { alpha, useTheme } from "@mui/material/styles";
+import {
+    EditSharp as EditSharpIcon,
+    Circle as CircleIcon,
+    Bookmark,
+    BookmarkBorder,
+} from "@mui/icons-material";
+import { ProjectStatus, toDisplayText } from "../../types/ProjectStatus";
+import TextIcon from "../../assets/TextIcon.png";
+import AudioIcon from "../../assets/AudioIcon.png";
 
 interface CardFeatureProps {
     project: Project;
@@ -18,15 +30,15 @@ interface CardFeatureProps {
 function mapStatusToColor(status: ProjectStatus) {
     switch (status) {
         case ProjectStatus.Processing:
-            return { backgroundColor: '#FFCC00', fontColor: '#000000' };
+            return { backgroundColor: "#FFCC00", fontColor: "#000000" };
         case ProjectStatus.Succeeded:
-            return { backgroundColor: '#00CC00', fontColor: '#FFFFFF' };
+            return { backgroundColor: "#C0EBA6", fontColor: "#16610E" };
         case ProjectStatus.Failed:
-            return { backgroundColor: '#FF0000', fontColor: '#FFFFFF' };
+            return { backgroundColor: "#F8C4B4", fontColor: "#CF0A0A" };
         case ProjectStatus.Raw:
-            return { backgroundColor: '#CCCCCC', fontColor: '#000000' };
+            return { backgroundColor: "#CCCCCC", fontColor: "#000000" };
         default:
-            return { backgroundColor: '#FFFFFF', fontColor: '#000000' };
+            return { backgroundColor: "#FFFFFF", fontColor: "#000000" };
     }
 }
 
@@ -50,7 +62,7 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
     };
 
     const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
+        if (e.key === "Enter") {
             setIsEditing(false);
             // onUpdateTitle(project.id, title); // Save changes on Enter key press
         }
@@ -63,8 +75,11 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
     const handleBookmarkClick = (e: React.MouseEvent) => {
         e.stopPropagation();
         setIsBookmarked((prev) => !prev);
-        console.log('Bookmark clicked');
+        console.log("Bookmark clicked");
     };
+    function isValidDate(d: any) {
+        return d instanceof Date && !isNaN(d.getTime());
+    }
 
     useEffect(() => {
         setTitle(project.title);
@@ -74,60 +89,77 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
         <Card
             variant="outlined"
             sx={{
-                width: '90%',
-                aspectRatio: 22 / 18,
-                borderRadius: '0.5rem',
-                boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.55)',
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column',
-                padding: '0.4rem',
+                width: "90%",
+                aspectRatio: 25 / 22,
+                borderRadius: "0.5rem",
+                boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.55)",
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                padding: "0.7rem",
+                cursor: "pointer",
             }}
         >
             {/* Image section */}
             <Box
                 sx={{
-                    position: 'relative',
-                    width: '100%',
-                    height: '60%',
-                    borderRadius: '0.5rem',
-                    overflow: 'hidden',
+                    position: "relative",
+                    width: "100%",
+                    borderRadius: "0.5rem",
+                    overflow: "hidden",
                 }}
                 onClick={handleClick}
             >
                 <img
                     src={
                         hasThumbnail(project)
-                            ? project.thumbnail.split('?')[0]
-                            : [ProjectType.Text, ProjectType.AudioGeneration, ProjectType.TextTranslation].includes(
-                                project.type_project
-                            )
-                                ? TextIcon
-                                : AudioIcon
+                            ? project.thumbnail.split("?")[0]
+                            : [
+                                  ProjectType.Text,
+                                  ProjectType.AudioGeneration,
+                                  ProjectType.TextTranslation,
+                              ].includes(project.type_project)
+                            ? TextIcon
+                            : AudioIcon
                     }
                     alt="Project Thumbnail"
                     style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'contain', // Keeps the original aspect ratio
-                        backgroundColor: '#E9E9E9', // Prevents white background if transparency exists
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
+                        backgroundColor: "#E9E9E9",
                     }}
                 />
 
                 {/* Bookmark icon */}
                 <Box
                     sx={{
-                        position: 'absolute',
-                        top: '0.1rem',
-                        right: '0.1rem',
+                        position: "absolute",
+                        top: "0.55rem",
+                        right: "0.55rem",
+                        backgroundColor: alpha("#121212", 0.4),
+                        borderRadius: "50%",
+                        boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: "0.2rem",
+                        cursor: "pointer",
                     }}
                     onClick={(e) => e.stopPropagation()}
                 >
-                    <IconButton onClick={handleBookmarkClick} sx={{ padding: '0' }}>
+                    <IconButton
+                        onClick={handleBookmarkClick}
+                        sx={{ padding: "0" }}
+                    >
                         {isBookmarked ? (
-                            <Bookmark sx={{ color: theme.palette.warning.main, fontSize: '2rem' }} />
+                            <Bookmark
+                                sx={{ color: "#FF9B17", fontSize: "1.8rem" }}
+                            />
                         ) : (
-                            <BookmarkBorder sx={{ color: theme.palette.warning.main, fontSize: '2rem' }} />
+                            <BookmarkBorder
+                                sx={{ color: "#FF9B17", fontSize: "1.8rem" }}
+                            />
                         )}
                     </IconButton>
                 </Box>
@@ -136,21 +168,23 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
             {/* Card Content */}
             <CardContent
                 sx={{
-                    marginTop: '0.4rem',
-                    marginBottom: '0.3rem',
-                    padding: '0rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    flex: '1',
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    flex: "1",
+                    mt: "0.5rem",
+                    p: 0,
+                    "&:last-child": {
+                        pb: 0,
+                    },
                 }}
             >
                 {/* Title Section with Inline Editing */}
                 <Box
                     sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
                     }}
                 >
                     {isEditing ? (
@@ -162,77 +196,90 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                             variant="standard"
                             autoFocus
                             sx={{
-                                fontFamily: theme.typography.body1.fontFamily,
-                                fontSize: '1rem',
-                                fontWeight: 550,
-                                marginRight: '0.5rem',
-                                flex: '1',
+                                "& .MuiInputBase-input": {
+                                    fontFamily: "Poppins, sans-serif",
+                                    fontWeight: 400,
+                                    fontSize: "0.9rem",
+                                },
+                                marginRight: "0.5rem",
+                                flex: "1",
                             }}
                         />
                     ) : (
                         <Typography
                             sx={{
-                                fontFamily: theme.typography.body1.fontFamily,
+                                fontFamily: "Poppins, sans-serif",
                                 color: theme.palette.primary.main,
                                 fontWeight: 550,
-                                fontSize: '1rem',
+                                fontSize: "1rem",
                             }}
                         >
                             {title}
                         </Typography>
                     )}
 
-                    <IconButton onClick={handleEditClick} sx={{ color: theme.palette.primary.main }}>
+                    <IconButton
+                        onClick={handleEditClick}
+                        sx={{ color: theme.palette.primary.main }}
+                    >
                         <EditSharpIcon fontSize="small" />
                     </IconButton>
                 </Box>
                 {/* Created Time */}
-                {/* <Typography
+                <Typography
                     sx={{
-                        fontFamily: theme.typography.body1.fontFamily,
-                        color: theme.fontColor.gray,
-                        fontSize: '0.9rem',
+                        fontFamily: "Poppins, sans-serif",
+                        color: "gray",
+                        fontSize: "0.75rem",
                     }}
                 >
-                    Created at: {formatDate(project.createdAt)}
-                </Typography> */}
+                    Created at:{" "}
+                    {isValidDate(project.createdAt)
+                        ? project.createdAt.toLocaleString()
+                        : "N/A"}
+                </Typography>
                 {/* Status and Type Chips */}
                 <Box
                     sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        marginTop: '0.5rem',
+                        display: "flex",
+                        justifyContent: "space-between",
+                        marginTop: "0.5rem",
+                        padding: "0",
                     }}
                 >
                     <Chip
                         label={toDisplayText(project.status)}
                         icon={
                             <CircleIcon
+                                color="secondary"
                                 sx={{
-                                    fontSize: '0.8rem',
-                                    color: mapStatusToColor(project.status).backgroundColor,
-                                    margin: '0',
-                                    padding: '0',
+                                    fontSize: "0.8rem",
+                                    margin: "0",
+                                    padding: "0",
+                                    color: mapStatusToColor(project.status)
+                                        .fontColor,
                                 }}
                             />
                         }
                         sx={{
-                            backgroundColor: mapStatusToColor(project.status).backgroundColor,
+                            backgroundColor: mapStatusToColor(project.status)
+                                .backgroundColor,
                             color: mapStatusToColor(project.status).fontColor,
-                            fontFamily: theme.typography.body1.fontFamily,
-                            fontSize: '0.8rem',
-                            fontWeight: 'bold',
-                            borderRadius: '0.5rem',
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "0.8rem",
+                            fontWeight: "600",
+                            borderRadius: "0.5rem",
                         }}
                     />
                     <Chip
                         label={project.type_project}
                         sx={{
-                            backgroundColor: theme.palette.primary.main,
-                            color: theme.palette.primary.contrastText,
-                            fontFamily: theme.typography.body1.fontFamily,
-                            fontSize: '0.8rem',
-                            borderRadius: '0.5rem',
+                            backgroundColor: theme.palette.info.main,
+                            color: theme.palette.info.contrastText,
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "0.8rem",
+                            borderRadius: "0.5rem",
+                            fontWeight: "500",
                         }}
                     />
                 </Box>
@@ -240,12 +287,5 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
         </Card>
     );
 };
-
-function formatDate(date: Date): string {
-    const day = date.getUTCDate().toString().padStart(2, '0');
-    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-    const year = date.getUTCFullYear();
-    return `${day}/${month}/${year}`;
-}
 
 export default CardFeature;

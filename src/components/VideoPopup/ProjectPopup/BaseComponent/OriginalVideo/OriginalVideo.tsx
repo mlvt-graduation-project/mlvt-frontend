@@ -9,8 +9,8 @@ export const OriginalVideo = ({ videoUrl }: { videoUrl: string | null }) => {
             sx={{
                 position: 'relative',
                 width: '100%',
-                paddingTop: '56.25%', // 16:9 aspect ratio (height/width * 100)
-                backgroundColor: 'black', // Optional: background for empty areas
+                paddingTop: '56.25%', 
+                backgroundColor: 'black', 
                 borderRadius: '10px',
                 marginTop: '20px',
             }}

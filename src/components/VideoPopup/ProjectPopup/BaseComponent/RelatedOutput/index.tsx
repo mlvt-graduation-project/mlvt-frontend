@@ -1,18 +1,19 @@
-import { Box } from '@mui/material';
-import { CustomAudioPlayer } from './CustomizedVideoBox';
-import { TextView } from './CustomizedTextBox';
+import { Box } from "@mui/material";
+import { CustomAudioPlayer } from "./CustomizedVideoBox";
+import { TextView } from "./CustomizedTextBox";
+import { Height } from "@mui/icons-material";
 
 interface AudioProps {
-    type: 'audio/video';
+    type: "audio/video";
     props: {
         audioSrc: string;
         audioTittle: string;
-        sourceType: 'audio' | 'video';
+        sourceType: "audio" | "video";
     };
 }
 
 interface TextProps {
-    type: 'text';
+    type: "text";
     props: {
         displayText: string;
         textTittle: string;
@@ -21,49 +22,52 @@ interface TextProps {
 
 type ChildComponentProps = AudioProps | TextProps;
 
-interface RealatedOutputProps {
+interface RelatedOutputProps {
     childrenData: ChildComponentProps[];
     splitTwoColumn: boolean;
 }
 
-export const RealatedOutput: React.FC<RealatedOutputProps> = ({ childrenData, splitTwoColumn }) => {
+export const RelatedOutput: React.FC<RelatedOutputProps> = ({
+    childrenData,
+    splitTwoColumn,
+}) => {
     // const defaultSx = {};
 
     const splitTwoColumnSx = splitTwoColumn
         ? {
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              padding: '5px',
+              display: "grid",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              padding: "5px",
               gap: 2,
-              height: '38px',
-              mt: 4,
-              paddingTop: '0',
+              height: "40px",
+              mt: 2,
+              paddingTop: "0",
           }
         : {
-              width: '100%',
+              width: "100%",
           };
 
     const customChildSx = splitTwoColumn
         ? {
-              height: '95%',
+              height: "100%",
           }
         : {
-              width: '80%',
-              height: '100%',
+              width: "80%",
+              height: "100%",
           };
 
     return (
         <Box
             sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
                 ...splitTwoColumnSx,
             }}
         >
             {childrenData.map((child, index) => {
-                if (child.type === 'audio/video') {
+                if (child.type === "audio/video") {
                     return (
                         <CustomAudioPlayer
                             key={index}
@@ -74,7 +78,7 @@ export const RealatedOutput: React.FC<RealatedOutputProps> = ({ childrenData, sp
                         />
                     );
                 }
-                if (child.type === 'text') {
+                if (child.type === "text") {
                     return (
                         <TextView
                             key={index}
