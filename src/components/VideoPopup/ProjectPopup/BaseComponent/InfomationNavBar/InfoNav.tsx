@@ -69,7 +69,7 @@ export const InfoNav: React.FC<InfoNavProps> = ({
                 <Box
                     sx={{
                         display: "flex",
-                        flexDirection: "rpw",
+                        flexDirection: "row",
                         gap: 1,
                         backgroundColor: theme.palette.action.hover,
                         padding: "10px 10px",
