@@ -76,9 +76,9 @@ export const ProcessedVideoPopUp: React.FC<ProcessedVideoProps> = ({
         customSx: {
             // height: hideNavBar ? '37.5rem' : '42.5rem',
             '& .MuiDialog-paper': {
-                // height: 'auto', // Make height fit content
+                height: 'auto', // Make height fit content
                 maxWidth: '90vw', // Limit max width to viewport width
-                maxHeight: '90vh', // Limit max height to viewport height
+                maxHeight: '90vh', 
             },
         },
         customPaperPropSx: {
@@ -90,7 +90,7 @@ export const ProcessedVideoPopUp: React.FC<ProcessedVideoProps> = ({
             // height: hideNavBar ? '45.5rem' : '47.5rem',
             '& .MuiDialog-paper': {
                 // width: 'auto', // Make width fit content
-                // height: 'auto', // Make height fit content
+                height: 'auto', // Make height fit content
                 maxWidth: '90vw', // Limit max width to viewport width
                 maxHeight: '90vh', // Limit max height to viewport height
             },

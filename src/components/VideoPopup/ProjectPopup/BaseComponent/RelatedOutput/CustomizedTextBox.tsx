@@ -1,5 +1,5 @@
-import { Typography, Box, IconButton } from '@mui/material';
-import DownloadIcon from '@mui/icons-material/Download';
+import { Typography, Box, IconButton } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 export const TextView = ({
     displayText,
     textTittle,
@@ -16,11 +16,11 @@ export const TextView = ({
     showOutsideBox?: boolean;
 }) => {
     const handleDownload = () => {
-        const element = document.createElement('a');
-        const file = new Blob([displayText], { type: 'text/plain' });
+        const element = document.createElement("a");
+        const file = new Blob([displayText], { type: "text/plain" });
         element.href = URL.createObjectURL(file);
-        element.download = textTittle + '.txt';
-        document.body.appendChild(element); // Required for this to work in FireFox
+        element.download = textTittle + ".txt";
+        document.body.appendChild(element);
         element.click();
     };
 
@@ -29,46 +29,49 @@ export const TextView = ({
             {showOutsideBox ? (
                 <Box
                     sx={{
-                        backgroundColor: '#F3E8FF',
-                        padding: '2.5%',
-                        borderRadius: '20px',
-                        width: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        overflow: 'hidden', // Prevents expanding due to content
-                        position: 'relative',
-                        height: '85%', // Set a fixed height
+                        backgroundColor: (theme) => theme.palette.tertiary.main,
+                        padding: "20px",
+                        borderRadius: "20px",
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                        overflow: "hidden",
+                        position: "relative",
                         ...customizeSx,
                     }}
                 >
                     <Box
                         sx={{
-                            display: 'flex',
-                            justifyContent: centerTittle ? 'center' : 'space-between',
-                            alignItems: 'center',
-                            marginBottom: '3%',
-                            gap: '16px',
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginBottom: "10px",
                         }}
                     >
                         <Typography
-                            variant="h6"
+                            variant="body1"
                             sx={{
-                                fontWeight: 'bold',
+                                fontWeight: "600",
+                                fontFamily: "Poppins, sans-serif",
                                 margin: 0,
+                                color: (theme) => theme.palette.primary.main,
                             }}
                         >
                             {textTittle}
                         </Typography>
                         {!disableDownload && (
                             <IconButton
+                                size="small"
                                 sx={{
-                                    position: 'absolute',
-                                    right: '5%',
-                                    borderRadius: '25%',
-                                    padding: '5px',
-                                    backgroundColor: '#B800E6',
-                                    color: 'white',
-                                    '&:hover': { backgroundColor: '#9B00CC' },
+                                    borderRadius: "10px",
+                                    padding: "5px",
+                                    backgroundColor: (theme) =>
+                                        theme.palette.action.active,
+                                    color: "white",
+                                    "&:hover": {
+                                        backgroundColor: (theme) =>
+                                            theme.palette.action.hover,
+                                    },
                                 }}
                                 onClick={handleDownload}
                             >
@@ -79,23 +82,21 @@ export const TextView = ({
 
                     <Box
                         sx={{
-                            border: '1px solid black',
-                            borderRadius: '10px',
-                            padding: '10px',
-                            flexGrow: 1, // Ensures it takes up the remaining space
-                            overflowY: 'auto', // Enable scrolling if needed
-                            height: '100%', // Ensures the box does not shrink
+                            paddingX: "10px",
+                            flexGrow: 1, 
+                            overflowY: "auto",
+                            height: "100%",
                         }}
                     >
                         <p
                             style={{
-                                fontSize: '13px',
-                                maxWidth: '95%',
-                                overflowY: 'auto',
-                                whiteSpace: 'pre-wrap',
+                                fontSize: "13px",
+                                maxWidth: "95%",
+                                overflowY: "auto",
+                                whiteSpace: "pre-wrap",
                                 margin: 0,
-                                scrollbarWidth: 'thin',
-                                fontFamily: 'Times New Roman, Times, serif',
+                                scrollbarWidth: "thin",
+                                fontFamily: "Be Vietnam Pro, Roboto, sans-serif",
                             }}
                         >
                             {displayText}
@@ -105,21 +106,21 @@ export const TextView = ({
             ) : (
                 <Box
                     sx={{
-                        border: '1px solid black', // Viền đen
-                        borderRadius: '10px', // Bo góc 2px
-                        padding: '10px', // Khoảng cách bên trong
-                        height: '80%',
+                        border: "1px solid black", // Viền đen
+                        borderRadius: "10px", // Bo góc 2px
+                        padding: "10px", // Khoảng cách bên trong
+                        height: "80%",
                     }}
                 >
                     <p
                         style={{
-                            fontSize: '13px',
-                            maxHeight: '100%', // Set max height for scrolling area
-                            overflowY: 'auto', // Enable vertical scrolling when content overflows
-                            whiteSpace: 'pre-wrap',
+                            fontSize: "13px",
+                            maxHeight: "100%", // Set max height for scrolling area
+                            overflowY: "auto", // Enable vertical scrolling when content overflows
+                            whiteSpace: "pre-wrap",
                             margin: 0, // Remove default margin
-                            scrollbarWidth: 'thin', // For Firefox: makes the scrollbar thinner
-                            fontFamily: 'Times New Roman, Times, serif',
+                            scrollbarWidth: "thin", // For Firefox: makes the scrollbar thinner
+                            fontFamily: "Times New Roman, Times, serif",
                         }}
                     >
                         {displayText}

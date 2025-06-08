@@ -50,7 +50,7 @@ export const LipSyncContent: React.FC<ContentProps> = ({ inputProject }) => {
   const Views = useMemo(
     () => [
       {
-        text: "ORGINAL VIDEO",
+        text: "ORIGINAL VIDEO",
         viewState: "original",
         component: <OriginalVideo videoUrl={inputVideoURL} />,
       },
@@ -77,7 +77,6 @@ export const LipSyncContent: React.FC<ContentProps> = ({ inputProject }) => {
       <InfoNav />
       <Box sx={{ marginTop: "15px", height: "31rem" }}>
         <ChangeViewBox Views={Views} setViewState={changeViewState} />
-
         <Box sx={{ marginTop: "20px" }}>{ActiveComponent}</Box>
       </Box>
     </>

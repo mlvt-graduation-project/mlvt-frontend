@@ -1,6 +1,6 @@
-import { useState, useEffect, ChangeEvent } from 'react';
-import { Box, Typography, TextField } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { useState, useEffect, ChangeEvent } from "react";
+import { Box, Typography, TextField } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 interface InputTextBoxProps {
     inputTextFromParent: string;
@@ -32,17 +32,17 @@ export const InputTextBox: React.FC<InputTextBoxProps> = ({
     return (
         <Box
             sx={{
-                marginBottom: '20px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
+                marginBottom: "20px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
             }}
         >
             <Typography
                 variant="body2"
                 sx={{
-                    marginY: '10px',
-                    fontFamily: 'Poppins, sans-serif',
+                    marginY: "10px",
+                    fontFamily: "Poppins, sans-serif",
                     fontWeight: 600,
                 }}
             >
@@ -53,25 +53,25 @@ export const InputTextBox: React.FC<InputTextBoxProps> = ({
                 fullWidth
                 label=""
                 placeholder="Enter your text here"
-                multiline 
+                multiline
                 rows={4}
                 value={inputValue}
                 onChange={handleInputChange}
                 inputProps={{
-                    id: 'textarea-input', 
-                    name: 'textareaInput', 
+                    id: "textarea-input",
+                    name: "textareaInput",
                 }}
                 sx={{
-                    borderRadius: '0.375rem',
-                    height: '2.5rem',
-                    padding: '0',
-                    marginBottom: '4rem',
+                    borderRadius: "0.375rem",
+                    height: "2.5rem",
+                    padding: "0",
+                    marginBottom: "4rem",
                 }}
                 InputProps={{
                     style: {
                         backgroundColor: theme.palette.background.paper,
-                        fontFamily: 'Poppins, sans-serif',
-                        fontSize: '0.875rem',
+                        fontFamily: "Poppins, sans-serif",
+                        fontSize: "0.875rem",
                     },
                 }}
             />
