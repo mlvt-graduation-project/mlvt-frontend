@@ -18,7 +18,7 @@ interface ColorModeContextType {
 }
 export const ColorModeContext = createContext<ColorModeContextType>({
   toggle: () => {},
-  mode: "light", // Default mode
+  mode: "light",
 });
 export const useColorMode = () => useContext(ColorModeContext);
 
@@ -56,9 +56,9 @@ export const ColorModeProvider = ({
   const colorMode = useMemo(
     () => ({
       toggle: () => setMode((m) => (m === "light" ? "dark" : "light")),
-      mode, // Expose current mode
+      mode,
     }),
-    [mode] // Add mode to dependency array
+    [mode]
   );
   const theme = useMemo(() => createAppTheme(mode), [mode]);
 
