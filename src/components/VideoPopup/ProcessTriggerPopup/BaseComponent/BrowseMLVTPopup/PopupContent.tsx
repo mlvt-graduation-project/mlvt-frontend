@@ -1,12 +1,12 @@
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
-import SearchBar from '../../../../SearchBar';
-import { Box, Button } from '@mui/material';
-import { handleGetVideosProjectByUserId } from '../../../../../utils/project.utils';
-import { Project, ProjectType } from '../../../../../types/Project';
-import { useAuth } from '../../../../../context/AuthContext';
-import { BrowseFileCard } from '../BrowseFileCard';
-import { GenerateButton } from '../GenerateButton';
-import { useProjectContext } from '../../../../../context/ProjectContext';
+import React from "react";
+import SearchBar from "../../../../SearchBar";
+import { Box } from "@mui/material";
+import { Project, ProjectType } from "../../../../../types/Project";
+import { useAuth } from "../../../../../context/AuthContext";
+import { BrowseFileCard } from "../BrowseFileCard";
+import { GenerateButton } from "../GenerateButton";
+import { useProjectContext } from "../../../../../context/ProjectContext";
+import { a } from "framer-motion/dist/types.d-CtuPurYT";
 
 interface DialogContentProps {
     onClosePopup: () => void;
@@ -22,10 +22,13 @@ export const DialogContent: React.FC<DialogContentProps> = ({
     const { userId } = useAuth();
     const { getProjectsByType } = useProjectContext();
     const projects: Project[] = allowType ? getProjectsByType(allowType) : [];
-    const [selectedProject, setSelectedProject] = React.useState<Project | null>(null);
+    const [selectedProject, setSelectedProject] =
+        React.useState<Project | null>(null);
 
     const handleCardClick = (project: Project) => {
-        setSelectedProject((prev) => (prev?.id === project.id ? null : project));
+        setSelectedProject((prev) =>
+            prev?.id === project.id ? null : project
+        );
     };
 
     const handleGenerate = () => {
@@ -37,21 +40,26 @@ export const DialogContent: React.FC<DialogContentProps> = ({
 
     return (
         <>
-            <SearchBar placeholder="Search" onChange={() => {}} searchBarWidth="40rem" />
+            <SearchBar
+                placeholder="Search"
+                onChange={() => {}}
+                searchBarWidth="40rem"
+            />
             <Box
                 display="grid"
-                height="23rem"
+                height="25rem"
                 style={{
-                    border: '2px solid #A9A9A9',
-                    borderRadius: '0.5rem',
-                    marginTop: '1rem',
-                    overflow: 'hidden',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    rowGap: '1.5rem',
-                    columnGap: '2px',
-                    overflowY: 'scroll',
-                    overflowX: 'hidden',
-                    padding: '1rem',
+                    borderRadius: "0.5rem",
+                    marginTop: "1rem",
+                    overflow: "hidden",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    rowGap: "1.5rem",
+                    columnGap: "1.2rem",
+                    justifyItems: "center",
+                    alignItems: "center",
+                    overflowY: "scroll",
+                    overflowX: "hidden",
+                    padding: "1rem",
                 }}
             >
                 {projects.map((project) => (
@@ -59,7 +67,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({
                         key={project.id}
                         project={project}
                         onclick={() => handleCardClick(project)}
-                        customSx={{ width: '13.5rem', height: '13rem' }}
+                        customSx={{ width: "14rem", height: "14rem" }}
                         blueBoxOutside={selectedProject?.id === project.id}
                     />
                 ))}
@@ -68,7 +76,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({
                 isDisable={selectedProject === null}
                 handleGenerate={handleGenerate}
                 buttonContent="CHOOSE"
-                customSx={{ marginTop: '0px' }}
+                customSx={{ marginTop: "0px" }}
             />
         </>
     );
