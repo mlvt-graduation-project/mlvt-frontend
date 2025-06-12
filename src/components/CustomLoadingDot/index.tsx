@@ -37,7 +37,7 @@ interface LoadingDotsProps {
 
 // 4. The main component
 const LoadingDots: React.FC<LoadingDotsProps> = ({
-    content = "Loading",
+    content = "",
     sx,
 }) => {
     return (

@@ -108,7 +108,7 @@ export const LipsyncPopup: React.FC<LipsyncPopupProps> = ({
                 setNotification({
                     isOpen: true,
                     status: "success",
-                    content: "Upload data successfully!",
+                    content: "Upload data successfully! 🎉",
                 });
             } catch (error) {
                 console.error("Upload failed:", error);

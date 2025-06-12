@@ -147,7 +147,7 @@ const UploadNotification: FC<UploadNotificationProps> = ({
                             ? `${
                                   content !== null
                                       ? content
-                                      : "Upload data successfully!"
+                                      : "Upload data successfully! 🎉"
                               }`
                             : `${content !== null ? content : "Upload data failed!"}`}
                     </Typography>

@@ -136,7 +136,7 @@ export const VoiceGenerationPopup: React.FC<VoiceGenerationPopupProps> = ({
                 setNotification({
                     isOpen: true,
                     status: "success",
-                    content: "Voice generation started successfully!",
+                    content: "Data upload successfully! 🎉",
                 });
             } catch (error) {
                 console.error("Voice generation process failed:", error);
