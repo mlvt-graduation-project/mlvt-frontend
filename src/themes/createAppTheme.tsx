@@ -26,7 +26,7 @@ const colorTokens = {
         tertiary: { main: "#1d1d1d", contrastText: "#E178C5" },
         accent: { main: "#64ffda", contrastText: "#121212" },
         neutral: { main: "#90CAF9", contrastText: "#121212" },
-        success: { main: "#81c784", contrastText: "#16FF00" },
+        success: { main: "#81c784", contrastText: "#4E9F3D" },
         warning: { main: "#ffb74d", contrastText: "#121212" },
         error: { main: "#e57373", contrastText: "#FF1E00" },
         info: { main: "#64b5f6", contrastText: "#121212" },

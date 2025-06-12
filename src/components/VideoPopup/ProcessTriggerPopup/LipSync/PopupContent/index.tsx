@@ -1,41 +1,50 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
-import ChangeViewBox from "../BaseComponent/ChangeView";
-import { UploadFileFromDevice } from "../BaseComponent/UploadFileFromDevice";
-import { UploadVideoFromUrl } from "../BaseComponent/UploadVideoURL";
-import { VideoData } from "../../../../types/FileData";
-import { GenerateButton } from "../BaseComponent/GenerateButton";
-import UploadNotification from "../../../UploadNotification";
-import { SingleOptionBox } from "../BaseComponent/OptionBox";
-import { BrowseFile } from "../BaseComponent/BrowseMLVTFile";
-import { TranslateLanguage } from "../../../../types/Translation";
-import { LoadingDots } from "../../../StaticComponent/LoadingDot/LoadingDot";
-import { AudioFileType, VideoFileType } from "../../../../types/FileType";
-import { useAuth } from "../../../../context/AuthContext";
-import { AudioData } from "../../../../types/FileData";
-import { S3Folder } from "../../../../types/S3FolderStorage";
-import { uploadAudio } from "../../../../utils/ProcessTriggerPopup/AudioService";
-import { uploadVideo } from "../../../../utils/ProcessTriggerPopup/VideoService";
+import ChangeViewBox from "../../BaseComponent/ChangeView";
+import { UploadFileFromDevice } from "../../BaseComponent/UploadFileFromDevice";
+import { UploadVideoFromUrl } from "../../BaseComponent/UploadVideoURL";
+import { VideoData } from "../../../../../types/FileData";
+import { GenerateButton } from "../../BaseComponent/GenerateButton";
+import { SingleOptionBox } from "../../BaseComponent/OptionBox";
+import { BrowseFile } from "../../BaseComponent/BrowseMLVTFile";
+import { TranslateLanguage } from "../../../../../types/Translation";
+import { AudioFileType, VideoFileType } from "../../../../../types/FileType";
+import { useAuth } from "../../../../../context/AuthContext";
+import { AudioData } from "../../../../../types/FileData";
+import { S3Folder } from "../../../../../types/S3FolderStorage";
+import { uploadAudio } from "../../../../../utils/ProcessTriggerPopup/AudioService";
+import { uploadVideo } from "../../../../../utils/ProcessTriggerPopup/VideoService";
 import {
     ProjectType,
     RawAudio,
     RawVideo,
     Project,
-} from "../../../../types/Project";
-import { checkValidGenerate } from "../../../../utils/ProcessTriggerPopup/CheckValidGenerate";
-import { postLipSync } from "../../../../api/pipeline.api";
-import { lipSync } from "../../../../utils/ProcessTriggerPopup/PipelineService";
-import { getLanguageCode } from "../../../../utils/ProcessTriggerPopup/VideoPopup.utils";
-
-interface UploadNoti {
-    isOpen: boolean;
-    status: "fail" | "success";
-}
+} from "../../../../../types/Project";
+import { checkValidGenerate } from "../../../../../utils/ProcessTriggerPopup/CheckValidGenerate";
+import { getLanguageCode } from "../../../../../utils/ProcessTriggerPopup/VideoPopup.utils";
 
 const modelList = ["Model 1", "Model 2", "Model 3"];
+type modelType = (typeof modelList)[number];
+export interface GenerateLipsyncData {
+    videoViewState: "upload" | "url" | "browse";
+    deviceVideo: File | null;
+    videoUrl: string | null;
+    MLVTVideo: RawVideo | null;
+    videoData: VideoData;
+    audioViewState: "upload" | "url" | "browse";
+    deviceAudio: File | null;
+    audioUrl: string | null;
+    MLVTAudio: RawAudio | null;
+    audioData: AudioData;
+    audioLanguage: TranslateLanguage | null;
+    model: modelType | null;
+}
 
-export const DialogContent: React.FC = () => {
-    type modelType = (typeof modelList)[number];
+interface DialogContentProps {
+    onGenerate: (data: GenerateLipsyncData) => void;
+}
+
+export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const { userId } = useAuth();
     const parsedUserId = userId ? parseInt(userId) : 0;
     const [model, setModel] = useState<modelType | null>("Model 1");
@@ -59,25 +68,17 @@ export const DialogContent: React.FC = () => {
     const [MLVTVideo, setMLVTVideo] = useState<RawVideo | null>(null);
 
     const [disableGenerate, setDisableGenerate] = useState<boolean>(true);
-    const [isLoading, setIsLoading] = useState(false);
+
     const [videoData, setVideoData] = useState<VideoData>({
-        title: "My Video Title",
-        duration: 300,
-        description: "A description of the video",
-        file_name: "",
-        folder: S3Folder.video,
-        image: "avatar.jpg",
-        user_id: parsedUserId,
+        title: "My Video Title", duration: 300, description: "A description of the video",
+        file_name: "", folder: S3Folder.video, image: "avatar.jpg", user_id: parsedUserId,
     });
+
     const [audioData, setAudioData] = useState<AudioData>({
         file_name: "",
         folder: S3Folder.audio,
         user_id: parsedUserId,
         duration: 0,
-    });
-    const [uploadNoti, setUploadNoti] = useState<UploadNoti>({
-        isOpen: false,
-        status: "success",
     });
 
     const handleChangeModel = useCallback((model: string) => {
@@ -136,10 +137,6 @@ export const DialogContent: React.FC = () => {
 
     const handleChangeDeviceAudio = (file: File | null) => {
         setDeviceAudio(file);
-    };
-
-    const handleCloseStatusPopup = () => {
-        setUploadNoti((prevData) => ({ ...prevData, isOpen: false }));
     };
 
     const changeVideoViewState = (view: string) => {
@@ -325,51 +322,26 @@ export const DialogContent: React.FC = () => {
         (view) => view.viewState === videoViewState
     );
     const activeVideoComponent = activeVideoView?.component || null;
-    const handleVideoGenerate: (() => Promise<number>) | undefined =
-        activeVideoView?.handleSubmit;
 
     const activeAudioView = audioViews.find(
         (view) => view.viewState === audioViewState
     );
     const activeAudioComponent = activeAudioView?.component || null;
-    const handleAudioGenerate: (() => Promise<number>) | undefined =
-        activeAudioView?.handleSubmit;
 
-    const handleGenerate = useCallback(async () => {
-        let videoId: number | undefined = undefined;
-        let audioId: number | undefined = undefined;
-        try {
-            setIsLoading(true);
-            setDisableGenerate(true);
-
-            const videoPromise = handleVideoGenerate
-                ? handleVideoGenerate()
-                : Promise.resolve(undefined);
-            const audioPromise = handleAudioGenerate
-                ? handleAudioGenerate()
-                : Promise.resolve(undefined);
-
-            // Run both promises in parallel
-            [videoId, audioId] = await Promise.all([
-                videoPromise,
-                audioPromise,
-            ]);
-            setUploadNoti({ isOpen: true, status: "success" });
-            try {
-                if (videoId && audioId) {
-                    lipSync(videoId, audioId);
-                }
-            } catch (error) {
-                console.error("Error handling Lipsync process");
-            }
-        } catch (error) {
-            console.error("Uploading files to server failed", error);
-            setUploadNoti({ isOpen: true, status: "fail" });
-        } finally {
-            setIsLoading(false);
-            setDisableGenerate(false);
-        }
-    }, [handleAudioGenerate, handleVideoGenerate]);
+    const handleGenerate = useCallback(() => {
+        // Package all the relevant state into one object
+        const generationData: GenerateLipsyncData = {
+            videoViewState, deviceVideo, videoUrl, MLVTVideo, videoData,
+            audioViewState, deviceAudio, audioUrl, MLVTAudio, audioData,
+            audioLanguage, model,
+        };
+        // Call the function passed down from the parent
+        onGenerate(generationData);
+    }, [
+        onGenerate, videoViewState, deviceVideo, videoUrl, MLVTVideo, videoData,
+        audioViewState, deviceAudio, audioUrl, MLVTAudio, audioData,
+        audioLanguage, model,
+    ]);
 
     return (
         <>
@@ -479,21 +451,10 @@ export const DialogContent: React.FC = () => {
                 </Box>
             </Box>
 
-            {/* Render loading dot when loading */}
-            {isLoading && <LoadingDots content="Uploading video" />}
-
             {/* Generate button */}
             <GenerateButton
                 isDisable={disableGenerate}
                 handleGenerate={handleGenerate}
-            />
-
-            {/* Notification on generate's result */}
-            <UploadNotification
-                isOpen={uploadNoti["isOpen"]}
-                uploadStatus={uploadNoti["status"]}
-                onClose={handleCloseStatusPopup}
-                content={null}
             />
         </>
     );

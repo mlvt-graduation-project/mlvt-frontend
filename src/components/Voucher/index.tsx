@@ -232,7 +232,7 @@ const Voucher: React.FC = () => {
             <UploadNotification
                 isOpen={errNoti.isOpen}
                 onClose={handleCloseNotiPopup}
-                uploadStatus={errNoti.status}
+                status={errNoti.status}
                 content={errNoti.content}
                 okButtonVisible
                 navigateStorage={false}

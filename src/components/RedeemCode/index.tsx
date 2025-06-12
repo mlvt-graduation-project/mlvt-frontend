@@ -59,7 +59,7 @@ export const RedeemCode: React.FC<RedeemCodeProps> = ({ handleChangeView }) => {
             <UploadNotification
                 isOpen={uploadNoti['isOpen']}
                 onClose={handleCloseNotiPopup}
-                uploadStatus={uploadNoti['status']}
+                status={uploadNoti['status']}
                 content={uploadNoti['content']}
                 okButtonVisible={true}
                 navigateStorage={false}

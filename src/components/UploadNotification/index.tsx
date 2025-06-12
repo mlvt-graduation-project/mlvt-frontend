@@ -1,16 +1,25 @@
-import React, { FC } from 'react';
-import { Dialog, DialogTitle, DialogContent, IconButton, Typography, Divider, Box, Link } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
-import { useNavigate } from 'react-router-dom';
-import { useTheme } from '@mui/material/styles';
-import { CustomButton } from '../CustomButton';
-// import VideoTransPopUp from '../VideoTransPopUp';
+import React, { FC } from "react";
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    IconButton,
+    Typography,
+    Divider,
+    Box,
+    Link,
+    CircularProgress,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
+import { useNavigate } from "react-router-dom";
+import { alpha, useTheme } from "@mui/material/styles";
+import { CustomButton } from "../CustomButton";
 
 interface UploadNotificationProps {
     isOpen: boolean;
-    uploadStatus: 'success' | 'fail';
+    status: "success" | "fail" | "loading";
     onClose: () => void;
     content: string | null;
     okButtonVisible?: boolean;
@@ -20,14 +29,15 @@ interface UploadNotificationProps {
 
 const UploadNotification: FC<UploadNotificationProps> = ({
     isOpen,
-    uploadStatus,
+    status,
     onClose,
     content,
     okButtonVisible = false,
     navigateStorage = true,
-    title = 'Video Translation',
+    title = "Video Translation",
 }) => {
-    const isSuccess = uploadStatus === 'success';
+    const isSuccess = status === "success";
+    const isLoading = status === "loading";
     const navigate = useNavigate();
     const theme = useTheme();
 
@@ -38,65 +48,108 @@ const UploadNotification: FC<UploadNotificationProps> = ({
             fullWidth
             PaperProps={{
                 sx: {
-                    backgroundColor: 'transparent',
-                    borderRadius: '15px',
+                    backgroundColor: alpha(theme.palette.background.default, 0.88),
+                    borderRadius: "15px",
                 },
             }}
-            onClose={onClose}
+            onClose={isLoading ? () => {} : onClose}
         >
             {!okButtonVisible && (
                 <DialogTitle
                     sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        height: '30px',
-                        margin: '10px',
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        height: "30px",
+                        margin: "10px",
                     }}
                 >
                     <Typography
                         sx={{
                             flexGrow: 1,
-                            fontWeight: 'bold',
-                            fontFamily: 'Poppins, sans-serif',
-                            color: '#a60195',
+                            fontWeight: "600",
+                            fontFamily: "Poppins, sans-serif",
+                            color: theme.palette.secondary.contrastText,
                         }}
                     >
                         {title}
                     </Typography>
 
                     <IconButton onClick={onClose}>
-                        <CloseIcon />
+                        <CloseIcon
+                            sx={{
+                                color: theme.palette.secondary.contrastText,
+                            }}
+                        />
                     </IconButton>
                 </DialogTitle>
             )}
 
-            <Divider orientation="horizontal" flexItem sx={{ borderBottomWidth: 2 }} />
+            <Divider
+                orientation="horizontal"
+                flexItem
+                sx={{ borderBottomWidth: 2 }}
+            />
 
-            <DialogContent sx={{
-                bgcolor: theme.palette.background.paper,
-                paddingY: 4,     
-            }}>
-                <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" >
-                    {isSuccess ? (
-                        <CheckCircleIcon sx={{ color: theme.palette.success.contrastText, fontSize: 100 }} />
-                    ) : (
-                        <CancelRoundedIcon sx={{ color: theme.palette.error.main, fontSize: 100 }} />
+            <DialogContent
+                sx={{
+                    bgcolor: theme.palette.background.paper,
+                    paddingY: 4,
+                }}
+            >
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    {isLoading && (
+                        <>
+                            <CircularProgress size={80} />
+                        </>
+                    )}
+                    {!isLoading && (
+                        <>
+                            {isSuccess ? (
+                                <CheckCircleIcon
+                                    sx={{
+                                        color: theme.palette.success
+                                            .contrastText,
+                                        fontSize: 100,
+                                    }}
+                                />
+                            ) : (
+                                <CancelRoundedIcon
+                                    sx={{
+                                        color: theme.palette.error.main,
+                                        fontSize: 100,
+                                    }}
+                                />
+                            )}
+                        </>
                     )}
 
                     <Typography
                         sx={{
                             flexGrow: 1,
                             fontWeight: 600,
-                            fontFamily: 'Poppins, sans-serif',
-                            fontSize: '1.8rem',
-                            color: (theme) => (isSuccess ? theme.palette.success.contrastText : theme.palette.error.main),
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "1.8rem",
+                            textAlign: "center",
+                            color: (theme) =>
+                                isSuccess
+                                    ? theme.palette.success.contrastText
+                                    : theme.palette.primary.main,
                         }}
                     >
                         {isSuccess
-                            ? `${content !== null ? content : 'UPLOAD SUCESSFULLY'}`
-                            : `${content !== null ? content : 'UPLOAD FAILED'}`}
+                            ? `${
+                                  content !== null
+                                      ? content
+                                      : "Upload data successfully!"
+                              }`
+                            : `${content !== null ? content : "Upload data failed!"}`}
                     </Typography>
                     {navigateStorage && (
                         <Typography
@@ -104,14 +157,19 @@ const UploadNotification: FC<UploadNotificationProps> = ({
                             paddingTop="15px"
                             sx={{
                                 flexGrow: 1,
-                                fontFamily: 'Araboto, Roboto, Arial, sans-serif',
+                                fontFamily:
+                                    "Poppins, Roboto, Arial, sans-serif",
                             }}
                         >
-                            Navigate to the video storage by{' '}
+                            Navigate to the video storage by{" "}
                             <Link
                                 component="button"
-                                onClick={() => navigate('/storage')}
-                                sx={{ fontWeight: 'bold', color: 'blue' }}
+                                onClick={() => navigate("/storage")}
+                                sx={{
+                                    fontWeight: "650",
+                                    color: theme.palette.neutral.main,
+                                    textDecoration: "underline",
+                                }}
                             >
                                 click here
                             </Link>
@@ -119,12 +177,18 @@ const UploadNotification: FC<UploadNotificationProps> = ({
                     )}
                 </Box>
                 {okButtonVisible && (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            mt: 3,
+                        }}
+                    >
                         <CustomButton
-                            text='Continue'
+                            text="Continue"
                             onClick={onClose}
                             sx={{
-                                fontSize: '1rem',
+                                fontSize: "1rem",
                             }}
                         />
                     </Box>
