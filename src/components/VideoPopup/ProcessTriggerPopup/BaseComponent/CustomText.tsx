@@ -19,7 +19,7 @@ export const CustomText: React.FC<CustomAudioProps> = ({ textContent, handleRemo
                     maxHeight: '300px',
                     overflowX: 'hidden',
                     fontFamily: 'Be Vietnam Pro, Poppins, Inter, Arial, sans-serif',
-                    fontColor: (theme) => theme.palette.text.primary,
+                    color: (theme) => theme.palette.text.primary,
                 }}
                 component="pre"
             >

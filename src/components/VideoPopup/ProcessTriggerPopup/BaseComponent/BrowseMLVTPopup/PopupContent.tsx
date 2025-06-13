@@ -6,7 +6,6 @@ import { useAuth } from "../../../../../context/AuthContext";
 import { BrowseFileCard } from "../BrowseFileCard";
 import { GenerateButton } from "../GenerateButton";
 import { useProjectContext } from "../../../../../context/ProjectContext";
-import { a } from "framer-motion/dist/types.d-CtuPurYT";
 
 interface DialogContentProps {
     onClosePopup: () => void;
