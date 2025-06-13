@@ -35,13 +35,16 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const [viewState, setViewState] = useState<"upload" | "url" | "browse">(
         "upload"
     );
-    const [sourceLanguage, setSourceLanguage] =
-        useState<TranslateLanguage | null>(null);
+    const [sourceLanguage, setSourceLanguage] = useState<TranslateLanguage>(
+        TranslateLanguage.English
+    );
+
     const [deviceFile, setDeviceFile] = useState<File | null>(null);
     const [MLVTVideo, setMLVTVideo] = useState<RawVideo | null>(null);
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
-    const [targetLanguage, setTargetLanguage] =
-        useState<TranslateLanguage | null>(null);
+    const [targetLanguage, setTargetLanguage] = useState<TranslateLanguage>(
+        TranslateLanguage.Vietnamese
+    );
     const [disableGenerate, setDisableGenerate] = useState<boolean>(true);
 
     const [fileData, setFileData] = useState<VideoData>({

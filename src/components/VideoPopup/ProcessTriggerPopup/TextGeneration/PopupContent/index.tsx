@@ -38,8 +38,9 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const [MLVTVideo, setMLVTVideo] = useState<RawVideo | null>(null);
     const [disableGenerate, setDisableGenerate] = useState<boolean>(true);
-    const [sourceLanguage, setSourceLanguage] =
-        useState<TranslateLanguage | null>(null);
+    const [sourceLanguage, setSourceLanguage] = useState<TranslateLanguage>(
+        TranslateLanguage.English
+    );
 
     const [fileData, setFileData] = useState<VideoData>({
         title: "My Video Title",
@@ -161,7 +162,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             MLVTVideo,
             sourceLanguage,
             viewState,
-            fileData, 
+            fileData,
         };
         onGenerate(data);
     }, [

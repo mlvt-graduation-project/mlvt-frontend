@@ -47,9 +47,10 @@ interface DialogContentProps {
 export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const { userId } = useAuth();
     const parsedUserId = userId ? parseInt(userId) : 0;
-    const [model, setModel] = useState<modelType | null>("Model 1");
-    const [audioLanguage, setAudioLanguage] =
-        useState<TranslateLanguage | null>(null);
+    const [model, setModel] = useState<modelType>("Model 1");
+    const [audioLanguage, setAudioLanguage] = useState<TranslateLanguage>(
+        TranslateLanguage.English
+    );
 
     const [videoViewState, setVideoViewState] = useState<
         "upload" | "url" | "browse"
@@ -70,8 +71,13 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const [disableGenerate, setDisableGenerate] = useState<boolean>(true);
 
     const [videoData, setVideoData] = useState<VideoData>({
-        title: "My Video Title", duration: 300, description: "A description of the video",
-        file_name: "", folder: S3Folder.video, image: "avatar.jpg", user_id: parsedUserId,
+        title: "My Video Title",
+        duration: 300,
+        description: "A description of the video",
+        file_name: "",
+        folder: S3Folder.video,
+        image: "avatar.jpg",
+        user_id: parsedUserId,
     });
 
     const [audioData, setAudioData] = useState<AudioData>({
@@ -331,16 +337,35 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const handleGenerate = useCallback(() => {
         // Package all the relevant state into one object
         const generationData: GenerateLipsyncData = {
-            videoViewState, deviceVideo, videoUrl, MLVTVideo, videoData,
-            audioViewState, deviceAudio, audioUrl, MLVTAudio, audioData,
-            audioLanguage, model,
+            videoViewState,
+            deviceVideo,
+            videoUrl,
+            MLVTVideo,
+            videoData,
+            audioViewState,
+            deviceAudio,
+            audioUrl,
+            MLVTAudio,
+            audioData,
+            audioLanguage,
+            model,
         };
         // Call the function passed down from the parent
         onGenerate(generationData);
     }, [
-        onGenerate, videoViewState, deviceVideo, videoUrl, MLVTVideo, videoData,
-        audioViewState, deviceAudio, audioUrl, MLVTAudio, audioData,
-        audioLanguage, model,
+        onGenerate,
+        videoViewState,
+        deviceVideo,
+        videoUrl,
+        MLVTVideo,
+        videoData,
+        audioViewState,
+        deviceAudio,
+        audioUrl,
+        MLVTAudio,
+        audioData,
+        audioLanguage,
+        model,
     ]);
 
     return (

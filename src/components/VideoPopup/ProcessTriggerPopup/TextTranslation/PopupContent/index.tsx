@@ -38,10 +38,12 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const [MLVTText, setMLVTText] = useState<RawText | null>(null);
     const [inputText, setInputText] = useState<string>("");
     const [disableGenerate, setDisableGenerate] = useState<boolean>(true);
-    const [sourceLanguage, setSourceLanguage] =
-        useState<TranslateLanguage | null>(null);
-    const [targetLanguage, setTargetLanguage] =
-        useState<TranslateLanguage | null>(null);
+    const [sourceLanguage, setSourceLanguage] = useState<TranslateLanguage>(
+        TranslateLanguage.English
+    );
+    const [targetLanguage, setTargetLanguage] = useState<TranslateLanguage>(
+        TranslateLanguage.Vietnamese
+    );
     const [textData, setTextData] = useState<TextData>({
         file_name: "",
         folder: S3Folder.text,
