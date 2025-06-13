@@ -9,27 +9,30 @@ interface CustomAudioProps {
 export const CustomText: React.FC<CustomAudioProps> = ({ textContent, handleRemoveFile, customSx, fileName }) => {
     return (
         <Box sx={{ position: 'relative' }}>
-            <pre
-                style={{
+            <Box
+                sx={{
                     whiteSpace: 'pre-wrap',
-                    backgroundColor: '#f4f4f4',
+                    backgroundColor: (theme) => theme.palette.action.active,
                     padding: '10px',
                     borderRadius: '8px',
                     overflowY: 'auto',
                     maxHeight: '300px',
                     overflowX: 'hidden',
+                    fontFamily: 'Be Vietnam Pro, Poppins, Inter, Arial, sans-serif',
+                    color: (theme) => theme.palette.text.primary,
                 }}
+                component="pre"
             >
                 {textContent}
-            </pre>
+            </Box>
             <IconButton
                 onClick={handleRemoveFile}
                 sx={{
                     position: 'absolute',
-                    top: '2px',
+                    top: '15px',
                     right: '15px',
-                    backgroundColor: 'grey',
-                    color: 'white',
+                    backgroundColor: (theme) => theme.palette.tertiary.main,
+                    color: (theme) => theme.palette.text.primary,
                 }}
             >
                 <DeleteIcon />
@@ -40,7 +43,7 @@ export const CustomText: React.FC<CustomAudioProps> = ({ textContent, handleRemo
                     align="center"
                     sx={{
                         marginTop: '5px',
-                        fontFamily: 'Inter, Arial, sans-serif',
+                        fontFamily: 'Poppins, Inter, Arial, sans-serif',
                     }}
                 >
                     {fileName}

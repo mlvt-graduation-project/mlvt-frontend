@@ -120,7 +120,7 @@ export const TextView = ({
                             whiteSpace: "pre-wrap",
                             margin: 0, // Remove default margin
                             scrollbarWidth: "thin", // For Firefox: makes the scrollbar thinner
-                            fontFamily: "Times New Roman, Times, serif",
+                            fontFamily: "Be Vietnam Pro, Times New Roman, Times, serif",
                         }}
                     >
                         {displayText}

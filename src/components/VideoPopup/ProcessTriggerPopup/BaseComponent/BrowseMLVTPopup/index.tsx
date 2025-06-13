@@ -1,7 +1,7 @@
-import React from 'react';
-import { BasePopup } from '../../../BasePopup/BasePopup';
-import { DialogContent } from './PopupContent';
-import { ProjectType, Project } from '../../../../../types/Project';
+import React from "react";
+import { BasePopup } from "../../../BasePopup/BasePopup";
+import { DialogContent } from "./PopupContent";
+import { ProjectType, Project } from "../../../../../types/Project";
 
 interface BrowseMLVTPopupProps {
     isOpen: boolean;
@@ -23,12 +23,16 @@ export const BrowseMLVTPopup: React.FC<BrowseMLVTPopupProps> = ({
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={null}
-                childComponent={<DialogContent
-                    onClosePopup={onClose}
-                    allowType={allowType}
-                    handleChangeSelectedProject={handleChangeSelectedProject}
-                />}
-                customSx={{ maxHeight: '80%' }}
+                childComponent={
+                    <DialogContent
+                        onClosePopup={onClose}
+                        allowType={allowType}
+                        handleChangeSelectedProject={
+                            handleChangeSelectedProject
+                        }
+                    />
+                }
+                customSx={{ maxHeight: "80%" }}
             />
         </>
     );
