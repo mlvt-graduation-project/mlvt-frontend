@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
 
 interface CarouselCardProps {
     title: string;
@@ -25,7 +24,6 @@ const getDefaultContent = (title: string): string => {
 };
 
 const CarouselCard: React.FC<CarouselCardProps> = ({ title, onClick }) => {
-    const theme = useTheme();
     const content = getDefaultContent(title);
 
     return (
