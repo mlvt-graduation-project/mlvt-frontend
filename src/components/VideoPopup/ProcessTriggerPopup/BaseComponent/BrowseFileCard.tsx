@@ -32,7 +32,6 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
     blueBoxOutside = false,
 }) => {
     const theme = useTheme();
-    const [viewContent, setViewContent] = useState<boolean>(false);
     const [selectedProject, setSelectedProject] = useState<Project | null>(
         null
     );
@@ -42,7 +41,7 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
     };
 
     const handleCloseViewContent = () => {
-        setViewContent(false);
+        setSelectedProject(null);
     };
 
     return (
@@ -159,7 +158,7 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                         }}
                         onClick={(event) => {
                             event.stopPropagation();
-                            setViewContent(true);
+                            setSelectedProject(project);
                         }}
                     >
                         View
@@ -217,10 +216,10 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                     />
                 </Box>
             </CardContent>
-            {viewContent && !selectedProject && (
+            {selectedProject && !selectedProject && (
                 <ProcessedVideoPopUp
                     inputObject={project}
-                    isOpen={viewContent}
+                    isOpen={!!selectedProject}
                     onClose={handleCloseViewContent}
                     type={project.type_project}
                     hideNavBar={true}

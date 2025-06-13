@@ -1,10 +1,7 @@
-import { Box, Button, Typography, IconButton } from "@mui/material";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Box, Typography } from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import { useDropzone } from "react-dropzone";
 import { useEffect, useState } from "react";
-// import { getVideoDuration } from '../../../../utils/ProcessTriggerPopup/VideoService';
 import { getMediaDuration } from "../../../../utils/ProcessTriggerPopup/VideoService";
 import { FileData } from "../../../../types/FileData";
 import {
@@ -12,7 +9,6 @@ import {
     TextFileType,
     AudioFileType,
 } from "../../../../types/FileType";
-import { useTheme } from "@mui/material/styles";
 import { useAuth } from "../../../../context/AuthContext";
 import { CustomAudio } from "./CustomAudio";
 import { CustomVideo } from "./CustomVideo";
@@ -45,7 +41,7 @@ export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
     handleChangeFileData,
     fileTypeList,
 }) => {
-    const theme = useTheme();
+
     const { userId } = useAuth();
     const [isDragActive, setIsDragActive] = useState(false);
     const [localURL, setLocalURL] = useState<string | null>(null);
@@ -143,7 +139,7 @@ export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
     };
 
     // Render Components for Each File Type
-    const renderFileContent = () => {
+    /**const renderFileContent = () => {
         if (localFileType === "video" && localURL) {
             return (
                 <Box
@@ -201,7 +197,7 @@ export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
         }
 
         return null;
-    };
+    };**/
 
     return (
         <>

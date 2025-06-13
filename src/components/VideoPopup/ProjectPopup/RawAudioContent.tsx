@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { getOneVideoById } from '../../../api/video.api';
 import { Box } from '@mui/material';
 import { InfoNav } from './BaseComponent/InfomationNavBar/InfoNav';
 import { CustomAudioPlayer } from './BaseComponent/RelatedOutput/CustomizedVideoBox';

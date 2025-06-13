@@ -1,11 +1,10 @@
-import React, { FC, useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Box, Typography, IconButton, LinearProgress } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
 import DownloadIcon from "@mui/icons-material/Download"; // Assuming download icon is used
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import "react-h5-audio-player/lib/styles.css";
-import { red } from "@mui/material/colors";
 
 interface AudioPlayerProps {
     audioSrc: string;

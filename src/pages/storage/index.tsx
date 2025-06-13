@@ -13,13 +13,9 @@ import Layout from "../../layout/HomeUser";
 import { useTheme } from "@mui/material/styles";
 import AlignHorizontalRightIcon from "@mui/icons-material/AlignHorizontalRight";
 import React, { useEffect, useState } from "react";
-import { Bookmark, BookmarkBorder, FilterList } from "@mui/icons-material";
+import { Bookmark, BookmarkBorder } from "@mui/icons-material";
 import { Project, ProjectType } from "../../types/Project";
-import {
-    mapStatusToProjectStatus,
-    ProjectStatus,
-    toDisplayText,
-} from "../../types/ProjectStatus";
+import { ProjectStatus } from "../../types/ProjectStatus";
 import CardFeature from "../../components/CardFeature";
 import SearchBar from "../../components/SearchBar";
 import { useProjectContext } from "../../context/ProjectContext";
@@ -594,7 +590,3 @@ const Storage = () => {
 };
 
 export default Storage;
-
-function setError(arg0: string) {
-    throw new Error("Function not implemented.");
-}

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { getOneVideoById } from '../../../api/video.api';
 import { InfoNav } from './BaseComponent/InfomationNavBar/InfoNav';
 import { OriginalVideo } from './BaseComponent/OriginalVideo/OriginalVideo';
-import { Box } from '@mui/material';
 
 interface ContentProps {
     videoId: number;

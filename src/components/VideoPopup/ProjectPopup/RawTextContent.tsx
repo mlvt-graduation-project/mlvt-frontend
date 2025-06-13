@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { getOneVideoById } from '../../../api/video.api';
 import { InfoNav } from './BaseComponent/InfomationNavBar/InfoNav';
 import { Box } from '@mui/material';
 import { TextView } from './BaseComponent/RelatedOutput/CustomizedTextBox';
-import { getTextById } from '../../../api/text.api';
-import { getTextFileContent } from '../../../api/aws.api';
-import { Text } from '../../../types/Response/Text';
+// import { Text } from '../../../types/Response/Text';
 import { getTextContent } from '../../../utils/ProcessTriggerPopup/TextService';
 
 interface ContentProps {
@@ -24,13 +21,13 @@ export const RawTextContent: React.FC<ContentProps> = ({
     hideDownloadButton = false,
 }) => {
     const [textContent, setTextContent] = useState<string>('Some text will be display here');
-    const [textInfomation, setTextInfomation] = useState<Text | null>(null);
+    // const [textInfomation, setTextInfomation] = useState<Text | null>(null);
 
     useEffect(() => {
         const fetchTextData = async () => {
             try {
-                const [information, content] = await getTextContent(textId);
-                setTextInfomation(information);
+                const [, content] = await getTextContent(textId);
+                // setTextInfomation(information);
                 setTextContent(content);
             } catch (error) {
                 console.error('Error fetching video URL:', error);

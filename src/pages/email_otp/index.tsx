@@ -23,7 +23,7 @@ const EmailOTP = () => {
     const theme = useTheme();
     const [email, setEmail] = useState(""); 
     const [emailError, setEmailError] = useState(""); 
-    const [error, setError] = useState("");
+    // const [error, setError] = useState("");
 
     // Validate the email input on blur (when the user leaves the field)
     const validateEmail = () => {
@@ -101,9 +101,9 @@ const EmailOTP = () => {
                 }}
             />
 
-            {error && (
+            {emailError && (
                 <Typography color="error" sx={{ marginTop: 2 }}>
-                    {error}
+                    {emailError}
                 </Typography>
             )}
 

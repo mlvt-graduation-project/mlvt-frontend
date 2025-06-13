@@ -1,7 +1,6 @@
 import React from 'react';
-import { Box, Button, Paper, Typography } from '@mui/material';
-import { hexToRgb, useTheme } from '@mui/material/styles';
-import AddIcon from '@mui/icons-material/Add';
+import { Box, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 interface CarouselCardProps {
     title: string;

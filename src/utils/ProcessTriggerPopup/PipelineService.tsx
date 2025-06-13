@@ -6,7 +6,6 @@ import {
     postLipSync,
 } from '../../api/pipeline.api';
 import { TranslateLanguage } from '../../types/Translation';
-import { FileData } from '../../types/FileData';
 import { checkSuccessResponse } from '../checkResponseStatus';
 import { getLanguageCode } from './VideoPopup.utils'
 

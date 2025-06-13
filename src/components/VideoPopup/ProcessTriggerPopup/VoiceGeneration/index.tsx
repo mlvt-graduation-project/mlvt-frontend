@@ -121,14 +121,14 @@ export const VoiceGenerationPopup: React.FC<VoiceGenerationPopupProps> = ({
                     content: "Generating voice...",
                 }));
 
-                let voiceId: number | undefined = undefined;
+                /*let voiceId: number | undefined = undefined;
                 let voiceName: string | undefined = undefined;
 
                 if (typeof voiceSource === "number") {
                     voiceId = voiceSource;
                 } else {
                     voiceName = voiceSource;
-                }
+                }*/
 
                 await generateVoice(textId);
 
