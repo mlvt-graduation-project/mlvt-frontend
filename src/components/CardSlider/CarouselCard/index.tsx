@@ -1,7 +1,5 @@
 import React from 'react';
-import { Box, Button, Paper, Typography } from '@mui/material';
-import { hexToRgb, useTheme } from '@mui/material/styles';
-import AddIcon from '@mui/icons-material/Add';
+import { Box, Typography } from '@mui/material';
 
 interface CarouselCardProps {
     title: string;
@@ -26,7 +24,6 @@ const getDefaultContent = (title: string): string => {
 };
 
 const CarouselCard: React.FC<CarouselCardProps> = ({ title, onClick }) => {
-    const theme = useTheme();
     const content = getDefaultContent(title);
 
     return (

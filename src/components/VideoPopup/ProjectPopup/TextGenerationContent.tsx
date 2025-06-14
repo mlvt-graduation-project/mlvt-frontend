@@ -3,7 +3,6 @@ import ChangeViewBox from "../ProcessTriggerPopup/BaseComponent/ChangeView";
 import { getOneVideoById } from "../../../api/video.api";
 import { InfoNav } from "./BaseComponent/InfomationNavBar/InfoNav";
 import { OriginalVideo } from "./BaseComponent/OriginalVideo/OriginalVideo";
-import { ImageInProgress } from "./BaseComponent/MainProjectOutput/ImageInProgress";
 import { RelatedOutput } from "./BaseComponent/RelatedOutput";
 import { TextGenerationProject } from "../../../types/Project";
 import { getTextDownloadUrl } from "../../../api/text.api";

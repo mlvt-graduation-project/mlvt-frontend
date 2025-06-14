@@ -37,11 +37,6 @@ const VerifyOtp: React.FC = () => {
         }
     };
 
-    const handleSubmit = () => {
-        const otpNum = otp.join("");
-        console.log(otpNum);
-    }
-
     return (
         <LoginSignup>
             <Box sx={{

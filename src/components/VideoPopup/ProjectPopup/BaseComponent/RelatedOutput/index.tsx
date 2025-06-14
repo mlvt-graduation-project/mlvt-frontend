@@ -1,7 +1,6 @@
 import { Box } from "@mui/material";
 import { CustomAudioPlayer } from "./CustomizedVideoBox";
 import { TextView } from "./CustomizedTextBox";
-import { Height } from "@mui/icons-material";
 
 interface AudioProps {
     type: "audio/video";

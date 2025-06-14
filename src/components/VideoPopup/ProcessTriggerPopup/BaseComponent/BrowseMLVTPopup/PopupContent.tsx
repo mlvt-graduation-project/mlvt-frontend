@@ -2,7 +2,6 @@ import React from "react";
 import SearchBar from "../../../../SearchBar";
 import { Box } from "@mui/material";
 import { Project, ProjectType } from "../../../../../types/Project";
-import { useAuth } from "../../../../../context/AuthContext";
 import { BrowseFileCard } from "../BrowseFileCard";
 import { GenerateButton } from "../GenerateButton";
 import { useProjectContext } from "../../../../../context/ProjectContext";
@@ -18,7 +17,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({
     allowType,
     handleChangeSelectedProject,
 }) => {
-    const { userId } = useAuth();
     const { getProjectsByType } = useProjectContext();
     const projects: Project[] = allowType ? getProjectsByType(allowType) : [];
     const [selectedProject, setSelectedProject] =

@@ -45,7 +45,7 @@ function UploadButton() {
         setNotifMessage(message);
         setNotiOpen(true);
     };
-    // Define the ref with a specific type HTMLInputElement and initialize as null
+
     let ref = useRef<VideoData>({
         title: "My Video Title",
         duration: 300,
@@ -57,13 +57,12 @@ function UploadButton() {
     });
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [fileName, setFileName] = useState<string | null>(null);
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const theme = useTheme();
 
     const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
-            console.log(file.name); // Log the file object to see the details
+            setFileName(file.name); 
             ref.current.file_name = file.name;
             ref.current.user_id = Number(localStorage.getItem("userId"));
             if (file) {
@@ -76,17 +75,6 @@ function UploadButton() {
                 await uploadFile(file, file.type);
             }
         }
-    };
-
-    const saveFile = (file: File) => {
-        const url = URL.createObjectURL(file);
-        const a = document.createElement("a");
-        a.style.display = "none";
-        a.href = url;
-        a.download = file.name; // The file name for the downloaded image
-        document.body.appendChild(a);
-        a.click();
-        URL.revokeObjectURL(url); // Clean up after download
     };
 
     const extractFirstFrame = (videoFile: File): Promise<File> => {
@@ -160,7 +148,7 @@ function UploadButton() {
     };
 
     const uploadFile = async (file: File, fileType: string) => {
-        openNotification('loading', 'Uploading…');
+        openNotification("loading", "Uploading…");
         try {
             console.log(ref.current);
             const responseAdd = await postVideo(ref.current);
@@ -191,7 +179,7 @@ function UploadButton() {
                 if (s3UploadVideoResponse.status === 200) {
                     console.log("Upload video to S3 successfully");
                 }
-                openNotification('success', 'Upload complete 🎉');
+                openNotification("success", "Upload complete 🎉");
             }
         } catch (e) {
             console.error("Error uploading file: " + e);

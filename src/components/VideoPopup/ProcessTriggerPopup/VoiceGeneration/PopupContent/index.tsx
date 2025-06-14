@@ -6,17 +6,12 @@ import { GenerateButton } from "../../BaseComponent/GenerateButton";
 import { BrowseFile } from "../../BaseComponent/BrowseMLVTFile";
 import { InputTextBox } from "../../BaseComponent/InputTextBox";
 import { SingleOptionBox } from "../../BaseComponent/OptionBox";
-import { generateVoice } from "../../../../../utils/ProcessTriggerPopup/PipelineService";
 import { TranslateLanguage } from "../../../../../types/Translation";
 import { AudioFileType, TextFileType } from "../../../../../types/FileType";
 import { TextData, AudioData } from "../../../../../types/FileData";
 import { S3Folder } from "../../../../../types/S3FolderStorage";
-import { uploadText } from "../../../../../utils/ProcessTriggerPopup/TextService";
 import { useAuth } from "../../../../../context/AuthContext";
-import { uploadAudio } from "../../../../../utils/ProcessTriggerPopup/AudioService";
 import { ProjectType, RawText, Project } from "../../../../../types/Project";
-import { getLanguageCode } from "../../../../../utils/ProcessTriggerPopup/VideoPopup.utils";
-import CustomLoadingDot from "../../../../CustomLoadingDot";
 
 export interface VoiceGenerationData {
     textViewState: "upload" | "enter text" | "browse";
@@ -72,7 +67,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         null
     );
 
-    const [isLoading, setIsLoading] = useState(false);
     const [textData, setTextData] = useState<TextData>({
         file_name: "",
         folder: S3Folder.text,
@@ -387,7 +381,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 />
                 {ActiveAudioComponent}
             </Box>
-            {isLoading ? <CustomLoadingDot content="Uploading Video" /> : null}
             <GenerateButton
                 isDisable={disableGenerate}
                 handleGenerate={handleGenerate}

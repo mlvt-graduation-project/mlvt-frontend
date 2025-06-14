@@ -41,7 +41,8 @@
     "start:mightymeld": "react-app-rewired start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint ."
   },
   "eslintConfig": {
     "extends": [
@@ -66,6 +67,7 @@
     "@mightymeld/runtime": "^0.1.51",
     "@types/react-slick": "^0.23.13",
     "customize-cra": "^1.0.0",
+    "eslint": "^8.57.1",
     "mightymeld": "^0.2.10",
     "react-app-rewired": "^2.2.1",
     "tsconfig-paths-webpack-plugin": "^4.2.0"

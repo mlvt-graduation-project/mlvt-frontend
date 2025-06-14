@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FullPipelineContent } from './FullPipelineContent';
 import { TextGenerationContent } from './TextGenerationContent';
 import { BasePopup } from '../BasePopup/BasePopup';
 import { ProjectType } from '../../../types/Project';
 import { Project } from '../../../types/Project';
-import { ProjectStatus } from '../../../types/ProjectStatus';
 import { RawVideoContent } from './RawVideoContext';
 import { AudioGenerationContent } from './AudioGeneration';
 import { RawTextContent } from './RawTextContent';
@@ -12,11 +11,11 @@ import { RawAudioContent } from './RawAudioContent';
 import { TextTranslationContent } from './TextTranslationContent';
 import { LipSyncContent } from './LipSyncContent';
 
-interface childComponentType {
-    type: ProjectType;
-    tittle: string;
-    childComponent: React.ReactNode;
-}
+// interface childComponentType {
+//     type: ProjectType;
+//     tittle: string;
+//     childComponent: React.ReactNode;
+// }
 
 interface ProcessedVideoProps {
     inputObject: Project;

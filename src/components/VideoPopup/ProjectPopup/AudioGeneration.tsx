@@ -1,10 +1,9 @@
 import React, { useMemo, useState, useEffect } from "react";
 import ChangeViewBox from "../ProcessTriggerPopup/BaseComponent/ChangeView";
-import { getOneVideoById } from "../../../api/video.api";
 import { InfoNav } from "./BaseComponent/InfomationNavBar/InfoNav";
 import { RelatedOutput } from "./BaseComponent/RelatedOutput";
 import { Box } from "@mui/material";
-import { Text } from "../../../types/Response/Text";
+// import { Text } from "../../../types/Response/Text";
 import { AudioGenerationProject } from "../../../types/Project";
 import { getAduioById } from "../../../api/audio.api";
 import { getTextContent } from "../../../utils/ProcessTriggerPopup/TextService";
@@ -19,8 +18,8 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
     const [viewState, setViewState] = useState<"original" | "related output">(
         "original"
     );
-    const [originalTextInformation, setOriginalTextInformation] =
-        useState<Text | null>(null);
+    // const [originalTextInformation, setOriginalTextInformation] =
+    //     useState<Text | null>(null);
     const [originalTextContent, setOriginalTextContent] = useState<
         string | null
     >(null);
@@ -33,7 +32,7 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
                     getAduioById(inputProject.generated_audioId),
                     getTextContent(inputProject.original_textId),
                 ]);
-                setOriginalTextInformation(originalText[0]);
+                // setOriginalTextInformation(originalText[0]);
                 setOriginalTextContent(originalText[1]);
                 setResultAudio(resultAudio.download_url.split("?")[0]);
             } catch (error) {
