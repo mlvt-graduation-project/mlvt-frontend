@@ -30,7 +30,6 @@ interface DialogContentProps {
     onGenerate: (data: VoiceGenerationData) => void;
 }
 
-
 export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const { userId } = useAuth();
     const parsedUserId = userId ? parseInt(userId) : 0;
@@ -283,23 +282,57 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     );
 
     useEffect(() => {
-        const isTextValid = (textViewState === 'enter text' && !!inputText) || (textViewState === 'upload' && !!deviceTextFile) || (textViewState === 'browse' && !!MLVTText);
-        const isAudioValid = (audioViewState === 'build-in' && !!buildinVoice) || (audioViewState === 'custom' && !!deviceAudioFile);
-        
+        const isTextValid =
+            (textViewState === "enter text" && !!inputText) ||
+            (textViewState === "upload" && !!deviceTextFile) ||
+            (textViewState === "browse" && !!MLVTText);
+        const isAudioValid =
+            (audioViewState === "build-in" && !!buildinVoice) ||
+            (audioViewState === "custom" && !!deviceAudioFile);
+
         if (!isTextValid || !isAudioValid || !textLanguage) {
             setDisableGenerate(true);
         } else {
             setDisableGenerate(false);
         }
-    }, [textViewState, inputText, deviceTextFile, MLVTText, audioViewState, buildinVoice, deviceAudioFile, textLanguage]);
+    }, [
+        textViewState,
+        inputText,
+        deviceTextFile,
+        MLVTText,
+        audioViewState,
+        buildinVoice,
+        deviceAudioFile,
+        textLanguage,
+    ]);
 
     const handleGenerate = useCallback(() => {
         const data: VoiceGenerationData = {
-            textViewState, audioViewState, deviceAudioFile, deviceTextFile,
-            inputText, buildinVoice, textLanguage, MLVTText, textData, audioData
+            textViewState,
+            audioViewState,
+            deviceAudioFile,
+            deviceTextFile,
+            inputText,
+            buildinVoice,
+            textLanguage,
+            MLVTText,
+            textData,
+            audioData,
         };
         onGenerate(data);
-    }, [onGenerate, textViewState, audioViewState, deviceAudioFile, deviceTextFile, inputText, buildinVoice, textLanguage, MLVTText, textData, audioData]);
+    }, [
+        onGenerate,
+        textViewState,
+        audioViewState,
+        deviceAudioFile,
+        deviceTextFile,
+        inputText,
+        buildinVoice,
+        textLanguage,
+        MLVTText,
+        textData,
+        audioData,
+    ]);
 
     const activeAudioView = AudioViews.find(
         (view) => view.viewState === audioViewState
