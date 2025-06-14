@@ -38,7 +38,7 @@ const CheckoutMethod: React.FC<CheckoutMethodProps> = ({
             return;
         }
         console.log("Processing payment with card:", cardData);
-        // Add your API call to process the payment here
+        // Add API call to process the payment here
     };
 
     return (
@@ -165,8 +165,6 @@ const CheckoutMethod: React.FC<CheckoutMethodProps> = ({
                             />
                         </Stack>
                     </Box>
-
-                    {/* HERE IS THE REUSED COMPONENT! */}
                     <CardDetailsForm onUpdate={handleCardUpdate} />
                 </Paper>
 
