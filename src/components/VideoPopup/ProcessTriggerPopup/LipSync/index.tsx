@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { DialogContent, GenerateLipsyncData } from "./PopupContent";
-import { BasePopup } from "../../BasePopup/BasePopup";
+import { BasePopup } from "../../BasePopup";
 import { uploadVideo } from "../../../../utils/ProcessTriggerPopup/VideoService";
 import { uploadAudio } from "../../../../utils/ProcessTriggerPopup/AudioService";
 import { lipSync } from "../../../../utils/ProcessTriggerPopup/PipelineService";
@@ -133,7 +133,9 @@ export const LipsyncPopup: React.FC<LipsyncPopupProps> = ({
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={null}
-                childComponent={<DialogContent onGenerate={handleStartGeneration}/>}
+                childComponent={
+                    <DialogContent onGenerate={handleStartGeneration} />
+                }
             />
             <UploadNotification
                 isOpen={notification.isOpen}

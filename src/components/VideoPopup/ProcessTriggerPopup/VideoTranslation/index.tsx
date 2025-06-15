@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { DialogContent, GenerateVideoData } from "./PopupContent";
 import UploadNotification from "../../../UploadNotification";
-import { BasePopup } from "../../BasePopup/BasePopup";
+import { BasePopup } from "../../BasePopup";
 import { uploadVideo } from "../../../../utils/ProcessTriggerPopup/VideoService";
 import { translateVideo } from "../../../../utils/ProcessTriggerPopup/PipelineService";
 
@@ -59,14 +59,14 @@ export const VideoTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
                 setNotification({
                     isOpen: true,
                     status: "success",
-                    content: null, 
+                    content: null,
                 });
             } catch (error) {
                 console.error("Video translation process failed:", error);
                 setNotification({
                     isOpen: true,
                     status: "fail",
-                    content: null, 
+                    content: null,
                 });
             }
         },
@@ -79,7 +79,9 @@ export const VideoTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={null}
-                childComponent={<DialogContent onGenerate={handleStartGeneration}/>}
+                childComponent={
+                    <DialogContent onGenerate={handleStartGeneration} />
+                }
             />
             <UploadNotification
                 isOpen={notification.isOpen}

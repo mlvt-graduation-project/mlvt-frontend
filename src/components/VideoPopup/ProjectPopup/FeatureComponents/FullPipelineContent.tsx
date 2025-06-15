@@ -1,13 +1,13 @@
 import React, { useMemo, useState, useEffect } from "react";
-import ChangeViewBox from "../ProcessTriggerPopup/BaseComponent/ChangeView";
-import { getOneVideoById } from "../../../api/video.api";
-import { InfoNav } from "./BaseComponent/InfomationNavBar/InfoNav";
-import { OriginalVideo } from "./BaseComponent/OriginalVideo/OriginalVideo";
-import { RelatedOutput } from "./BaseComponent/RelatedOutput";
-import { MainProjectOutput } from "./BaseComponent/MainProjectOutput";
-import { FullPipelineProject } from "../../../types/Project";
-import { getTextContent } from "../../../utils/ProcessTriggerPopup/TextService";
-import { getAduioById } from "../../../api/audio.api";
+import ChangeViewBox from "../../ProcessTriggerPopup/BaseComponent/ChangeView";
+import { getOneVideoById } from "../../../../api/video.api";
+import { InfoNav } from "../BaseComponent/InfomationNavBar";
+import { OriginalVideo } from "../BaseComponent/OriginalVideo";
+import { RelatedOutput } from "../BaseComponent/RelatedOutput";
+import { MainProjectOutput } from "../BaseComponent/MainProjectOutput";
+import { FullPipelineProject } from "../../../../types/Project";
+import { getTextContent } from "../../../../utils/ProcessTriggerPopup/TextService";
+import { getAudioById } from "../../../../api/audio.api";
 import { Box } from "@mui/material";
 
 interface ContentProps {
@@ -39,7 +39,7 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
                     getOneVideoById(inputProject.original_videoId),
                     getTextContent(inputProject.extracted_textId),
                     getTextContent(inputProject.translated_textId),
-                    getAduioById(inputProject.translated_audioId),
+                    getAudioById(inputProject.translated_audioId),
                 ]);
 
                 setVideoUrl(videoResponse.video_url.split("?")[0]);
