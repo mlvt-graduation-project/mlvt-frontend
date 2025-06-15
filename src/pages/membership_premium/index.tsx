@@ -1,6 +1,6 @@
 import { Box, Typography, useTheme } from "@mui/material";
-import MembershipCard from "../../components/MembershipCard";
-import HomePage from "../../layout/HomeUser";
+import MembershipCard from "./MembershipCard";
+import HomePage from "../../layout/HomePage";
 import { CustomButton } from "../../components/CustomButton";
 import { useNavigate } from "react-router-dom";
 import { PLANS_DATA, PlanId } from "../../types/MembershipPlan";
@@ -64,7 +64,7 @@ const MembershipPremiumPage: React.FC = () => {
                         <MembershipCard
                             key={plan.id}
                             title={plan.title}
-                            price={plan.priceString} 
+                            price={plan.priceString}
                             period={plan.period}
                             perks={plan.perks}
                             onButtonClick={() => handleSubscribeClick(plan.id)}

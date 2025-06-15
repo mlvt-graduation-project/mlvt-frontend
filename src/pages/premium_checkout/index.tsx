@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import HomePage from "../../layout/HomeUser";
+import HomePage from "../../layout/HomePage";
 import CheckoutInformation from "./components/CheckoutInformation";
 import CheckoutMethod from "./components/CheckoutMethod";
 import { Navigate, useParams } from "react-router-dom";

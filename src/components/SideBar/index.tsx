@@ -25,11 +25,6 @@ interface NavLink {
 
 const navLinks: NavLink[] = [
     {
-        name: "Explore",
-        icon: <ExploreOutlinedIcon />,
-        link: "/landing",
-    },
-    {
         name: "Storage",
         icon: <Inventory2OutlinedIcon />,
         link: "/storage",
@@ -38,6 +33,11 @@ const navLinks: NavLink[] = [
         name: "Premium",
         icon: <LocalActivityOutlinedIcon />,
         link: "/premium_membership",
+    },
+    {
+        name: "Explore",
+        icon: <ExploreOutlinedIcon />,
+        link: "/landing",
     },
     {
         name: "About us",
@@ -144,7 +144,6 @@ const Sidebar: React.FC = () => {
                                     width: "3em",
                                     height: "2.5em",
                                     textDecoration: "none",
-                                    // --- CHANGE 3: Apply background color if active ---
                                     backgroundColor: isActive
                                         ? theme.palette.secondary.main
                                         : "transparent",

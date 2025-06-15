@@ -2,13 +2,13 @@ import { useTheme } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import { Avatar, Box, Badge, Typography, IconButton } from "@mui/material";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import { getUser } from "../../../api/user.api";
-import { useAuth } from "../../../context/AuthContext";
-import { User } from "../../../types/Response/User";
-import MenuDropdown from "../components/MenuDropdown";
-import CustomLoadingDot from "../../CustomLoadingDot";
+import { getUser } from "../../../../api/user.api";
+import { useAuth } from "../../../../context/AuthContext";
+import { User } from "../../../../types/Response/User";
+import MenuDropdown from "./MenuDropdown";
+import CustomLoadingDot from "../../../CustomLoadingDot";
 
-interface UserProfileProps {
+interface UserMenuProps {
     first_name: string;
     last_name: string;
     status?: boolean;
@@ -16,7 +16,7 @@ interface UserProfileProps {
     notifications: number;
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({
+const UserMenu: React.FC<UserMenuProps> = ({
     first_name,
     last_name,
     status,
@@ -132,4 +132,4 @@ const UserProfile: React.FC<UserProfileProps> = ({
     );
 };
 
-export default UserProfile;
+export default UserMenu;

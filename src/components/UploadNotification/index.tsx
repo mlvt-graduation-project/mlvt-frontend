@@ -48,7 +48,10 @@ const UploadNotification: FC<UploadNotificationProps> = ({
             fullWidth
             PaperProps={{
                 sx: {
-                    backgroundColor: alpha(theme.palette.background.default, 0.88),
+                    backgroundColor: alpha(
+                        theme.palette.background.default,
+                        0.88
+                    ),
                     borderRadius: "15px",
                 },
             }}
@@ -122,7 +125,7 @@ const UploadNotification: FC<UploadNotificationProps> = ({
                             ) : (
                                 <CancelRoundedIcon
                                     sx={{
-                                        color: theme.palette.error.main,
+                                        color: theme.palette.error.contrastText,
                                         fontSize: 100,
                                     }}
                                 />
@@ -138,9 +141,11 @@ const UploadNotification: FC<UploadNotificationProps> = ({
                             fontSize: "1.8rem",
                             textAlign: "center",
                             color: (theme) =>
-                                isSuccess
-                                    ? theme.palette.success.contrastText
-                                    : theme.palette.primary.main,
+                                isLoading 
+                                    ? theme.palette.primary.main 
+                                    : isSuccess 
+                                    ? theme.palette.success.contrastText 
+                                    : theme.palette.error.contrastText, 
                         }}
                     >
                         {isSuccess
@@ -149,7 +154,11 @@ const UploadNotification: FC<UploadNotificationProps> = ({
                                       ? content
                                       : "Upload data successfully! 🎉"
                               }`
-                            : `${content !== null ? content : "Upload data failed!"}`}
+                            : `${
+                                  content !== null
+                                      ? content
+                                      : "Upload data failed!"
+                              }`}
                     </Typography>
                     {navigateStorage && (
                         <Typography

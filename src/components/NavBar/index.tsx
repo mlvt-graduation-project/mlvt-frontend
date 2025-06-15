@@ -9,8 +9,8 @@ import TranslateIcon from "@mui/icons-material/Translate";
 import MicIcon from "@mui/icons-material/Mic";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 
-import UploadVideoButton from "./UploadVideoButton";
-import UserProfile from "./UserProfile";
+import UploadVideoButton from "./components/UploadVideoButton";
+import UserMenu from "./components/UserMenu";
 import { useUserDetails } from "../../hooks/useUserDetails";
 import LoadingBackdrop from "../LoadingBackdrop";
 
@@ -91,6 +91,8 @@ const NavBar: React.FC<NavbarProps> = (callbacks) => {
                     color: theme.palette.primary.main,
                     boxShadow: "none",
                     borderBottom: "2px solid" + theme.palette.secondary.main,
+                    width: "100%",
+                    overflowX: "hidden",
                 }}
             >
                 <Toolbar
@@ -99,7 +101,8 @@ const NavBar: React.FC<NavbarProps> = (callbacks) => {
                         flexDirection: "row",
                         alignItems: "center",
                         justifyContent: "space-between",
-                        padding: "0.7rem 2.2rem",
+                        px: { xs: 1, sm: 2.2, md: 3, lg: 4 },
+                        py: { xs: 1.2, sm: 2 },
                     }}
                 >
                     <UploadVideoButton />
@@ -107,11 +110,12 @@ const NavBar: React.FC<NavbarProps> = (callbacks) => {
                     {/* ----------------  centre nav links  ---------------- */}
                     <Box sx={{ display: "flex" }}>
                         <Box
+                            component="nav"
                             sx={{
-                                display: "flex",
+                                display: { xs: "none", md: "none", lg: "flex" },
                                 alignItems: "center",
-                                gap: 4,
-                                marginRight: "2rem",
+                                gap: { md: 4, lg: 6 },
+                                mr: 2,
                             }}
                         >
                             {NAV_LINKS.map(({ icon, text, action }) => (
@@ -186,7 +190,7 @@ const NavBar: React.FC<NavbarProps> = (callbacks) => {
                         </Box>
 
                         {/* ----------------  user profile  ---------------- */}
-                        <UserProfile
+                        <UserMenu
                             first_name={first_name}
                             last_name={last_name}
                             status={premium}
