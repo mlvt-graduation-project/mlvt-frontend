@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback } from "react";
+import React, { useRef, useState, useCallback, useMemo } from "react";
 import {
     Box,
     Typography,
@@ -41,77 +41,87 @@ const ChangePassword: React.FC = () => {
         new: false,
         confirm: false,
     });
-    const [errors, setErrors] = useState<Record<FieldKey, boolean>>({
-        current: false,
-        new: false,
-        confirm: false,
+    const [errors, setErrors] = useState<Record<FieldKey, string>>({
+        current: "",
+        new: "",
+        confirm: "",
     });
-    const [passwordMismatch, setPasswordMismatch] = useState(false);
+    const currentRef = useRef<HTMLInputElement>(null);
+    const newRef = useRef<HTMLInputElement>(null);
+    const confirmRef = useRef<HTMLInputElement>(null);
+    const refs = useMemo(
+        () => ({
+            current: currentRef,
+            new: newRef,
+            confirm: confirmRef,
+        }),
+        []
+    );
+
     const [successPopup, setSuccessPopup] = useState(false);
 
     const handleToggleShow = useCallback((key: FieldKey) => {
         setShow((s) => ({ ...s, [key]: !s[key] }));
     }, []);
 
-    const handleChange = useCallback(
-        (key: FieldKey, v: string) => {
-            setValues((prev) => ({ ...prev, [key]: v }));
-            setErrors((e) => ({ ...e, [key]: !v.trim() }));
-            if (key === "confirm" || key === "new") {
-                setPasswordMismatch(
-                    key === "confirm" ? v !== values.new : values.confirm !== v
-                );
-            }
-        },
-        [values.confirm, values.new]
-    );
-
-    const currentRef = useRef<HTMLInputElement>(null);
-    const newRef = useRef<HTMLInputElement>(null);
-    const confirmRef = useRef<HTMLInputElement>(null);
+    const handleChange = useCallback((key: FieldKey, v: string) => {
+        setValues((prev) => ({ ...prev, [key]: v }));
+        setErrors((e) => ({ ...e, [key]: "" }));
+    }, []);
 
     const validate = useCallback((): boolean => {
-        const newErrs: Record<FieldKey, boolean> = {
-            current: !values.current.trim(),
-            new: !values.new.trim(),
-            confirm: !values.confirm.trim(),
+        const newErrs: Record<FieldKey, string> = {
+            current: "",
+            new: "",
+            confirm: "",
         };
-        setErrors(newErrs);
-        setPasswordMismatch(values.new !== values.confirm);
+        let focusKey: FieldKey | null = null;
 
-        if (newErrs.current) currentRef.current?.focus();
-        else if (newErrs.new) newRef.current?.focus();
-        else if (newErrs.confirm || values.new !== values.confirm)
-            confirmRef.current?.focus();
+        // required
+        (["current", "new", "confirm"] as FieldKey[]).forEach((k) => {
+            if (!values[k].trim()) {
+                newErrs[k] = "This field is required";
+                focusKey = focusKey || k;
+            }
+        });
 
-        return (
-            !newErrs.current &&
-            !newErrs.new &&
+        // new ≠ current
+        if (!newErrs.new && values.new && values.new === values.current) {
+            newErrs.new = "New password must differ from current";
+            focusKey = focusKey || "new";
+        }
+
+        // confirm matches new
+        if (
             !newErrs.confirm &&
-            values.new === values.confirm
-        );
-    }, [values]);
+            values.confirm.trim() &&
+            values.confirm !== values.new
+        ) {
+            newErrs.confirm = "Passwords do not match";
+            focusKey = focusKey || "confirm";
+        }
+
+        setErrors(newErrs);
+        if (focusKey) refs[focusKey].current?.focus();
+
+        return Object.values(newErrs).every((msg) => msg === "");
+    }, [values, refs]);
 
     const handleSave = useCallback(async () => {
         if (!validate()) return;
         if (!userId) {
-            console.error("User ID is null. Cannot change password.");
+            console.error("No user ID; cannot change password");
             return;
         }
         try {
             await changePassword(userId, values.current, values.new);
             setSuccessPopup(true);
-            setTimeout(() => {
-                window.location.reload();
-            }, 3000);
+            setTimeout(() => window.location.reload(), 3000);
         } catch (err: any) {
-            console.error("Error changing password:", err);
+            console.error(err);
             const status = err?.response?.status;
-            const msg =
-                err?.response?.data?.message || "An unexpected error occurred.";
-            if (status === 400) alert(msg);
-            else if (status === 401)
-                alert("Unauthorized: Please log in again.");
+            const msg = err?.response?.data?.message || "Unexpected error.";
+            if (status === 400 || status === 401) alert(msg);
             else
                 alert(
                     "An error occurred while changing password. Please try again."
@@ -156,13 +166,17 @@ const ChangePassword: React.FC = () => {
                     {(["current", "new", "confirm"] as FieldKey[]).map(
                         (key) => {
                             const isConfirm = key === "confirm";
-                            const showError =
-                                errors[key] || (isConfirm && passwordMismatch);
-                            const helperText = errors[key]
-                                ? "This field is required"
-                                : isConfirm && passwordMismatch
-                                ? "Passwords do not match"
-                                : "";
+                            const isMismatch =
+                                isConfirm &&
+                                values.confirm.length > 0 &&
+                                values.new !== values.confirm;
+
+                            // An error exists if it comes from validation OR there's a live mismatch.
+                            const hasError = !!errors[key] || isMismatch;
+                            // The helper text should prioritize the validation message.
+                            const helperText =
+                                errors[key] ||
+                                (isMismatch ? "Passwords do not match" : "");
 
                             return (
                                 <Box
@@ -186,7 +200,7 @@ const ChangePassword: React.FC = () => {
                                     </Typography>
                                     <TextField
                                         id={ids[key]}
-                                        inputRef={currentRef}
+                                        inputRef={refs[key]}
                                         fullWidth
                                         size="small"
                                         type={show[key] ? "text" : "password"}
@@ -229,7 +243,7 @@ const ChangePassword: React.FC = () => {
                                                 </InputAdornment>
                                             ),
                                         }}
-                                        error={showError}
+                                        error={hasError}
                                         helperText={helperText}
                                         sx={{
                                             "& .MuiFormHelperText-root.Mui-error":
