@@ -1,10 +1,10 @@
 import React from "react";
-import SearchBar from "../../../../SearchBar";
+import SearchBar from "../../../../../SearchBar";
 import { Box } from "@mui/material";
-import { Project, ProjectType } from "../../../../../types/Project";
-import { BrowseFileCard } from "../BrowseFileCard";
-import { GenerateButton } from "../GenerateButton";
-import { useProjectContext } from "../../../../../context/ProjectContext";
+import { Project, ProjectType } from "../../../../../../types/Project";
+import { BrowseFileCard } from "../../BrowseFileCard";
+import { GenerateButton } from "../../GenerateButton";
+import { useProjectContext } from "../../../../../../context/ProjectContext";
 
 interface DialogContentProps {
     onClosePopup: () => void;

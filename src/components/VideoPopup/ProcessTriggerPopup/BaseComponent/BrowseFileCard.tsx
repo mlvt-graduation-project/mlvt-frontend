@@ -216,7 +216,7 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                     />
                 </Box>
             </CardContent>
-            {selectedProject && !selectedProject && (
+            {selectedProject && (
                 <ProcessedVideoPopUp
                     inputObject={project}
                     isOpen={!!selectedProject}

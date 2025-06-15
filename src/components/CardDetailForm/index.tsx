@@ -1,51 +1,133 @@
-import React from 'react';
-import {
-    Box,
-    Grid,
-    TextField,
-    Typography,
-    useTheme,
-} from '@mui/material';
-import CreditCardIcon from '@mui/icons-material/CreditCard';
+import React, { useEffect, useState } from "react";
+import { Box, Grid, TextField, Typography, useTheme } from "@mui/material";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
+import { CardData } from "../../types/Payment";
 
 const labelSX = {
-    fontSize: '0.9rem',
+    fontSize: "0.9rem",
     fontWeight: 500,
-    fontFamily: 'Poppins, sans-serif',
+    fontFamily: "Poppins, sans-serif",
     mb: 0.8,
 };
 
 const inputBaseSX = {
-    '& .MuiInputBase-input': {
-        padding: '10px 14px',
-        fontFamily: 'Poppins, sans-serif',
-        fontSize: '1rem',
+    "& .MuiInputBase-input": {
+        padding: "10px 14px",
+        fontFamily: "Poppins, sans-serif",
+        fontSize: "1rem",
     },
 };
 
 interface CardDetailsFormProps {
-    cardHolderName: string;
-    cardNumber: string;
-    expiryDate: string;
-    securityCode: string;
-    onCardHolderNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onCardNumberChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onExpiryDateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onSecurityCodeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onUpdate: (data: CardData, isValid: boolean) => void;
 }
 
-const CardDetailsForm: React.FC<CardDetailsFormProps> = ({
-    cardHolderName,
-    cardNumber,
-    expiryDate,
-    securityCode,
-    onCardHolderNameChange,
-    onCardNumberChange,
-    onExpiryDateChange,
-    onSecurityCodeChange,
-}) => {
+const CardDetailsForm: React.FC<CardDetailsFormProps> = ({ onUpdate }) => {
     const theme = useTheme();
+    const [cardHolderName, setCardHolderName] = useState("");
+    const [cardNumber, setCardNumber] = useState("");
+    const [expiryDate, setExpiryDate] = useState("");
+    const [securityCode, setSecurityCode] = useState("");
 
+    // All handler functions now live inside this component
+    const handleCardHolderNameChange = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const value = e.target.value.replace(/[^a-zA-Z\s]/g, "");
+        setCardHolderName(value);
+    };
+
+    const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawValue = e.target.value.replace(/\D/g, ""); // Remove non-digits
+        const truncatedValue = rawValue.substring(0, 16); // Max 16 digits (typical for Visa/MasterCard)
+
+        let formattedValue = "";
+        for (let i = 0; i < truncatedValue.length; i++) {
+            if (i > 0 && i % 4 === 0) {
+                formattedValue += " ";
+            }
+            formattedValue += truncatedValue[i];
+        }
+        setCardNumber(formattedValue);
+    };
+
+    const handleExpiryDateChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const inputValue = event.target.value;
+        const previousValue = expiryDate;
+        let digits = inputValue.replace(/\D/g, "");
+
+        if (
+            digits.length === 1 &&
+            parseInt(digits[0]) > 1 &&
+            parseInt(digits[0]) <= 9
+        ) {
+            if (previousValue.replace(/\D/g, "").length === 0) {
+                digits = "0" + digits[0];
+            }
+        }
+
+        if (digits.length >= 2) {
+            let monthPart = digits.substring(0, 2);
+            if (monthPart === "00") {
+                digits = "0" + digits.substring(2);
+            } else if (parseInt(monthPart) > 12) {
+                digits = monthPart[0] + digits.substring(2);
+            }
+        }
+
+        if (digits.length > 4) {
+            digits = digits.substring(0, 4);
+        }
+
+        let formatted = "";
+        if (digits.length > 2) {
+            formatted = `${digits.substring(0, 2)}/${digits.substring(2)}`;
+        } else if (digits.length > 0) {
+            formatted = digits;
+        } else {
+            formatted = "";
+        }
+
+        if (
+            inputValue.endsWith("/") &&
+            digits.length === 2 &&
+            formatted.length === 2
+        ) {
+            formatted += "/";
+        } else if (
+            previousValue.endsWith("/") &&
+            digits.length === 2 &&
+            formatted.length === 2 &&
+            !inputValue.endsWith("/")
+        ) {
+        }
+        setExpiryDate(formatted);
+    };
+
+    const handleSecurityCodeChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const inputValue = event.target.value.replace(/\D/g, "");
+        setSecurityCode(inputValue.substring(0, 3));
+    };
+
+    useEffect(() => {
+        const data: CardData = {
+            cardHolderName,
+            cardNumber,
+            expiryDate,
+            securityCode,
+        };
+        const isValid =
+            cardHolderName.trim() !== "" &&
+            cardNumber.replace(/\s/g, "").length === 16 &&
+            expiryDate.length === 5 && // e.g., 'MM/YY'
+            securityCode.length === 3;
+
+        onUpdate(data, isValid);
+    }, [cardHolderName, cardNumber, expiryDate, securityCode, onUpdate]);
     return (
         <Grid container spacing={2}>
             {/* Card Holder Name */}
@@ -56,12 +138,12 @@ const CardDetailsForm: React.FC<CardDetailsFormProps> = ({
                     placeholder="John Doe"
                     inputProps={{
                         style: {
-                            fontFamily: 'Poppins, sans-serif',
-                            fontSize: '1rem',
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "1rem",
                         },
                     }}
                     value={cardHolderName}
-                    onChange={onCardHolderNameChange}
+                    onChange={handleCardHolderNameChange}
                     sx={inputBaseSX}
                 />
             </Grid>
@@ -74,17 +156,25 @@ const CardDetailsForm: React.FC<CardDetailsFormProps> = ({
                     placeholder="XXXX XXXX XXXX XXXX"
                     inputProps={{
                         style: {
-                            fontFamily: 'Poppins, sans-serif',
-                            fontSize: '1rem',
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "1rem",
                         },
                     }}
                     value={cardNumber}
-                    onChange={onCardNumberChange}
+                    onChange={handleCardNumberChange}
                     sx={inputBaseSX}
                     InputProps={{
                         startAdornment: (
-                            <Box sx={{ display: 'flex', alignItems: 'center', mr: 1 }}>
-                                <CreditCardIcon sx={{ color: theme.palette.text.secondary }} />
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    mr: 1,
+                                }}
+                            >
+                                <CreditCardIcon
+                                    sx={{ color: theme.palette.text.secondary }}
+                                />
                             </Box>
                         ),
                     }}
@@ -99,12 +189,12 @@ const CardDetailsForm: React.FC<CardDetailsFormProps> = ({
                     placeholder="MM/YY"
                     inputProps={{
                         style: {
-                            fontFamily: 'Poppins, sans-serif',
-                            fontSize: '1rem',
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "1rem",
                         },
                     }}
                     value={expiryDate}
-                    onChange={onExpiryDateChange}
+                    onChange={handleExpiryDateChange}
                     sx={inputBaseSX}
                 />
             </Grid>
@@ -117,12 +207,12 @@ const CardDetailsForm: React.FC<CardDetailsFormProps> = ({
                     placeholder="CVV"
                     inputProps={{
                         style: {
-                            fontFamily: 'Poppins, sans-serif',
-                            fontSize: '1rem',
+                            fontFamily: "Poppins, sans-serif",
+                            fontSize: "1rem",
                         },
                     }}
                     value={securityCode}
-                    onChange={onSecurityCodeChange}
+                    onChange={handleSecurityCodeChange}
                     sx={inputBaseSX}
                 />
             </Grid>

@@ -1,5 +1,5 @@
 import React from "react";
-import { BasePopup } from "../../../BasePopup/BasePopup";
+import { BasePopup } from "../../../BasePopup";
 import { DialogContent } from "./PopupContent";
 import { ProjectType, Project } from "../../../../../types/Project";
 

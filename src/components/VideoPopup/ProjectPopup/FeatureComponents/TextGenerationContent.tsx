@@ -1,12 +1,12 @@
 import React, { useMemo, useState, useEffect } from "react";
-import ChangeViewBox from "../ProcessTriggerPopup/BaseComponent/ChangeView";
-import { getOneVideoById } from "../../../api/video.api";
-import { InfoNav } from "./BaseComponent/InfomationNavBar/InfoNav";
-import { OriginalVideo } from "./BaseComponent/OriginalVideo/OriginalVideo";
-import { RelatedOutput } from "./BaseComponent/RelatedOutput";
-import { TextGenerationProject } from "../../../types/Project";
-import { getTextDownloadUrl } from "../../../api/text.api";
-import { getTextFileContent } from "../../../api/aws.api";
+import ChangeViewBox from "../../ProcessTriggerPopup/BaseComponent/ChangeView";
+import { getOneVideoById } from "../../../../api/video.api";
+import { InfoNav } from "../BaseComponent/InfomationNavBar";
+import { OriginalVideo } from "../BaseComponent/OriginalVideo";
+import { RelatedOutput } from "../BaseComponent/RelatedOutput";
+import { TextGenerationProject } from "../../../../types/Project";
+import { getTextDownloadUrl } from "../../../../api/text.api";
+import { getTextFileContent } from "../../../../api/aws.api";
 import { Box } from "@mui/material";
 
 interface ContentProps {

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { DialogContent, TextGenerationData } from "./PopupContent";
-import { BasePopup } from "../../BasePopup/BasePopup";
+import { BasePopup } from "../../BasePopup";
 import UploadNotification from "../../../UploadNotification";
 import { uploadVideo } from "../../../../utils/ProcessTriggerPopup/VideoService";
 import { generateText } from "../../../../utils/ProcessTriggerPopup/PipelineService";
@@ -83,7 +83,9 @@ export const TextGenerationPopup: React.FC<TextGenerationPopupProps> = ({
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={null}
-                childComponent={<DialogContent onGenerate={handleStartGeneration}/>}
+                childComponent={
+                    <DialogContent onGenerate={handleStartGeneration} />
+                }
             />
             <UploadNotification
                 isOpen={notification.isOpen}

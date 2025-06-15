@@ -9,7 +9,7 @@ import {
     SxProps,
     Typography,
 } from "@mui/material";
-import Layout from "../../layout/HomeUser";
+import Layout from "../../layout/HomePage";
 import { useTheme } from "@mui/material/styles";
 import AlignHorizontalRightIcon from "@mui/icons-material/AlignHorizontalRight";
 import React, { useEffect, useState } from "react";

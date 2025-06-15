@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { DialogContent, VoiceGenerationData } from "./PopupContent";
-import { BasePopup } from "../../BasePopup/BasePopup";
+import { BasePopup } from "../../BasePopup";
 import UploadNotification from "../../../UploadNotification";
 import { generateVoice } from "../../../../utils/ProcessTriggerPopup/PipelineService";
 import { uploadText } from "../../../../utils/ProcessTriggerPopup/TextService";

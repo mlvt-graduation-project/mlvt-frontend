@@ -1,5 +1,5 @@
 import React from 'react';
-import { OriginalVideo } from '../OriginalVideo/OriginalVideo';
+import { OriginalVideo } from '../OriginalVideo';
 import { ImageInProgress } from './ImageInProgress';
 
 interface MainProjectOutputProps {

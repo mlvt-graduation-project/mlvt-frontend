@@ -12,7 +12,7 @@ export const getListAudioByUserId = async (userId: number): Promise<AudioList> =
     }
 };
 
-export const getAduioById = async (id: number): Promise<GetAudioById> => {
+export const getAudioById = async (id: number): Promise<GetAudioById> => {
     try {
         const response = await credentialAPI.get<GetAudioById>(`/audios/${id}`);
         console.log(response);

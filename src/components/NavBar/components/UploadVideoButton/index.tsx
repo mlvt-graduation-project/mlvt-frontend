@@ -2,14 +2,14 @@ import React, { useRef, useState } from "react";
 import Button from "@mui/material/Button";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import axios from "axios";
-import { VideoData } from "../../../types/FileData";
+import { VideoData } from "../../../../types/FileData";
 import {
     getPresignedImageURL,
     getPresignedVideoURL,
     postVideo,
-} from "../../../api/video.api";
-import { useTheme } from "@mui/material/styles";
-import UploadNotification from "../../UploadNotification";
+} from "../../../../api/video.api";
+import { styled } from "@mui/material/styles";
+import UploadNotification from "../../../UploadNotification";
 
 const s3ApiClient = axios.create({});
 
@@ -26,6 +26,42 @@ const uploadImageToS3 = async (uploadUrl: string, file: File) => {
         throw error;
     }
 };
+
+const ResponsiveUploadButton = styled(Button)(({ theme }) => ({
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: theme.spacing(1),
+    maxWidth: 100,
+    padding: theme.spacing(0.5, 2),
+    borderRadius: theme.spacing(1.2),
+    fontFamily: "Poppins, sans-serif",
+    fontWeight: 700,
+    transition: "background-color 0.3s ease",
+
+    /* base colors */
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.secondary.main,
+
+    "&:hover": {
+        backgroundColor: theme.palette.secondary.contrastText,
+    },
+
+    /* XS up through SM: full width */
+    [theme.breakpoints.down("sm")]: {
+        width: "100%",
+        fontSize: "0.8rem",
+        height: 40,
+    },
+
+    /* MD and up: auto width, slightly larger */
+    [theme.breakpoints.up("md")]: {
+        width: "auto",
+        fontSize: "1rem",
+        height: 48,
+        minWidth: 160,
+    },
+}));
 
 function UploadButton() {
     /** ────────────────  notification state  ──────────────── */
@@ -56,20 +92,15 @@ function UploadButton() {
         user_id: parseInt(localStorage.getItem("userId") || "0"),
     });
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [fileName, setFileName] = useState<string | null>(null);
-    const theme = useTheme();
 
     const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
-            setFileName(file.name); 
             ref.current.file_name = file.name;
             ref.current.user_id = Number(localStorage.getItem("userId"));
             if (file) {
                 if (file.type === "video/mp4") {
-                    // Extract first frame and save it as a file
                     const imageFile = await extractFirstFrame(file);
-                    // Upload video image to s3
                     await uploadVideoImage(imageFile);
                 }
                 await uploadFile(file, file.type);
@@ -200,34 +231,11 @@ function UploadButton() {
                 ref={fileInputRef}
                 onChange={handleFileInput}
             />
-            <Button
-                sx={{
-                    width: { xs: "100%", sm: "auto" },
-                    maxWidth: { xs: "100%", sm: "250px" },
-                    height: { xs: "2.2rem", sm: "2.5rem" },
-                    fontSize: { xs: "0.8em", sm: "1em" },
-                    backgroundColor: theme.palette.primary.main,
-                    padding: "0.5rem 1rem",
-                    borderRadius: "0.8rem",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                    transition: "background-color 0.3s ease",
-                    color: theme.palette.secondary.main,
-                    fontFamily: "Poppins, sans-serif",
-                    fontWeight: "bold",
-                    "&:hover": {
-                        backgroundColor: theme.palette.secondary.contrastText,
-                    },
-                    gap: "0.5rem",
-                }}
-                onClick={handleClick}
-            >
-                <FileUploadIcon
-                    style={{ color: theme.palette.secondary.main }}
-                />
-                {fileName ? fileName : "Upload"}
-            </Button>
+            <ResponsiveUploadButton onClick={handleClick}>
+                <FileUploadIcon fontSize="small" />
+                {"Upload"}
+            </ResponsiveUploadButton>
+
             <UploadNotification
                 isOpen={notiOpen}
                 content={notifMessage}

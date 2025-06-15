@@ -1,6 +1,6 @@
-import React from 'react';
-import { Box, Typography, Modal, useTheme } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import React from "react";
+import { Box, Typography, Modal, useTheme } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 interface SuccessPopupProps {
     open: boolean;
@@ -8,7 +8,11 @@ interface SuccessPopupProps {
     message: string;
 }
 
-const SuccessPopup: React.FC<SuccessPopupProps> = ({ open, onClose, message }) => {
+const SuccessPopup: React.FC<SuccessPopupProps> = ({
+    open,
+    onClose,
+    message,
+}) => {
     const theme = useTheme();
     return (
         <Modal
@@ -19,35 +23,35 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({ open, onClose, message }) =
         >
             <Box
                 sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    bgcolor: 'background.paper',
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    bgcolor: "background.paper",
                     boxShadow: 24,
                     p: 4,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
                     borderRadius: 2,
                 }}
             >
                 <CheckCircleIcon
                     sx={{
                         fontSize: 100,
-                        // color: theme.palette.success.main,
-                        color: '#4CAF50',
-                        alignSelf: 'center',
+                        color: theme.palette.success.contrastText,
+                        alignSelf: "center",
                     }}
                 />
 
                 <Typography
                     sx={{
-                        fontFamily: theme.typography.h1,
-                        fontWeight: theme.typography.fontWeightBold,
-                        fontSize: '1.5rem',
+                        fontFamily: "Poppins, sans-serif",
+                        fontWeight: "550",
+                        fontSize: "1.5rem",
                         marginTop: 5,
-                        color: '#4CAF50'
+                        color: theme.palette.success.contrastText,
+                        textAlign: "center",
                     }}
                 >
                     {message}
