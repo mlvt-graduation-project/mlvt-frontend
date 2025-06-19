@@ -158,7 +158,7 @@ export const VoiceGenerationPopup: React.FC<VoiceGenerationPopupProps> = ({
     return (
         <>
             <BasePopup
-                tittle="Voice Generation"
+                title="Voice Generation"
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={null}

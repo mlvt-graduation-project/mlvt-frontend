@@ -15,7 +15,7 @@ import { ProjectStatus, toDisplayText } from "../../../types/ProjectStatus";
 
 interface BasePopupProps {
     isOpen: boolean;
-    tittle: string;
+    title: string;
     onClose: () => void;
     childComponent: React.ReactNode;
     statusChip: ProjectStatus | null;
@@ -24,7 +24,7 @@ interface BasePopupProps {
 }
 
 export const BasePopup: FC<BasePopupProps> = ({
-    tittle,
+    title,
     isOpen,
     onClose,
     childComponent,
@@ -129,7 +129,7 @@ export const BasePopup: FC<BasePopupProps> = ({
                             color: theme.palette.text.primary,
                         }}
                     >
-                        {tittle}
+                        {title}
                     </Typography>
                 </Box>
                 <IconButton

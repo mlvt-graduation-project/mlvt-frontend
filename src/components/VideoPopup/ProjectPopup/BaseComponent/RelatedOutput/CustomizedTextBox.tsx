@@ -2,16 +2,16 @@ import { Typography, Box, IconButton } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 export const TextView = ({
     displayText,
-    textTittle,
+    textTitle,
     customizeSx,
-    centerTittle = false,
+    centerTitle = false,
     disableDownload = false,
     showOutsideBox = true,
 }: {
     displayText: string;
-    textTittle?: string;
+    textTitle?: string;
     customizeSx?: object;
-    centerTittle?: boolean;
+    centerTitle?: boolean;
     disableDownload?: boolean;
     showOutsideBox?: boolean;
 }) => {
@@ -19,7 +19,7 @@ export const TextView = ({
         const element = document.createElement("a");
         const file = new Blob([displayText], { type: "text/plain" });
         element.href = URL.createObjectURL(file);
-        element.download = textTittle + ".txt";
+        element.download = textTitle + ".txt";
         document.body.appendChild(element);
         element.click();
     };
@@ -57,7 +57,7 @@ export const TextView = ({
                                 color: (theme) => theme.palette.primary.main,
                             }}
                         >
-                            {textTittle}
+                            {textTitle}
                         </Typography>
                         {!disableDownload && (
                             <IconButton
@@ -83,7 +83,7 @@ export const TextView = ({
                     <Box
                         sx={{
                             paddingX: "10px",
-                            flexGrow: 1, 
+                            flexGrow: 1,
                             overflowY: "auto",
                             height: "100%",
                         }}
@@ -96,7 +96,8 @@ export const TextView = ({
                                 whiteSpace: "pre-wrap",
                                 margin: 0,
                                 scrollbarWidth: "thin",
-                                fontFamily: "Be Vietnam Pro, Roboto, sans-serif",
+                                fontFamily:
+                                    "Be Vietnam Pro, Roboto, sans-serif",
                             }}
                         >
                             {displayText}
@@ -106,21 +107,22 @@ export const TextView = ({
             ) : (
                 <Box
                     sx={{
-                        border: "1px solid black", // Viền đen
-                        borderRadius: "10px", // Bo góc 2px
-                        padding: "10px", // Khoảng cách bên trong
+                        border: "1px solid black",
+                        borderRadius: "10px",
+                        padding: "10px",
                         height: "80%",
                     }}
                 >
                     <p
                         style={{
                             fontSize: "13px",
-                            maxHeight: "100%", // Set max height for scrolling area
-                            overflowY: "auto", // Enable vertical scrolling when content overflows
+                            maxHeight: "100%",
+                            overflowY: "auto",
                             whiteSpace: "pre-wrap",
-                            margin: 0, // Remove default margin
-                            scrollbarWidth: "thin", // For Firefox: makes the scrollbar thinner
-                            fontFamily: "Be Vietnam Pro, Times New Roman, Times, serif",
+                            margin: 0,
+                            scrollbarWidth: "thin",
+                            fontFamily:
+                                "Be Vietnam Pro, Times New Roman, Times, serif",
                         }}
                     >
                         {displayText}

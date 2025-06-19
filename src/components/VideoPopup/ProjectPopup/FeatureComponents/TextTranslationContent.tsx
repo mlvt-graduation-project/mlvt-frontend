@@ -63,7 +63,7 @@ export const TextTranslationContent: React.FC<ContentProps> = ({
                             {
                                 type: "text",
                                 props: {
-                                    textTittle: "Input Text",
+                                    textTitle: "Input Text",
                                     displayText: originalTextContent
                                         ? originalTextContent
                                         : "",
@@ -83,7 +83,7 @@ export const TextTranslationContent: React.FC<ContentProps> = ({
                             {
                                 type: "text",
                                 props: {
-                                    textTittle: "Input Text",
+                                    textTitle: "Input Text",
                                     displayText: resultTextContent
                                         ? resultTextContent
                                         : "",

@@ -6,7 +6,7 @@ interface AudioProps {
     type: "audio/video";
     props: {
         audioSrc: string;
-        audioTittle: string;
+        audioTitle: string;
         sourceType: "audio" | "video";
     };
 }
@@ -15,7 +15,7 @@ interface TextProps {
     type: "text";
     props: {
         displayText: string;
-        textTittle: string;
+        textTitle: string;
     };
 }
 
@@ -71,7 +71,7 @@ export const RelatedOutput: React.FC<RelatedOutputProps> = ({
                         <CustomAudioPlayer
                             key={index}
                             audioSrc={child.props.audioSrc}
-                            audioTittle={child.props.audioTittle}
+                            audioTitle={child.props.audioTitle}
                             customizeSx={customChildSx}
                             sourceType={child.props.sourceType}
                         />
@@ -82,9 +82,9 @@ export const RelatedOutput: React.FC<RelatedOutputProps> = ({
                         <TextView
                             key={index}
                             displayText={child.props.displayText}
-                            textTittle={child.props.textTittle}
+                            textTitle={child.props.textTitle}
                             customizeSx={customChildSx}
-                            centerTittle={true}
+                            centerTitle={true}
                         />
                     );
                 }

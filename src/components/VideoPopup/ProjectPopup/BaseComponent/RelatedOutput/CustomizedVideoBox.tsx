@@ -129,13 +129,13 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioSrc }) => {
 
 export const CustomAudioPlayer = ({
     audioSrc,
-    audioTittle,
+    audioTitle,
     customizeSx,
     sourceType,
     disableDownload = false,
 }: {
     audioSrc: string;
-    audioTittle: string;
+    audioTitle: string;
     customizeSx?: object;
     sourceType: "audio" | "video";
     disableDownload?: boolean;
@@ -171,7 +171,7 @@ export const CustomAudioPlayer = ({
                         color: (theme) => theme.palette.primary.main,
                     }}
                 >
-                    {audioTittle}
+                    {audioTitle}
                 </Typography>
                 {/* Nút tải về */}
                 {!disableDownload && (

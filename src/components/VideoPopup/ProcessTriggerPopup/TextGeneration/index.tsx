@@ -79,7 +79,7 @@ export const TextGenerationPopup: React.FC<TextGenerationPopupProps> = ({
     return (
         <>
             <BasePopup
-                tittle="Text Generation"
+                title="Text Generation"
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={null}

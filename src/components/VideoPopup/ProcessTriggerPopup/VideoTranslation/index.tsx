@@ -75,7 +75,7 @@ export const VideoTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
     return (
         <>
             <BasePopup
-                tittle="Video Translation"
+                title="Video Translation"
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={null}

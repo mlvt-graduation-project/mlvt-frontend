@@ -93,14 +93,14 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
                                 type: "audio/video",
                                 props: {
                                     audioSrc: videoUrl ? videoUrl : "",
-                                    audioTittle: "Original Audio",
+                                    audioTitle: "Original Audio",
                                     sourceType: "audio",
                                 },
                             },
                             {
                                 type: "text",
                                 props: {
-                                    textTittle: "Original Text",
+                                    textTitle: "Original Text",
                                     displayText: extractedText
                                         ? extractedText
                                         : "",
@@ -112,14 +112,14 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
                                     audioSrc: translatedAudio
                                         ? translatedAudio
                                         : "",
-                                    audioTittle: "Processed Audio",
+                                    audioTitle: "Processed Audio",
                                     sourceType: "audio",
                                 },
                             },
                             {
                                 type: "text",
                                 props: {
-                                    textTittle: "Processed Text",
+                                    textTitle: "Processed Text",
                                     displayText: translatedText
                                         ? translatedText
                                         : "",
@@ -160,7 +160,10 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
                 }}
             >
                 <Box paddingX={1}>
-                    <ChangeViewBox Views={Views} setViewState={changeViewState} />
+                    <ChangeViewBox
+                        Views={Views}
+                        setViewState={changeViewState}
+                    />
                 </Box>
                 {ActiveComponent}
             </Box>

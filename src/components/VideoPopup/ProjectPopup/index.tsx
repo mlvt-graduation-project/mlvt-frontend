@@ -11,12 +11,6 @@ import { RawAudioContent } from "./FeatureComponents/RawAudioContent";
 import { TextTranslationContent } from "./FeatureComponents/TextTranslationContent";
 import { LipSyncContent } from "./FeatureComponents/LipSyncContent";
 
-// interface childComponentType {
-//     type: ProjectType;
-//     tittle: string;
-//     childComponent: React.ReactNode;
-// }
-
 interface ProcessedVideoProps {
     inputObject: Project;
     isOpen: boolean;
@@ -54,7 +48,7 @@ export const ProcessedVideoPopUp: React.FC<ProcessedVideoProps> = ({
                         hideNavBar={hideNavBar}
                         hideDownloadButton={hideDownloadButton}
                         customSx={{ height: "90%", width: "80%" }}
-                        centerTittle={true}
+                        centerTitle={true}
                     />
                 );
             case ProjectType.Audio:
@@ -119,55 +113,10 @@ export const ProcessedVideoPopUp: React.FC<ProcessedVideoProps> = ({
         else return largeBasePopup;
     };
 
-    // const childComponent: childComponentType[] = [
-    //     {
-    //         type: ProjectType.Fullpipeline,
-    //         tittle: 'Video Translation',
-    //         // childComponent: <FullPipelineContent videoId={} />,
-    //         childComponent: <></>
-    //     },
-    //     {
-    //         type: ProjectType.TextGeneration,
-    //         tittle: 'Text generation',
-    //         childComponent: <TextGenerationContent videoId={inputObject.} />,
-    //     },
-    //     {
-    //         type: ProjectType.TextTranslation,
-    //         tittle: 'Text translation',
-    //         childComponent: <></>,
-    //     },
-    //     {
-    //         type: ProjectType.AudioGeneration,
-    //         tittle: 'Audio generation',
-    //         childComponent: <AudioGenerationContent videoId={videoId} />,
-    //     },
-    //     {
-    //         type: ProjectType.Lipsync,
-    //         tittle: 'Lip synchroniztion',
-    //         childComponent: <></>,
-    //     },
-    //     {
-    //         type: ProjectType.Video,
-    //         tittle: 'Video',
-    //         childComponent: <RawVideoContent videoId={videoId} hideNavBar={hideNavBar} />,
-    //     },
-    //     {
-    //         type: ProjectType.Text,
-    //         tittle: 'Text',
-    //         childComponent: <RawTextContent hideNavBar={true} />,
-    //     },
-    //     {
-    //         type: ProjectType.Audio,
-    //         tittle: 'Audio',
-    //         childComponent: <RawAudioContent videoId={videoId} hideNavBar={true} />,
-    //     },
-    // ];
-    // const matchingComponent = childComponent.find((item) => item.type === type);
-
     return (
         <>
             <BasePopup
-                tittle={inputObject.title || "Video translation"}
+                title={inputObject.title || "Video translation"}
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={inputObject.status}

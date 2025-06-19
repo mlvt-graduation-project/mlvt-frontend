@@ -19,7 +19,7 @@ export const BrowseMLVTPopup: React.FC<BrowseMLVTPopupProps> = ({
     return (
         <>
             <BasePopup
-                tittle="Browse MLVT"
+                title="Browse MLVT"
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={null}

@@ -129,7 +129,7 @@ export const LipsyncPopup: React.FC<LipsyncPopupProps> = ({
     return (
         <>
             <BasePopup
-                tittle="Lip Synchronization"
+                title="Lip Synchronization"
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={null}

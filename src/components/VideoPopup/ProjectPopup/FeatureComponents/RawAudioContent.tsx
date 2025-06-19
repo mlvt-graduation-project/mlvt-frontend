@@ -45,7 +45,7 @@ export const RawAudioContent: React.FC<ContentProps> = ({
             >
                 <CustomAudioPlayer
                     audioSrc={audioUrl || ""}
-                    audioTittle={"Raw Audio"}
+                    audioTitle={"Raw Audio"}
                     sourceType="audio"
                     customizeSx={{ width: "60%", height: "100%" }}
                     disableDownload={true}

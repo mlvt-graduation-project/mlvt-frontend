@@ -9,14 +9,14 @@ interface ContentProps {
     textId: number;
     hideNavBar?: boolean;
     customSx?: object;
-    centerTittle?: boolean;
+    centerTitle?: boolean;
     hideDownloadButton?: boolean;
 }
 
 export const RawTextContent: React.FC<ContentProps> = ({
     textId,
     hideNavBar = false,
-    centerTittle = false,
+    centerTitle = false,
     customSx,
     hideDownloadButton = false,
 }) => {
@@ -56,9 +56,9 @@ export const RawTextContent: React.FC<ContentProps> = ({
             >
                 <TextView
                     displayText={textContent}
-                    textTittle="Text"
+                    textTitle="Text"
                     customizeSx={customSx}
-                    centerTittle={centerTittle}
+                    centerTitle={centerTitle}
                     disableDownload={hideDownloadButton}
                 />
             </Box>

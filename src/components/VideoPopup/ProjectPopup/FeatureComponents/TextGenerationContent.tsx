@@ -67,7 +67,7 @@ export const TextGenerationContent: React.FC<ContentProps> = ({
                             {
                                 type: "text",
                                 props: {
-                                    textTittle: "Text Generation's result",
+                                    textTitle: "Text Generation's result",
                                     displayText: text || "No output text",
                                 },
                             },

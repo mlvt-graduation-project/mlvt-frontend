@@ -61,7 +61,7 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
                             {
                                 type: "text",
                                 props: {
-                                    textTittle: "Input Text",
+                                    textTitle: "Input Text",
                                     displayText: originalTextContent
                                         ? originalTextContent
                                         : "",
@@ -82,7 +82,7 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
                                 type: "audio/video",
                                 props: {
                                     audioSrc: resultAudio ? resultAudio : "",
-                                    audioTittle: "Output audio",
+                                    audioTitle: "Output audio",
                                     sourceType: "audio",
                                 },
                             },
