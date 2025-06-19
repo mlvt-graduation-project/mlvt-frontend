@@ -1,42 +1,44 @@
 import React, { useMemo, useState, useEffect } from "react";
-import ChangeViewBox from "../ProcessTriggerPopup/BaseComponent/ChangeView";
-import { InfoNav } from "./BaseComponent/InfomationNavBar/InfoNav";
-import { RelatedOutput } from "./BaseComponent/RelatedOutput";
+import ChangeViewBox from "../../ProcessTriggerPopup/BaseComponent/ChangeView";
+import { InfoNav } from "../BaseComponent/InfomationNavBar";
+import { RelatedOutput } from "../BaseComponent/RelatedOutput";
 import { Box } from "@mui/material";
-// import { Text } from "../../../types/Response/Text";
-import { AudioGenerationProject } from "../../../types/Project";
-import { getAduioById } from "../../../api/audio.api";
-import { getTextContent } from "../../../utils/ProcessTriggerPopup/TextService";
+import { TextTranslationProject } from "../../../../types/Project";
+import { getTextContent } from "../../../../utils/ProcessTriggerPopup/TextService";
+import { Text } from "../../../../types/Response/Text";
 
 interface ContentProps {
-    inputProject: AudioGenerationProject;
+    inputProject: TextTranslationProject;
 }
 
-export const AudioGenerationContent: React.FC<ContentProps> = ({
+export const TextTranslationContent: React.FC<ContentProps> = ({
     inputProject,
 }) => {
     const [viewState, setViewState] = useState<"original" | "related output">(
         "original"
     );
-    // const [originalTextInformation, setOriginalTextInformation] =
-    //     useState<Text | null>(null);
+    const [, setOriginalTextInformation] = useState<Text | null>(null);
     const [originalTextContent, setOriginalTextContent] = useState<
         string | null
     >(null);
-    const [resultAudio, setResultAudio] = useState<string | null>(null);
+    const [, setResultTextInformation] = useState<Text | null>(null);
+    const [resultTextContent, setResultTextContent] = useState<string | null>(
+        null
+    );
 
     useEffect(() => {
         const fetchVideoData = async () => {
             try {
-                const [resultAudio, originalText] = await Promise.all([
-                    getAduioById(inputProject.generated_audioId),
+                const [originalText, resultText] = await Promise.all([
                     getTextContent(inputProject.original_textId),
+                    getTextContent(inputProject.translated_textId),
                 ]);
-                // setOriginalTextInformation(originalText[0]);
                 setOriginalTextContent(originalText[1]);
-                setResultAudio(resultAudio.download_url.split("?")[0]);
+                setOriginalTextInformation(originalText[0]);
+                setResultTextContent(resultText[1]);
+                setResultTextInformation(resultText[0]);
             } catch (error) {
-                console.error("Error fetching Audio Genration URL:", error);
+                console.error("Error fetching video URL:", error);
             }
         };
 
@@ -61,7 +63,7 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
                             {
                                 type: "text",
                                 props: {
-                                    textTittle: "Input Text",
+                                    textTitle: "Input Text",
                                     displayText: originalTextContent
                                         ? originalTextContent
                                         : "",
@@ -72,18 +74,19 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
                 ),
             },
             {
-                text: "AUDIO GENERATION OUTPUT",
+                text: "RELATED OUTPUT",
                 viewState: "related output",
                 component: (
                     <RelatedOutput
                         splitTwoColumn={false}
                         childrenData={[
                             {
-                                type: "audio/video",
+                                type: "text",
                                 props: {
-                                    audioSrc: resultAudio ? resultAudio : "",
-                                    audioTittle: "Output audio",
-                                    sourceType: "audio",
+                                    textTitle: "Input Text",
+                                    displayText: resultTextContent
+                                        ? resultTextContent
+                                        : "",
                                 },
                             },
                         ]}
@@ -91,7 +94,7 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
                 ),
             },
         ],
-        [resultAudio, originalTextContent]
+        [originalTextContent, resultTextContent]
     );
 
     const activeView = Views.find((view) => view.viewState === viewState);
@@ -100,21 +103,9 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
     return (
         <>
             <InfoNav />
-            <Box
-                sx={{
-                    mt: "10px",
-                    display: "flex",
-                    flexDirection: "column",
-                    mb: "15px",
-                }}
-            >
-                <Box paddingX={1} sx={{ marginBottom: "20px" }}>
-                    <ChangeViewBox
-                        Views={Views}
-                        setViewState={changeViewState}
-                    />
-                </Box>
-                {ActiveComponent}
+            <Box sx={{ marginTop: "15px" }}>
+                <ChangeViewBox Views={Views} setViewState={changeViewState} />
+                <Box sx={{ marginTop: "30px" }}>{ActiveComponent}</Box>
             </Box>
         </>
     );

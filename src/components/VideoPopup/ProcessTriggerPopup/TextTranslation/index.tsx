@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { DialogContent, TextTranslationData } from "./PopupContent";
-import { BasePopup } from "../../BasePopup/BasePopup";
+import { BasePopup } from "../../BasePopup";
 import { uploadText } from "../../../../utils/ProcessTriggerPopup/TextService";
 import { translateText } from "../../../../utils/ProcessTriggerPopup/PipelineService";
 import { getLanguageCode } from "../../../../utils/ProcessTriggerPopup/VideoPopup.utils";
@@ -119,7 +119,7 @@ export const TextTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
     return (
         <>
             <BasePopup
-                tittle="Text Translation"
+                title="Text Translation"
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={null}

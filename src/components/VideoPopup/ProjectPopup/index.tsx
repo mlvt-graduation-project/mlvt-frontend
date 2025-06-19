@@ -1,21 +1,15 @@
-import React from 'react';
-import { FullPipelineContent } from './FullPipelineContent';
-import { TextGenerationContent } from './TextGenerationContent';
-import { BasePopup } from '../BasePopup/BasePopup';
-import { ProjectType } from '../../../types/Project';
-import { Project } from '../../../types/Project';
-import { RawVideoContent } from './RawVideoContext';
-import { AudioGenerationContent } from './AudioGeneration';
-import { RawTextContent } from './RawTextContent';
-import { RawAudioContent } from './RawAudioContent';
-import { TextTranslationContent } from './TextTranslationContent';
-import { LipSyncContent } from './LipSyncContent';
-
-// interface childComponentType {
-//     type: ProjectType;
-//     tittle: string;
-//     childComponent: React.ReactNode;
-// }
+import React from "react";
+import { FullPipelineContent } from "./FeatureComponents/FullPipelineContent";
+import { TextGenerationContent } from "./FeatureComponents/TextGenerationContent";
+import { BasePopup } from "../BasePopup";
+import { ProjectType } from "../../../types/Project";
+import { Project } from "../../../types/Project";
+import { RawVideoContent } from "./FeatureComponents/RawVideoContext";
+import { AudioGenerationContent } from "./FeatureComponents/AudioGeneration";
+import { RawTextContent } from "./FeatureComponents/RawTextContent";
+import { RawAudioContent } from "./FeatureComponents/RawAudioContent";
+import { TextTranslationContent } from "./FeatureComponents/TextTranslationContent";
+import { LipSyncContent } from "./FeatureComponents/LipSyncContent";
 
 interface ProcessedVideoProps {
     inputObject: Project;
@@ -41,19 +35,29 @@ export const ProcessedVideoPopUp: React.FC<ProcessedVideoProps> = ({
             case ProjectType.TextGeneration:
                 return <TextGenerationContent inputProject={project} />; // Use project.id
             case ProjectType.Video:
-                return <RawVideoContent videoId={project.id} hideNavBar={hideNavBar} />;
+                return (
+                    <RawVideoContent
+                        videoId={project.id}
+                        hideNavBar={hideNavBar}
+                    />
+                );
             case ProjectType.Text:
                 return (
                     <RawTextContent
                         textId={project.id}
                         hideNavBar={hideNavBar}
                         hideDownloadButton={hideDownloadButton}
-                        customSx={{ height: '90%', width: '80%' }}
-                        centerTittle={true}
+                        customSx={{ height: "90%", width: "80%" }}
+                        centerTitle={true}
                     />
                 );
             case ProjectType.Audio:
-                return <RawAudioContent audioId={project.id} hideNavBar={hideNavBar} />;
+                return (
+                    <RawAudioContent
+                        audioId={project.id}
+                        hideNavBar={hideNavBar}
+                    />
+                );
             case ProjectType.TextTranslation:
                 return <TextTranslationContent inputProject={project} />;
             case ProjectType.AudioGeneration:
@@ -74,28 +78,28 @@ export const ProcessedVideoPopUp: React.FC<ProcessedVideoProps> = ({
     const smallBasePopup: customSxPopup = {
         customSx: {
             // height: hideNavBar ? '37.5rem' : '42.5rem',
-            '& .MuiDialog-paper': {
-                height: 'auto', // Make height fit content
-                maxWidth: '90vw', // Limit max width to viewport width
-                maxHeight: '90vh', 
+            "& .MuiDialog-paper": {
+                height: "auto", // Make height fit content
+                maxWidth: "90vw", // Limit max width to viewport width
+                maxHeight: "90vh",
             },
         },
         customPaperPropSx: {
-            height: hideNavBar ? '36rem' : '40rem',
+            height: hideNavBar ? "36rem" : "40rem",
         },
     };
     const largeBasePopup: customSxPopup = {
         customSx: {
             // height: hideNavBar ? '45.5rem' : '47.5rem',
-            '& .MuiDialog-paper': {
+            "& .MuiDialog-paper": {
                 // width: 'auto', // Make width fit content
-                height: 'auto', // Make height fit content
-                maxWidth: '90vw', // Limit max width to viewport width
-                maxHeight: '90vh', // Limit max height to viewport height
+                height: "auto", // Make height fit content
+                maxWidth: "90vw", // Limit max width to viewport width
+                maxHeight: "90vh", // Limit max height to viewport height
             },
         },
         customPaperPropSx: {
-            height: hideNavBar ? '40rem' : '42rem',
+            height: hideNavBar ? "40rem" : "42rem",
         },
     };
 
@@ -109,61 +113,18 @@ export const ProcessedVideoPopUp: React.FC<ProcessedVideoProps> = ({
         else return largeBasePopup;
     };
 
-    // const childComponent: childComponentType[] = [
-    //     {
-    //         type: ProjectType.Fullpipeline,
-    //         tittle: 'Video Translation',
-    //         // childComponent: <FullPipelineContent videoId={} />,
-    //         childComponent: <></>
-    //     },
-    //     {
-    //         type: ProjectType.TextGeneration,
-    //         tittle: 'Text generation',
-    //         childComponent: <TextGenerationContent videoId={inputObject.} />,
-    //     },
-    //     {
-    //         type: ProjectType.TextTranslation,
-    //         tittle: 'Text translation',
-    //         childComponent: <></>,
-    //     },
-    //     {
-    //         type: ProjectType.AudioGeneration,
-    //         tittle: 'Audio generation',
-    //         childComponent: <AudioGenerationContent videoId={videoId} />,
-    //     },
-    //     {
-    //         type: ProjectType.Lipsync,
-    //         tittle: 'Lip synchroniztion',
-    //         childComponent: <></>,
-    //     },
-    //     {
-    //         type: ProjectType.Video,
-    //         tittle: 'Video',
-    //         childComponent: <RawVideoContent videoId={videoId} hideNavBar={hideNavBar} />,
-    //     },
-    //     {
-    //         type: ProjectType.Text,
-    //         tittle: 'Text',
-    //         childComponent: <RawTextContent hideNavBar={true} />,
-    //     },
-    //     {
-    //         type: ProjectType.Audio,
-    //         tittle: 'Audio',
-    //         childComponent: <RawAudioContent videoId={videoId} hideNavBar={true} />,
-    //     },
-    // ];
-    // const matchingComponent = childComponent.find((item) => item.type === type);
-
     return (
         <>
             <BasePopup
-                tittle={inputObject.title || 'Video translation'}
+                title={inputObject.title || "Video translation"}
                 isOpen={isOpen}
                 onClose={onClose}
                 statusChip={inputObject.status}
                 childComponent={getChildComponent(inputObject)}
                 customSx={getCustomSxChild(inputObject).customSx}
-                customPaperPropsSx={getCustomSxChild(inputObject).customPaperPropSx}
+                customPaperPropsSx={
+                    getCustomSxChild(inputObject).customPaperPropSx
+                }
             />
         </>
     );
