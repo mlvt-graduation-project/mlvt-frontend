@@ -5,7 +5,7 @@ import { UploadFileFromDevice } from "../../BaseComponent/UploadFileFromDevice";
 import { GenerateButton } from "../../BaseComponent/GenerateButton";
 import { BrowseFile } from "../../BaseComponent/BrowseMLVTFile";
 import { InputTextBox } from "../../BaseComponent/InputTextBox";
-import { SingleOptionBox } from "../../BaseComponent/OptionBox";
+import { SingleOptionBox } from "../../BaseComponent/SingleOptionBox";
 import { TranslateLanguage } from "../../../../../types/Translation";
 import { AudioFileType, TextFileType } from "../../../../../types/FileType";
 import { TextData, AudioData } from "../../../../../types/FileData";
@@ -255,7 +255,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                         choices={buildinVoiceList}
                         handleChangeOption={handleChangeBuildinVoice}
                         customSx={{ width: "100%" }}
-                        initChoice={buildinVoice || ""}
+                        value={buildinVoice || ""}
                     />
                 ),
             },
@@ -383,8 +383,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                         TranslateLanguage.Japanese,
                     ]}
                     handleChangeOption={handleChangeTextLanguage}
-                    customSx={{ width: "100%" }}
-                    initChoice={TranslateLanguage.English}
+                    customSx={{ width: "30%" }}
+                    value={TranslateLanguage.English}
                 />
             </Box>
 

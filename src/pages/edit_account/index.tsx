@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
     Box,
     Typography,
@@ -9,39 +9,39 @@ import {
     useTheme,
     Divider,
     Link,
-} from '@mui/material';
-import { AccountCircle, Lock, Subscriptions } from '@mui/icons-material';
-import PersonalDetails from '../../components/PersonalDetails';
-import ChangePassword from '../../components/ChangePassword';
-import Voucher from '../../components/Voucher';
-import Footer from '../../components/Footer';
-import LogoImg from '../../assets/mlvt_logo.png';
-import { useUserDetails } from '../../hooks/useUserDetails';
-import { UserWithAvatar } from '@/types/Response/User';
+} from "@mui/material";
+import { AccountCircle, Lock, Subscriptions } from "@mui/icons-material";
+import PersonalDetails from "../../components/PersonalDetails";
+import ChangePassword from "../../components/ChangePassword";
+import Voucher from "../../components/Voucher";
+import Footer from "../../components/Footer";
+import LogoImg from "../../assets/mlvt_logo.png";
+import { useUserDetails } from "../../hooks/useUserDetails";
+import { UserWithAvatar } from "@/types/Response/User";
 
-type TabKey = 'personal' | 'password' | 'subscription';
+type TabKey = "personal" | "password" | "subscription";
 
 const TABS: {
     key: TabKey;
     label: string;
     icon: React.ReactNode;
 }[] = [
-        { key: 'personal', label: 'Personal details', icon: <AccountCircle /> },
-        { key: 'password', label: 'Change password', icon: <Lock /> },
-        { key: 'subscription', label: 'Subscription', icon: <Subscriptions /> },
-    ];
+    { key: "personal", label: "Personal details", icon: <AccountCircle /> },
+    { key: "password", label: "Change password", icon: <Lock /> },
+    { key: "subscription", label: "Subscription", icon: <Subscriptions /> },
+];
 
 const listItemCommonSx = {
-    cursor: 'pointer',
-    borderRadius: '0.5rem',
-    marginBottom: '0.5rem',
-    fontFamily: 'Poppins, sans-serif',
+    cursor: "pointer",
+    borderRadius: "0.5rem",
+    marginBottom: "0.5rem",
+    fontFamily: "Poppins, sans-serif",
 };
 
 const EditAccount: React.FC = () => {
     const theme = useTheme();
     const { user, loading } = useUserDetails();
-    const [activeTab, setActiveTab] = useState<TabKey>('personal');
+    const [activeTab, setActiveTab] = useState<TabKey>("personal");
 
     if (loading) {
         return <div>Loading...</div>;
@@ -49,22 +49,18 @@ const EditAccount: React.FC = () => {
 
     const renderContent = () => {
         switch (activeTab) {
-            case 'personal':
-                return (
-                    <PersonalDetails
-                        user={user as UserWithAvatar}
-                    />
-                );
-            case 'password':
+            case "personal":
+                return <PersonalDetails user={user as UserWithAvatar} />;
+            case "password":
                 return <ChangePassword />;
-            case 'subscription':
+            case "subscription":
                 return <Voucher />;
         }
     };
 
     return (
         <Box>
-            <Box sx={{ display: 'flex', padding: 4, height: '100vh' }}>
+            <Box sx={{ display: "flex", padding: 4, height: "100vh" }}>
                 {/* Left Sidebar */}
                 <Box sx={{ flex: 1, maxWidth: 380, pr: 5 }}>
                     <Link href="/">
@@ -72,15 +68,20 @@ const EditAccount: React.FC = () => {
                             component="img"
                             src={LogoImg}
                             alt="Logo"
-                            sx={{ width: 150, height: 150, mb: 2, borderRadius: '0.8rem' }}
+                            sx={{
+                                width: 150,
+                                height: 150,
+                                mb: 2,
+                                borderRadius: "0.8rem",
+                            }}
                         />
                     </Link>
                     <Typography
                         sx={{
                             fontWeight: 650,
                             color: theme.palette.primary.main,
-                            fontSize: '1.2rem',
-                            fontFamily: 'Poppins, sans-serif',
+                            fontSize: "1.2rem",
+                            fontFamily: "Poppins, sans-serif",
                         }}
                     >
                         Multi-language Video Translation
@@ -90,7 +91,7 @@ const EditAccount: React.FC = () => {
                         sx={{
                             color: theme.palette.text.secondary,
                             mt: 0.5,
-                            fontFamily: 'Poppins, sans-serif',
+                            fontFamily: "Poppins, sans-serif",
                         }}
                     >
                         Manage your personal account settings
@@ -103,7 +104,7 @@ const EditAccount: React.FC = () => {
                             color: theme.palette.text.primary,
                             mt: 3,
                             mb: 1,
-                            fontFamily: 'Poppins, sans-serif',
+                            fontFamily: "Poppins, sans-serif",
                         }}
                     >
                         Account settings
@@ -118,19 +119,34 @@ const EditAccount: React.FC = () => {
                                     onClick={() => setActiveTab(key)}
                                     sx={{
                                         ...listItemCommonSx,
-                                        backgroundColor: isActive ? theme.palette.primary.main : 'transparent',
+                                        backgroundColor: isActive
+                                            ? theme.palette.primary.main
+                                            : "transparent",
                                     }}
                                 >
                                     <ListItemIcon>
-                                        {React.cloneElement(icon as React.ReactElement, {
-                                            sx: { color: isActive ? theme.palette.secondary.main : theme.palette.text.disabled }
-                                        })}
+                                        {React.cloneElement(
+                                            icon as React.ReactElement,
+                                            {
+                                                sx: {
+                                                    color: isActive
+                                                        ? theme.palette
+                                                              .secondary.main
+                                                        : theme.palette.text
+                                                              .disabled,
+                                                },
+                                            }
+                                        )}
                                     </ListItemIcon>
                                     <ListItemText
                                         primary={label}
                                         sx={{
-                                            color: isActive ? theme.palette.secondary.main : theme.palette.text.disabled,
-                                            '& .MuiTypography-root': { fontFamily: 'inherit' },
+                                            color: isActive
+                                                ? theme.palette.secondary.main
+                                                : theme.palette.text.disabled,
+                                            "& .MuiTypography-root": {
+                                                fontFamily: "inherit",
+                                            },
                                         }}
                                     />
                                 </ListItem>
@@ -139,12 +155,14 @@ const EditAccount: React.FC = () => {
                     </List>
                 </Box>
 
-                <Divider orientation="vertical" flexItem sx={{ mx: 2, bgcolor: theme.palette.divider }} />
+                <Divider
+                    orientation="vertical"
+                    flexItem
+                    sx={{ mx: 2, bgcolor: theme.palette.divider }}
+                />
 
                 {/* Content Area */}
-                <Box sx={{ flex: 2, pl: 3 }}>
-                    {renderContent()}
-                </Box>
+                <Box sx={{ flex: 2, pl: 3 }}>{renderContent()}</Box>
             </Box>
             <Footer />
         </Box>

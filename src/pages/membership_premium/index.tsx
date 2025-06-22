@@ -35,7 +35,7 @@ const MembershipPremiumPage: React.FC = () => {
                             fontFamily: "Poppins, sans-serif",
                             fontWeight: 550,
                             fontSize: "1rem",
-                            color: "#D22B2B",
+                            color: "#E79CC2",
                         }}
                     >
                         Pricing

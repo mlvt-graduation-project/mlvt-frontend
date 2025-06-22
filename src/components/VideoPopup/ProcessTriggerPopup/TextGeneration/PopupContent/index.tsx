@@ -6,7 +6,7 @@ import { UploadVideoFromUrl } from "../../BaseComponent/UploadVideoURL";
 import { VideoData } from "../../../../../types/FileData";
 import { GenerateButton } from "../../BaseComponent/GenerateButton";
 import { BrowseFile } from "../../BaseComponent/BrowseMLVTFile";
-import { SingleOptionBox } from "../../BaseComponent/OptionBox";
+import { SingleOptionBox } from "../../BaseComponent/SingleOptionBox";
 import { VideoFileType } from "../../../../../types/FileType";
 import { S3Folder } from "../../../../../types/S3FolderStorage";
 import { ProjectType, RawVideo, Project } from "../../../../../types/Project";
@@ -205,7 +205,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                         TranslateLanguage.Japanese,
                     ]}
                     handleChangeOption={handleChangeSourceLanguage}
-                    initChoice={TranslateLanguage.English}
+                    value={TranslateLanguage.English}
+                    customSx={{ width: "30%"}}
                 />
             </Box>
             <GenerateButton

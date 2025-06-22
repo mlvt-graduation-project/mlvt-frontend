@@ -151,19 +151,6 @@ export const BrowseFile: React.FC<BrowsFileProps> = ({
                     </Button>
                 </Box>
             ) : (
-                // <Box
-                //     sx={{
-                //         border: '2px dashed grey',
-                //         padding: '10px',
-                //         justifyContent: 'center',
-                //         borderRadius: '8px',
-                //         cursor: 'pointer',
-                //         width: '100%', // Ensures it takes full width of its container
-                //         display: 'block', // Allows height to expand based on content
-                //     }}
-                // >
-                // { projectContent }
-                // </Box>
                 projectContent
             )}
 

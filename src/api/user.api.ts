@@ -1,60 +1,44 @@
-import { get, put } from './base.api';
-import { GetUserResponse, UserUpdateData } from '../types/Response/User';
+import { get, put } from "./base.api";
+import { GetUserResponse, UserUpdateData } from "../types/Response/User";
 
 export const getUser = async (userId: string): Promise<GetUserResponse> => {
-  try {
-    const response = await get<GetUserResponse>(`/users/${userId}`);
-    return response;
-  } catch (error) {
-    console.error('API Error in getUser:', error);
-    throw error;
-  }
+    return get<GetUserResponse>(`/users/${userId}`) as Promise<GetUserResponse>;
 };
 
-export const updateUser = async (userId: string, updatedData: UserUpdateData): Promise<string> => {
-  try {
-    const response = await put<string, UserUpdateData>(`/users/${userId}`, updatedData);
-    return response;
-  } catch (error) {
-    console.error('API Error in updateUser:', error);
-    throw error;
-  }
+export const updateUser = async (
+    userId: string,
+    updatedData: UserUpdateData
+): Promise<string> => {
+    return put<string, UserUpdateData>(
+        `/users/${userId}`,
+        updatedData
+    ) as Promise<string>;
 };
 
-export const changePassword = async (userId: string, oldPassword: string, newPassword: string): Promise<string> => {
-  try {
-    const response = await put<string>(`/users/${userId}/change-password`, {
-      old_password: oldPassword,
-      new_password: newPassword,
-    });
-    return response; 
-  } catch (error) {
-    console.error('API Error in changePassword:', error);
-    throw error;
-  }
+export const changePassword = async (
+    userId: string,
+    oldPassword: string,
+    newPassword: string
+): Promise<string> => {
+    return put<string>(`/users/${userId}/change-password`, {
+        old_password: oldPassword,
+        new_password: newPassword,
+    }) as Promise<string>;
 };
 
 export const getAvatarDownloadUrl = async (userId: string): Promise<string> => {
-  try {
-    const response = await get<{ avatar_download_url: string }>(`/users/${userId}/avatar-download-url`);
+    const response = (await get<{ avatar_download_url: string }>(
+        `/users/${userId}/avatar-download-url`
+    )) as { avatar_download_url: string };
+
     return response.avatar_download_url;
-  } catch (error) {
-    console.error('API Error in getAvatarDownloadUrl:', error);
-    throw error;
-  }
-}
+};
 
 export const updateAvatar = async (userId: string, fileName: string) => {
-  try {
-    const response = await put<string>(`/users/${userId}/update-avatar`, null, {
+    return put<string>(`/users/${userId}/update-avatar`, null, {
         params: {
-          user_id: userId,
-          file_name: fileName,
-        }
-    });
-    return response;       
-  } catch (error) {
-    console.error('Error cannot update user avatar:', error);
-    throw error;
-  }
-}
+            user_id: userId,
+            file_name: fileName,
+        },
+    }) as Promise<string>;
+};

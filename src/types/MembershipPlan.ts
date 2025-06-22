@@ -40,7 +40,7 @@ export const PLANS_DATA: Record<PlanId, PlanDetails> = {
             'Exclusive content and updates',
             'Ad-free experience',
         ],
-        priceColor: '#d32f2f', 
+        priceColor: '#8DC6FF', 
         buttonText: 'Subscribe now',
         discount: 2.01,
     },

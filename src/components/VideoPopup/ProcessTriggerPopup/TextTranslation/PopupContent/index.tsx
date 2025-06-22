@@ -6,7 +6,7 @@ import { TextData } from "../../../../../types/FileData";
 import { GenerateButton } from "../../BaseComponent/GenerateButton";
 import { BrowseFile } from "../../BaseComponent/BrowseMLVTFile";
 import { InputTextBox } from "../../BaseComponent/InputTextBox";
-import { SingleOptionBox } from "../../BaseComponent/OptionBox";
+import { SingleOptionBox } from "../../BaseComponent/SingleOptionBox";
 import { TranslateLanguage } from "../../../../../types/Translation";
 import { TextFileType } from "../../../../../types/FileType";
 import { useAuth } from "../../../../../context/AuthContext";
@@ -228,7 +228,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                         ]}
                         customSx={{}}
                         handleChangeOption={handleChangeSourceLanguage}
-                        initChoice={TranslateLanguage.English}
+                        value={TranslateLanguage.English}
                     />
                 </Box>
                 {/* choosing model section */}
@@ -250,7 +250,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                             TranslateLanguage.Japanese,
                         ]}
                         handleChangeOption={handleChangeTargetLanguage}
-                        initChoice={TranslateLanguage.Vietnamese}
+                        value={TranslateLanguage.Vietnamese}
                     />
                 </Box>
             </Box>

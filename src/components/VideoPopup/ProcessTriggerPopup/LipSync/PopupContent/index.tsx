@@ -5,7 +5,7 @@ import { UploadFileFromDevice } from "../../BaseComponent/UploadFileFromDevice";
 import { UploadVideoFromUrl } from "../../BaseComponent/UploadVideoURL";
 import { VideoData } from "../../../../../types/FileData";
 import { GenerateButton } from "../../BaseComponent/GenerateButton";
-import { SingleOptionBox } from "../../BaseComponent/OptionBox";
+import { SingleOptionBox } from "../../BaseComponent/SingleOptionBox";
 import { BrowseFile } from "../../BaseComponent/BrowseMLVTFile";
 import { TranslateLanguage } from "../../../../../types/Translation";
 import { AudioFileType, VideoFileType } from "../../../../../types/FileType";
@@ -47,7 +47,7 @@ interface DialogContentProps {
 export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const { userId } = useAuth();
     const parsedUserId = userId ? parseInt(userId) : 0;
-    const [model, setModel] = useState<modelType>("Model 1");
+    const [model, setModel] = useState<modelType>(modelList[0]);
     const [audioLanguage, setAudioLanguage] = useState<TranslateLanguage>(
         TranslateLanguage.English
     );
@@ -453,7 +453,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                             TranslateLanguage.Japanese,
                         ]}
                         handleChangeOption={handleChangeAudioLanguage}
-                        initChoice={TranslateLanguage.English}
+                        value={TranslateLanguage.English}
                     />
                 </Box>
                 {/* choosing model section */}
@@ -471,7 +471,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                     <SingleOptionBox
                         choices={modelList}
                         handleChangeOption={handleChangeModel}
-                        initChoice={modelList[0]}
+                        value={modelList[0]}
                     />
                 </Box>
             </Box>
