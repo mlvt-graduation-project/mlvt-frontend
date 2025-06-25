@@ -18,6 +18,7 @@ const axiosInstance: AxiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+        // BUG FIX: Use the same key 'authToken' here as in setAuthToken
         const token = localStorage.getItem("authToken");
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -35,6 +36,8 @@ axiosInstance.interceptors.response.use(
             switch (status) {
                 case 401:
                     console.error("Unauthorized access. Redirecting to login.");
+                    // Also clear the broken token before redirecting
+                    localStorage.removeItem("authToken");
                     window.location.href = "/login";
                     break;
                 case 403:
@@ -65,9 +68,13 @@ axiosInstance.interceptors.response.use(
 
 export function setAuthToken(token: string | null): void {
     if (token) {
-        localStorage.setItem("token", token);
+        localStorage.setItem("authToken", token);
+
+        axiosInstance.defaults.headers.common[
+            "Authorization"
+        ] = `Bearer ${token}`;
     } else {
-        localStorage.removeItem("token");
+        localStorage.removeItem("authToken");
         delete axiosInstance.defaults.headers.common["Authorization"];
     }
 }
@@ -76,6 +83,17 @@ type ApiConfig = AxiosRequestConfig & {
     getFullResponse?: boolean;
 };
 
+// --- GET Overloads ---
+export function get<T>(
+    url: string,
+    params: object | undefined,
+    config: ApiConfig & { getFullResponse: true }
+): Promise<AxiosResponse<T>>;
+export function get<T>(
+    url: string,
+    params?: object,
+    config?: ApiConfig & { getFullResponse?: false }
+): Promise<T>;
 export async function get<T>(
     url: string,
     params?: object,
@@ -85,6 +103,17 @@ export async function get<T>(
     return config?.getFullResponse ? response : response.data;
 }
 
+// --- POST Overloads ---
+export function post<T, U = any>(
+    url: string,
+    data: U | undefined,
+    config: ApiConfig & { getFullResponse: true }
+): Promise<AxiosResponse<T>>;
+export function post<T, U = any>(
+    url: string,
+    data?: U,
+    config?: ApiConfig & { getFullResponse?: false }
+): Promise<T>;
 export async function post<T, U = any>(
     url: string,
     data?: U,
@@ -94,6 +123,17 @@ export async function post<T, U = any>(
     return config?.getFullResponse ? response : response.data;
 }
 
+// --- PUT Overloads ---
+export function put<T, U = any>(
+    url: string,
+    data: U | undefined,
+    config: ApiConfig & { getFullResponse: true }
+): Promise<AxiosResponse<T>>;
+export function put<T, U = any>(
+    url: string,
+    data?: U,
+    config?: ApiConfig & { getFullResponse?: false }
+): Promise<T>;
 export async function put<T, U = any>(
     url: string,
     data?: U,
@@ -103,6 +143,17 @@ export async function put<T, U = any>(
     return config?.getFullResponse ? response : response.data;
 }
 
+// --- PATCH Overloads ---
+export function patch<T, U = any>(
+    url: string,
+    data: U | undefined,
+    config: ApiConfig & { getFullResponse: true }
+): Promise<AxiosResponse<T>>;
+export function patch<T, U = any>(
+    url: string,
+    data?: U,
+    config?: ApiConfig & { getFullResponse?: false }
+): Promise<T>;
 export async function patch<T, U = any>(
     url: string,
     data?: U,
@@ -112,6 +163,15 @@ export async function patch<T, U = any>(
     return config?.getFullResponse ? response : response.data;
 }
 
+// --- DELETE Overloads ---
+export function del<T = any>(
+    url: string,
+    config: ApiConfig & { getFullResponse: true }
+): Promise<AxiosResponse<T>>;
+export function del<T = any>(
+    url: string,
+    config?: ApiConfig & { getFullResponse?: false }
+): Promise<T>;
 export async function del<T = any>(
     url: string,
     config?: ApiConfig
@@ -120,4 +180,5 @@ export async function del<T = any>(
     return config?.getFullResponse ? response : response.data;
 }
 
+// It's fine to export the instance for rare edge cases, but prefer using the helpers.
 export default axiosInstance;

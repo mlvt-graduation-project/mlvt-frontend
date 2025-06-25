@@ -60,7 +60,7 @@ export const handleGetTextProjectByUserId = async (
 ): Promise<RawText[]> => {
     try {
         const response = await getListTextByUserId(parseInt(userId));
-        const successTextProject: Text[] = response.data.transcriptions.filter(
+       const successTextProject: Text[] = response.transcriptions.filter(
             (data) =>
                 mapStatusToProjectStatus(data.status) ===
                     ProjectStatus.Succeeded ||
