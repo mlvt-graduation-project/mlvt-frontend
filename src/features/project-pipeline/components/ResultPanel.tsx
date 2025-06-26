@@ -8,7 +8,7 @@ import {
     Alert,
 } from "@mui/material";
 import { PipelineContext } from "../context//PipelineContext";
-import LightBackdrop from "../assets/LightBackdrop.png";
+import WaitBackdrop from "../assets/wait-backdrop.png"; 
 // import { isFormValid } from './utils/validation'; // Helper function
 // import { callApi } from './api/pipelineApi'; // API call function
 
@@ -46,7 +46,7 @@ const ResultsPanel = () => {
                     state.isGenerating || state.selectedPipeline
                         ? `
                         // linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-                        url(${LightBackdrop})
+                        url(${WaitBackdrop})
                       `
                         : "none", // Use 'none' to remove the background when not generating
 
