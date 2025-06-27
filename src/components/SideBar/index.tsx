@@ -33,12 +33,12 @@ const navLinks: NavLink[] = [
     {
         name: "Storage",
         icon: <VideoLibraryIcon />,
-        link: "/storage",
+        link: "/my-storage",
     },
     {
         name: "Premium",
         icon: <LocalActivityIcon />,
-        link: "/premium_membership",
+        link: "/premium-plan",
     },
     {
         name: "Explore",
@@ -48,12 +48,12 @@ const navLinks: NavLink[] = [
     {
         name: "About us",
         icon: <WorkspacesOutlinedIcon />,
-        link: "/about_us",
+        link: "/about-us",
     },
     {
         name: "FAQ",
         icon: <HelpOutlineOutlinedIcon />,
-        link: "/help_and_support",
+        link: "/help-and-support",
     },
 ];
 

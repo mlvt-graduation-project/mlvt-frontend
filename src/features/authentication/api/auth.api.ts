@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import * as api from "./base.api";
+import * as api from "../../../api/base.api";
 
 function isAxiosResponse<T>(response: any): response is AxiosResponse<T> {
     return (
@@ -9,7 +9,7 @@ function isAxiosResponse<T>(response: any): response is AxiosResponse<T> {
 
 interface LoginPayload {
     email: string;
-    password: string; 
+    password: string;
 }
 
 interface LoginResponse {

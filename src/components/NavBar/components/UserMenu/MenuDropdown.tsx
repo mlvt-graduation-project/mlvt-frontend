@@ -61,15 +61,15 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
     const menuItems = [
         {
             type: MenuItemType.ACCOUNT_EDIT,
-            label: "Edit account",
+            label: "Account settings",
             icon: <AccountCircle />,
-            path: "/edit_account",
+            path: "/account-settings",
         },
         {
             type: MenuItemType.PREMIUM,
             label: "Premium membership",
             icon: <WorkspacePremiumSharp />,
-            path: "/premium_membership",
+            path: "/premium-plan",
         },
         {
             type: MenuItemType.APPEARANCE,
@@ -82,7 +82,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
             type: MenuItemType.HELP,
             label: "Help & Support",
             icon: <Help />,
-            path: "/help_and_support",
+            path: "/help-and-support",
         },
         { type: MenuItemType.LOGOUT, label: "Log out", icon: <Logout /> },
     ];

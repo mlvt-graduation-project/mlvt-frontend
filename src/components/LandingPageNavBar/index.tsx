@@ -43,8 +43,8 @@ const LandingPageNavbar = () => {
             }}
             variant="text"
             onClick={() => {
-              if (item === "Help") navigate("/help_and_support");
-              else if (item === "About us") navigate("/about_us");
+              if (item === "Help") navigate("/help-and-support");
+              else if (item === "About us") navigate("/about-us");
               else if (item === "Document") navigate("/document");
               else if (item === "Explore") navigate("/landing");
             }}

@@ -1,43 +1,41 @@
 import React from "react";
 import { createBrowserRouter } from "react-router-dom";
-import Home from "./pages/home";
-import Error from "./pages/error";
-import Login from "./pages/login";
-import Signup from "./pages/signup";
-import SignupSuccess from "./pages/signup_success";
+import HomeUser from "./features/home-user";
+import { LoginPage, RegistrationPage } from "./features/authentication";
 import EmailOTP from "./pages/email_otp";
 import VerifyOTP from "./pages/verify_otp";
-import Storage from "./pages/storage";
+import Storage from "./features/my-storage";
 import ProjectPipeline from "./features/project-pipeline";
 import ProtectedRoute from "./components/ProtectedRoute";
-import EditAccount from "./pages/edit_account";
-import HelpAndSupportPage from "./pages/help_and_support";
-import AboutPage from "./pages/about_us";
-import LandingPage from "./pages/landing";
-import MembershipPremium from "./pages/membership_premium";
-import PremiumCheckout from "./pages/premium_checkout";
+import AccountSettings from "./features/account-settings";
+import HelpAndSupportPage from "./features/help-and-support";
+import AboutPage from "./features/about-us";
+import LandingPage from "./features/home-landing";
+import {
+    MembershipPlansPage,
+    MembershipCheckoutPage,
+} from "./features/membership-subscription";
 import AnimatedLayout from "./components/AnimatedLayout";
-
 
 export const router = createBrowserRouter([
     {
         element: <AnimatedLayout />,
-        errorElement: <Error />,
+        errorElement: <div>Page Not Found</div>,
         children: [
             {
                 path: "/login",
-                element: <Login />,
+                element: <LoginPage />,
             },
             {
                 path: "/",
                 element: (
                     <ProtectedRoute>
-                        <Home />
+                        <HomeUser />
                     </ProtectedRoute>
                 ),
             },
             {
-                path: "/project_pipeline",
+                path: "/project-pipeline",
                 element: (
                     <ProtectedRoute>
                         <ProjectPipeline />
@@ -45,15 +43,15 @@ export const router = createBrowserRouter([
                 ),
             },
             {
-                path: "/premium_membership",
+                path: "/premium-plan",
                 element: (
                     <ProtectedRoute>
-                        <MembershipPremium />
+                        <MembershipPlansPage />
                     </ProtectedRoute>
                 ),
             },
             {
-                path: "/storage",
+                path: "/my-storage",
                 element: (
                     <ProtectedRoute>
                         <Storage />
@@ -64,36 +62,32 @@ export const router = createBrowserRouter([
                 path: "/checkout/:planId",
                 element: (
                     <ProtectedRoute>
-                        <PremiumCheckout />
+                        <MembershipCheckoutPage />
                     </ProtectedRoute>
                 ),
             },
             {
                 path: "/signup",
-                element: <Signup />,
+                element: <RegistrationPage />,
             },
             {
-                path: "/signup_success",
-                element: <SignupSuccess />,
-            },
-            {
-                path: "/email_otp",
+                path: "/email-otp",
                 element: <EmailOTP />,
             },
             {
-                path: "/verify_otp",
+                path: "/verify-otp",
                 element: <VerifyOTP />,
             },
             {
-                path: "/edit_account",
-                element: <EditAccount />,
+                path: "/account-settings",
+                element: <AccountSettings />,
             },
             {
-                path: "/help_and_support",
+                path: "/help-and-support",
                 element: <HelpAndSupportPage />,
             },
             {
-                path: "/about_us",
+                path: "/about-us",
                 element: <AboutPage />,
             },
             {

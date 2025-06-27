@@ -1,7 +1,7 @@
 import { useTheme } from "@mui/material/styles";
 import { Button, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
-import LoginSignup from "../../layout/LoginRegistration";
+import LoginSignup from "../../layout/LoginSignup";
 
 // A simple email validation function using regex
 const validateEmailFormat = (email: string) => {
@@ -12,17 +12,17 @@ const validateEmailFormat = (email: string) => {
 const InputStyles = (theme: any) => ({
     sx: {
         "& input::placeholder": {
-            fontSize: "0.9rem", 
-            color: theme.fontColor.gray, 
+            fontSize: "0.9rem",
+            color: theme.fontColor.gray,
         },
-        borderRadius: 2.5, 
+        borderRadius: 2.5,
     },
 });
 
 const EmailOTP = () => {
     const theme = useTheme();
-    const [email, setEmail] = useState(""); 
-    const [emailError, setEmailError] = useState(""); 
+    const [email, setEmail] = useState("");
+    const [emailError, setEmailError] = useState("");
     // const [error, setError] = useState("");
 
     // Validate the email input on blur (when the user leaves the field)
@@ -32,7 +32,7 @@ const EmailOTP = () => {
         } else if (!validateEmailFormat(email)) {
             setEmailError("Invalid email format");
         } else {
-            setEmailError(""); 
+            setEmailError("");
         }
     };
 
@@ -44,7 +44,7 @@ const EmailOTP = () => {
                     // color: theme.fontColor.black,
                     fontFamily: theme.typography.h1,
                     fontWeight: theme.typography.fontWeightBold,
-                    fontSize: '4rem',
+                    fontSize: "4rem",
                     marginBottom: 5,
                 }}
             >
@@ -119,9 +119,9 @@ const EmailOTP = () => {
                     // backgroundColor: theme.background.main,
                     fontFamily: theme.typography.h1,
                     fontWeight: theme.typography.fontWeightBold,
-                    fontSize: '1rem',
-                    height: '2.5rem',
-                    '&:hover': {
+                    fontSize: "1rem",
+                    height: "2.5rem",
+                    "&:hover": {
                         // backgroundColor: theme.background.main,
                     },
                 }}
