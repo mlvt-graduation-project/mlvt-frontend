@@ -16,11 +16,12 @@ import {
     MembershipCheckoutPage,
 } from "./features/membership-subscription";
 import AnimatedLayout from "./components/AnimatedLayout";
+import NotFoundPage from "./pages/NotFoundPage";
 
 export const router = createBrowserRouter([
     {
         element: <AnimatedLayout />,
-        errorElement: <div>Page Not Found</div>,
+        errorElement: <NotFoundPage />,
         children: [
             {
                 path: "/login",
