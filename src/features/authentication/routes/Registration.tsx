@@ -355,7 +355,7 @@ const Registration: React.FC = () => {
                             href="/login"
                             style={{
                                 color: theme.palette.secondary.contrastText,
-                                fontFamily: "Poppins, san-serif",
+                                fontFamily: "Poppins, sans-serif",
                                 fontWeight: 600,
                             }}
                         >

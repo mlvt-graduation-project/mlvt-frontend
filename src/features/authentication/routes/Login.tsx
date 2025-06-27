@@ -357,7 +357,7 @@ const Login = () => {
                         href="/signup"
                         style={{
                             color: theme.palette.secondary.contrastText,
-                            fontFamily: "Poppins, san-serif",
+                            fontFamily: "Poppins, sans-serif",
                             fontWeight: 600,
                         }}
                     >
