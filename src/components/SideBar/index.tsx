@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import LocalActivityOutlinedIcon from "@mui/icons-material/LocalActivityOutlined";
+import HomeIcon from '@mui/icons-material/Home';
 import ExploreOutlinedIcon from "@mui/icons-material/ExploreOutlined";
-import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
+import LocalActivityIcon from '@mui/icons-material/LocalActivity';
+import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import WorkspacesOutlinedIcon from "@mui/icons-material/WorkspacesOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -25,14 +26,19 @@ interface NavLink {
 
 const navLinks: NavLink[] = [
     {
+        name: "Home",
+        icon: <HomeIcon />,
+        link: "/",
+    },
+    {
         name: "Storage",
-        icon: <Inventory2OutlinedIcon />,
-        link: "/storage",
+        icon: <VideoLibraryIcon />,
+        link: "/my-storage",
     },
     {
         name: "Premium",
-        icon: <LocalActivityOutlinedIcon />,
-        link: "/premium_membership",
+        icon: <LocalActivityIcon />,
+        link: "/premium-plan",
     },
     {
         name: "Explore",
@@ -42,12 +48,12 @@ const navLinks: NavLink[] = [
     {
         name: "About us",
         icon: <WorkspacesOutlinedIcon />,
-        link: "/about_us",
+        link: "/about-us",
     },
     {
         name: "FAQ",
         icon: <HelpOutlineOutlinedIcon />,
-        link: "/help_and_support",
+        link: "/help-and-support",
     },
 ];
 

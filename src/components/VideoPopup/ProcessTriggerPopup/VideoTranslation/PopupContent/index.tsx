@@ -5,7 +5,7 @@ import { UploadFileFromDevice } from "../../BaseComponent/UploadFileFromDevice";
 import { UploadVideoFromUrl } from "../../BaseComponent/UploadVideoURL";
 import { VideoData } from "../../../../../types/FileData";
 import { GenerateButton } from "../../BaseComponent/GenerateButton";
-import { SingleOptionBox } from "../../BaseComponent/OptionBox";
+import { SingleOptionBox } from "../../BaseComponent/SingleOptionBox";
 import { BrowseFile } from "../../BaseComponent/BrowseMLVTFile";
 import { TranslateLanguage } from "../../../../../types/Translation";
 import { VideoFileType } from "../../../../../types/FileType";
@@ -234,12 +234,11 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 marginTop="10px"
                 sx={{
                     display: "flex",
-                    justifyContent: "space-between",
                     alignItems: "center",
-                    width: "100%",
+                    gap: 30, 
                 }}
             >
-                <Box paddingX={1}>
+                <Box flex={1}>
                     <Typography
                         sx={{
                             fontFamily: "Poppins, sans-serif",
@@ -257,10 +256,10 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                             TranslateLanguage.Japanese,
                         ]}
                         handleChangeOption={handleChangeSourceLanguage}
-                        initChoice={TranslateLanguage.English}
+                        value={TranslateLanguage.English}
                     />
                 </Box>
-                <Box>
+                <Box flex={1}>
                     <Typography
                         sx={{
                             fontFamily: "Poppins, sans-serif",
@@ -278,7 +277,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                             TranslateLanguage.Japanese,
                         ]}
                         handleChangeOption={handleChangeTargetLanguage}
-                        initChoice={TranslateLanguage.Vietnamese}
+                        value={TranslateLanguage.Vietnamese}
                     />
                 </Box>
             </Box>

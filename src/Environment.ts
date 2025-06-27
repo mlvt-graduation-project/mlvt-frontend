@@ -1,4 +1,4 @@
-export const apiUrl = `http://localhost:8080/api`;
+export const apiUrl = `https://capiarys.com/api`;
 // const ENV = {
 //   dev: {
 //     apiUrl: apiUrl,

@@ -1,6 +1,6 @@
 import React from "react";
 import SearchBar from "../../../../../SearchBar";
-import { Box } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import { Project, ProjectType } from "../../../../../../types/Project";
 import { BrowseFileCard } from "../../BrowseFileCard";
 import { GenerateButton } from "../../GenerateButton";
@@ -17,7 +17,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({
     allowType,
     handleChangeSelectedProject,
 }) => {
-    const { getProjectsByType } = useProjectContext();
+    const { getProjectsByType, isLoading } = useProjectContext();
     const projects: Project[] = allowType ? getProjectsByType(allowType) : [];
     const [selectedProject, setSelectedProject] =
         React.useState<Project | null>(null);
@@ -34,6 +34,19 @@ export const DialogContent: React.FC<DialogContentProps> = ({
             onClosePopup();
         }
     };
+
+    if (isLoading) {
+        return (
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="100%"
+            >
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     return (
         <>

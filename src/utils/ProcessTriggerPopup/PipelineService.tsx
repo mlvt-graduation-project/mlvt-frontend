@@ -1,30 +1,40 @@
+import { AxiosResponse } from "axios";
 import {
     postTextGeneration,
     postVideoTranslation,
     postTextTranslation,
     postAudioGeneration,
     postLipSync,
-} from '../../api/pipeline.api';
-import { TranslateLanguage } from '../../types/Translation';
-import { checkSuccessResponse } from '../checkResponseStatus';
-import { getLanguageCode } from './VideoPopup.utils'
+} from "../../api/pipeline.api";
+import { TranslateLanguage } from "../../types/Translation";
+import { checkSuccessResponse } from "../checkResponseStatus";
+import { getLanguageCode } from "./VideoPopup.utils";
 
-// Service for tranlating text to text (TextTranslation)
 export const translateText = async (
     textId: number,
     sourceLanguage: TranslateLanguage,
     targetLanguage: TranslateLanguage
-) => {
+): Promise<AxiosResponse<any>> => {
     const sourceLanguageCode = getLanguageCode(sourceLanguage);
     const targetLanguageCode = getLanguageCode(targetLanguage);
-    try {
-        const postTranslationResponse = await postTextTranslation(textId, sourceLanguageCode, targetLanguageCode);
-        if (!checkSuccessResponse(postTranslationResponse.status)) {
-            throw new Error('Error when translating text');
-        }
-    } catch (error) {
-        throw error;
+
+    const postTranslationResponse = await postTextTranslation(
+        textId,
+        sourceLanguageCode,
+        targetLanguageCode
+    );
+
+    if (!checkSuccessResponse(postTranslationResponse.status)) {
+        const errorData = postTranslationResponse.data;
+        console.error(
+            "Text translation API returned a non-success status:",
+            postTranslationResponse.status,
+            errorData
+        );
+        throw new Error("Server indicated an error during text translation.");
     }
+
+    return postTranslationResponse.data;
 };
 
 // Service for VoiceGeneration
@@ -32,7 +42,7 @@ export const generateVoice = async (textId: number) => {
     try {
         const postVoiceGenerationResponse = await postAudioGeneration(textId);
         if (!checkSuccessResponse(postVoiceGenerationResponse.status)) {
-            throw new Error('Error when generate voice');
+            throw new Error("Error when generate voice");
         }
     } catch (error) {
         throw error;
@@ -44,7 +54,7 @@ export const lipSync = async (videoId: number, audioId: number) => {
     try {
         const lipSyncRespsonse = await postLipSync(videoId, audioId);
         if (!checkSuccessResponse(lipSyncRespsonse.status)) {
-            throw new Error('Error when lipSync');
+            throw new Error("Error when lipSync");
         }
     } catch (error) {
         throw error;
@@ -52,13 +62,19 @@ export const lipSync = async (videoId: number, audioId: number) => {
 };
 
 // Service for extract text from video (TextGeneration)
-export const generateText = async (videoId: number, sourceLanguage: TranslateLanguage) => {
+export const generateText = async (
+    videoId: number,
+    sourceLanguage: TranslateLanguage
+) => {
     try {
         const sourceLanguageCode = getLanguageCode(sourceLanguage);
-        const postTextGenerationResponse = await postTextGeneration(videoId, sourceLanguageCode);
+        const postTextGenerationResponse = await postTextGeneration(
+            videoId,
+            sourceLanguageCode
+        );
 
         if (!checkSuccessResponse(postTextGenerationResponse.status)) {
-            throw new Error('Error when transcribing video');
+            throw new Error("Error when transcribing video");
         }
     } catch (error) {
         throw error;
@@ -80,7 +96,7 @@ export const translateVideo = async (
             targetLanguageCode
         );
         if (!checkSuccessResponse(postVideoTranslationResponse.status)) {
-            console.log('Failed translate video');
+            console.log("Failed translate video");
         }
     } catch (error) {
         throw error;

@@ -1,75 +1,61 @@
-import credentialAPI from './credential.api';
-import { GetAllProjectResponse } from '../types/Response/Project';
+import { GetAllProjectResponse } from "../types/Response/Project";
+import { post, get } from "./base.api";
+import { AxiosResponse } from "axios";
 
-export const postVideoTranslation = async (videoId: number, sourceLanguage: string, targetLanguage: string) => {
-    try {
-        const response = await credentialAPI.post(`/mlvt/pipeline/full/${videoId}`, null, {
-            params: {
-                source_language: sourceLanguage,
-                target_language: targetLanguage,
-            },
-        });
-        return response;
-    } catch (error) {
-        console.error('Posting Video Text to server error', error);
-        throw error;
-    }
+export const postVideoTranslation = (
+    videoId: number,
+    sourceLanguage: string,
+    targetLanguage: string
+): Promise<any> => {
+    return post(`/mlvt/pipeline/full/${videoId}`, null, {
+        params: {
+            source_language: sourceLanguage,
+            target_language: targetLanguage,
+        },
+    });
 };
 
-export const postTextGeneration = async (videoId: number, sourceLanguage: string) => {
-    try {
-        const response = await credentialAPI.post(`/mlvt/stt/${videoId}`, null, {
-            params: {
-                source_language: sourceLanguage,
-            },
-        });
-        return response;
-    } catch (error) {
-        console.error('Posting Video Text to server error', error);
-        throw error;
-    }
+export const postTextGeneration = (
+    videoId: number,
+    sourceLanguage: string
+): Promise<any> => {
+    return post(`/mlvt/stt/${videoId}`, null, {
+        params: {
+            source_language: sourceLanguage,
+        },
+    });
 };
 
-export const postTextTranslation = async (transcriptionId: number, sourceLanguage: string, targetLanguage: string) => {
-    try {
-        const response = await credentialAPI.post(`/mlvt/ttt/${transcriptionId}`, null, {
-            params: {
-                source_language: sourceLanguage,
-                target_language: targetLanguage,
-            },
-        });
-        return response;
-    } catch (error) {
-        console.error('Posting Text Translation to server error', error);
-        throw error;
-    }
+export const postTextTranslation = (
+    transcriptionId: number,
+    sourceLanguage: string,
+    targetLanguage: string
+) => {
+    return post(`/mlvt/ttt/${transcriptionId}`, null, {
+        params: {
+            source_language: sourceLanguage,
+            target_language: targetLanguage,
+        },
+        getFullResponse: true,
+    }) as Promise<AxiosResponse<any>>;
 };
 
-export const postAudioGeneration = async (transcriptionId: number) => {
-    try {
-        const response = await credentialAPI.post(`/mlvt/tts/${transcriptionId}`);
-        return response;
-    } catch (error) {
-        console.error('Posting Audio Generation to server error', error);
-        throw error;
-    }
+export const postAudioGeneration = (transcriptionId: number): Promise<any> => {
+    return post(`/mlvt/tts/${transcriptionId}`, null, {
+        getFullResponse: true,
+    });
 };
 
-export const postLipSync = async (videoId: number, audioId: number) => {
-    try {
-        const response = await credentialAPI.post(`/mlvt/lipsync/${videoId}/${audioId}`);
-        return response;
-    } catch (error) {
-        console.error('Posting Lipsync to Server error ', error);
-        throw error;
-    }
+export const postLipSync = (videoId: number, audioId: number): Promise<any> => {
+    return post(`/mlvt/lipsync/${videoId}/${audioId}`, null, {
+        getFullResponse: true,
+    });
 };
 
-export const getProjectProgress = async (userId: number) => {
-    try {
-        const response = await credentialAPI.get<GetAllProjectResponse>(`/progress/${userId}`);
-        return response;
-    } catch (error) {
-        throw error;
-    }
+export const getProjectProgress = (
+    userId: number
+): Promise<AxiosResponse<GetAllProjectResponse>> => { 
+    return get<GetAllProjectResponse>(`/progress/${userId}`, undefined, {
+        getFullResponse: true,
+    }) as Promise<AxiosResponse<GetAllProjectResponse>>;
 };

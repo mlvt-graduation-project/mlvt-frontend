@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from "@mui/material";
-import LoginSignup from "../../layout/LoginRegistration";
+import LoginSignup from "../../layout/LoginSignup";
 import { useState, useRef } from "react";
 import { useTheme } from "@mui/material/styles";
 
@@ -8,7 +8,10 @@ const VerifyOtp: React.FC = () => {
     const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
     const inputRefs = useRef<HTMLInputElement[]>([]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        index: number
+    ) => {
         const value = e.target.value;
         if (/^[0-9]*$/.test(value)) {
             const newOtp = [...otp];
@@ -28,7 +31,10 @@ const VerifyOtp: React.FC = () => {
         }
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+    const handleKeyDown = (
+        e: React.KeyboardEvent<HTMLInputElement>,
+        index: number
+    ) => {
         if (e.key === "Backspace" && index > 0 && !otp[index]) {
             const newOtp = [...otp];
             newOtp[index - 1] = "";
@@ -39,20 +45,24 @@ const VerifyOtp: React.FC = () => {
 
     return (
         <LoginSignup>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}>
-                <Typography sx={{
-                    fontFamily: theme.typography.h1,
-                    fontSize: '4rem',
-                    fontWeight: theme.typography.fontWeightBold,  
-                    color: '#000',
-                    marginTop: '2rem',
-                    marginBottom: '2rem'
-                }}>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <Typography
+                    sx={{
+                        fontFamily: theme.typography.h1,
+                        fontSize: "4rem",
+                        fontWeight: theme.typography.fontWeightBold,
+                        color: "#000",
+                        marginTop: "2rem",
+                        marginBottom: "2rem",
+                    }}
+                >
                     Enter OTP
                 </Typography>
 
@@ -60,7 +70,10 @@ const VerifyOtp: React.FC = () => {
                     {otp.map((digit, index) => (
                         <input
                             key={index}
-                            ref={(el) => inputRefs.current[index] = el as HTMLInputElement}
+                            ref={(el) =>
+                                (inputRefs.current[index] =
+                                    el as HTMLInputElement)
+                            }
                             type="text"
                             inputMode="numeric"
                             pattern="[0-9]*"
@@ -72,14 +85,15 @@ const VerifyOtp: React.FC = () => {
                             style={{
                                 width: 60,
                                 height: 60,
-                                textAlign: 'center',
+                                textAlign: "center",
                                 borderRadius: 5,
-                                border: '2px solid ' + theme.palette.primary.main,
+                                border:
+                                    "2px solid " + theme.palette.primary.main,
                                 color: theme.palette.primary.main,
                                 fontFamily: theme.typography.body1.fontFamily,
                                 fontWeight: theme.typography.fontWeightBold,
-                                fontSize: '1.5rem',
-                                outline: 'none'
+                                fontSize: "1.5rem",
+                                outline: "none",
                             }}
                         />
                     ))}
@@ -96,20 +110,18 @@ const VerifyOtp: React.FC = () => {
                         backgroundColor: theme.palette.primary.main,
                         fontFamily: theme.typography.h1,
                         fontWeight: theme.typography.fontWeightBold,
-                        fontSize: '1rem',
-                        height: '2.5rem',
-                        '&:hover': {
+                        fontSize: "1rem",
+                        height: "2.5rem",
+                        "&:hover": {
                             backgroundColor: theme.palette.primary.dark,
                         },
-
                     }}
                 >
                     VERIFY OTP
                 </Button>
             </Box>
         </LoginSignup>
-
     );
-}
+};
 
 export default VerifyOtp;

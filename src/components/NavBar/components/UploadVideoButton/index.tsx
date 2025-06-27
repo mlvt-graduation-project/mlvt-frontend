@@ -188,8 +188,7 @@ function UploadButton() {
                 console.log("File added successfully:", responseAdd.data);
             }
 
-            const responseGeneratePresignedVideoUpload =
-                await getPresignedVideoURL(file.name, fileType);
+            const responseGeneratePresignedVideoUpload = await getPresignedVideoURL(file.name, fileType);
 
             if (responseGeneratePresignedVideoUpload.status === 200) {
                 console.log(
