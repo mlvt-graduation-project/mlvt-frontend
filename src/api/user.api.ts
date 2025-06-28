@@ -5,6 +5,12 @@ export const getUser = async (userId: string): Promise<GetUserResponse> => {
     return get<GetUserResponse>(`/users/${userId}`) as Promise<GetUserResponse>;
 };
 
+export const getUserDetails = async (): Promise<GetUserResponse> => {
+    return get<GetUserResponse>(
+        `/users/user-details`
+    ) as Promise<GetUserResponse>;
+};
+
 export const updateUser = async (
     userId: string,
     updatedData: UserUpdateData

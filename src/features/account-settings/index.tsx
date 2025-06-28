@@ -17,11 +17,11 @@ import ChangePassword from "../../components/ChangePassword";
 import Voucher from "../../components/Voucher";
 import Footer from "../../components/Footer";
 import LogoImg from "../../assets/mlvt_logo.png";
-import { useUserDetails } from "../../hooks/useUserDetails";
 import HomeIcon from "@mui/icons-material/Home";
 import { useNavigate } from "react-router-dom";
 import LoadingBackdrop from "../../components/LoadingBackdrop";
 import { UserWithAvatar } from "src/types/Response/User";
+import { useGetUserDetails } from "src/hooks/useGetUserDetails";
 
 type TabKey = "personal" | "password" | "subscription";
 
@@ -44,7 +44,7 @@ const listItemCommonSx = {
 
 const AccountSettings: React.FC = () => {
     const theme = useTheme();
-    const { user, loading } = useUserDetails();
+    const { data: userDetails, isLoading: loading } = useGetUserDetails();
     const [activeTab, setActiveTab] = useState<TabKey>("personal");
     const navigate = useNavigate();
 
@@ -55,7 +55,11 @@ const AccountSettings: React.FC = () => {
     const renderContent = () => {
         switch (activeTab) {
             case "personal":
-                return <PersonalDetails user={user as UserWithAvatar} />;
+                return (
+                    <PersonalDetails
+                        user={userDetails?.user as UserWithAvatar}
+                    />
+                );
             case "password":
                 return <ChangePassword />;
             case "subscription":
