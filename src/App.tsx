@@ -1,23 +1,34 @@
-import React, { Suspense } from "react";
-import { AppRoutes } from "./routes";
-import { AuthProvider } from "./context/AuthContext";
-import { ProjectProvider } from "./context/ProjectContext";
-import { ColorModeProvider } from "./themes/ColorModeContext";
-import CustomLoadingDot from "./components/CustomLoadingDot";
-import { BrowserRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import React, { Suspense } from 'react'
+import { BrowserRouter } from 'react-router-dom'
+import CustomLoadingDot from './components/CustomLoadingDot'
+import { AuthProvider } from './context/AuthContext'
+import { ProjectProvider } from './context/ProjectContext'
+import { AppRoutes } from './routes'
+import { ColorModeProvider } from './themes/ColorModeContext'
+
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            staleTime: 0,
+        },
+    },
+})
 
 const App: React.FC = () => (
-    <BrowserRouter>
-        <ColorModeProvider>
-            <AuthProvider>
-                <ProjectProvider>
-                    <Suspense fallback={<CustomLoadingDot />}>
-                        <AppRoutes />
-                    </Suspense>
-                </ProjectProvider>
-            </AuthProvider>
-        </ColorModeProvider>
-    </BrowserRouter>
-);
+    <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+            <ColorModeProvider>
+                <AuthProvider>
+                    <ProjectProvider>
+                        <Suspense fallback={<CustomLoadingDot />}>
+                            <AppRoutes />
+                        </Suspense>
+                    </ProjectProvider>
+                </AuthProvider>
+            </ColorModeProvider>
+        </BrowserRouter>
+    </QueryClientProvider>
+)
 
-export default App;
+export default App

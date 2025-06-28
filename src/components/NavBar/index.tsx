@@ -11,8 +11,8 @@ import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 
 import UploadVideoButton from "./components/UploadVideoButton";
 import UserMenu from "./components/UserMenu";
-import { useUserDetails } from "../../hooks/useUserDetails";
 import LoadingBackdrop from "../LoadingBackdrop";
+import { useGetUserDetails } from "src/hooks/useGetUserDetails";
 
 interface NavbarProps {
     onOpenVideoTranslation: () => void;
@@ -55,7 +55,7 @@ const NAV_LINKS = [
 
 const NavBar: React.FC<NavbarProps> = (callbacks) => {
     const theme = useTheme();
-    const { user, loading } = useUserDetails();
+    const { data: userDetails, isLoading: loading } = useGetUserDetails();
 
     const actionMap = useMemo(
         () => ({
@@ -74,12 +74,13 @@ const NavBar: React.FC<NavbarProps> = (callbacks) => {
         [actionMap]
     );
 
+    const user = userDetails?.user;
+
     const { first_name = "", last_name = "", premium = false } = user ?? {};
 
     const avatarSrc = user?.avatar
         ? user?.avatar.split("?X-Amz-Algorithm")[0]
         : "";
-    console.log("Avatar Source:", avatarSrc);
 
     return (
         <>
