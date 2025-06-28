@@ -65,7 +65,6 @@ const routes: RouteObject[] = [
             { path: "/verify-otp", element: <VerifyOTP /> },
             { path: "/about-us", element: <AboutPage /> },
             { path: "/help-and-support", element: <HelpAndSupportPage /> },
-            { path: "/account-settings", element: <AccountSettings /> }, // Note: You might want to protect this route as well.
 
             // --- Protected Routes ---
             {
@@ -73,6 +72,14 @@ const routes: RouteObject[] = [
                 element: (
                     <ProtectedRoute>
                         <HomeUser />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "/account-settings",
+                element: (
+                    <ProtectedRoute>
+                        <AccountSettings />
                     </ProtectedRoute>
                 ),
             },
