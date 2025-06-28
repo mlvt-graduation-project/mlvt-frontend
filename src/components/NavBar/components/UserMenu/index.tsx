@@ -38,7 +38,9 @@ const UserMenu: React.FC<UserMenuProps> = ({
                     const userData = await getUser(userId);
                     setUser(userData.user);
                 } else {
-                    throw new Error("User ID is null");
+                    console.log(
+                        "No user ID found in AuthContext, skipping user fetch."
+                    );
                 }
             } catch (error) {
                 throw new Error(`Failed to fetch user data: ${error}`);

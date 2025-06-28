@@ -28,7 +28,8 @@ const InputStyles = (theme: any) => ({
 
 const Login = () => {
     const navigate = useNavigate();
-    const { authToken, login: setAuthData } = useAuth();
+    const { login: setAuthData } = useAuth();
+    const authToken = localStorage.getItem("authToken");
 
     useEffect(() => {
         if (authToken) {

@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { getUser, getAvatarDownloadUrl } from '../api/user.api';
-import { useAuth } from '../context/AuthContext';
-import { UserWithAvatar } from '@/types/Response/User';
+import { useEffect, useState } from "react";
+import { getUser, getAvatarDownloadUrl } from "../api/user.api";
+import { useAuth } from "../context/AuthContext";
+import { UserWithAvatar } from "src/types/Response/User";
 
 interface State {
     user: UserWithAvatar | null;
@@ -26,19 +26,21 @@ export function useUserDetails() {
         (async () => {
             try {
                 /* make the avatar request harmless – it resolves to '' on any error */
-                const avatarPromise = getAvatarDownloadUrl(userId).catch(() => '');
+                const avatarPromise = getAvatarDownloadUrl(userId).catch(
+                    () => ""
+                );
 
                 /* run both requests together */
                 const [{ user: apiUser }, avatarUrl] = await Promise.all([
-                    getUser(userId),        
-                    avatarPromise,          
+                    getUser(userId),
+                    avatarPromise,
                 ]);
 
-                if (!active) return;      
+                if (!active) return;
 
                 const avatarSrc = avatarUrl
-                    ? avatarUrl.split('?X-Amz-Algorithm')[0]
-                    : '';
+                    ? avatarUrl.split("?X-Amz-Algorithm")[0]
+                    : "";
 
                 setState({
                     user: { ...apiUser, avatarSrc },
@@ -47,9 +49,9 @@ export function useUserDetails() {
                 });
             } catch (err) {
                 /* only fires if getUser() failed */
-                if (active) setState({ user: null, loading: false, error: err });
+                if (active)
+                    setState({ user: null, loading: false, error: err });
             }
-
         })();
 
         return () => {

@@ -14,7 +14,7 @@ import { useCallback } from "react";
 
 interface ProjectContextValue {
     projects: Project[];
-    isLoading: boolean; 
+    isLoading: boolean;
     addProject: (newProject: Project) => void;
     updateProjects: (updatedProjects: Project[]) => void;
     getProjectsByType: (types: ProjectType[]) => Project[];
@@ -22,7 +22,7 @@ interface ProjectContextValue {
         types: ProjectType[],
         status: ProjectStatus[]
     ) => Project[];
-    fetchAllProjects: () => Promise<void>; 
+    fetchAllProjects: () => Promise<void>;
 }
 
 const ProjectContext = createContext<ProjectContextValue | null>(null);
@@ -68,9 +68,17 @@ export const ProjectProvider = ({
     }, [userId]);
 
     useEffect(() => {
-        console.log("ProjectContext mounted or userId changed. Fetching projects...");
+        if (!userId) {
+            console.log("No userId found. Skipping project fetch.");
+            setProjects([]);
+            setIsLoading(false);
+            return;
+        }
+        console.log(
+            "ProjectContext mounted or userId changed. Fetching projects..."
+        );
         fetchAllProjects();
-    }, [fetchAllProjects]);
+    }, [fetchAllProjects, userId]);
 
     const addProject = (newProject: Project) => {
         setProjects((prev) => [...prev, newProject]);

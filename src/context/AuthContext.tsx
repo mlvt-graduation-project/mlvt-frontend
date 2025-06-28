@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { Navigate } from "react-router-dom";
 
 interface AuthContextType {
-    authToken: string | null;
     userId: string | null;
     login: (token: string, userId: string) => void;
     logout: () => void;
@@ -15,25 +13,20 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [authToken, setAuthToken] = useState<string | null>(
-        localStorage.getItem("authToken")
-    );
-    const [userId, setUserId] = useState<string | null>(
-        localStorage.getItem("userId")
-    );
+    const [userId, setUserId] = useState<string | null>(null);
     const [remainingToken, setRemainingToken] = useState<number>(0);
 
     const login = (token: string, userId: string) => {
-        setAuthToken(token);
+        console.log("Logging in userId:", userId);
         setUserId(userId);
         localStorage.setItem("authToken", token);
-        localStorage.setItem("userId", userId);
     };
 
     const logout = () => {
-        setAuthToken(null);
+        console.log("Logging out...");
         localStorage.removeItem("authToken");
-        <Navigate to="/login" replace />;
+        setUserId(null);
+        window.location.href = "/login"; // Redirect to login page
     };
 
     const SetRemainingToken = (token: number) => {
@@ -51,7 +44,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return (
         <AuthContext.Provider
             value={{
-                authToken,
                 userId,
                 login,
                 logout,

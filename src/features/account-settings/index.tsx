@@ -18,10 +18,10 @@ import Voucher from "../../components/Voucher";
 import Footer from "../../components/Footer";
 import LogoImg from "../../assets/mlvt_logo.png";
 import { useUserDetails } from "../../hooks/useUserDetails";
-import { UserWithAvatar } from "@/types/Response/User";
 import HomeIcon from "@mui/icons-material/Home";
 import { useNavigate } from "react-router-dom";
 import LoadingBackdrop from "../../components/LoadingBackdrop";
+import { UserWithAvatar } from "src/types/Response/User";
 
 type TabKey = "personal" | "password" | "subscription";
 
@@ -70,7 +70,17 @@ const AccountSettings: React.FC = () => {
         <Box>
             <Box sx={{ display: "flex", padding: 4, height: "100vh" }}>
                 {/* Left Sidebar */}
-                <Box sx={{ flex: 1, maxWidth: 380, pr: 5, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between" }}>
+                <Box
+                    sx={{
+                        flex: 1,
+                        maxWidth: 380,
+                        pr: 5,
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                    }}
+                >
                     <Box>
                         <Link href="/">
                             <Box
