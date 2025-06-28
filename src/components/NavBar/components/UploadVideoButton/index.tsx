@@ -10,6 +10,7 @@ import {
 } from "../../../../api/video.api";
 import { styled } from "@mui/material/styles";
 import UploadNotification from "../../../UploadNotification";
+import { useAuth } from "src/context/AuthContext";
 
 const s3ApiClient = axios.create({});
 
@@ -73,6 +74,8 @@ function UploadButton() {
         "Uploading…"
     );
 
+    const { userId } = useAuth();
+
     const openNotification = (
         status: "loading" | "success" | "fail",
         message: string
@@ -89,7 +92,7 @@ function UploadButton() {
         file_name: "vietnamese.mp4",
         folder: "raw_videos",
         image: "avatar.jpg",
-        user_id: parseInt(localStorage.getItem("userId") || "0"),
+        user_id: parseInt(userId || "0"),
     });
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -97,7 +100,7 @@ function UploadButton() {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
             ref.current.file_name = file.name;
-            ref.current.user_id = Number(localStorage.getItem("userId"));
+            ref.current.user_id = parseInt(userId || "0");
             if (file) {
                 if (file.type === "video/mp4") {
                     const imageFile = await extractFirstFrame(file);
@@ -188,7 +191,8 @@ function UploadButton() {
                 console.log("File added successfully:", responseAdd.data);
             }
 
-            const responseGeneratePresignedVideoUpload = await getPresignedVideoURL(file.name, fileType);
+            const responseGeneratePresignedVideoUpload =
+                await getPresignedVideoURL(file.name, fileType);
 
             if (responseGeneratePresignedVideoUpload.status === 200) {
                 console.log(

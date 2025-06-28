@@ -1,5 +1,4 @@
 import { useAuth } from "../../../../context/AuthContext";
-import { User } from "@/types/Response/User";
 import {
     AccountCircle,
     DarkMode,
@@ -22,6 +21,7 @@ import {
 import { useColorMode } from "../../../../themes/ColorModeContext";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { User } from "src/types/Response/User";
 
 export interface MenuDropdownProps {
     user: User;
@@ -52,6 +52,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
     const navigate = useNavigate();
     const { remainingToken } = useAuth();
     const open = Boolean(anchorDropdown);
+    const { logout } = useAuth();
 
     const [anchorSubMenu, setAnchorSubMenu] = useState<HTMLElement | null>(
         null
@@ -97,9 +98,8 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
         }
 
         if (item.type === MenuItemType.LOGOUT) {
-            localStorage.removeItem("authToken");
-            navigate("/login");
             setAnchorDropdown(null);
+            logout();
             return;
         }
 
@@ -114,12 +114,6 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
             toggle();
         }
         setAnchorSubMenu(null);
-    };
-
-    const handleLogout = () => {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("userId");
-        navigate("/login");
     };
 
     return (
@@ -229,11 +223,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                 <Divider variant="middle" component="li" />
                 {menuItems.map((item) => (
                     <MenuItem
-                        onClick={
-                            item.type === MenuItemType.LOGOUT
-                                ? () => handleLogout()
-                                : (e) => handleMenuItemClick(e, item)
-                        }
+                        onClick={(e) => handleMenuItemClick(e, item)}
                         sx={{
                             padding: "0.3rem 1.5rem",
                             margin: "0.5rem 0.5rem",
