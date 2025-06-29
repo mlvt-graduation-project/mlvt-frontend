@@ -173,7 +173,7 @@ const UploadNotification: FC<UploadNotificationProps> = ({
                             Navigate to the video storage by{" "}
                             <Link
                                 component="button"
-                                onClick={() => navigate("/storage")}
+                                onClick={() => navigate("/my-storage")}
                                 sx={{
                                     fontWeight: "650",
                                     color: theme.palette.neutral.main,

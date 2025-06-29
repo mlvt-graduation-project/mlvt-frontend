@@ -3,14 +3,15 @@ import { useTheme } from '@mui/material/styles'
 import React, { useEffect, useState } from 'react'
 import CardFeature from 'src/components/CardFeature'
 import SearchBar from 'src/components/SearchBar'
-import { useAuth } from 'src/contexts/AuthContext'
 import { useProjectContext } from 'src/contexts/ProjectContext'
 import { ProcessedVideoPopUp } from 'src/features/core-feature-popup/ProjectPopup'
+import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import { Project, ProjectType } from 'src/types/Project'
 
 const ProjectSection = () => {
     const theme = useTheme()
-    const { userId } = useAuth()
+    const { data: userDetails } = useGetUserDetails()
+    const userId = userDetails?.user.id.toString() || ''
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         console.log()
     }
@@ -46,12 +47,6 @@ const ProjectSection = () => {
         }
 
         fetchData()
-
-        // const intervalId = setInterval(fetchData, 20000); // Fetch data every 30 seconds
-
-        // return () => {
-        //     clearInterval(intervalId); // Cleanup the interval on component unmount
-        // };
     }, [userId, fetchAllProjects])
 
     useEffect(() => {

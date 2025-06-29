@@ -1,115 +1,117 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { Project } from "../types/Project";
-import { ProjectType } from "../types/Project";
-import { ProjectStatus } from "../types/ProjectStatus";
-import { combineAndSortProjects } from "../utils/project.utils";
-import { useAuth } from "./AuthContext";
+import React, {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useState,
+} from 'react'
+import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
+import { Project, ProjectType } from '../types/Project'
+import { ProjectStatus } from '../types/ProjectStatus'
 import {
+    combineAndSortProjects,
+    getAllProgressProjects,
     handleGetAudioProjectByUserId,
     handleGetTextProjectByUserId,
     handleGetVideosProjectByUserId,
-} from "../utils/project.utils";
-import { getAllProgressProjects } from "../utils/project.utils";
-import { useCallback } from "react";
+} from '../utils/project.utils'
 
 interface ProjectContextValue {
-    projects: Project[];
-    isLoading: boolean;
-    addProject: (newProject: Project) => void;
-    updateProjects: (updatedProjects: Project[]) => void;
-    getProjectsByType: (types: ProjectType[]) => Project[];
+    projects: Project[]
+    isLoading: boolean
+    addProject: (newProject: Project) => void
+    updateProjects: (updatedProjects: Project[]) => void
+    getProjectsByType: (types: ProjectType[]) => Project[]
     getProjectByTypeAndStatus: (
         types: ProjectType[],
-        status: ProjectStatus[]
-    ) => Project[];
-    fetchAllProjects: () => Promise<void>;
+        status: ProjectStatus[],
+    ) => Project[]
+    fetchAllProjects: () => Promise<void>
 }
 
-const ProjectContext = createContext<ProjectContextValue | null>(null);
+const ProjectContext = createContext<ProjectContextValue | null>(null)
 
 export const ProjectProvider = ({
     children,
 }: {
-    children: React.ReactNode;
+    children: React.ReactNode
 }) => {
-    const { userId } = useAuth();
-    const [projects, setProjects] = useState<Project[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(true); // <-- 1. ADD isLoading state
+    const { data: userDetails, isLoading: isUserLoading } = useGetUserDetails()
+    const userId = userDetails?.user.id.toString() || ''
+
+    const [projects, setProjects] = useState<Project[]>([])
+    const [isFetchingProjects, setIsFetchingProjects] = useState<boolean>(true)
+    const combinedIsLoading = isUserLoading || isFetchingProjects
 
     const fetchAllProjects = useCallback(async () => {
-        if (!userId) {
-            setProjects([]);
-            setIsLoading(false);
-            return;
+        if (isUserLoading || !userId) {
+            setIsFetchingProjects(false)
+            return
         }
 
-        setIsLoading(true); // Set loading to true before fetching
+        setIsFetchingProjects(true) // Set loading to true before fetching
         try {
-            const videoProjects = await handleGetVideosProjectByUserId(userId);
-            const textProjects = await handleGetTextProjectByUserId(userId);
-            const audioProjects = await handleGetAudioProjectByUserId(userId);
-            const progressProjects = await getAllProgressProjects(
-                parseInt(userId)
-            );
+            const [
+                videoProjects,
+                textProjects,
+                audioProjects,
+                progressProjects,
+            ] = await Promise.all([
+                handleGetVideosProjectByUserId(userId),
+                handleGetTextProjectByUserId(userId),
+                handleGetAudioProjectByUserId(userId),
+                getAllProgressProjects(parseInt(userId)),
+            ])
 
             const combinedProject = combineAndSortProjects(
                 videoProjects,
                 textProjects,
                 audioProjects,
-                progressProjects
-            );
-            setProjects(combinedProject);
+                progressProjects,
+            )
+            setProjects(combinedProject)
         } catch (error) {
-            console.log("Error fetching all projects: ", error);
-            setProjects([]); // Clear projects on error to avoid showing stale data
+            console.log('Error fetching all projects: ', error)
+            setProjects([])
         } finally {
-            setIsLoading(false); // Set loading to false after fetch completes or fails
+            setIsFetchingProjects(false)
         }
-    }, [userId]);
+    }, [userId, isUserLoading])
 
     useEffect(() => {
-        if (!userId) {
-            console.log("No userId found. Skipping project fetch.");
-            setProjects([]);
-            setIsLoading(false);
-            return;
-        }
-        console.log(
-            "ProjectContext mounted or userId changed. Fetching projects..."
-        );
-        fetchAllProjects();
-    }, [fetchAllProjects, userId]);
+        fetchAllProjects()
+    }, [fetchAllProjects])
 
     const addProject = (newProject: Project) => {
-        setProjects((prev) => [...prev, newProject]);
-    };
+        setProjects((prev) => [...prev, newProject])
+    }
 
     const updateProjects = (updatedProjects: Project[]) => {
-        setProjects(updatedProjects);
-    };
+        setProjects(updatedProjects)
+    }
 
     const getProjectsByType = (types: ProjectType[]) => {
         return projects.filter((project) =>
-            types.includes(project.type_project)
-        );
-    };
+            types.includes(project.type_project),
+        )
+    }
 
     const getProjectByTypeAndStatus = (
         types: ProjectType[],
-        status: ProjectStatus[]
+        status: ProjectStatus[],
     ) => {
         return projects.filter(
             (project) =>
                 types.includes(project.type_project) &&
-                status.includes(project.status)
-        );
-    };
+                status.includes(project.status),
+        )
+    }
 
     return (
         <ProjectContext.Provider
             value={{
                 projects,
-                isLoading,
+                isLoading: combinedIsLoading,
                 addProject,
                 updateProjects,
                 getProjectsByType,
@@ -119,14 +121,14 @@ export const ProjectProvider = ({
         >
             {children}
         </ProjectContext.Provider>
-    );
-};
+    )
+}
 
 export const useProjectContext = () => {
-    const context = useContext(ProjectContext);
+    const context = useContext(ProjectContext)
     if (!context)
         throw new Error(
-            "useProjectContext must be used within a ProjectProvider"
-        );
-    return context;
-};
+            'useProjectContext must be used within a ProjectProvider',
+        )
+    return context
+}

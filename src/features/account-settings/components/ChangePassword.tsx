@@ -8,9 +8,9 @@ import {
     useTheme,
 } from '@mui/material'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
+import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import { CustomButton } from '../../../components/CustomButton'
 import SuccessPopup from '../../../components/SuccessPopup'
-import { useAuth } from '../../../contexts/AuthContext'
 import { changePassword } from '../apis/user.api'
 
 type FieldKey = 'current' | 'new' | 'confirm'
@@ -29,8 +29,8 @@ const ids: Record<FieldKey, string> = {
 
 const ChangePassword: React.FC = () => {
     const theme = useTheme()
-    const { userId } = useAuth()
-
+    const { data: userDetails } = useGetUserDetails()
+    const userId = userDetails?.user.id.toString() || ''
     const [values, setValues] = useState<Record<FieldKey, string>>({
         current: '',
         new: '',

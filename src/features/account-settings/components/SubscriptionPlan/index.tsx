@@ -19,6 +19,7 @@ import { RedeemCode } from './components/RedeemCode'
 import SubscriptionPlanCard from './components/SubscriptionPlanCard'
 import PaymentPlan from './components/SubscriptionPlanCard/components/PaymentPlan'
 import PlanSummaryCard from './components/SubscriptionPlanCard/components/PlanSummaryCard'
+import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 
 interface ErrNoti {
     isOpen: boolean
@@ -104,7 +105,9 @@ const SubscriptionPlan: React.FC = () => {
         content: '',
     })
 
-    const { userId, remainingToken, SetRemainingToken } = useAuth()
+    const { remainingToken, SetRemainingToken } = useAuth()
+    const { data: userDetails } = useGetUserDetails()
+    const userId = userDetails?.user.id.toString() || ''
 
     /* ------------------ callbacks ------------------ */
     const handleViewChange = (view: ViewType) => {

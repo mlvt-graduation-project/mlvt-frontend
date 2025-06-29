@@ -3,7 +3,7 @@ import Button from '@mui/material/Button'
 import { styled } from '@mui/material/styles'
 import axios from 'axios'
 import React, { useRef, useState } from 'react'
-import { useAuth } from 'src/contexts/AuthContext'
+import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import {
     getPresignedImageURL,
     getPresignedVideoURL,
@@ -74,7 +74,8 @@ function UploadButton() {
         'Uploading…',
     )
 
-    const { userId } = useAuth()
+    const { data: userDetails } = useGetUserDetails()
+    const userId = userDetails?.user.id.toString() || ''
 
     const openNotification = (
         status: 'loading' | 'success' | 'fail',

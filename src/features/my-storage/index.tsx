@@ -3,24 +3,25 @@ import AlignHorizontalRightIcon from '@mui/icons-material/AlignHorizontalRight'
 import {
     Box,
     Checkbox,
+    CircularProgress,
     Divider,
     FormControlLabel,
     Grid,
     IconButton,
     Pagination,
     SxProps,
+    Theme,
     Typography,
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import React, { useEffect, useState } from 'react'
-import CardFeature from '../../components/CardFeature'
+import React, { useCallback, useMemo, useState } from 'react'
+import CardFeature from 'src/components/CardFeature'
 
-import SearchBar from '../../components/SearchBar'
-import { useAuth } from '../../contexts/AuthContext'
-import { useProjectContext } from '../../contexts/ProjectContext'
-import Layout from '../../layout/HomePage'
-import { Project, ProjectType } from '../../types/Project'
-import { ProjectStatus } from '../../types/ProjectStatus'
+import SearchBar from 'src/components/SearchBar'
+import { useProjectContext } from 'src/contexts/ProjectContext'
+import Layout from 'src/layout/HomePage'
+import { Project, ProjectType } from 'src/types/Project'
+import { ProjectStatus } from 'src/types/ProjectStatus'
 import { ProcessedVideoPopUp } from '../core-feature-popup/ProjectPopup'
 
 interface categoryProjectType {
@@ -28,12 +29,96 @@ interface categoryProjectType {
     filterList: ProjectType[]
     checkStatus: boolean
 }
+
 interface categoryProjectStatus {
     label: string
     filterList: ProjectStatus[]
     checkStatus: boolean
     color: string
 }
+
+const CATEGORY_OPTIONS = [
+    {
+        label: 'All',
+        filterList: [
+            ProjectType.Audio,
+            ProjectType.Video,
+            ProjectType.Text,
+            ProjectType.AudioGeneration,
+            ProjectType.Fullpipeline,
+            ProjectType.Lipsync,
+            ProjectType.TextGeneration,
+            ProjectType.TextTranslation,
+        ],
+        checkStatus: true,
+    },
+    {
+        label: 'Video Translation',
+        filterList: [ProjectType.Fullpipeline],
+        checkStatus: true,
+    },
+    {
+        label: 'Text Genartion',
+        filterList: [ProjectType.TextGeneration],
+        checkStatus: true,
+    },
+    {
+        label: 'Text Translation',
+        filterList: [ProjectType.TextTranslation],
+        checkStatus: true,
+    },
+    {
+        label: 'Voice Generation',
+        filterList: [ProjectType.AudioGeneration],
+        checkStatus: true,
+    },
+    {
+        label: 'Lip Synchronization',
+        filterList: [ProjectType.Lipsync],
+        checkStatus: true,
+    },
+    { label: 'Video', filterList: [ProjectType.Video], checkStatus: true },
+    { label: 'Text', filterList: [ProjectType.Text], checkStatus: true },
+    { label: 'Audio', filterList: [ProjectType.Audio], checkStatus: true },
+]
+
+const getStatusOptions = (theme: Theme) => [
+    {
+        label: 'All',
+        filterList: [
+            ProjectStatus.Failed,
+            ProjectStatus.Processing,
+            ProjectStatus.Raw,
+            ProjectStatus.Succeeded,
+        ],
+        checkStatus: true,
+        color: theme.palette.text.secondary,
+    },
+    {
+        label: 'Succeeded',
+        color: theme.palette.success.main,
+        filterList: [ProjectStatus.Succeeded],
+        checkStatus: true,
+    },
+    {
+        label: 'Processing',
+        color: theme.palette.warning.main,
+        filterList: [ProjectStatus.Processing],
+        checkStatus: true,
+    },
+    {
+        label: 'Failed',
+        color: theme.palette.error.main,
+        filterList: [ProjectStatus.Failed],
+        checkStatus: true,
+    },
+    {
+        label: 'Raw',
+        color: theme.palette.neutral.main,
+        filterList: [ProjectStatus.Raw],
+        checkStatus: true,
+    },
+]
 
 interface ComponentProps {
     inputOption: categoryProjectType | categoryProjectStatus
@@ -87,249 +172,95 @@ function CheckboxComponent({
 
 const Storage = () => {
     const theme = useTheme()
-    const userId = useAuth()
-    const [isFavorite, setIsFavorite] = React.useState(false)
-    const { getProjectByTypeAndStatus, getProjectsByType, fetchAllProjects } =
-        useProjectContext()
-    const [selectedProject, setSelectedProject] =
-        React.useState<Project | null>(null)
-    const [isPopUpOpen, setIsPopUpOpen] = React.useState(false)
+    const { projects, isLoading } = useProjectContext()
+
+    // State for filter options
+    const [categoryOption, setCategoryOption] = useState(() => CATEGORY_OPTIONS)
+    const [statusOption, setStatusOption] = useState(() =>
+        getStatusOptions(theme),
+    )
     const [projectTypeFilter, setProjectTypeFilter] = useState<
         Set<ProjectType>
-    >(
-        new Set([
-            ProjectType.Audio,
-            ProjectType.Video,
-            ProjectType.Text,
-            ProjectType.AudioGeneration,
-            ProjectType.Fullpipeline,
-            ProjectType.Lipsync,
-            ProjectType.TextGeneration,
-            ProjectType.TextTranslation,
-        ]),
-    )
+    >(new Set(CATEGORY_OPTIONS.flatMap((opt) => opt.filterList)))
     const [projectStatusFilter, setProjectStatusFilter] = useState<
         Set<ProjectStatus>
-    >(
-        new Set([
-            ProjectStatus.Failed,
-            ProjectStatus.Processing,
-            ProjectStatus.Raw,
-            ProjectStatus.Succeeded,
-        ]),
-    )
-    const [displayProjects, setDisplayProjects] = useState<Project[]>([])
+    >(new Set(getStatusOptions(theme).flatMap((opt) => opt.filterList)))
 
-    const [categoryOption, setCategoryOption] = useState<categoryProjectType[]>(
-        [
-            {
-                label: 'All',
-                filterList: [
-                    ProjectType.Audio,
-                    ProjectType.Video,
-                    ProjectType.Text,
-                    ProjectType.AudioGeneration,
-                    ProjectType.Fullpipeline,
-                    ProjectType.Lipsync,
-                    ProjectType.TextGeneration,
-                    ProjectType.TextTranslation,
-                ],
-                checkStatus: true,
-            },
-            {
-                label: 'Video Translation',
-                filterList: [ProjectType.Fullpipeline],
-                checkStatus: true,
-            },
-            {
-                label: 'Text Genartion',
-                filterList: [ProjectType.TextGeneration],
-                checkStatus: true,
-            },
-            {
-                label: 'Text Translation',
-                filterList: [ProjectType.TextTranslation],
-                checkStatus: true,
-            },
-            {
-                label: 'Voice Generation',
-                filterList: [ProjectType.AudioGeneration],
-                checkStatus: true,
-            },
-            {
-                label: 'Lip Synchronization',
-                filterList: [ProjectType.Lipsync],
-                checkStatus: true,
-            },
-            {
-                label: 'Video',
-                filterList: [ProjectType.Video],
-                checkStatus: true,
-            },
-            {
-                label: 'Text',
-                filterList: [ProjectType.Text],
-                checkStatus: true,
-            },
-            {
-                label: 'Audio',
-                filterList: [ProjectType.Audio],
-                checkStatus: true,
-            },
-            { label: 'My Favorites', filterList: [], checkStatus: true },
-        ],
-    )
+    // State for favorite projects
+    const [isFavorite, setIsFavorite] = useState(false)
 
-    const [statusOption, setStatusOption] = useState<categoryProjectStatus[]>([
-        {
-            label: 'All',
-            filterList: [
-                ProjectStatus.Failed,
-                ProjectStatus.Processing,
-                ProjectStatus.Raw,
-                ProjectStatus.Succeeded,
-            ],
-            checkStatus: true,
-            color: theme.palette.text.secondary,
-        },
-        {
-            label: 'Succeeded',
-            color: theme.palette.success.main,
-            filterList: [ProjectStatus.Succeeded],
-            checkStatus: true,
-        },
-        {
-            label: 'Processing',
-            color: theme.palette.warning.main,
-            filterList: [ProjectStatus.Processing],
-            checkStatus: true,
-        },
-        {
-            label: 'Failed',
-            color: theme.palette.error.main,
-            filterList: [ProjectStatus.Failed],
-            checkStatus: true,
-        },
-        {
-            label: 'Raw',
-            color: theme.palette.neutral.main,
-            filterList: [ProjectStatus.Raw],
-            checkStatus: true,
-        },
-    ])
+    const [currentPage, setCurrentPage] = useState(1)
+    const ITEMS_PER_PAGE = 9
+    const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+    const [isPopUpOpen, setIsPopUpOpen] = useState(false)
 
-    const handleAddProjectTypeFilter = (inputList: ProjectType[]) => {
-        setProjectTypeFilter(
-            (prev: Set<ProjectType>) =>
-                new Set(Array.from(prev).concat(inputList)),
-        )
-    }
+    const handleFilterChange = useCallback(
+        <T extends { label: string; filterList: any[]; checkStatus: boolean }>(
+            optionToToggle: T,
+            allOptions: T[],
+            setOptions: React.Dispatch<React.SetStateAction<T[]>>,
+            setFilterSet: React.Dispatch<React.SetStateAction<Set<any>>>,
+        ) => {
+            const isChecking = !optionToToggle.checkStatus
+            let newOptions = [...allOptions]
 
-    const handleRemoveProjectTypeFilter = (inputList: ProjectType[]) => {
-        setProjectTypeFilter((prev: Set<ProjectType>) => {
-            const newSet = new Set(prev)
-            inputList.forEach((element) => newSet.delete(element)) // Remove each project in the array
-            return newSet
-        })
-    }
-
-    const handleAddProjectStatusFilter = (inputList: ProjectStatus[]) => {
-        setProjectStatusFilter(
-            (prev: Set<ProjectStatus>) =>
-                new Set(Array.from(prev).concat(inputList)),
-        )
-    }
-
-    const handleRemoveProjectStatusFilter = (inputList: ProjectStatus[]) => {
-        setProjectStatusFilter((prev: Set<ProjectStatus>) => {
-            const newSet = new Set(prev)
-            inputList.forEach((element) => newSet.delete(element)) // Remove each project in the array
-            return newSet
-        })
-    }
-
-    const onCheckProjectFilter = <
-        T extends categoryProjectType | categoryProjectStatus,
-    >(
-        allOption: T[],
-        setAllOption: React.Dispatch<React.SetStateAction<T[]>>,
-        selectOption: T,
-    ) => {
-        if (selectOption.label === 'All') {
-            setAllOption((prevOptions) =>
-                prevOptions.map((option) => ({ ...option, checkStatus: true })),
-            )
-        } else {
-            const checkCount = (
-                allOption as (categoryProjectType | categoryProjectStatus)[]
-            ).filter((option) => option.checkStatus).length
-            // case "All" filter will be checked on along with the selected filter
-            if (checkCount === allOption.length - 2) {
-                setAllOption((prevOptions) =>
-                    prevOptions.map((option) =>
-                        option.label === selectOption.label ||
-                        option.label === 'All'
-                            ? { ...option, checkStatus: true }
-                            : option,
-                    ),
+            if (optionToToggle.label === 'All') {
+                newOptions = allOptions.map((opt) => ({
+                    ...opt,
+                    checkStatus: isChecking,
+                }))
+            } else {
+                newOptions = allOptions.map((opt) =>
+                    opt.label === optionToToggle.label
+                        ? { ...opt, checkStatus: isChecking }
+                        : opt,
+                )
+                // Check if all other options are checked to update the "All" checkbox
+                const allOthersChecked = newOptions
+                    .filter((opt) => opt.label !== 'All')
+                    .every((opt) => opt.checkStatus)
+                newOptions = newOptions.map((opt) =>
+                    opt.label === 'All'
+                        ? { ...opt, checkStatus: allOthersChecked }
+                        : opt,
                 )
             }
-            // case just the selected filter will be checked on
-            else {
-                setAllOption((prevOptions) =>
-                    prevOptions.map((option) =>
-                        option.label === selectOption.label
-                            ? { ...option, checkStatus: true }
-                            : option,
-                    ),
-                )
-            }
-        }
-        if ('color' in selectOption) {
-            handleAddProjectStatusFilter(
-                selectOption.filterList as ProjectStatus[],
-            )
-        } else {
-            handleAddProjectTypeFilter(selectOption.filterList as ProjectType[])
-        }
-    }
 
-    const onUnCheckProjectFilter = <
-        T extends categoryProjectType | categoryProjectStatus,
-    >(
-        setAllOption: React.Dispatch<React.SetStateAction<T[]>>,
-        selectOption: T,
+            setOptions(newOptions)
+
+            // Update the master filter Set based on all checked options
+            const newFilterSet = new Set(
+                newOptions
+                    .filter((opt) => opt.checkStatus && opt.label !== 'All')
+                    .flatMap((opt) => opt.filterList),
+            )
+            setFilterSet(newFilterSet)
+        },
+        [],
+    )
+
+    // Memoized calculation for filtered projects. This is correct.
+    const filteredProjects = useMemo(() => {
+        return projects.filter(
+            (project) =>
+                projectTypeFilter.has(project.type_project) &&
+                projectStatusFilter.has(project.status),
+        )
+    }, [projects, projectTypeFilter, projectStatusFilter])
+
+    const paginatedProjects = useMemo(() => {
+        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+        const endIndex = startIndex + ITEMS_PER_PAGE
+        return filteredProjects.slice(startIndex, endIndex)
+    }, [filteredProjects, currentPage])
+
+    const pageCount = Math.ceil(filteredProjects.length / ITEMS_PER_PAGE)
+
+    const handlePageChange = (
+        event: React.ChangeEvent<unknown>,
+        value: number,
     ) => {
-        // case "All" filter is checked
-        if (selectOption.label === 'All') {
-            setAllOption((prevOptions) =>
-                prevOptions.map((option) => ({
-                    ...option,
-                    checkStatus: false,
-                })),
-            )
-        }
-        // case other fileter is checked
-        else {
-            setAllOption((prevOptions) =>
-                prevOptions.map((option) =>
-                    option.label === selectOption.label ||
-                    option.label === 'All'
-                        ? { ...option, checkStatus: false }
-                        : option,
-                ),
-            )
-        }
-
-        if ('color' in selectOption) {
-            handleRemoveProjectStatusFilter(
-                selectOption.filterList as ProjectStatus[],
-            )
-        } else {
-            handleRemoveProjectTypeFilter(
-                selectOption.filterList as ProjectType[],
-            )
-        }
+        setCurrentPage(value)
     }
 
     const handleCardClick = (project: Project) => {
@@ -342,36 +273,11 @@ const Storage = () => {
         setSelectedProject(null)
     }
 
-    useEffect(() => {
-        fetchAllProjects()
-    }, [userId, fetchAllProjects])
-
-    useEffect(() => {
-        const projectTypeList: ProjectType[] = Array.from(projectTypeFilter)
-        const projectStatusList: ProjectStatus[] =
-            Array.from(projectStatusFilter)
-        const projects = getProjectByTypeAndStatus(
-            projectTypeList,
-            projectStatusList,
-        )
-        setDisplayProjects(projects)
-    }, [
-        userId,
-        getProjectByTypeAndStatus,
-        projectTypeFilter,
-        projectStatusFilter,
-        getProjectsByType,
-    ])
-
     const handleFavoriteClicked = (e: any) => {
         e.stopPropagation()
         console.log('Favorite clicked')
         setIsFavorite(!isFavorite)
     }
-
-    useEffect(() => {
-        console.log('Display project: ', displayProjects)
-    }, [displayProjects])
 
     return (
         <Layout>
@@ -398,7 +304,7 @@ const Storage = () => {
                         {/* Checkbox filter: Project Type */}
                         {categoryOption.map((option, index) => (
                             <CheckboxComponent
-                                key={index}
+                                key={option.label}
                                 inputOption={option}
                                 labelProps={{
                                     fontFamily: 'Poppins, sans-serif',
@@ -406,16 +312,19 @@ const Storage = () => {
                                 }}
                                 color={theme.palette.text.secondary}
                                 onCheck={() =>
-                                    onCheckProjectFilter(
+                                    handleFilterChange(
+                                        option,
                                         categoryOption,
                                         setCategoryOption,
-                                        option,
+                                        setProjectTypeFilter,
                                     )
                                 }
                                 onUncheck={() =>
-                                    onUnCheckProjectFilter(
-                                        setCategoryOption,
+                                    handleFilterChange(
                                         option,
+                                        categoryOption,
+                                        setCategoryOption,
+                                        setProjectTypeFilter,
                                     )
                                 }
                             />
@@ -483,7 +392,7 @@ const Storage = () => {
                         <Box display="flex" flexDirection="column">
                             {statusOption.map((option, index) => (
                                 <CheckboxComponent
-                                    key={index}
+                                    key={option.label}
                                     inputOption={option}
                                     labelProps={{
                                         fontFamily: 'Poppins, sans-serif',
@@ -494,16 +403,19 @@ const Storage = () => {
                                         theme.palette.text.secondary
                                     }
                                     onCheck={() =>
-                                        onCheckProjectFilter(
+                                        handleFilterChange(
+                                            option,
                                             statusOption,
                                             setStatusOption,
-                                            option,
+                                            setProjectStatusFilter,
                                         )
                                     }
                                     onUncheck={() =>
-                                        onUnCheckProjectFilter(
-                                            setStatusOption,
+                                        handleFilterChange(
                                             option,
+                                            statusOption,
+                                            setStatusOption,
+                                            setProjectStatusFilter,
                                         )
                                     }
                                 />
@@ -543,40 +455,67 @@ const Storage = () => {
                     </Box>
 
                     {/* Grid of videos */}
-                    <Grid container rowSpacing={3} sx={{ marginTop: '1rem' }}>
-                        {displayProjects.map((project, index) => (
+                    {isLoading ? (
+                        <Box
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                            height="50vh"
+                        >
+                            <CircularProgress />
+                        </Box>
+                    ) : (
+                        <>
                             <Grid
-                                item
-                                xs={12}
-                                sm={6}
-                                md={4}
-                                key={index}
                                 container
-                                justifyContent="center"
-                                alignItems="center"
+                                rowSpacing={3}
+                                sx={{ marginTop: '1rem' }}
                             >
-                                <CardFeature
-                                    key={index}
-                                    project={project}
-                                    onclick={() => handleCardClick(project)}
-                                />
+                                {paginatedProjects.map((project) => (
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        sm={6}
+                                        md={4}
+                                        key={project.id}
+                                        container
+                                        justifyContent="center"
+                                        alignItems="center"
+                                    >
+                                        <CardFeature
+                                            project={project}
+                                            onclick={() =>
+                                                handleCardClick(project)
+                                            }
+                                        />
+                                    </Grid>
+                                ))}
                             </Grid>
-                        ))}
-                    </Grid>
-
-                    {/* Pagination */}
-                    <Box mt={4} display="flex" justifyContent="center">
-                        <Pagination
-                            count={3}
-                            color="primary"
-                            sx={{
-                                '& .MuiPaginationItem-root': {
-                                    fontFamily: 'Poppins, sans-serif',
-                                    fontSize: '0.9rem',
-                                },
-                            }}
-                        />
-                    </Box>
+                            {/* Pagination */}
+                            {pageCount > 1 && (
+                                <Box
+                                    mt={4}
+                                    mb={10}
+                                    display="flex"
+                                    justifyContent="center"
+                                >
+                                    <Pagination
+                                        count={pageCount}
+                                        page={currentPage}
+                                        onChange={handlePageChange}
+                                        color="primary"
+                                        sx={{
+                                            '& .MuiPaginationItem-root': {
+                                                fontFamily:
+                                                    'Poppins, sans-serif',
+                                                fontSize: '0.9rem',
+                                            },
+                                        }}
+                                    />
+                                </Box>
+                            )}
+                        </>
+                    )}
                 </Box>
             </Box>
             {selectedProject && (
