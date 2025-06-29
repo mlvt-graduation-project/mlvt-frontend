@@ -1,101 +1,101 @@
-import React, { useEffect } from "react";
-import { Box, TextField, Typography, Divider, Checkbox } from "@mui/material";
-import LoginSignup from "../../../layout/LoginSignup";
-import { useTheme } from "@mui/material/styles";
-import GoogleLoginButton from "../components/SocialLoginButton/GoogleLoginButton";
-import FacebookLoginButton from "../components/SocialLoginButton/FacebookLoginButton";
-import { useSnackbar } from "notistack";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
-import { CustomButton } from "../../../components/CustomButton";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { login as apiLogin } from "../api/auth.api";
+import { Visibility, VisibilityOff } from '@mui/icons-material'
+import { Box, Checkbox, Divider, TextField, Typography } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
+import { useSnackbar } from 'notistack'
+import React, { useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { CustomButton } from '../../../components/CustomButton'
+import { useAuth } from '../../../contexts/AuthContext'
+import LoginSignup from '../../../layout/LoginSignup'
+import { login as apiLogin } from '../api/auth.api'
+import FacebookLoginButton from '../components/SocialLoginButton/FacebookLoginButton'
+import GoogleLoginButton from '../components/SocialLoginButton/GoogleLoginButton'
 
 const InputStyles = (theme: any) => ({
     sx: {
-        "& input::placeholder": {
-            fontSize: "0.9rem",
+        '& input::placeholder': {
+            fontSize: '0.9rem',
             color: theme.palette.text.primary,
-            fontFamily: "Poppins, sans-serif",
+            fontFamily: 'Poppins, sans-serif',
             borderRadius: 2.5,
         },
     },
     style: {
-        fontFamily: "Poppins, sans-serif",
-        fontSize: "0.9rem",
+        fontFamily: 'Poppins, sans-serif',
+        fontSize: '0.9rem',
     },
-});
+})
 
 const Login = () => {
-    const navigate = useNavigate();
-    const { login: setAuthData } = useAuth();
-    const authToken = localStorage.getItem("authToken");
+    const navigate = useNavigate()
+    const { login: setAuthData } = useAuth()
+    const authToken = localStorage.getItem('authToken')
 
     useEffect(() => {
         if (authToken) {
-            navigate("/", { replace: true });
+            navigate('/', { replace: true })
         }
-    }, [authToken, navigate]);
+    }, [authToken, navigate])
 
-    const theme = useTheme();
-    const { enqueueSnackbar } = useSnackbar();
+    const theme = useTheme()
+    const { enqueueSnackbar } = useSnackbar()
 
-    const [email, setEmail] = React.useState("");
-    const [password, setPassword] = React.useState("");
-    const [error, setError] = React.useState("");
-    const [emailError, setEmailError] = React.useState(false);
-    const [passwordError, setPasswordError] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
-    const [rememberMe, setRememberMe] = React.useState(false);
-    const [showPassword, setShowPassword] = React.useState(false);
-    const location = useLocation();
+    const [email, setEmail] = React.useState('')
+    const [password, setPassword] = React.useState('')
+    const [error, setError] = React.useState('')
+    const [emailError, setEmailError] = React.useState(false)
+    const [passwordError, setPasswordError] = React.useState(false)
+    const [loading, setLoading] = React.useState(false)
+    const [rememberMe, setRememberMe] = React.useState(false)
+    const [showPassword, setShowPassword] = React.useState(false)
+    const location = useLocation()
 
     useEffect(() => {
         if (location.state?.successMessage) {
             enqueueSnackbar(location.state.successMessage, {
-                variant: "success",
-            });
+                variant: 'success',
+            })
         }
-    }, [location.state, enqueueSnackbar]);
+    }, [location.state, enqueueSnackbar])
 
-    const validateEmail = () => setEmailError(!email);
-    const validatePassword = () => setPasswordError(!password);
+    const validateEmail = () => setEmailError(!email)
+    const validatePassword = () => setPasswordError(!password)
 
     const handleLogin = async () => {
-        setError("");
-        let valid = true;
+        setError('')
+        let valid = true
 
         if (!email) {
-            setEmailError(true);
-            valid = false;
+            setEmailError(true)
+            valid = false
         }
 
         if (!password) {
-            setPasswordError(true);
-            valid = false;
+            setPasswordError(true)
+            valid = false
         }
 
-        if (!valid) return;
+        if (!valid) return
 
-        setLoading(true);
+        setLoading(true)
 
         try {
             const responseData = await apiLogin({
                 email: email,
                 password: password, // Send the raw password
-            });
+            })
 
-            setAuthData(responseData.token, responseData.user_id);
-            navigate("/");
+            setAuthData(responseData.token, responseData.user_id)
+            navigate('/')
         } catch (err: any) {
             const errorMessage =
                 err.response?.data?.message ||
-                "Invalid credentials. Please try again.";
-            setError(errorMessage);
+                'Invalid credentials. Please try again.'
+            setError(errorMessage)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    };
+    }
 
     return (
         <LoginSignup>
@@ -103,13 +103,13 @@ const Login = () => {
                 gutterBottom
                 sx={{
                     color: theme.palette.text.primary,
-                    fontFamily: "Poppins, sans-serif",
+                    fontFamily: 'Poppins, sans-serif',
                     fontWeight: 600,
                     fontSize: {
-                        xs: "1.8rem",
-                        sm: "2.5rem",
-                        md: "3rem",
-                        lg: "3.5rem",
+                        xs: '1.8rem',
+                        sm: '2.5rem',
+                        md: '3rem',
+                        lg: '3.5rem',
                     },
                     mt: 3,
                 }}
@@ -120,10 +120,10 @@ const Login = () => {
                 sx={{
                     marginBottom: 5,
                     color: theme.palette.text.primary,
-                    fontFamily: "Poppins, sans-serif",
+                    fontFamily: 'Poppins, sans-serif',
                     fontWeight: 500,
                     fontSize: 16,
-                    textAlign: "center",
+                    textAlign: 'center',
                 }}
             >
                 Enter your Credentials to access your account
@@ -132,7 +132,7 @@ const Login = () => {
             {/* Email Input */}
             <Typography
                 sx={{
-                    fontFamily: "Poppins, sans-serif",
+                    fontFamily: 'Poppins, sans-serif',
                     fontSize: 14,
                     fontWeight: 500,
                     marginTop: 2.5,
@@ -150,8 +150,8 @@ const Login = () => {
                 InputProps={InputStyles(theme)}
                 sx={{
                     marginTop: 1.5,
-                    "& .MuiOutlinedInput-root": {
-                        "&.Mui-focused fieldset": {
+                    '& .MuiOutlinedInput-root': {
+                        '&.Mui-focused fieldset': {
                             borderColor: theme.palette.text.primary,
                         },
                     },
@@ -160,10 +160,10 @@ const Login = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 onBlur={validateEmail}
                 error={emailError}
-                helperText={emailError ? "Email is required" : ""}
+                helperText={emailError ? 'Email is required' : ''}
                 FormHelperTextProps={{
                     sx: {
-                        fontFamily: "Poppins, sans-serif",
+                        fontFamily: 'Poppins, sans-serif',
                         marginLeft: 0,
                         fontSize: 12,
                         color: `${theme.palette.error.contrastText} !important`,
@@ -174,7 +174,7 @@ const Login = () => {
             {/* Password Input */}
             <Typography
                 sx={{
-                    fontFamily: "Poppins, sans-serif",
+                    fontFamily: 'Poppins, sans-serif',
                     fontSize: 14,
                     fontWeight: 500,
                     marginTop: 1.5,
@@ -184,7 +184,7 @@ const Login = () => {
             </Typography>
             <TextField
                 placeholder="Enter your password"
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 fullWidth
                 margin="normal"
                 size="small"
@@ -194,12 +194,12 @@ const Login = () => {
                     endAdornment: (
                         <Box
                             sx={{
-                                cursor: "pointer",
+                                cursor: 'pointer',
                                 color: theme.palette.text.secondary,
                                 marginRight: 1,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
                             }}
                             onClick={() => setShowPassword(!showPassword)}
                         >
@@ -209,8 +209,8 @@ const Login = () => {
                 }}
                 sx={{
                     marginTop: 1.5,
-                    "& .MuiOutlinedInput-root": {
-                        "&.Mui-focused fieldset": {
+                    '& .MuiOutlinedInput-root': {
+                        '&.Mui-focused fieldset': {
                             borderColor: theme.palette.text.primary,
                         },
                     },
@@ -219,10 +219,10 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 onBlur={validatePassword}
                 error={passwordError}
-                helperText={passwordError ? "Password is required" : ""}
+                helperText={passwordError ? 'Password is required' : ''}
                 FormHelperTextProps={{
                     sx: {
-                        fontFamily: "Poppins, sans-serif",
+                        fontFamily: 'Poppins, sans-serif',
                         color: `${theme.palette.error.contrastText} !important`,
                         marginLeft: 0,
                         fontSize: 12,
@@ -237,7 +237,7 @@ const Login = () => {
                     sx={{
                         marginTop: 2,
                         fontSize: 14,
-                        fontFamily: "Poppins, sans-serif",
+                        fontFamily: 'Poppins, sans-serif',
                     }}
                 >
                     {error}
@@ -247,21 +247,21 @@ const Login = () => {
             {/* Remember Me and Forgot Password */}
             <Box
                 sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                     marginBottom: 2,
                     marginTop: 2,
                 }}
             >
-                <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Checkbox
                         id="rememberMe"
                         size="medium"
                         sx={{
                             color: theme.palette.secondary.contrastText,
                             padding: 0,
-                            "&.Mui-checked": {
+                            '&.Mui-checked': {
                                 color: theme.palette.secondary.contrastText,
                             },
                         }}
@@ -273,11 +273,11 @@ const Login = () => {
                         component="label"
                         sx={{
                             marginLeft: 1,
-                            fontSize: "0.8rem",
+                            fontSize: '0.8rem',
                             color: theme.palette.text.secondary,
-                            fontFamily: "Poppins, sans-serif",
-                            display: "flex",
-                            alignItems: "center",
+                            fontFamily: 'Poppins, sans-serif',
+                            display: 'flex',
+                            alignItems: 'center',
                         }}
                     >
                         Remember for 30 days
@@ -286,12 +286,12 @@ const Login = () => {
                 <Typography
                     variant="body2"
                     sx={{
-                        cursor: "pointer",
+                        cursor: 'pointer',
                         color: theme.palette.neutral.main,
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "0.8rem",
-                        "&:hover": {
-                            textDecoration: "underline",
+                        fontFamily: 'Poppins, sans-serif',
+                        fontSize: '0.8rem',
+                        '&:hover': {
+                            textDecoration: 'underline',
                         },
                     }}
                 >
@@ -308,7 +308,7 @@ const Login = () => {
                     marginBottom: 2,
                     marginTop: 2,
                     borderRadius: 1.25,
-                    width: "100%",
+                    width: '100%',
                 }}
             />
 
@@ -316,8 +316,8 @@ const Login = () => {
             <Divider
                 sx={{
                     my: 1.5,
-                    fontFamily: "Poppins, sans-serif",
-                    fontSize: "0.8rem",
+                    fontFamily: 'Poppins, sans-serif',
+                    fontSize: '0.8rem',
                 }}
             >
                 Or
@@ -326,8 +326,8 @@ const Login = () => {
             {/* Social Login Buttons */}
             <Box
                 sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
+                    display: 'flex',
+                    justifyContent: 'space-between',
                     marginTop: 2,
                 }}
             >
@@ -338,27 +338,27 @@ const Login = () => {
             {/* Signup Link */}
             <Box
                 sx={{
-                    textTransform: "none",
+                    textTransform: 'none',
                     color: theme.palette.text.secondary,
-                    fontSize: "0.8rem",
-                    display: "flex",
-                    justifyContent: "center",
+                    fontSize: '0.8rem',
+                    display: 'flex',
+                    justifyContent: 'center',
                 }}
             >
                 <Typography
                     sx={{
                         marginTop: 3,
-                        alignItems: "center",
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: "0.9rem",
+                        alignItems: 'center',
+                        fontFamily: 'Poppins, sans-serif',
+                        fontSize: '0.9rem',
                     }}
                 >
-                    Don’t have an account?{" "}
+                    Don’t have an account?{' '}
                     <a
                         href="/signup"
                         style={{
                             color: theme.palette.secondary.contrastText,
-                            fontFamily: "Poppins, sans-serif",
+                            fontFamily: 'Poppins, sans-serif',
                             fontWeight: 600,
                         }}
                     >
@@ -367,7 +367,7 @@ const Login = () => {
                 </Typography>
             </Box>
         </LoginSignup>
-    );
-};
+    )
+}
 
-export default Login;
+export default Login

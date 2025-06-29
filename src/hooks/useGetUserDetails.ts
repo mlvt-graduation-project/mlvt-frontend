@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getUserDetails } from 'src/api/user.api'
+import { getUserDetails } from 'src/features/account-settings/apis/user.api'
 
 export const useGetUserDetails = () => {
     const authToken = localStorage.getItem('authToken')

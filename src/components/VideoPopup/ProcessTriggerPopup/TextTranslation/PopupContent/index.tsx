@@ -1,106 +1,106 @@
-import React, { useMemo, useState, useCallback, useEffect } from "react";
-import { Box, Typography } from "@mui/material";
-import ChangeViewBox from "../../BaseComponent/ChangeView";
-import { UploadFileFromDevice } from "../../BaseComponent/UploadFileFromDevice";
-import { TextData } from "../../../../../types/FileData";
-import { GenerateButton } from "../../BaseComponent/GenerateButton";
-import { BrowseFile } from "../../BaseComponent/BrowseMLVTFile";
-import { InputTextBox } from "../../BaseComponent/InputTextBox";
-import { SingleOptionBox } from "../../BaseComponent/SingleOptionBox";
-import { TranslateLanguage } from "../../../../../types/Translation";
-import { TextFileType } from "../../../../../types/FileType";
-import { useAuth } from "../../../../../context/AuthContext";
-import { S3Folder } from "../../../../../types/S3FolderStorage";
-import { ProjectType, RawText, Project } from "../../../../../types/Project";
+import { Box, Typography } from '@mui/material'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useAuth } from '../../../../../contexts/AuthContext'
+import { TextData } from '../../../../../types/FileData'
+import { TextFileType } from '../../../../../types/FileType'
+import { Project, ProjectType, RawText } from '../../../../../types/Project'
+import { S3Folder } from '../../../../../types/S3FolderStorage'
+import { TranslateLanguage } from '../../../../../types/Translation'
+import { BrowseFile } from '../../BaseComponent/BrowseMLVTFile'
+import ChangeViewBox from '../../BaseComponent/ChangeView'
+import { GenerateButton } from '../../BaseComponent/GenerateButton'
+import { InputTextBox } from '../../BaseComponent/InputTextBox'
+import { SingleOptionBox } from '../../BaseComponent/SingleOptionBox'
+import { UploadFileFromDevice } from '../../BaseComponent/UploadFileFromDevice'
 
 export interface TextTranslationData {
-    viewState: "upload" | "enter text" | "browse";
-    deviceFile: File | null;
-    MLVTText: RawText | null;
-    inputText: string;
-    sourceLanguage: TranslateLanguage | null;
-    targetLanguage: TranslateLanguage | null;
-    textData: TextData;
+    viewState: 'upload' | 'enter text' | 'browse'
+    deviceFile: File | null
+    MLVTText: RawText | null
+    inputText: string
+    sourceLanguage: TranslateLanguage | null
+    targetLanguage: TranslateLanguage | null
+    textData: TextData
 }
 
 interface DialogContentProps {
-    onGenerate: (data: TextTranslationData) => void;
+    onGenerate: (data: TextTranslationData) => void
 }
 
 export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
-    const { userId } = useAuth();
-    const parsedUserId = userId ? parseInt(userId) : 0;
+    const { userId } = useAuth()
+    const parsedUserId = userId ? parseInt(userId) : 0
 
     const [viewState, setViewState] = useState<
-        "upload" | "enter text" | "browse"
-    >("enter text");
-    const [deviceFile, setDeviceFile] = useState<File | null>(null);
-    const [MLVTText, setMLVTText] = useState<RawText | null>(null);
-    const [inputText, setInputText] = useState<string>("");
-    const [disableGenerate, setDisableGenerate] = useState<boolean>(true);
+        'upload' | 'enter text' | 'browse'
+    >('enter text')
+    const [deviceFile, setDeviceFile] = useState<File | null>(null)
+    const [MLVTText, setMLVTText] = useState<RawText | null>(null)
+    const [inputText, setInputText] = useState<string>('')
+    const [disableGenerate, setDisableGenerate] = useState<boolean>(true)
     const [sourceLanguage, setSourceLanguage] = useState<TranslateLanguage>(
-        TranslateLanguage.English
-    );
+        TranslateLanguage.English,
+    )
     const [targetLanguage, setTargetLanguage] = useState<TranslateLanguage>(
-        TranslateLanguage.Vietnamese
-    );
+        TranslateLanguage.Vietnamese,
+    )
     const [textData, setTextData] = useState<TextData>({
-        file_name: "",
+        file_name: '',
         folder: S3Folder.text,
         user_id: parsedUserId,
-        lang: "",
-    });
+        lang: '',
+    })
 
     const handleChangeSourceLanguage = (value: string) => {
         if (
             Object.values(TranslateLanguage).includes(
-                value as TranslateLanguage
+                value as TranslateLanguage,
             )
         ) {
-            setSourceLanguage(value as TranslateLanguage);
+            setSourceLanguage(value as TranslateLanguage)
         }
-    };
+    }
 
     const handleChangeTargetLanguage = (value: string) => {
         if (
             Object.values(TranslateLanguage).includes(
-                value as TranslateLanguage
+                value as TranslateLanguage,
             )
         ) {
-            setTargetLanguage(value as TranslateLanguage);
+            setTargetLanguage(value as TranslateLanguage)
         }
-    };
+    }
 
     const handleChangeTextData = useCallback((update: Partial<TextData>) => {
         setTextData((prevData) => ({
             ...prevData,
             ...update,
-        }));
-    }, []);
+        }))
+    }, [])
 
     const handleChangeDeviceFile = (file: File | null) => {
-        setDeviceFile(file);
-    };
+        setDeviceFile(file)
+    }
 
     const handleChangeMLVTText = useCallback(
         (input: Project | null) => {
-            if (input && input.type_project !== ProjectType.Text) return; // Ensure it's an audio project
-            setMLVTText(input as RawText | null);
+            if (input && input.type_project !== ProjectType.Text) return // Ensure it's an audio project
+            setMLVTText(input as RawText | null)
         },
-        [setMLVTText]
-    );
+        [setMLVTText],
+    )
 
     const changeViewState = (view: string) => {
-        if (["upload", "enter text", "browse"].includes(view)) {
-            setViewState(view as "upload" | "enter text" | "browse");
+        if (['upload', 'enter text', 'browse'].includes(view)) {
+            setViewState(view as 'upload' | 'enter text' | 'browse')
         }
-    };
+    }
 
     const Views = useMemo(
         () => [
             {
-                text: "ENTER TEXT",
-                viewState: "enter text",
+                text: 'ENTER TEXT',
+                viewState: 'enter text',
                 component: (
                     <InputTextBox
                         inputTextFromParent={inputText}
@@ -109,8 +109,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 ),
             },
             {
-                text: "UPLOAD",
-                viewState: "upload",
+                text: 'UPLOAD',
+                viewState: 'upload',
                 component: (
                     <UploadFileFromDevice
                         selectedFile={deviceFile}
@@ -121,8 +121,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 ),
             },
             {
-                text: "BROWSE MLVT",
-                viewState: "browse",
+                text: 'BROWSE MLVT',
+                viewState: 'browse',
                 component: (
                     <BrowseFile
                         allowTypes={[ProjectType.Text]}
@@ -138,19 +138,19 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             handleChangeMLVTText,
             inputText,
             MLVTText,
-        ]
-    );
+        ],
+    )
 
     useEffect(() => {
         const isInputValid =
-            (viewState === "enter text" && !!inputText) ||
-            (viewState === "upload" && !!deviceFile) ||
-            (viewState === "browse" && !!MLVTText);
+            (viewState === 'enter text' && !!inputText) ||
+            (viewState === 'upload' && !!deviceFile) ||
+            (viewState === 'browse' && !!MLVTText)
 
         if (!isInputValid || !sourceLanguage || !targetLanguage) {
-            setDisableGenerate(true);
+            setDisableGenerate(true)
         } else {
-            setDisableGenerate(false);
+            setDisableGenerate(false)
         }
     }, [
         viewState,
@@ -159,10 +159,10 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         MLVTText,
         sourceLanguage,
         targetLanguage,
-    ]);
+    ])
 
-    const activeView = Views.find((view) => view.viewState === viewState);
-    const ActiveComponent = activeView?.component ?? null;
+    const activeView = Views.find((view) => view.viewState === viewState)
+    const ActiveComponent = activeView?.component ?? null
 
     const handleGenerate = useCallback(async () => {
         const data: TextTranslationData = {
@@ -173,8 +173,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             sourceLanguage,
             targetLanguage,
             textData,
-        };
-        onGenerate(data);
+        }
+        onGenerate(data)
     }, [
         onGenerate,
         viewState,
@@ -184,7 +184,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         sourceLanguage,
         targetLanguage,
         textData,
-    ]);
+    ])
 
     return (
         <>
@@ -202,19 +202,19 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             <Box
                 marginTop="10px"
                 sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    width: "100%",
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    width: '100%',
                 }}
             >
                 {/* Choosing audio language seciton */}
                 <Box paddingX={2}>
                     <Typography
                         sx={{
-                            fontFamily: "Poppins, sans-serif",
+                            fontFamily: 'Poppins, sans-serif',
                             fontWeight: 500,
-                            fontSize: "0.9rem",
+                            fontSize: '0.9rem',
                         }}
                     >
                         Text language:
@@ -235,9 +235,9 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 <Box>
                     <Typography
                         sx={{
-                            fontFamily: "Poppins, sans-serif",
+                            fontFamily: 'Poppins, sans-serif',
                             fontWeight: 500,
-                            fontSize: "0.9rem",
+                            fontSize: '0.9rem',
                         }}
                     >
                         Translate to Language:
@@ -259,5 +259,5 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 handleGenerate={handleGenerate}
             />
         </>
-    );
-};
+    )
+}

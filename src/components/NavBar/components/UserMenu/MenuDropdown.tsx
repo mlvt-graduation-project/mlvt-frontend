@@ -1,4 +1,3 @@
-import { useAuth } from "../../../../context/AuthContext";
 import {
     AccountCircle,
     DarkMode,
@@ -6,7 +5,7 @@ import {
     LightMode,
     Logout,
     WorkspacePremiumSharp,
-} from "@mui/icons-material";
+} from '@mui/icons-material'
 import {
     Avatar,
     Box,
@@ -17,104 +16,103 @@ import {
     MenuItem,
     Typography,
     useTheme,
-} from "@mui/material";
-import { useColorMode } from "../../../../themes/ColorModeContext";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { User } from "src/types/Response/User";
+} from '@mui/material'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { User } from 'src/types/Response/User'
+import { useAuth } from '../../../../contexts/AuthContext'
+import { useColorMode } from '../../../../themes/ColorModeContext'
 
 export interface MenuDropdownProps {
-    user: User;
-    anchorDropdown: HTMLElement | null;
-    setAnchorDropdown: (anchor: HTMLElement | null) => void;
+    user: User
+    anchorDropdown: HTMLElement | null
+    setAnchorDropdown: (anchor: HTMLElement | null) => void
 }
 
 const enum MenuItemType {
-    MAIN = "main",
-    APPEARANCE = "appearance",
-    ACCOUNT_EDIT = "account_edit",
-    PREMIUM = "premium",
-    HELP = "help",
-    LOGOUT = "logout",
+    MAIN = 'main',
+    APPEARANCE = 'appearance',
+    ACCOUNT_EDIT = 'account_edit',
+    PREMIUM = 'premium',
+    HELP = 'help',
+    LOGOUT = 'logout',
 }
 
 const appearanceOptions = [
-    { label: "Light", icon: <LightMode /> },
-    { label: "Dark", icon: <DarkMode /> },
-];
+    { label: 'Light', icon: <LightMode /> },
+    { label: 'Dark', icon: <DarkMode /> },
+]
 
 const MenuDropdown: React.FC<MenuDropdownProps> = ({
     user,
     anchorDropdown,
     setAnchorDropdown,
 }) => {
-    const theme = useTheme();
-    const navigate = useNavigate();
-    const { remainingToken } = useAuth();
-    const open = Boolean(anchorDropdown);
-    const { logout } = useAuth();
+    const theme = useTheme()
+    const navigate = useNavigate()
+    const { remainingToken } = useAuth()
+    const open = Boolean(anchorDropdown)
+    const { logout } = useAuth()
 
-    const [anchorSubMenu, setAnchorSubMenu] = useState<HTMLElement | null>(
-        null
-    );
-    const { toggle } = useColorMode();
+    const [anchorSubMenu, setAnchorSubMenu] = useState<HTMLElement | null>(null)
+    const { toggle } = useColorMode()
 
     const menuItems = [
         {
             type: MenuItemType.ACCOUNT_EDIT,
-            label: "Account settings",
+            label: 'Account settings',
             icon: <AccountCircle />,
-            path: "/account-settings",
+            path: '/account-settings',
         },
         {
             type: MenuItemType.PREMIUM,
-            label: "Premium membership",
+            label: 'Premium membership',
             icon: <WorkspacePremiumSharp />,
-            path: "/premium-plan",
+            path: '/premium-plan',
         },
         {
             type: MenuItemType.APPEARANCE,
             label: `Appearance: ${
-                theme.palette.mode === "light" ? "Light" : "Dark"
+                theme.palette.mode === 'light' ? 'Light' : 'Dark'
             }`,
-            icon: theme.palette.mode === "light" ? <LightMode /> : <DarkMode />,
+            icon: theme.palette.mode === 'light' ? <LightMode /> : <DarkMode />,
         },
         {
             type: MenuItemType.HELP,
-            label: "Help & Support",
+            label: 'Help & Support',
             icon: <Help />,
-            path: "/help-and-support",
+            path: '/help-and-support',
         },
-        { type: MenuItemType.LOGOUT, label: "Log out", icon: <Logout /> },
-    ];
+        { type: MenuItemType.LOGOUT, label: 'Log out', icon: <Logout /> },
+    ]
 
     const handleMenuItemClick = (
         e: React.MouseEvent<HTMLElement>,
-        item: (typeof menuItems)[0]
+        item: (typeof menuItems)[0],
     ) => {
         if (item.type === MenuItemType.APPEARANCE) {
-            setAnchorSubMenu(e.currentTarget);
-            return;
+            setAnchorSubMenu(e.currentTarget)
+            return
         }
 
         if (item.type === MenuItemType.LOGOUT) {
-            setAnchorDropdown(null);
-            logout();
-            return;
+            setAnchorDropdown(null)
+            logout()
+            return
         }
 
         if (item.path) {
-            navigate(item.path);
-            setAnchorDropdown(null);
+            navigate(item.path)
+            setAnchorDropdown(null)
         }
-    };
+    }
 
     const handleAppearanceSelect = (option: (typeof appearanceOptions)[0]) => {
         if (option.label.toLowerCase() !== theme.palette.mode) {
-            toggle();
+            toggle()
         }
-        setAnchorSubMenu(null);
-    };
+        setAnchorSubMenu(null)
+    }
 
     return (
         <>
@@ -123,33 +121,33 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                 open={open}
                 onClose={() => setAnchorDropdown(null)}
                 anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
+                    vertical: 'bottom',
+                    horizontal: 'right',
                 }}
                 transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
+                    vertical: 'top',
+                    horizontal: 'right',
                 }}
                 sx={{
-                    mt: "1.2rem",
-                    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-                    overflow: "hidden",
-                    borderRadius: "0.7rem",
+                    mt: '1.2rem',
+                    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                    overflow: 'hidden',
+                    borderRadius: '0.7rem',
                 }}
-                slotProps={{ paper: { sx: { borderRadius: "0.6rem" } } }}
+                slotProps={{ paper: { sx: { borderRadius: '0.6rem' } } }}
             >
                 {/* Profile Section */}
                 <Box>
                     <Box
                         sx={{
-                            display: "flex",
-                            flexDirection: "row",
+                            display: 'flex',
+                            flexDirection: 'row',
                             gap: 1.5,
-                            padding: "1rem 1.5rem",
-                            marginLeft: "0.5rem",
-                            marginRight: "0.5rem",
-                            alignItems: "center",
-                            borderRadius: "0.5rem",
+                            padding: '1rem 1.5rem',
+                            marginLeft: '0.5rem',
+                            marginRight: '0.5rem',
+                            alignItems: 'center',
+                            borderRadius: '0.5rem',
                             boxShadow: `
                                 inset 0 0 0 1px ${theme.palette.divider},
                                 0px 4px 15px ${theme.palette.background.default}
@@ -159,19 +157,19 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                         <Avatar
                             src={
                                 user.avatar
-                                    ? user.avatar.split("?X-Amz-Algorithm")[0]
-                                    : ""
+                                    ? user.avatar.split('?X-Amz-Algorithm')[0]
+                                    : ''
                             }
-                            sx={{ width: "2.5rem", height: "2.5rem" }}
+                            sx={{ width: '2.5rem', height: '2.5rem' }}
                         />
                         <Box>
                             <Typography
                                 variant="body2"
                                 sx={{
                                     color: theme.palette.text.primary,
-                                    fontFamily: "Poppins, sans-serif",
+                                    fontFamily: 'Poppins, sans-serif',
                                     fontWeight: 600,
-                                    fontSize: "0.95rem",
+                                    fontSize: '0.95rem',
                                 }}
                             >
                                 {`${user?.first_name} ${user?.last_name}`}
@@ -180,38 +178,38 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                                 variant="caption"
                                 sx={{
                                     color: theme.palette.text.secondary,
-                                    fontFamily: "Poppins, sans-serif",
-                                    fontSize: "0.77rem",
+                                    fontFamily: 'Poppins, sans-serif',
+                                    fontSize: '0.77rem',
                                 }}
                             >
                                 {user?.status
-                                    ? "Premium user"
-                                    : "Standard user"}
+                                    ? 'Premium user'
+                                    : 'Standard user'}
                             </Typography>
                         </Box>
                     </Box>
                     <Box
                         sx={{
-                            marginLeft: "0.5rem",
-                            padding: "0.5rem 1.5rem",
-                            paddingTop: "0.6rem",
+                            marginLeft: '0.5rem',
+                            padding: '0.5rem 1.5rem',
+                            paddingTop: '0.6rem',
                         }}
                     >
                         <Typography
                             variant="caption"
                             sx={{
                                 color: theme.palette.text.secondary,
-                                fontFamily: "Poppins, sans-serif",
-                                fontSize: "0.77rem",
-                                gap: "0.5rem",
-                                display: "flex",
-                                alignItems: "space-between",
+                                fontFamily: 'Poppins, sans-serif',
+                                fontSize: '0.77rem',
+                                gap: '0.5rem',
+                                display: 'flex',
+                                alignItems: 'space-between',
                             }}
                         >
                             Remaining token
                             <span
                                 style={{
-                                    fontFamily: "Poppins, sans-serif",
+                                    fontFamily: 'Poppins, sans-serif',
                                     fontWeight: 600,
                                 }}
                             >
@@ -225,12 +223,12 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                     <MenuItem
                         onClick={(e) => handleMenuItemClick(e, item)}
                         sx={{
-                            padding: "0.3rem 1.5rem",
-                            margin: "0.5rem 0.5rem",
-                            borderRadius: "0.4em",
-                            alignItems: "center",
-                            gap: "1.2rem",
-                            "&:hover": {
+                            padding: '0.3rem 1.5rem',
+                            margin: '0.5rem 0.5rem',
+                            borderRadius: '0.4em',
+                            alignItems: 'center',
+                            gap: '1.2rem',
+                            '&:hover': {
                                 backgroundColor: theme.palette.tertiary.main,
                                 color: theme.palette.primary.contrastText,
                             },
@@ -238,7 +236,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                     >
                         <ListItemIcon
                             sx={{
-                                minWidth: "35px",
+                                minWidth: '35px',
                                 color: theme.palette.text.secondary,
                             }}
                         >
@@ -249,8 +247,8 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                             primary={item.label}
                             sx={{
                                 color: theme.palette.text.primary,
-                                fontFamily: "Poppins, sans-serif",
-                                fontSize: "0.8rem",
+                                fontFamily: 'Poppins, sans-serif',
+                                fontSize: '0.8rem',
                             }}
                         />
                     </MenuItem>
@@ -262,23 +260,23 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                 open={Boolean(anchorSubMenu)}
                 onClose={() => setAnchorSubMenu(null)}
                 anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
+                    vertical: 'top',
+                    horizontal: 'left',
                 }}
                 transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
+                    vertical: 'top',
+                    horizontal: 'right',
                 }}
                 sx={{
-                    borderRadius: "0.7rem",
+                    borderRadius: '0.7rem',
                     padding: 0,
                 }}
                 slotProps={{
                     paper: {
                         sx: {
-                            borderRadius: "0.6rem",
-                            ml: "-12px",
-                            paddingX: "0.5rem",
+                            borderRadius: '0.6rem',
+                            ml: '-12px',
+                            paddingX: '0.5rem',
                         },
                     },
                 }}
@@ -288,14 +286,14 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                         key={opt.label}
                         onClick={() => handleAppearanceSelect(opt)}
                         sx={{
-                            padding: "0.5rem 1rem",
-                            gap: "1.2rem",
-                            borderRadius: "0.4em",
-                            "&:hover": {
+                            padding: '0.5rem 1rem',
+                            gap: '1.2rem',
+                            borderRadius: '0.4em',
+                            '&:hover': {
                                 backgroundColor: theme.palette.tertiary.main,
                                 color: theme.palette.primary.contrastText,
                             },
-                            "&.Mui-selected, &.Mui-selected:hover": {
+                            '&.Mui-selected, &.Mui-selected:hover': {
                                 backgroundColor: theme.palette.primary.main,
                                 color: theme.palette.primary.contrastText,
                             },
@@ -303,7 +301,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                     >
                         <ListItemIcon
                             sx={{
-                                minWidth: "35px",
+                                minWidth: '35px',
                                 color: theme.palette.text.primary,
                             }}
                         >
@@ -313,8 +311,8 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                             disableTypography
                             sx={{
                                 color: theme.palette.text.primary,
-                                fontFamily: "Poppins, sans-serif",
-                                fontSize: "0.8rem",
+                                fontFamily: 'Poppins, sans-serif',
+                                fontSize: '0.8rem',
                             }}
                             primary={opt.label}
                         />
@@ -322,7 +320,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                 ))}
             </Menu>
         </>
-    );
-};
+    )
+}
 
-export default MenuDropdown;
+export default MenuDropdown

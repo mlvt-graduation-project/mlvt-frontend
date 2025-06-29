@@ -1,38 +1,38 @@
-import { Box, Typography } from "@mui/material";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
-import { useDropzone } from "react-dropzone";
-import { useEffect, useState } from "react";
-import { getMediaDuration } from "../../../../utils/ProcessTriggerPopup/VideoService";
-import { FileData } from "../../../../types/FileData";
+import FileUploadIcon from '@mui/icons-material/FileUpload'
+import { Box, Typography } from '@mui/material'
+import { useEffect, useState } from 'react'
+import { useDropzone } from 'react-dropzone'
+import { useAuth } from '../../../../contexts/AuthContext'
+import { FileData } from '../../../../types/FileData'
 import {
-    VideoFileType,
-    TextFileType,
     AudioFileType,
-} from "../../../../types/FileType";
-import { useAuth } from "../../../../context/AuthContext";
-import { CustomAudio } from "./CustomAudio";
-import { CustomVideo } from "./CustomVideo";
-import { CustomText } from "./CustomText";
+    TextFileType,
+    VideoFileType,
+} from '../../../../types/FileType'
+import { getMediaDuration } from '../../../../utils/ProcessTriggerPopup/VideoService'
+import { CustomAudio } from './CustomAudio'
+import { CustomText } from './CustomText'
+import { CustomVideo } from './CustomVideo'
 
-type AllowedFileType = VideoFileType | TextFileType | AudioFileType;
+type AllowedFileType = VideoFileType | TextFileType | AudioFileType
 
 interface UploadVideoFromDeviceProps {
-    handleChangeFileData: (update: Partial<FileData>) => void;
-    selectedFile: File | null;
-    fileTypeList: AllowedFileType[];
-    handleChangeSelectedFile: (file: File | null) => void;
+    handleChangeFileData: (update: Partial<FileData>) => void
+    selectedFile: File | null
+    fileTypeList: AllowedFileType[]
+    handleChangeSelectedFile: (file: File | null) => void
 }
 
 // Utility Function
-const checkFileType = (fileType: string): "video" | "audio" | "text" | null => {
+const checkFileType = (fileType: string): 'video' | 'audio' | 'text' | null => {
     if (Object.values(VideoFileType).includes(fileType as VideoFileType))
-        return "video";
+        return 'video'
     if (Object.values(TextFileType).includes(fileType as TextFileType))
-        return "text";
+        return 'text'
     if (Object.values(AudioFileType).includes(fileType as AudioFileType))
-        return "audio";
-    return null;
-};
+        return 'audio'
+    return null
+}
 
 // Component
 export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
@@ -41,102 +41,99 @@ export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
     handleChangeFileData,
     fileTypeList,
 }) => {
-
-    const { userId } = useAuth();
-    const [isDragActive, setIsDragActive] = useState(false);
-    const [localURL, setLocalURL] = useState<string | null>(null);
+    const { userId } = useAuth()
+    const [isDragActive, setIsDragActive] = useState(false)
+    const [localURL, setLocalURL] = useState<string | null>(null)
     const [localFileType, setLocalFileType] = useState<
-        "video" | "audio" | "text" | null
-    >(null);
-    const [fileContent, setFileContent] = useState<string | null>(null);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const joinedFileTypes = fileTypeList.map((fileType) => fileType).join(", ");
+        'video' | 'audio' | 'text' | null
+    >(null)
+    const [fileContent, setFileContent] = useState<string | null>(null)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const joinedFileTypes = fileTypeList.map((fileType) => fileType).join(', ')
 
     useEffect(() => {
         if (selectedFile) {
-            const fileType = checkFileType(selectedFile.type);
-            setLocalFileType(fileType);
+            const fileType = checkFileType(selectedFile.type)
+            setLocalFileType(fileType)
 
-            if (fileType === "video" || fileType === "audio") {
-                const url = URL.createObjectURL(selectedFile);
-                setLocalURL(url);
-                return () => URL.revokeObjectURL(url);
+            if (fileType === 'video' || fileType === 'audio') {
+                const url = URL.createObjectURL(selectedFile)
+                setLocalURL(url)
+                return () => URL.revokeObjectURL(url)
             }
 
-            if (fileType === "text") {
-                const reader = new FileReader();
+            if (fileType === 'text') {
+                const reader = new FileReader()
                 reader.onload = (e) =>
-                    setFileContent(e.target?.result as string);
-                reader.readAsText(selectedFile);
+                    setFileContent(e.target?.result as string)
+                reader.readAsText(selectedFile)
             }
         } else {
-            setLocalURL(null);
-            setFileContent(null);
-            setLocalFileType(null);
+            setLocalURL(null)
+            setFileContent(null)
+            setLocalFileType(null)
         }
-    }, [selectedFile]);
+    }, [selectedFile])
 
     const { getRootProps, getInputProps } = useDropzone({
         onDragEnter: () => setIsDragActive(true),
         onDragLeave: () => setIsDragActive(false),
         onDrop: async (acceptedFiles) => {
-            const file = acceptedFiles[0];
+            const file = acceptedFiles[0]
             if (file && fileTypeList.includes(file.type as AllowedFileType)) {
-                setErrorMessage(null);
-                handleChangeSelectedFile(file);
-                setIsDragActive(false);
-                const fileExtension = file.name.includes(".")
-                    ? file.name.substring(file.name.lastIndexOf("."))
-                    : "";
+                setErrorMessage(null)
+                handleChangeSelectedFile(file)
+                setIsDragActive(false)
+                const fileExtension = file.name.includes('.')
+                    ? file.name.substring(file.name.lastIndexOf('.'))
+                    : ''
 
                 // Generate new filename while preserving extension
-                const newFileName = `${userId}_${Math.floor(
-                    Date.now() / 1000
-                )}`;
-                const newVideoName = newFileName + fileExtension;
+                const newFileName = `${userId}_${Math.floor(Date.now() / 1000)}`
+                const newVideoName = newFileName + fileExtension
 
-                if (checkFileType(file.type) === "video") {
+                if (checkFileType(file.type) === 'video') {
                     try {
-                        const duration = await getMediaDuration(file);
+                        const duration = await getMediaDuration(file)
 
                         handleChangeFileData({
                             file_name: newVideoName,
                             image: `${newFileName}_thumbnail.jpg`,
                             duration: duration,
-                            folder: "raw_videos",
-                        });
+                            folder: 'raw_videos',
+                        })
                     } catch (error) {
-                        console.error("Error getting video duration", error);
+                        console.error('Error getting video duration', error)
                     }
-                } else if (checkFileType(file.type) === "text") {
+                } else if (checkFileType(file.type) === 'text') {
                     handleChangeFileData({
                         file_name: newFileName,
-                        folder: "transcriptions",
-                    });
-                } else if (checkFileType(file.type) === "audio") {
+                        folder: 'transcriptions',
+                    })
+                } else if (checkFileType(file.type) === 'audio') {
                     try {
-                        const duration = await getMediaDuration(file);
+                        const duration = await getMediaDuration(file)
                         handleChangeFileData({
                             file_name: newFileName,
                             duration: duration,
-                            folder: "audios",
-                        });
+                            folder: 'audios',
+                        })
                     } catch (error) {
-                        console.error("Error getting audio duration", error);
+                        console.error('Error getting audio duration', error)
                     }
                 }
             } else {
-                setErrorMessage(`Wrong input file type`);
+                setErrorMessage(`Wrong input file type`)
             }
         },
-    });
+    })
 
     const handleRemoveFile = () => {
-        setLocalURL(null);
-        setFileContent(null);
-        setLocalFileType(null);
-        handleChangeSelectedFile(null);
-    };
+        setLocalURL(null)
+        setFileContent(null)
+        setLocalFileType(null)
+        handleChangeSelectedFile(null)
+    }
 
     // Render Components for Each File Type
     /**const renderFileContent = () => {
@@ -204,9 +201,9 @@ export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
             <Typography
                 variant="body2"
                 sx={{
-                    marginBottom: "10px",
-                    marginTop: "15px",
-                    fontFamily: "Poppins, sans-serif",
+                    marginBottom: '10px',
+                    marginTop: '15px',
+                    fontFamily: 'Poppins, sans-serif',
                 }}
             >
                 Drag and drop a file or click to browse your files.
@@ -216,27 +213,27 @@ export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
                     <Box
                         {...getRootProps()}
                         sx={{
-                            border: "1.5px dashed grey",
-                            padding: "10px",
-                            textAlign: "center",
-                            justifyContent: "center",
-                            borderRadius: "10px",
-                            cursor: "pointer",
-                            minHeight: "150px",
-                            height: "20vh",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            ...(isDragActive && { backgroundColor: "white" }),
+                            border: '1.5px dashed grey',
+                            padding: '10px',
+                            textAlign: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '10px',
+                            cursor: 'pointer',
+                            minHeight: '150px',
+                            height: '20vh',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            ...(isDragActive && { backgroundColor: 'white' }),
                         }}
                     >
                         <input {...getInputProps()} />
-                        <FileUploadIcon sx={{ fontSize: "3rem" }} />
+                        <FileUploadIcon sx={{ fontSize: '3rem' }} />
                         <Typography
                             sx={{
-                                marginTop: "5px",
-                                fontFamily: "Poppins, sans-serif",
-                                fontSize: "0.75rem",
+                                marginTop: '5px',
+                                fontFamily: 'Poppins, sans-serif',
+                                fontSize: '0.75rem',
                             }}
                         >
                             {selectedFile ? (
@@ -244,7 +241,7 @@ export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
                             ) : (
                                 <>
                                     Drag and drop a file here <br />
-                                    Supported{" "}
+                                    Supported{' '}
                                     <span
                                         style={{
                                             fontWeight: 550,
@@ -262,10 +259,10 @@ export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
                             // color={theme.palette.error.main}
                             align="center"
                             sx={{
-                                color: "#FF1E00",
-                                marginTop: "8px",
-                                fontWeight: "450",
-                                fontFamily: "Poppins, sans-serif",
+                                color: '#FF1E00',
+                                marginTop: '8px',
+                                fontWeight: '450',
+                                fontFamily: 'Poppins, sans-serif',
                             }}
                         >
                             {errorMessage}
@@ -274,19 +271,19 @@ export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
                 </>
             ) : (
                 <>
-                    {localFileType === "audio" && localURL && (
+                    {localFileType === 'audio' && localURL && (
                         <CustomAudio
                             handleRemoveFile={handleRemoveFile}
                             audioURL={localURL}
                         />
                     )}
-                    {localFileType === "video" && localURL && (
+                    {localFileType === 'video' && localURL && (
                         <CustomVideo
                             handleRemoveFile={handleRemoveFile}
                             videoURL={localURL}
                         />
                     )}
-                    {localFileType === "text" && fileContent && (
+                    {localFileType === 'text' && fileContent && (
                         <CustomText
                             handleRemoveFile={handleRemoveFile}
                             textContent={fileContent}
@@ -295,5 +292,5 @@ export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
                 </>
             )}
         </>
-    );
-};
+    )
+}

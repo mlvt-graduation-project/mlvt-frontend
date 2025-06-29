@@ -1,145 +1,145 @@
-import React, { useMemo, useState, useCallback, useEffect } from "react";
-import { Box, Typography } from "@mui/material";
-import ChangeViewBox from "../../BaseComponent/ChangeView";
-import { UploadFileFromDevice } from "../../BaseComponent/UploadFileFromDevice";
-import { GenerateButton } from "../../BaseComponent/GenerateButton";
-import { BrowseFile } from "../../BaseComponent/BrowseMLVTFile";
-import { InputTextBox } from "../../BaseComponent/InputTextBox";
-import { SingleOptionBox } from "../../BaseComponent/SingleOptionBox";
-import { TranslateLanguage } from "../../../../../types/Translation";
-import { AudioFileType, TextFileType } from "../../../../../types/FileType";
-import { TextData, AudioData } from "../../../../../types/FileData";
-import { S3Folder } from "../../../../../types/S3FolderStorage";
-import { useAuth } from "../../../../../context/AuthContext";
-import { ProjectType, RawText, Project } from "../../../../../types/Project";
+import { Box, Typography } from '@mui/material'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useAuth } from '../../../../../contexts/AuthContext'
+import { AudioData, TextData } from '../../../../../types/FileData'
+import { AudioFileType, TextFileType } from '../../../../../types/FileType'
+import { Project, ProjectType, RawText } from '../../../../../types/Project'
+import { S3Folder } from '../../../../../types/S3FolderStorage'
+import { TranslateLanguage } from '../../../../../types/Translation'
+import { BrowseFile } from '../../BaseComponent/BrowseMLVTFile'
+import ChangeViewBox from '../../BaseComponent/ChangeView'
+import { GenerateButton } from '../../BaseComponent/GenerateButton'
+import { InputTextBox } from '../../BaseComponent/InputTextBox'
+import { SingleOptionBox } from '../../BaseComponent/SingleOptionBox'
+import { UploadFileFromDevice } from '../../BaseComponent/UploadFileFromDevice'
 
 export interface VoiceGenerationData {
-    textViewState: "upload" | "enter text" | "browse";
-    audioViewState: "build-in" | "custom";
-    deviceAudioFile: File | null;
-    deviceTextFile: File | null;
-    inputText: string;
-    buildinVoice: string | null;
-    textLanguage: TranslateLanguage | null;
-    MLVTText: RawText | null;
-    textData: TextData;
-    audioData: AudioData;
+    textViewState: 'upload' | 'enter text' | 'browse'
+    audioViewState: 'build-in' | 'custom'
+    deviceAudioFile: File | null
+    deviceTextFile: File | null
+    inputText: string
+    buildinVoice: string | null
+    textLanguage: TranslateLanguage | null
+    MLVTText: RawText | null
+    textData: TextData
+    audioData: AudioData
 }
 
 interface DialogContentProps {
-    onGenerate: (data: VoiceGenerationData) => void;
+    onGenerate: (data: VoiceGenerationData) => void
 }
 
 export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
-    const { userId } = useAuth();
-    const parsedUserId = userId ? parseInt(userId) : 0;
+    const { userId } = useAuth()
+    const parsedUserId = userId ? parseInt(userId) : 0
     const buildinVoiceList = useMemo(
         () => [
-            "en-US-Wavenet-A",
-            "en-US-Wavenet-B",
-            "en-US-Wavenet-C",
-            "en-US-Wavenet-D",
-            "vi-VN-Wavenet-A",
-            "vi-VN-Wavenet-B",
-            "fr-FR-Wavenet-A",
-            "fr-FR-Wavenet-B",
-            "ja-JP-Wavenet-A",
-            "ja-JP-Wavenet-B",
+            'en-US-Wavenet-A',
+            'en-US-Wavenet-B',
+            'en-US-Wavenet-C',
+            'en-US-Wavenet-D',
+            'vi-VN-Wavenet-A',
+            'vi-VN-Wavenet-B',
+            'fr-FR-Wavenet-A',
+            'fr-FR-Wavenet-B',
+            'ja-JP-Wavenet-A',
+            'ja-JP-Wavenet-B',
         ],
-        []
-    );
-    type BuildinVoice = (typeof buildinVoiceList)[number];
+        [],
+    )
+    type BuildinVoice = (typeof buildinVoiceList)[number]
 
-    const [buildinVoice, setBuildinVoice] = useState<BuildinVoice | null>(null);
-    const [audioViewState, setAudioViewState] = useState<"build-in" | "custom">(
-        "build-in"
-    );
+    const [buildinVoice, setBuildinVoice] = useState<BuildinVoice | null>(null)
+    const [audioViewState, setAudioViewState] = useState<'build-in' | 'custom'>(
+        'build-in',
+    )
     const [textViewState, setTextViewState] = useState<
-        "upload" | "enter text" | "browse"
-    >("enter text");
-    const [deviceAudioFile, setDeviceAudioFile] = useState<File | null>(null);
-    const [deviceTextFile, setDeviceTextFile] = useState<File | null>(null);
-    const [MLVTText, setMLVTText] = useState<RawText | null>(null);
-    const [inputText, setInputText] = useState<string>("");
-    const [disableGenerate, setDisableGenerate] = useState<boolean>(true);
+        'upload' | 'enter text' | 'browse'
+    >('enter text')
+    const [deviceAudioFile, setDeviceAudioFile] = useState<File | null>(null)
+    const [deviceTextFile, setDeviceTextFile] = useState<File | null>(null)
+    const [MLVTText, setMLVTText] = useState<RawText | null>(null)
+    const [inputText, setInputText] = useState<string>('')
+    const [disableGenerate, setDisableGenerate] = useState<boolean>(true)
     const [textLanguage, setTextLanguage] = useState<TranslateLanguage | null>(
-        null
-    );
+        null,
+    )
 
     const [textData, setTextData] = useState<TextData>({
-        file_name: "",
+        file_name: '',
         folder: S3Folder.text,
         user_id: parsedUserId,
-        lang: "",
-    });
+        lang: '',
+    })
 
     const [audioData, setAudioData] = useState<AudioData>({
-        file_name: "",
+        file_name: '',
         folder: S3Folder.audio,
         user_id: parsedUserId,
         duration: 0,
-    });
+    })
 
     const handleChangeTextLanguage = (value: string) => {
         if (
             Object.values(TranslateLanguage).includes(
-                value as TranslateLanguage
+                value as TranslateLanguage,
             )
         ) {
-            setTextLanguage(value as TranslateLanguage);
+            setTextLanguage(value as TranslateLanguage)
         }
-    };
+    }
 
     const handleChangeBuildinVoice = useCallback(
         (voice: string) => {
             if (buildinVoiceList.includes(voice as BuildinVoice)) {
-                setBuildinVoice(voice as BuildinVoice);
+                setBuildinVoice(voice as BuildinVoice)
             }
         },
-        [buildinVoiceList]
-    );
+        [buildinVoiceList],
+    )
 
     const handleChangeTextData = useCallback((update: Partial<TextData>) => {
         setTextData((prevData) => ({
             ...prevData,
             ...update,
-        }));
-    }, []);
+        }))
+    }, [])
 
     const handleChangeAudioData = useCallback((update: Partial<AudioData>) => {
         setAudioData((prevData: AudioData) => ({
             ...prevData,
             ...update,
-        }));
-    }, []);
+        }))
+    }, [])
 
     const handleChangeMLVTText = useCallback(
         (input: Project | null) => {
-            if (input && input.type_project !== ProjectType.Text) return; // Ensure it's an audio project
-            setMLVTText(input as RawText | null);
+            if (input && input.type_project !== ProjectType.Text) return // Ensure it's an audio project
+            setMLVTText(input as RawText | null)
         },
-        [setMLVTText]
-    );
+        [setMLVTText],
+    )
 
     const handleChangeDeviceTextFile = (file: File | null) => {
-        setDeviceTextFile(file);
-    };
+        setDeviceTextFile(file)
+    }
 
     const handleChangeDeviceAudioFile = (file: File | null) => {
-        setDeviceAudioFile(file);
-    };
+        setDeviceAudioFile(file)
+    }
 
     const handleChangeAudioViewState = (view: string) => {
-        if (["build-in", "custom"].includes(view)) {
-            setAudioViewState(view as "build-in" | "custom");
+        if (['build-in', 'custom'].includes(view)) {
+            setAudioViewState(view as 'build-in' | 'custom')
         }
-    };
+    }
 
     const handleChangeTextViewState = (view: string) => {
-        if (["upload", "enter text", "browse"].includes(view)) {
-            setTextViewState(view as "upload" | "enter text" | "browse");
+        if (['upload', 'enter text', 'browse'].includes(view)) {
+            setTextViewState(view as 'upload' | 'enter text' | 'browse')
         }
-    };
+    }
 
     // const uploadTextFromDevice = useCallback(async (): Promise<number> => {
     //     if (deviceTextFile && textLanguage) {
@@ -203,8 +203,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const TextViews = useMemo(
         () => [
             {
-                text: "ENTER TEXT",
-                viewState: "enter text",
+                text: 'ENTER TEXT',
+                viewState: 'enter text',
                 component: (
                     <InputTextBox
                         inputTextFromParent={inputText}
@@ -213,8 +213,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 ),
             },
             {
-                text: "UPLOAD",
-                viewState: "upload",
+                text: 'UPLOAD',
+                viewState: 'upload',
                 component: (
                     <UploadFileFromDevice
                         selectedFile={deviceTextFile}
@@ -225,8 +225,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 ),
             },
             {
-                text: "BROWSE MLVT",
-                viewState: "browse",
+                text: 'BROWSE MLVT',
+                viewState: 'browse',
                 component: (
                     <BrowseFile
                         allowTypes={[ProjectType.Text]}
@@ -242,26 +242,26 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             handleChangeMLVTText,
             inputText,
             MLVTText,
-        ]
-    );
+        ],
+    )
 
     const AudioViews = useMemo(
         () => [
             {
-                text: "BUILD-IN VOICE",
-                viewState: "build-in",
+                text: 'BUILD-IN VOICE',
+                viewState: 'build-in',
                 component: (
                     <SingleOptionBox
                         choices={buildinVoiceList}
                         handleChangeOption={handleChangeBuildinVoice}
-                        customSx={{ width: "100%" }}
-                        value={buildinVoice || ""}
+                        customSx={{ width: '100%' }}
+                        value={buildinVoice || ''}
                     />
                 ),
             },
             {
-                text: "CUSTOM VOICE",
-                viewState: "custom",
+                text: 'CUSTOM VOICE',
+                viewState: 'custom',
                 component: (
                     <UploadFileFromDevice
                         handleChangeFileData={handleChangeAudioData}
@@ -278,22 +278,22 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             deviceAudioFile,
             handleChangeBuildinVoice,
             handleChangeAudioData,
-        ]
-    );
+        ],
+    )
 
     useEffect(() => {
         const isTextValid =
-            (textViewState === "enter text" && !!inputText) ||
-            (textViewState === "upload" && !!deviceTextFile) ||
-            (textViewState === "browse" && !!MLVTText);
+            (textViewState === 'enter text' && !!inputText) ||
+            (textViewState === 'upload' && !!deviceTextFile) ||
+            (textViewState === 'browse' && !!MLVTText)
         const isAudioValid =
-            (audioViewState === "build-in" && !!buildinVoice) ||
-            (audioViewState === "custom" && !!deviceAudioFile);
+            (audioViewState === 'build-in' && !!buildinVoice) ||
+            (audioViewState === 'custom' && !!deviceAudioFile)
 
         if (!isTextValid || !isAudioValid || !textLanguage) {
-            setDisableGenerate(true);
+            setDisableGenerate(true)
         } else {
-            setDisableGenerate(false);
+            setDisableGenerate(false)
         }
     }, [
         textViewState,
@@ -304,7 +304,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         buildinVoice,
         deviceAudioFile,
         textLanguage,
-    ]);
+    ])
 
     const handleGenerate = useCallback(() => {
         const data: VoiceGenerationData = {
@@ -318,8 +318,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             MLVTText,
             textData,
             audioData,
-        };
-        onGenerate(data);
+        }
+        onGenerate(data)
     }, [
         onGenerate,
         textViewState,
@@ -332,17 +332,17 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         MLVTText,
         textData,
         audioData,
-    ]);
+    ])
 
     const activeAudioView = AudioViews.find(
-        (view) => view.viewState === audioViewState
-    );
-    const ActiveAudioComponent = activeAudioView?.component || null;
+        (view) => view.viewState === audioViewState,
+    )
+    const ActiveAudioComponent = activeAudioView?.component || null
 
     const activeTextView = TextViews.find(
-        (view) => view.viewState === textViewState
-    );
-    const ActiveTextComponent = activeTextView?.component || null;
+        (view) => view.viewState === textViewState,
+    )
+    const ActiveTextComponent = activeTextView?.component || null
 
     return (
         <>
@@ -352,7 +352,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                     padding: 1.5,
                     borderRadius: 1.5,
                     backgroundColor: (theme) => theme.palette.background.paper,
-                    marginBottom: "10px",
+                    marginBottom: '10px',
                 }}
             >
                 <ChangeViewBox
@@ -368,9 +368,9 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                     variant="body2"
                     sx={{
                         fontFamily:
-                            "Poppins, Araboto, Roboto, Arial, sans-serif",
+                            'Poppins, Araboto, Roboto, Arial, sans-serif',
                         fontWeight: 500,
-                        marginTop: "10px",
+                        marginTop: '10px',
                     }}
                 >
                     Text Language
@@ -383,7 +383,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                         TranslateLanguage.Japanese,
                     ]}
                     handleChangeOption={handleChangeTextLanguage}
-                    customSx={{ width: "30%" }}
+                    customSx={{ width: '30%' }}
                     value={TranslateLanguage.English}
                 />
             </Box>
@@ -391,10 +391,10 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             <Typography
                 variant="body2"
                 sx={{
-                    fontFamily: "Poppins, Araboto, Roboto, Arial, sans-serif",
+                    fontFamily: 'Poppins, Araboto, Roboto, Arial, sans-serif',
                     fontWeight: 500,
                     paddingLeft: 1.5,
-                    marginTop: "20px",
+                    marginTop: '20px',
                 }}
             >
                 Voice Generation option:
@@ -405,7 +405,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                     padding: 1.5,
                     borderRadius: 1.5,
                     backgroundColor: (theme) => theme.palette.background.paper,
-                    marginBottom: "10px",
+                    marginBottom: '10px',
                 }}
             >
                 <ChangeViewBox
@@ -419,5 +419,5 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 handleGenerate={handleGenerate}
             />
         </>
-    );
-};
+    )
+}

@@ -1,129 +1,129 @@
-import React, { useMemo, useState, useCallback, useEffect } from "react";
-import { Box, Typography } from "@mui/material";
-import ChangeViewBox from "../../BaseComponent/ChangeView";
-import { UploadFileFromDevice } from "../../BaseComponent/UploadFileFromDevice";
-import { UploadVideoFromUrl } from "../../BaseComponent/UploadVideoURL";
-import { VideoData } from "../../../../../types/FileData";
-import { GenerateButton } from "../../BaseComponent/GenerateButton";
-import { SingleOptionBox } from "../../BaseComponent/SingleOptionBox";
-import { BrowseFile } from "../../BaseComponent/BrowseMLVTFile";
-import { TranslateLanguage } from "../../../../../types/Translation";
-import { VideoFileType } from "../../../../../types/FileType";
-import { uploadVideo } from "../../../../../utils/ProcessTriggerPopup/VideoService";
-import { useAuth } from "../../../../../context/AuthContext";
-import { S3Folder } from "../../../../../types/S3FolderStorage";
-import { ProjectType, RawVideo, Project } from "../../../../../types/Project";
-import { checkValidGenerate } from "../../../../../utils/ProcessTriggerPopup/CheckValidGenerate";
+import { Box, Typography } from '@mui/material'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useAuth } from '../../../../../contexts/AuthContext'
+import { VideoData } from '../../../../../types/FileData'
+import { VideoFileType } from '../../../../../types/FileType'
+import { Project, ProjectType, RawVideo } from '../../../../../types/Project'
+import { S3Folder } from '../../../../../types/S3FolderStorage'
+import { TranslateLanguage } from '../../../../../types/Translation'
+import { checkValidGenerate } from '../../../../../utils/ProcessTriggerPopup/CheckValidGenerate'
+import { uploadVideo } from '../../../../../utils/ProcessTriggerPopup/VideoService'
+import { BrowseFile } from '../../BaseComponent/BrowseMLVTFile'
+import ChangeViewBox from '../../BaseComponent/ChangeView'
+import { GenerateButton } from '../../BaseComponent/GenerateButton'
+import { SingleOptionBox } from '../../BaseComponent/SingleOptionBox'
+import { UploadFileFromDevice } from '../../BaseComponent/UploadFileFromDevice'
+import { UploadVideoFromUrl } from '../../BaseComponent/UploadVideoURL'
 
 export interface GenerateVideoData {
-    viewState: "upload" | "url" | "browse";
-    deviceFile: File | null;
-    videoUrl: string | null;
-    MLVTVideo: RawVideo | null;
-    sourceLanguage: TranslateLanguage | null;
-    targetLanguage: TranslateLanguage | null;
-    fileData: VideoData;
+    viewState: 'upload' | 'url' | 'browse'
+    deviceFile: File | null
+    videoUrl: string | null
+    MLVTVideo: RawVideo | null
+    sourceLanguage: TranslateLanguage | null
+    targetLanguage: TranslateLanguage | null
+    fileData: VideoData
 }
 
 interface DialogContentProps {
-    onGenerate: (data: GenerateVideoData) => void;
+    onGenerate: (data: GenerateVideoData) => void
 }
 
 export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
-    const { userId } = useAuth();
-    const parsedUserId = userId ? parseInt(userId) : 0;
-    const [viewState, setViewState] = useState<"upload" | "url" | "browse">(
-        "upload"
-    );
+    const { userId } = useAuth()
+    const parsedUserId = userId ? parseInt(userId) : 0
+    const [viewState, setViewState] = useState<'upload' | 'url' | 'browse'>(
+        'upload',
+    )
     const [sourceLanguage, setSourceLanguage] = useState<TranslateLanguage>(
-        TranslateLanguage.English
-    );
+        TranslateLanguage.English,
+    )
 
-    const [deviceFile, setDeviceFile] = useState<File | null>(null);
-    const [MLVTVideo, setMLVTVideo] = useState<RawVideo | null>(null);
-    const [videoUrl, setVideoUrl] = useState<string | null>(null);
+    const [deviceFile, setDeviceFile] = useState<File | null>(null)
+    const [MLVTVideo, setMLVTVideo] = useState<RawVideo | null>(null)
+    const [videoUrl, setVideoUrl] = useState<string | null>(null)
     const [targetLanguage, setTargetLanguage] = useState<TranslateLanguage>(
-        TranslateLanguage.Vietnamese
-    );
-    const [disableGenerate, setDisableGenerate] = useState<boolean>(true);
+        TranslateLanguage.Vietnamese,
+    )
+    const [disableGenerate, setDisableGenerate] = useState<boolean>(true)
 
     const [fileData, setFileData] = useState<VideoData>({
-        title: "My Video Title",
+        title: 'My Video Title',
         duration: 300,
-        description: "A description of the video",
-        file_name: "",
+        description: 'A description of the video',
+        file_name: '',
         folder: S3Folder.video,
-        image: "avatar.jpg",
+        image: 'avatar.jpg',
         user_id: parsedUserId,
-    });
+    })
 
     const handleChangeSourceLanguage = (value: string) => {
         if (
             Object.values(TranslateLanguage).includes(
-                value as TranslateLanguage
+                value as TranslateLanguage,
             )
         ) {
-            setSourceLanguage(value as TranslateLanguage);
+            setSourceLanguage(value as TranslateLanguage)
         }
-    };
+    }
 
     const handleChangeTargetLanguage = (value: string) => {
         if (
             Object.values(TranslateLanguage).includes(
-                value as TranslateLanguage
+                value as TranslateLanguage,
             )
         ) {
-            setTargetLanguage(value as TranslateLanguage);
+            setTargetLanguage(value as TranslateLanguage)
         }
-    };
+    }
 
     const handleChangeDisableGenerate = useCallback((value: boolean) => {
-        setDisableGenerate(value);
-    }, []);
+        setDisableGenerate(value)
+    }, [])
 
     const handleChangeFileData = useCallback((update: Partial<VideoData>) => {
         setFileData((prevData) => ({
             ...prevData,
             ...update,
-        }));
-    }, []);
+        }))
+    }, [])
 
     const handleChangeDeviceFile = (file: File | null) => {
-        setDeviceFile(file);
-    };
+        setDeviceFile(file)
+    }
 
     const handleChangeMLVTVideo = useCallback(
         (input: Project | null) => {
-            if (input && input.type_project !== ProjectType.Video) return;
-            setMLVTVideo(input as RawVideo | null);
+            if (input && input.type_project !== ProjectType.Video) return
+            setMLVTVideo(input as RawVideo | null)
         },
-        [setMLVTVideo]
-    );
+        [setMLVTVideo],
+    )
 
     const changeViewState = (view: string) => {
-        if (["upload", "url", "browse"].includes(view)) {
-            setViewState(view as "upload" | "url" | "browse");
+        if (['upload', 'url', 'browse'].includes(view)) {
+            setViewState(view as 'upload' | 'url' | 'browse')
         }
-    };
+    }
 
     const uploadVideoFromDevice = useCallback(async (): Promise<number> => {
         if (deviceFile) {
             try {
-                const videoId = await uploadVideo(deviceFile, fileData);
-                return videoId;
+                const videoId = await uploadVideo(deviceFile, fileData)
+                return videoId
             } catch (error) {
-                throw error;
+                throw error
             }
         } else {
-            throw new Error("Failed uploading Video file to Server");
+            throw new Error('Failed uploading Video file to Server')
         }
-    }, [deviceFile, fileData]);
+    }, [deviceFile, fileData])
 
     const Views = useMemo(
         () => [
             {
-                text: "UPLOAD",
-                viewState: "upload",
+                text: 'UPLOAD',
+                viewState: 'upload',
                 handleSubmit: uploadVideoFromDevice,
                 component: (
                     <UploadFileFromDevice
@@ -135,8 +135,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 ),
             },
             {
-                text: "URL",
-                viewState: "url",
+                text: 'URL',
+                viewState: 'url',
                 component: (
                     <UploadVideoFromUrl
                         handleChangeDisableGenerate={
@@ -147,8 +147,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 ),
             },
             {
-                text: "BROWSE MLVT",
-                viewState: "browse",
+                text: 'BROWSE MLVT',
+                viewState: 'browse',
                 handleSubmit:
                     MLVTVideo !== null
                         ? () => Promise.resolve(MLVTVideo.id)
@@ -169,8 +169,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             handleChangeMLVTVideo,
             MLVTVideo,
             uploadVideoFromDevice,
-        ]
-    );
+        ],
+    )
 
     useEffect(() => {
         if (
@@ -178,9 +178,9 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             !sourceLanguage ||
             !targetLanguage
         ) {
-            setDisableGenerate(true);
+            setDisableGenerate(true)
         } else {
-            setDisableGenerate(false);
+            setDisableGenerate(false)
         }
     }, [
         viewState,
@@ -189,10 +189,10 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         sourceLanguage,
         targetLanguage,
         MLVTVideo,
-    ]);
+    ])
 
-    const activeView = Views.find((view) => view.viewState === viewState);
-    const ActiveComponent = activeView?.component || null;
+    const activeView = Views.find((view) => view.viewState === viewState)
+    const ActiveComponent = activeView?.component || null
 
     const handleGenerate = useCallback(async () => {
         const generationData: GenerateVideoData = {
@@ -203,10 +203,10 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             sourceLanguage,
             targetLanguage,
             fileData,
-        };
+        }
 
         // Call the function passed down from the parent
-        onGenerate(generationData);
+        onGenerate(generationData)
     }, [
         viewState,
         deviceFile,
@@ -216,7 +216,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         targetLanguage,
         fileData,
         onGenerate,
-    ]);
+    ])
 
     return (
         <>
@@ -233,17 +233,17 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             <Box
                 marginTop="10px"
                 sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 30, 
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 30,
                 }}
             >
                 <Box flex={1}>
                     <Typography
                         sx={{
-                            fontFamily: "Poppins, sans-serif",
+                            fontFamily: 'Poppins, sans-serif',
                             fontWeight: 500,
-                            fontSize: "0.9rem",
+                            fontSize: '0.9rem',
                         }}
                     >
                         Video's language:
@@ -262,9 +262,9 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 <Box flex={1}>
                     <Typography
                         sx={{
-                            fontFamily: "Poppins, sans-serif",
+                            fontFamily: 'Poppins, sans-serif',
                             fontWeight: 500,
-                            fontSize: "0.9rem",
+                            fontSize: '0.9rem',
                         }}
                     >
                         Translate to:
@@ -287,5 +287,5 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 handleGenerate={handleGenerate}
             />
         </>
-    );
-};
+    )
+}

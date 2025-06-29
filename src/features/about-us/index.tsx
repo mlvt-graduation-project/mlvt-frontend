@@ -1,92 +1,92 @@
-import React from "react";
 import {
-    Container,
-    Typography,
     Box,
-    Grid,
     Card,
-    CardMedia,
     CardContent,
-} from "@mui/material";
-import { styled, useTheme } from "@mui/material/styles";
-import NavBar from "../../components/LandingPageNavBar";
-import AboutUsImage from "./assets/about-us.png";
-import OurMission from "./assets/our-mission.png";
-import bgImage from "../../assets/landing_page_background.png";
-import Footer from "../../components/LandingPageFooter";
-import { CustomButton } from "../../components/CustomButton";
-import UpButton from "../../components/UpButton";
+    CardMedia,
+    Container,
+    Grid,
+    Typography,
+} from '@mui/material'
+import { styled, useTheme } from '@mui/material/styles'
+import React from 'react'
+import bgImage from '../../assets/landing_page_background.png'
+import { CustomButton } from '../../components/CustomButton'
+import Footer from '../../components/LandingPageComponents/Footer'
+import NavBar from '../../components/LandingPageComponents/NavBar'
+import UpButton from '../../components/UpButton'
+import AboutUsImage from './assets/about-us.png'
+import OurMission from './assets/our-mission.png'
 
 interface TeamMember {
-    name: string;
-    role: string;
-    imageUrl: string;
-    bio?: string;
+    name: string
+    role: string
+    imageUrl: string
+    bio?: string
 }
 
 const Section = styled(Box)(({ theme }) => ({
     paddingTop: theme.spacing(8),
     paddingBottom: theme.spacing(8),
-}));
+}))
 
-const SectionImage = styled("img")({
-    width: "100%",
-    height: "auto",
-    borderRadius: "8px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-});
+const SectionImage = styled('img')({
+    width: '100%',
+    height: 'auto',
+    borderRadius: '8px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+})
 
 const teamData: TeamMember[] = [
     {
-        name: "Alice Wonderland",
-        role: "CEO & Founder",
+        name: 'Alice Wonderland',
+        role: 'CEO & Founder',
         imageUrl:
-            "https://imageio.forbes.com/specials-images/imageserve/646e6affb9a2a85595a62c39/0x0.jpg?format=jpg&crop=1573,1574,x239,y256,safe&height=416&width=416&fit=bounds",
+            'https://imageio.forbes.com/specials-images/imageserve/646e6affb9a2a85595a62c39/0x0.jpg?format=jpg&crop=1573,1574,x239,y256,safe&height=416&width=416&fit=bounds',
     },
     {
-        name: "Bob The Builder",
-        role: "Head of Technology",
+        name: 'Bob The Builder',
+        role: 'Head of Technology',
         imageUrl:
-            "https://imageio.forbes.com/specials-images/imageserve/646e6affb9a2a85595a62c39/0x0.jpg?format=jpg&crop=1573,1574,x239,y256,safe&height=416&width=416&fit=bounds",
+            'https://imageio.forbes.com/specials-images/imageserve/646e6affb9a2a85595a62c39/0x0.jpg?format=jpg&crop=1573,1574,x239,y256,safe&height=416&width=416&fit=bounds',
     },
     {
-        name: "Charlie Chaplin",
-        role: "Creative Director",
+        name: 'Charlie Chaplin',
+        role: 'Creative Director',
         imageUrl:
-            "https://imageio.forbes.com/specials-images/imageserve/646e6affb9a2a85595a62c39/0x0.jpg?format=jpg&crop=1573,1574,x239,y256,safe&height=416&width=416&fit=bounds",
+            'https://imageio.forbes.com/specials-images/imageserve/646e6affb9a2a85595a62c39/0x0.jpg?format=jpg&crop=1573,1574,x239,y256,safe&height=416&width=416&fit=bounds',
     },
     {
-        name: "Diana Prince",
-        role: "Marketing Lead",
+        name: 'Diana Prince',
+        role: 'Marketing Lead',
         imageUrl:
-            "https://imageio.forbes.com/specials-images/imageserve/646e6affb9a2a85595a62c39/0x0.jpg?format=jpg&crop=1573,1574,x239,y256,safe&height=416&width=416&fit=bounds",
+            'https://imageio.forbes.com/specials-images/imageserve/646e6affb9a2a85595a62c39/0x0.jpg?format=jpg&crop=1573,1574,x239,y256,safe&height=416&width=416&fit=bounds',
     },
     {
-        name: "Edward Elric",
-        role: "Lead Developer",
+        name: 'Edward Elric',
+        role: 'Lead Developer',
         imageUrl:
-            "https://imageio.forbes.com/specials-images/imageserve/646e6affb9a2a85595a62c39/0x0.jpg?format=jpg&crop=1573,1574,x239,y256,safe&height=416&width=416&fit=bounds",
+            'https://imageio.forbes.com/specials-images/imageserve/646e6affb9a2a85595a62c39/0x0.jpg?format=jpg&crop=1573,1574,x239,y256,safe&height=416&width=416&fit=bounds',
     },
     {
-        name: "Fiona Gallagher",
-        role: "Project Manager",
+        name: 'Fiona Gallagher',
+        role: 'Project Manager',
         imageUrl:
-            "https://imageio.forbes.com/specials-images/imageserve/646e6affb9a2a85595a62c39/0x0.jpg?format=jpg&crop=1573,1574,x239,y256,safe&height=416&width=416&fit=bounds",
+            'https://imageio.forbes.com/specials-images/imageserve/646e6affb9a2a85595a62c39/0x0.jpg?format=jpg&crop=1573,1574,x239,y256,safe&height=416&width=416&fit=bounds',
     },
-];
+]
 
 const AboutPage: React.FC = () => {
-    const theme = useTheme();
+    const theme = useTheme()
 
     return (
         <Box
             sx={{
                 backgroundImage: `url(${bgImage})`,
-                backgroundSize: "cover",
-                backgroundPosition: "right center",
-                backgroundRepeat: "repeat-y",
-                color: "white",
-                minHeight: "100vh",
+                backgroundSize: 'cover',
+                backgroundPosition: 'right center',
+                backgroundRepeat: 'repeat-y',
+                color: 'white',
+                minHeight: '100vh',
             }}
         >
             <NavBar />
@@ -94,11 +94,11 @@ const AboutPage: React.FC = () => {
                 sx={{
                     paddingTop: theme.spacing(12),
                     paddingBottom: theme.spacing(5),
-                    textAlign: "center",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    textAlign: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                 }}
             >
                 <Container maxWidth="md">
@@ -106,10 +106,10 @@ const AboutPage: React.FC = () => {
                         variant="h3"
                         component="h2"
                         gutterBottom
-                        color={"#DDCCFF"}
+                        color={'#DDCCFF'}
                         sx={{
-                            fontWeight: "bold",
-                            fontFamily: "Poppins, sans-serif",
+                            fontWeight: 'bold',
+                            fontFamily: 'Poppins, sans-serif',
                         }}
                     >
                         About Us
@@ -117,7 +117,7 @@ const AboutPage: React.FC = () => {
                     <Typography
                         variant="h6"
                         component="p"
-                        sx={{ mb: 3, fontFamily: "Poppins, sans-serif" }}
+                        sx={{ mb: 3, fontFamily: 'Poppins, sans-serif' }}
                     >
                         Driving innovation and excellence in the digital
                         landscape.
@@ -141,8 +141,8 @@ const AboutPage: React.FC = () => {
                                 component="h2"
                                 gutterBottom
                                 sx={{
-                                    fontWeight: "600",
-                                    fontFamily: "Poppins, sans-serif",
+                                    fontWeight: '600',
+                                    fontFamily: 'Poppins, sans-serif',
                                 }}
                             >
                                 Who We Are
@@ -150,7 +150,7 @@ const AboutPage: React.FC = () => {
                             <Typography
                                 variant="body1"
                                 paragraph
-                                fontFamily={"Poppins, sans-serif"}
+                                fontFamily={'Poppins, sans-serif'}
                             >
                                 Cup Agency is a dynamic and forward-thinking
                                 digital solutions provider. We are a passionate
@@ -161,7 +161,7 @@ const AboutPage: React.FC = () => {
                             <Typography
                                 variant="body1"
                                 paragraph
-                                fontFamily={"Poppins, sans-serif"}
+                                fontFamily={'Poppins, sans-serif'}
                             >
                                 Founded on the principles of creativity and
                                 technological expertise, we partner with clients
@@ -180,7 +180,7 @@ const AboutPage: React.FC = () => {
                         container
                         spacing={6}
                         alignItems="center"
-                        direction={{ xs: "column-reverse", md: "row" }}
+                        direction={{ xs: 'column-reverse', md: 'row' }}
                     >
                         <Grid item xs={12} md={6}>
                             <Typography
@@ -188,9 +188,9 @@ const AboutPage: React.FC = () => {
                                 component="h2"
                                 gutterBottom
                                 sx={{
-                                    fontWeight: "600",
-                                    fontFamily: "Poppins, sans-serif",
-                                    textAlign: "right",
+                                    fontWeight: '600',
+                                    fontFamily: 'Poppins, sans-serif',
+                                    textAlign: 'right',
                                 }}
                             >
                                 Our Mission
@@ -198,7 +198,7 @@ const AboutPage: React.FC = () => {
                             <Typography
                                 variant="body1"
                                 paragraph
-                                fontFamily={"Poppins, sans-serif"}
+                                fontFamily={'Poppins, sans-serif'}
                                 textAlign="right"
                             >
                                 Our mission is to empower businesses with
@@ -212,7 +212,7 @@ const AboutPage: React.FC = () => {
                             <Typography
                                 variant="body1"
                                 paragraph
-                                fontFamily={"Poppins, sans-serif"}
+                                fontFamily={'Poppins, sans-serif'}
                                 textAlign="right"
                             >
                                 We believe in the power of collaboration and are
@@ -240,26 +240,26 @@ const AboutPage: React.FC = () => {
                         textAlign="center"
                         gutterBottom
                         sx={{
-                            fontWeight: "bold",
+                            fontWeight: 'bold',
                             mb: 4,
-                            fontFamily: "Poppins, sans-serif",
-                            color: "#DDCCFF",
+                            fontFamily: 'Poppins, sans-serif',
+                            color: '#DDCCFF',
                         }}
                     >
                         Meet The Team
                     </Typography>
                     <Box
                         sx={{
-                            display: "flex",
-                            overflowX: "auto",
-                            flexWrap: "nowrap",
+                            display: 'flex',
+                            overflowX: 'auto',
+                            flexWrap: 'nowrap',
                             py: 2,
                             gap: theme.spacing(3),
-                            "&::-webkit-scrollbar": {
-                                display: "none",
+                            '&::-webkit-scrollbar': {
+                                display: 'none',
                             },
-                            "-ms-overflow-style": "none",
-                            "scrollbar-width": "none",
+                            '-ms-overflow-style': 'none',
+                            'scrollbar-width': 'none',
                         }}
                     >
                         {teamData.map((member) => (
@@ -267,9 +267,9 @@ const AboutPage: React.FC = () => {
                                 key={member.name}
                                 sx={{
                                     minWidth: { xs: 260, sm: 280, md: 300 },
-                                    height: "100%",
-                                    display: "flex",
-                                    flexDirection: "column",
+                                    height: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'column',
                                     flexShrink: 0,
                                 }}
                             >
@@ -278,17 +278,17 @@ const AboutPage: React.FC = () => {
                                     height="250"
                                     image={member.imageUrl}
                                     alt={member.name}
-                                    sx={{ objectFit: "cover" }}
+                                    sx={{ objectFit: 'cover' }}
                                 />
                                 <CardContent
-                                    sx={{ textAlign: "center", flexGrow: 1 }}
+                                    sx={{ textAlign: 'center', flexGrow: 1 }}
                                 >
                                     <Typography
                                         variant="h6"
                                         component="div"
                                         sx={{
                                             fontWeight: 500,
-                                            fontFamily: "Poppins, sans-serif",
+                                            fontFamily: 'Poppins, sans-serif',
                                         }}
                                     >
                                         {member.name}
@@ -297,7 +297,7 @@ const AboutPage: React.FC = () => {
                                         variant="body2"
                                         color="text.secondary"
                                         sx={{
-                                            fontFamily: "Poppins, sans-serif",
+                                            fontFamily: 'Poppins, sans-serif',
                                         }}
                                     >
                                         {member.role}
@@ -312,7 +312,7 @@ const AboutPage: React.FC = () => {
             <Box
                 sx={{
                     py: 10,
-                    textAlign: "center",
+                    textAlign: 'center',
                 }}
             >
                 <Container maxWidth="md">
@@ -321,8 +321,8 @@ const AboutPage: React.FC = () => {
                         component="h2"
                         gutterBottom
                         sx={{
-                            fontWeight: "650",
-                            fontFamily: "Poppins, sans-serif",
+                            fontWeight: '650',
+                            fontFamily: 'Poppins, sans-serif',
                             mb: 2,
                         }}
                     >
@@ -330,7 +330,7 @@ const AboutPage: React.FC = () => {
                     </Typography>
                     <Typography
                         variant="body1"
-                        sx={{ mb: 4, fontFamily: "Poppins, sans-serif" }}
+                        sx={{ mb: 4, fontFamily: 'Poppins, sans-serif' }}
                     >
                         Let's discuss how our expertise can help you achieve
                         your digital goals. Get in touch today!
@@ -339,15 +339,15 @@ const AboutPage: React.FC = () => {
                         text="Contact Us"
                         onClick={() =>
                             (window.location.href =
-                                "mailto: nguyenthiminhminh.hcm@gmail.com")
+                                'mailto: nguyenthiminhminh.hcm@gmail.com')
                         }
                         sx={{
-                            backgroundColor: "#7A2EFF",
-                            color: "white",
-                            "&:hover": {
-                                backgroundColor: "#6a1b9a",
+                            backgroundColor: '#7A2EFF',
+                            color: 'white',
+                            '&:hover': {
+                                backgroundColor: '#6a1b9a',
                             },
-                            fontFamily: "Poppins, sans-serif",
+                            fontFamily: 'Poppins, sans-serif',
                         }}
                     />
                 </Container>
@@ -356,7 +356,7 @@ const AboutPage: React.FC = () => {
 
             <UpButton />
         </Box>
-    );
-};
+    )
+}
 
-export default AboutPage;
+export default AboutPage

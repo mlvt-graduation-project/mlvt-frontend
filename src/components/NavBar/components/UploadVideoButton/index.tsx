@@ -1,242 +1,242 @@
-import React, { useRef, useState } from "react";
-import Button from "@mui/material/Button";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
-import axios from "axios";
-import { VideoData } from "../../../../types/FileData";
+import FileUploadIcon from '@mui/icons-material/FileUpload'
+import Button from '@mui/material/Button'
+import { styled } from '@mui/material/styles'
+import axios from 'axios'
+import React, { useRef, useState } from 'react'
+import { useAuth } from 'src/contexts/AuthContext'
 import {
     getPresignedImageURL,
     getPresignedVideoURL,
     postVideo,
-} from "../../../../api/video.api";
-import { styled } from "@mui/material/styles";
-import UploadNotification from "../../../UploadNotification";
-import { useAuth } from "src/context/AuthContext";
+} from '../../../../api/video.api'
+import { VideoData } from '../../../../types/FileData'
+import UploadNotification from '../../../UploadNotification'
 
-const s3ApiClient = axios.create({});
+const s3ApiClient = axios.create({})
 
 const uploadImageToS3 = async (uploadUrl: string, file: File) => {
     try {
         const response = await s3ApiClient.put(uploadUrl, file, {
             headers: {
-                "Content-Type": file.type,
+                'Content-Type': file.type,
             },
-        });
-        return response;
+        })
+        return response
     } catch (error) {
-        console.error("Error uploading image to S3:", error);
-        throw error;
+        console.error('Error uploading image to S3:', error)
+        throw error
     }
-};
+}
 
 const ResponsiveUploadButton = styled(Button)(({ theme }) => ({
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     gap: theme.spacing(1),
     maxWidth: 100,
     padding: theme.spacing(0.5, 2),
     borderRadius: theme.spacing(1.2),
-    fontFamily: "Poppins, sans-serif",
+    fontFamily: 'Poppins, sans-serif',
     fontWeight: 700,
-    transition: "background-color 0.3s ease",
+    transition: 'background-color 0.3s ease',
 
     /* base colors */
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.secondary.main,
 
-    "&:hover": {
+    '&:hover': {
         backgroundColor: theme.palette.secondary.contrastText,
     },
 
     /* XS up through SM: full width */
-    [theme.breakpoints.down("sm")]: {
-        width: "100%",
-        fontSize: "0.8rem",
+    [theme.breakpoints.down('sm')]: {
+        width: '100%',
+        fontSize: '0.8rem',
         height: 40,
     },
 
     /* MD and up: auto width, slightly larger */
-    [theme.breakpoints.up("md")]: {
-        width: "auto",
-        fontSize: "1rem",
+    [theme.breakpoints.up('md')]: {
+        width: 'auto',
+        fontSize: '1rem',
         height: 48,
         minWidth: 160,
     },
-}));
+}))
 
 function UploadButton() {
     /** ────────────────  notification state  ──────────────── */
-    const [notiOpen, setNotiOpen] = useState(false);
+    const [notiOpen, setNotiOpen] = useState(false)
     const [notiStatus, setNotiStatus] = useState<
-        "loading" | "success" | "fail"
-    >("loading");
+        'loading' | 'success' | 'fail'
+    >('loading')
     const [notifMessage, setNotifMessage] = useState<string | null>(
-        "Uploading…"
-    );
+        'Uploading…',
+    )
 
-    const { userId } = useAuth();
+    const { userId } = useAuth()
 
     const openNotification = (
-        status: "loading" | "success" | "fail",
-        message: string
+        status: 'loading' | 'success' | 'fail',
+        message: string,
     ) => {
-        setNotiStatus(status);
-        setNotifMessage(message);
-        setNotiOpen(true);
-    };
+        setNotiStatus(status)
+        setNotifMessage(message)
+        setNotiOpen(true)
+    }
 
     let ref = useRef<VideoData>({
-        title: "My Video Title",
+        title: 'My Video Title',
         duration: 300,
-        description: "A description of the video",
-        file_name: "vietnamese.mp4",
-        folder: "raw_videos",
-        image: "avatar.jpg",
-        user_id: parseInt(userId || "0"),
-    });
-    const fileInputRef = useRef<HTMLInputElement>(null);
+        description: 'A description of the video',
+        file_name: 'vietnamese.mp4',
+        folder: 'raw_videos',
+        image: 'avatar.jpg',
+        user_id: parseInt(userId || '0'),
+    })
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
-            const file = e.target.files[0];
-            ref.current.file_name = file.name;
-            ref.current.user_id = parseInt(userId || "0");
+            const file = e.target.files[0]
+            ref.current.file_name = file.name
+            ref.current.user_id = parseInt(userId || '0')
             if (file) {
-                if (file.type === "video/mp4") {
-                    const imageFile = await extractFirstFrame(file);
-                    await uploadVideoImage(imageFile);
+                if (file.type === 'video/mp4') {
+                    const imageFile = await extractFirstFrame(file)
+                    await uploadVideoImage(imageFile)
                 }
-                await uploadFile(file, file.type);
+                await uploadFile(file, file.type)
             }
         }
-    };
+    }
 
     const extractFirstFrame = (videoFile: File): Promise<File> => {
         return new Promise((resolve, reject) => {
-            const video = document.createElement("video");
-            video.src = URL.createObjectURL(videoFile);
-            video.currentTime = 0.1; // Seek to 0.1 seconds to capture the first frame
+            const video = document.createElement('video')
+            video.src = URL.createObjectURL(videoFile)
+            video.currentTime = 0.1 // Seek to 0.1 seconds to capture the first frame
 
             video.onloadeddata = () => {
-                const canvas = document.createElement("canvas");
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const context = canvas.getContext("2d");
+                const canvas = document.createElement('canvas')
+                canvas.width = video.videoWidth
+                canvas.height = video.videoHeight
+                const context = canvas.getContext('2d')
 
                 if (context) {
-                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height)
 
                     // Convert the canvas to a Blob in JPEG format
                     canvas.toBlob((blob) => {
                         if (blob) {
                             // Convert the Blob to a File
                             const imageName =
-                                videoFile.name.split(".")[0] + "_thumbnail.jpg";
-                            console.log(imageName);
+                                videoFile.name.split('.')[0] + '_thumbnail.jpg'
+                            console.log(imageName)
                             const imageFile = new File([blob], imageName, {
-                                type: "image/jpeg",
-                            });
-                            resolve(imageFile); // Return the file
+                                type: 'image/jpeg',
+                            })
+                            resolve(imageFile) // Return the file
 
-                            ref.current.image = imageName;
+                            ref.current.image = imageName
                         } else {
                             reject(
                                 new Error(
-                                    "Could not generate image from canvas"
-                                )
-                            );
+                                    'Could not generate image from canvas',
+                                ),
+                            )
                         }
-                    }, "image/jpeg");
+                    }, 'image/jpeg')
                 } else {
-                    reject(new Error("Failed to get 2D context from canvas"));
+                    reject(new Error('Failed to get 2D context from canvas'))
                 }
-            };
+            }
 
             video.onerror = (error) => {
-                reject(error);
-            };
-        });
-    };
+                reject(error)
+            }
+        })
+    }
 
     const uploadVideoImage = async (file: File) => {
         try {
             const responseGeneratePresignedImageUpload =
-                await getPresignedImageURL(file.name, file.type);
+                await getPresignedImageURL(file.name, file.type)
             if (responseGeneratePresignedImageUpload.status === 200) {
                 console.log(
-                    "Generate presigned url for image successfully:",
-                    responseGeneratePresignedImageUpload.data
-                );
+                    'Generate presigned url for image successfully:',
+                    responseGeneratePresignedImageUpload.data,
+                )
             }
 
             const s3UploadImageResponse = await uploadImageToS3(
                 responseGeneratePresignedImageUpload.data.upload_url,
-                file
-            );
+                file,
+            )
             if (s3UploadImageResponse.status === 200) {
-                console.log("Upload image to S3 successfully");
+                console.log('Upload image to S3 successfully')
             }
         } catch (e) {
-            console.error("Error uploading file: " + e);
+            console.error('Error uploading file: ' + e)
         }
-    };
+    }
 
     const uploadFile = async (file: File, fileType: string) => {
-        openNotification("loading", "Uploading…");
+        openNotification('loading', 'Uploading…')
         try {
-            console.log(ref.current);
-            const responseAdd = await postVideo(ref.current);
+            console.log(ref.current)
+            const responseAdd = await postVideo(ref.current)
 
             if (responseAdd.status === 201) {
-                console.log("File added successfully:", responseAdd.data);
+                console.log('File added successfully:', responseAdd.data)
             }
 
             const responseGeneratePresignedVideoUpload =
-                await getPresignedVideoURL(file.name, fileType);
+                await getPresignedVideoURL(file.name, fileType)
 
             if (responseGeneratePresignedVideoUpload.status === 200) {
                 console.log(
-                    "Generate presigned url for video successfully:",
-                    responseGeneratePresignedVideoUpload.data
-                );
+                    'Generate presigned url for video successfully:',
+                    responseGeneratePresignedVideoUpload.data,
+                )
 
                 const s3UploadVideoResponse = await axios.put(
                     responseGeneratePresignedVideoUpload.data.upload_url,
                     file,
                     {
                         headers: {
-                            "Content-Type": fileType,
+                            'Content-Type': fileType,
                         },
-                    }
-                );
+                    },
+                )
 
                 if (s3UploadVideoResponse.status === 200) {
-                    console.log("Upload video to S3 successfully");
+                    console.log('Upload video to S3 successfully')
                 }
-                openNotification("success", "Upload complete 🎉");
+                openNotification('success', 'Upload complete 🎉')
             }
         } catch (e) {
-            console.error("Error uploading file: " + e);
+            console.error('Error uploading file: ' + e)
         }
-    };
+    }
 
     const handleClick = () => {
         if (fileInputRef.current !== null) {
-            fileInputRef.current.click();
+            fileInputRef.current.click()
         }
-    };
+    }
 
     return (
         <>
             <input
                 type="file"
-                style={{ display: "none" }}
+                style={{ display: 'none' }}
                 ref={fileInputRef}
                 onChange={handleFileInput}
             />
             <ResponsiveUploadButton onClick={handleClick}>
                 <FileUploadIcon fontSize="small" />
-                {"Upload"}
+                {'Upload'}
             </ResponsiveUploadButton>
 
             <UploadNotification
@@ -247,7 +247,7 @@ function UploadButton() {
                 title="Data Upload Status"
             />
         </>
-    );
+    )
 }
 
-export default UploadButton;
+export default UploadButton

@@ -1,194 +1,193 @@
-import React, { useMemo, useState, useCallback, useEffect } from "react";
-import { Box, Typography } from "@mui/material";
-import ChangeViewBox from "../../BaseComponent/ChangeView";
-import { UploadFileFromDevice } from "../../BaseComponent/UploadFileFromDevice";
-import { UploadVideoFromUrl } from "../../BaseComponent/UploadVideoURL";
-import { VideoData } from "../../../../../types/FileData";
-import { GenerateButton } from "../../BaseComponent/GenerateButton";
-import { SingleOptionBox } from "../../BaseComponent/SingleOptionBox";
-import { BrowseFile } from "../../BaseComponent/BrowseMLVTFile";
-import { TranslateLanguage } from "../../../../../types/Translation";
-import { AudioFileType, VideoFileType } from "../../../../../types/FileType";
-import { useAuth } from "../../../../../context/AuthContext";
-import { AudioData } from "../../../../../types/FileData";
-import { S3Folder } from "../../../../../types/S3FolderStorage";
-import { uploadAudio } from "../../../../../utils/ProcessTriggerPopup/AudioService";
-import { uploadVideo } from "../../../../../utils/ProcessTriggerPopup/VideoService";
+import { Box, Typography } from '@mui/material'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useAuth } from '../../../../../contexts/AuthContext'
+import { AudioData, VideoData } from '../../../../../types/FileData'
+import { AudioFileType, VideoFileType } from '../../../../../types/FileType'
 import {
+    Project,
     ProjectType,
     RawAudio,
     RawVideo,
-    Project,
-} from "../../../../../types/Project";
-import { checkValidGenerate } from "../../../../../utils/ProcessTriggerPopup/CheckValidGenerate";
-import { getLanguageCode } from "../../../../../utils/ProcessTriggerPopup/VideoPopup.utils";
+} from '../../../../../types/Project'
+import { S3Folder } from '../../../../../types/S3FolderStorage'
+import { TranslateLanguage } from '../../../../../types/Translation'
+import { uploadAudio } from '../../../../../utils/ProcessTriggerPopup/AudioService'
+import { checkValidGenerate } from '../../../../../utils/ProcessTriggerPopup/CheckValidGenerate'
+import { getLanguageCode } from '../../../../../utils/ProcessTriggerPopup/VideoPopup.utils'
+import { uploadVideo } from '../../../../../utils/ProcessTriggerPopup/VideoService'
+import { BrowseFile } from '../../BaseComponent/BrowseMLVTFile'
+import ChangeViewBox from '../../BaseComponent/ChangeView'
+import { GenerateButton } from '../../BaseComponent/GenerateButton'
+import { SingleOptionBox } from '../../BaseComponent/SingleOptionBox'
+import { UploadFileFromDevice } from '../../BaseComponent/UploadFileFromDevice'
+import { UploadVideoFromUrl } from '../../BaseComponent/UploadVideoURL'
 
-const modelList = ["Model 1", "Model 2", "Model 3"];
-type modelType = (typeof modelList)[number];
+const modelList = ['Model 1', 'Model 2', 'Model 3']
+type modelType = (typeof modelList)[number]
 export interface GenerateLipsyncData {
-    videoViewState: "upload" | "url" | "browse";
-    deviceVideo: File | null;
-    videoUrl: string | null;
-    MLVTVideo: RawVideo | null;
-    videoData: VideoData;
-    audioViewState: "upload" | "url" | "browse";
-    deviceAudio: File | null;
-    audioUrl: string | null;
-    MLVTAudio: RawAudio | null;
-    audioData: AudioData;
-    audioLanguage: TranslateLanguage | null;
-    model: modelType | null;
+    videoViewState: 'upload' | 'url' | 'browse'
+    deviceVideo: File | null
+    videoUrl: string | null
+    MLVTVideo: RawVideo | null
+    videoData: VideoData
+    audioViewState: 'upload' | 'url' | 'browse'
+    deviceAudio: File | null
+    audioUrl: string | null
+    MLVTAudio: RawAudio | null
+    audioData: AudioData
+    audioLanguage: TranslateLanguage | null
+    model: modelType | null
 }
 
 interface DialogContentProps {
-    onGenerate: (data: GenerateLipsyncData) => void;
+    onGenerate: (data: GenerateLipsyncData) => void
 }
 
 export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
-    const { userId } = useAuth();
-    const parsedUserId = userId ? parseInt(userId) : 0;
-    const [model, setModel] = useState<modelType>(modelList[0]);
+    const { userId } = useAuth()
+    const parsedUserId = userId ? parseInt(userId) : 0
+    const [model, setModel] = useState<modelType>(modelList[0])
     const [audioLanguage, setAudioLanguage] = useState<TranslateLanguage>(
-        TranslateLanguage.English
-    );
+        TranslateLanguage.English,
+    )
 
     const [videoViewState, setVideoViewState] = useState<
-        "upload" | "url" | "browse"
-    >("upload");
+        'upload' | 'url' | 'browse'
+    >('upload')
     const [audioViewState, setAudioViewState] = useState<
-        "upload" | "url" | "browse"
-    >("upload");
+        'upload' | 'url' | 'browse'
+    >('upload')
 
-    const [deviceVideo, setDeviceVideo] = useState<File | null>(null);
-    const [deviceAudio, setDeviceAudio] = useState<File | null>(null);
+    const [deviceVideo, setDeviceVideo] = useState<File | null>(null)
+    const [deviceAudio, setDeviceAudio] = useState<File | null>(null)
 
-    const [videoUrl, setVideoUrl] = useState<string | null>(null);
-    const [audioUrl, setAudioUrl] = useState<string | null>(null);
+    const [videoUrl, setVideoUrl] = useState<string | null>(null)
+    const [audioUrl, setAudioUrl] = useState<string | null>(null)
 
-    const [MLVTAudio, setMLVTAudio] = useState<RawAudio | null>(null);
-    const [MLVTVideo, setMLVTVideo] = useState<RawVideo | null>(null);
+    const [MLVTAudio, setMLVTAudio] = useState<RawAudio | null>(null)
+    const [MLVTVideo, setMLVTVideo] = useState<RawVideo | null>(null)
 
-    const [disableGenerate, setDisableGenerate] = useState<boolean>(true);
+    const [disableGenerate, setDisableGenerate] = useState<boolean>(true)
 
     const [videoData, setVideoData] = useState<VideoData>({
-        title: "My Video Title",
+        title: 'My Video Title',
         duration: 300,
-        description: "A description of the video",
-        file_name: "",
+        description: 'A description of the video',
+        file_name: '',
         folder: S3Folder.video,
-        image: "avatar.jpg",
+        image: 'avatar.jpg',
         user_id: parsedUserId,
-    });
+    })
 
     const [audioData, setAudioData] = useState<AudioData>({
-        file_name: "",
+        file_name: '',
         folder: S3Folder.audio,
         user_id: parsedUserId,
         duration: 0,
-    });
+    })
 
     const handleChangeModel = useCallback((model: string) => {
         if (modelList.includes(model as modelType)) {
-            setModel(model as modelType);
+            setModel(model as modelType)
         }
-    }, []);
+    }, [])
 
     const handleChangeAudioLanguage = (value: string) => {
         if (
             Object.values(TranslateLanguage).includes(
-                value as TranslateLanguage
+                value as TranslateLanguage,
             )
         ) {
-            setAudioLanguage(value as TranslateLanguage);
+            setAudioLanguage(value as TranslateLanguage)
         }
-    };
+    }
 
     const handleChangeDisableGenerate = useCallback((value: boolean) => {
-        setDisableGenerate(value);
-    }, []);
+        setDisableGenerate(value)
+    }, [])
 
     const handleChangeVideoData = useCallback((update: Partial<VideoData>) => {
         setVideoData((prevData) => ({
             ...prevData,
             ...update,
-        }));
-    }, []);
+        }))
+    }, [])
 
     const handleChangeAudioData = useCallback((update: Partial<AudioData>) => {
         setAudioData((prevData) => ({
             ...prevData,
             ...update,
-        }));
-    }, []);
+        }))
+    }, [])
 
     const handleChangeMLVTAudio = useCallback(
         (input: Project | null) => {
-            if (input && input.type_project !== ProjectType.Audio) return;
-            setMLVTAudio(input as RawAudio | null);
+            if (input && input.type_project !== ProjectType.Audio) return
+            setMLVTAudio(input as RawAudio | null)
         },
-        [setMLVTAudio]
-    );
+        [setMLVTAudio],
+    )
 
     const handleChangeMLVTVideo = useCallback(
         (input: Project | null) => {
-            if (input && input.type_project !== ProjectType.Video) return;
-            setMLVTVideo(input as RawVideo | null);
+            if (input && input.type_project !== ProjectType.Video) return
+            setMLVTVideo(input as RawVideo | null)
         },
-        [setMLVTVideo]
-    );
+        [setMLVTVideo],
+    )
 
     const handleChangeDeviceVideo = (file: File | null) => {
-        setDeviceVideo(file);
-    };
+        setDeviceVideo(file)
+    }
 
     const handleChangeDeviceAudio = (file: File | null) => {
-        setDeviceAudio(file);
-    };
+        setDeviceAudio(file)
+    }
 
     const changeVideoViewState = (view: string) => {
-        if (["upload", "url", "browse"].includes(view)) {
-            setVideoViewState(view as "upload" | "url" | "browse");
+        if (['upload', 'url', 'browse'].includes(view)) {
+            setVideoViewState(view as 'upload' | 'url' | 'browse')
         }
-    };
+    }
 
     const changeAudioViewState = (view: string) => {
-        if (["upload", "url", "browse"].includes(view)) {
-            setAudioViewState(view as "upload" | "url" | "browse");
+        if (['upload', 'url', 'browse'].includes(view)) {
+            setAudioViewState(view as 'upload' | 'url' | 'browse')
         }
-    };
+    }
 
     const uploadAudioFromDevice = useCallback(async (): Promise<number> => {
         if (deviceAudio && audioLanguage) {
             try {
-                handleChangeAudioData({ lang: getLanguageCode(audioLanguage) });
-                const audioId = await uploadAudio(deviceAudio, audioData);
-                return audioId;
+                handleChangeAudioData({ lang: getLanguageCode(audioLanguage) })
+                const audioId = await uploadAudio(deviceAudio, audioData)
+                return audioId
             } catch (error) {
-                throw error;
+                throw error
             }
         } else {
-            throw new Error("Failed uploading Audio file to Server");
+            throw new Error('Failed uploading Audio file to Server')
         }
-    }, [deviceAudio, audioData, handleChangeAudioData, audioLanguage]);
+    }, [deviceAudio, audioData, handleChangeAudioData, audioLanguage])
 
     const uploadVideoFromDevice = useCallback(async (): Promise<number> => {
         if (deviceVideo) {
             try {
-                const videoId = await uploadVideo(deviceVideo, videoData);
-                return videoId;
+                const videoId = await uploadVideo(deviceVideo, videoData)
+                return videoId
             } catch (error) {
-                throw error;
+                throw error
             }
         } else {
-            throw new Error("Failed uploading Video file to Server");
+            throw new Error('Failed uploading Video file to Server')
         }
-    }, [deviceVideo, videoData]);
+    }, [deviceVideo, videoData])
 
     const videoViews = useMemo(
         () => [
             {
-                text: "UPLOAD",
-                viewState: "upload",
+                text: 'UPLOAD',
+                viewState: 'upload',
                 handleSubmit: uploadVideoFromDevice,
                 component: (
                     <UploadFileFromDevice
@@ -200,8 +199,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 ),
             },
             {
-                text: "URL",
-                viewState: "url",
+                text: 'URL',
+                viewState: 'url',
                 component: (
                     <UploadVideoFromUrl
                         handleChangeDisableGenerate={
@@ -212,8 +211,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 ),
             },
             {
-                text: "BROWSE MLVT",
-                viewState: "browse",
+                text: 'BROWSE MLVT',
+                viewState: 'browse',
                 component: (
                     <BrowseFile
                         allowTypes={[ProjectType.Video]}
@@ -234,14 +233,14 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             uploadVideoFromDevice,
             handleChangeMLVTVideo,
             MLVTVideo,
-        ]
-    );
+        ],
+    )
 
     const audioViews = useMemo(
         () => [
             {
-                text: "UPLOAD",
-                viewState: "upload",
+                text: 'UPLOAD',
+                viewState: 'upload',
                 handleSubmit: uploadAudioFromDevice,
                 component: (
                     <UploadFileFromDevice
@@ -253,8 +252,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 ),
             },
             {
-                text: "URL",
-                viewState: "url",
+                text: 'URL',
+                viewState: 'url',
                 component: (
                     <UploadVideoFromUrl
                         handleChangeDisableGenerate={
@@ -265,8 +264,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 ),
             },
             {
-                text: "BROWSE MLVT",
-                viewState: "browse",
+                text: 'BROWSE MLVT',
+                viewState: 'browse',
                 component: (
                     <BrowseFile
                         allowTypes={[ProjectType.Audio]}
@@ -287,8 +286,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             uploadAudioFromDevice,
             handleChangeMLVTAudio,
             MLVTAudio,
-        ]
-    );
+        ],
+    )
 
     useEffect(() => {
         if (
@@ -296,20 +295,20 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 audioViewState,
                 deviceAudio,
                 audioUrl,
-                MLVTAudio
+                MLVTAudio,
             ) ||
             !checkValidGenerate(
                 videoViewState,
                 deviceVideo,
                 videoUrl,
-                MLVTVideo
+                MLVTVideo,
             ) ||
             !audioLanguage ||
             !model
         ) {
-            setDisableGenerate(true);
+            setDisableGenerate(true)
         } else {
-            setDisableGenerate(false);
+            setDisableGenerate(false)
         }
     }, [
         deviceAudio,
@@ -322,17 +321,17 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         model,
         MLVTAudio,
         MLVTVideo,
-    ]);
+    ])
 
     const activeVideoView = videoViews.find(
-        (view) => view.viewState === videoViewState
-    );
-    const activeVideoComponent = activeVideoView?.component || null;
+        (view) => view.viewState === videoViewState,
+    )
+    const activeVideoComponent = activeVideoView?.component || null
 
     const activeAudioView = audioViews.find(
-        (view) => view.viewState === audioViewState
-    );
-    const activeAudioComponent = activeAudioView?.component || null;
+        (view) => view.viewState === audioViewState,
+    )
+    const activeAudioComponent = activeAudioView?.component || null
 
     const handleGenerate = useCallback(() => {
         // Package all the relevant state into one object
@@ -349,9 +348,9 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             audioData,
             audioLanguage,
             model,
-        };
+        }
         // Call the function passed down from the parent
-        onGenerate(generationData);
+        onGenerate(generationData)
     }, [
         onGenerate,
         videoViewState,
@@ -366,7 +365,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         audioData,
         audioLanguage,
         model,
-    ]);
+    ])
 
     return (
         <>
@@ -375,9 +374,9 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 variant="body2"
                 sx={{
                     fontFamily:
-                        "Poppins, Inter, Araboto, Roboto, Arial, sans-serif",
+                        'Poppins, Inter, Araboto, Roboto, Arial, sans-serif',
                     fontWeight: 500,
-                    marginBottom: "10px",
+                    marginBottom: '10px',
                 }}
             >
                 Upload a video
@@ -401,10 +400,10 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 variant="body2"
                 sx={{
                     fontFamily:
-                        "Poppins, Inter, Araboto, Roboto, Arial, sans-serif",
+                        'Poppins, Inter, Araboto, Roboto, Arial, sans-serif',
                     fontWeight: 500,
-                    marginBottom: "10px",
-                    marginTop: "10px",
+                    marginBottom: '10px',
+                    marginTop: '10px',
                 }}
             >
                 Upload an audio
@@ -427,10 +426,10 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             <Box
                 marginTop="10px"
                 sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    width: "100%",
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    width: '100%',
                 }}
             >
                 {/* Choosing audio language seciton */}
@@ -438,9 +437,9 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                     <Typography
                         variant="body2"
                         sx={{
-                            marginBottom: "10px",
-                            marginTop: "15px",
-                            fontFamily: "Poppins, sans-serif",
+                            marginBottom: '10px',
+                            marginTop: '15px',
+                            fontFamily: 'Poppins, sans-serif',
                         }}
                     >
                         Audio language:
@@ -461,9 +460,9 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                     <Typography
                         variant="body2"
                         sx={{
-                            marginBottom: "10px",
-                            marginTop: "15px",
-                            fontFamily: "Poppins, sans-serif",
+                            marginBottom: '10px',
+                            marginTop: '15px',
+                            fontFamily: 'Poppins, sans-serif',
                         }}
                     >
                         Model:
@@ -482,5 +481,5 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 handleGenerate={handleGenerate}
             />
         </>
-    );
-};
+    )
+}
