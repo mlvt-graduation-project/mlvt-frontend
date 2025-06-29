@@ -81,7 +81,7 @@ export const getThemeOptions = (mode: PaletteMode): ThemeOptions => {
             text: paletteTokens.text,
         },
         typography: {
-            fontFamily: ["Roboto", "Helvetica", "Arial", "sans-serif"].join(
+            fontFamily: ["Poppins","Roboto", "Helvetica", "Arial", "sans-serif"].join(
                 ","
             ),
             h1: { fontSize: "2.5rem", fontWeight: 700 },

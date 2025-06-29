@@ -68,7 +68,9 @@ const ProjectSection = () => {
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
-                    marginY: '1.6rem',
+                    marginTop: '2rem',
+                    marginBottom: '3.5rem',
+                    paddingX: '1.5rem',
                 }}
             >
                 <Typography
@@ -103,7 +105,7 @@ const ProjectSection = () => {
                             fontFamily: 'Poppins, sans-serif',
                         }}
                     >
-                        {projects.length}
+                        {displayProjects.length}
                     </Typography>
                 </Box>
 
