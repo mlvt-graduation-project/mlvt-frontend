@@ -1,88 +1,88 @@
-import React, { useState } from "react";
+import { AccountCircle, Lock, Subscriptions } from '@mui/icons-material'
+import HomeIcon from '@mui/icons-material/Home'
 import {
     Box,
-    Typography,
+    Button,
+    Divider,
+    Link,
     List,
     ListItem,
     ListItemIcon,
     ListItemText,
+    Typography,
     useTheme,
-    Divider,
-    Link,
-    Button,
-} from "@mui/material";
-import { AccountCircle, Lock, Subscriptions } from "@mui/icons-material";
-import PersonalDetails from "../../components/PersonalDetails";
-import ChangePassword from "../../components/ChangePassword";
-import Voucher from "../../components/Voucher";
-import Footer from "../../components/Footer";
-import LogoImg from "../../assets/mlvt_logo.png";
-import HomeIcon from "@mui/icons-material/Home";
-import { useNavigate } from "react-router-dom";
-import LoadingBackdrop from "../../components/LoadingBackdrop";
-import { UserWithAvatar } from "src/types/Response/User";
-import { useGetUserDetails } from "src/hooks/useGetUserDetails";
+} from '@mui/material'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
+import { UserWithAvatar } from 'src/types/Response/User'
+import LogoImg from '../../assets/mlvt_logo.png'
+import Footer from '../../components/Footer'
+import LoadingBackdrop from '../../components/LoadingBackdrop'
+import ChangePassword from './components/ChangePassword'
+import PersonalDetails from './components/PersonalDetails'
+import Voucher from './components/SubscriptionPlan'
 
-type TabKey = "personal" | "password" | "subscription";
+type TabKey = 'personal' | 'password' | 'subscription'
 
 const TABS: {
-    key: TabKey;
-    label: string;
-    icon: React.ReactNode;
+    key: TabKey
+    label: string
+    icon: React.ReactNode
 }[] = [
-    { key: "personal", label: "Personal details", icon: <AccountCircle /> },
-    { key: "password", label: "Change password", icon: <Lock /> },
-    { key: "subscription", label: "Subscription", icon: <Subscriptions /> },
-];
+    { key: 'personal', label: 'Personal details', icon: <AccountCircle /> },
+    { key: 'password', label: 'Change password', icon: <Lock /> },
+    { key: 'subscription', label: 'Subscription', icon: <Subscriptions /> },
+]
 
 const listItemCommonSx = {
-    cursor: "pointer",
-    borderRadius: "0.5rem",
-    marginBottom: "0.5rem",
-    fontFamily: "Poppins, sans-serif",
-};
+    cursor: 'pointer',
+    borderRadius: '0.5rem',
+    marginBottom: '0.5rem',
+    fontFamily: 'Poppins, sans-serif',
+}
 
 const AccountSettings: React.FC = () => {
-    const theme = useTheme();
-    const { data: userDetails, isLoading: loading } = useGetUserDetails();
-    const [activeTab, setActiveTab] = useState<TabKey>("personal");
-    const navigate = useNavigate();
+    const theme = useTheme()
+    const { data: userDetails, isLoading: loading } = useGetUserDetails()
+    const [activeTab, setActiveTab] = useState<TabKey>('personal')
+    const navigate = useNavigate()
 
     if (loading) {
-        return <LoadingBackdrop open={loading} />; // Show loading backdrop while fetching user details
+        return <LoadingBackdrop open={loading} /> // Show loading backdrop while fetching user details
     }
 
     const renderContent = () => {
         switch (activeTab) {
-            case "personal":
+            case 'personal':
                 return (
                     <PersonalDetails
                         user={userDetails?.user as UserWithAvatar}
                     />
-                );
-            case "password":
-                return <ChangePassword />;
-            case "subscription":
-                return <Voucher />;
+                )
+            case 'password':
+                return <ChangePassword />
+            case 'subscription':
+                return <Voucher />
         }
-    };
+    }
     const handleGoHome = () => {
-        navigate("/");
-    };
+        navigate('/')
+    }
 
     return (
         <Box>
-            <Box sx={{ display: "flex", padding: 4, height: "100vh" }}>
+            <Box sx={{ display: 'flex', padding: 4, height: '100vh' }}>
                 {/* Left Sidebar */}
                 <Box
                     sx={{
                         flex: 1,
                         maxWidth: 380,
                         pr: 5,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "space-between",
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
                     }}
                 >
                     <Box>
@@ -95,7 +95,7 @@ const AccountSettings: React.FC = () => {
                                     width: 150,
                                     height: 150,
                                     mb: 2,
-                                    borderRadius: "0.8rem",
+                                    borderRadius: '0.8rem',
                                 }}
                             />
                         </Link>
@@ -103,8 +103,8 @@ const AccountSettings: React.FC = () => {
                             sx={{
                                 fontWeight: 650,
                                 color: theme.palette.primary.main,
-                                fontSize: "1.2rem",
-                                fontFamily: "Poppins, sans-serif",
+                                fontSize: '1.2rem',
+                                fontFamily: 'Poppins, sans-serif',
                             }}
                         >
                             Multi-language Video Translation
@@ -114,7 +114,7 @@ const AccountSettings: React.FC = () => {
                             sx={{
                                 color: theme.palette.text.secondary,
                                 mt: 0.5,
-                                fontFamily: "Poppins, sans-serif",
+                                fontFamily: 'Poppins, sans-serif',
                             }}
                         >
                             Manage your personal account settings
@@ -126,14 +126,14 @@ const AccountSettings: React.FC = () => {
                                 color: theme.palette.text.primary,
                                 mt: 3,
                                 mb: 1,
-                                fontFamily: "Poppins, sans-serif",
+                                fontFamily: 'Poppins, sans-serif',
                             }}
                         >
                             Account settings
                         </Typography>
                         <List>
                             {TABS.map(({ key, label, icon }) => {
-                                const isActive = activeTab === key;
+                                const isActive = activeTab === key
                                 return (
                                     <ListItem
                                         key={key}
@@ -142,7 +142,7 @@ const AccountSettings: React.FC = () => {
                                             ...listItemCommonSx,
                                             backgroundColor: isActive
                                                 ? theme.palette.primary.main
-                                                : "transparent",
+                                                : 'transparent',
                                         }}
                                     >
                                         <ListItemIcon>
@@ -157,7 +157,7 @@ const AccountSettings: React.FC = () => {
                                                             : theme.palette.text
                                                                   .disabled,
                                                     },
-                                                }
+                                                },
                                             )}
                                         </ListItemIcon>
                                         <ListItemText
@@ -168,13 +168,13 @@ const AccountSettings: React.FC = () => {
                                                           .main
                                                     : theme.palette.text
                                                           .disabled,
-                                                "& .MuiTypography-root": {
-                                                    fontFamily: "inherit",
+                                                '& .MuiTypography-root': {
+                                                    fontFamily: 'inherit',
                                                 },
                                             }}
                                         />
                                     </ListItem>
-                                );
+                                )
                             })}
                         </List>
                     </Box>
@@ -183,12 +183,12 @@ const AccountSettings: React.FC = () => {
                         onClick={handleGoHome}
                         startIcon={<HomeIcon />}
                         sx={{
-                            borderRadius: "50px",
-                            padding: "10px 25px",
-                            fontWeight: "550",
-                            textTransform: "none",
-                            fontSize: "1rem",
-                            fontFamily: "Poppins, sans-serif",
+                            borderRadius: '50px',
+                            padding: '10px 25px',
+                            fontWeight: '550',
+                            textTransform: 'none',
+                            fontSize: '1rem',
+                            fontFamily: 'Poppins, sans-serif',
                         }}
                     >
                         Go Back Home
@@ -206,7 +206,7 @@ const AccountSettings: React.FC = () => {
             </Box>
             <Footer />
         </Box>
-    );
-};
+    )
+}
 
-export default AccountSettings;
+export default AccountSettings

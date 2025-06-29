@@ -1,3 +1,5 @@
+import { Bookmark, BookmarkBorder } from '@mui/icons-material'
+import AlignHorizontalRightIcon from '@mui/icons-material/AlignHorizontalRight'
 import {
     Box,
     Checkbox,
@@ -8,36 +10,35 @@ import {
     Pagination,
     SxProps,
     Typography,
-} from "@mui/material";
-import Layout from "../../layout/HomePage";
-import { useTheme } from "@mui/material/styles";
-import AlignHorizontalRightIcon from "@mui/icons-material/AlignHorizontalRight";
-import React, { useEffect, useState } from "react";
-import { Bookmark, BookmarkBorder } from "@mui/icons-material";
-import { Project, ProjectType } from "../../types/Project";
-import { ProjectStatus } from "../../types/ProjectStatus";
-import CardFeature from "../../components/CardFeature";
-import SearchBar from "../../components/SearchBar";
-import { useProjectContext } from "../../context/ProjectContext";
-import { ProcessedVideoPopUp } from "../../components/VideoPopup/ProjectPopup";
-import { useAuth } from "../../context/AuthContext";
+} from '@mui/material'
+import { useTheme } from '@mui/material/styles'
+import React, { useEffect, useState } from 'react'
+import CardFeature from '../../components/CardFeature'
+
+import SearchBar from '../../components/SearchBar'
+import { useAuth } from '../../contexts/AuthContext'
+import { useProjectContext } from '../../contexts/ProjectContext'
+import Layout from '../../layout/HomePage'
+import { Project, ProjectType } from '../../types/Project'
+import { ProjectStatus } from '../../types/ProjectStatus'
+import { ProcessedVideoPopUp } from '../core-feature-popup/ProjectPopup'
 
 interface categoryProjectType {
-    label: string;
-    filterList: ProjectType[];
-    checkStatus: boolean;
+    label: string
+    filterList: ProjectType[]
+    checkStatus: boolean
 }
 interface categoryProjectStatus {
-    label: string;
-    filterList: ProjectStatus[];
-    checkStatus: boolean;
-    color: string;
+    label: string
+    filterList: ProjectStatus[]
+    checkStatus: boolean
+    color: string
 }
 
 interface ComponentProps {
-    inputOption: categoryProjectType | categoryProjectStatus;
-    labelProps?: SxProps;
-    color: string;
+    inputOption: categoryProjectType | categoryProjectStatus
+    labelProps?: SxProps
+    color: string
 }
 
 function CheckboxComponent({
@@ -47,17 +48,17 @@ function CheckboxComponent({
     onCheck,
     onUncheck,
 }: ComponentProps & {
-    onCheck: () => void;
-    onUncheck: () => void;
+    onCheck: () => void
+    onUncheck: () => void
 }) {
-    const theme = useTheme();
+    const theme = useTheme()
     const handleChange = () => {
         if (!inputOption.checkStatus) {
-            onCheck();
+            onCheck()
         } else {
-            onUncheck();
+            onUncheck()
         }
-    };
+    }
 
     return (
         <FormControlLabel
@@ -67,32 +68,32 @@ function CheckboxComponent({
                     onChange={handleChange}
                     sx={{
                         color: color,
-                        "&.Mui-checked": {
+                        '&.Mui-checked': {
                             color: color,
                         },
-                        height: "2.625rem",
+                        height: '2.625rem',
                     }}
                 />
             }
             sx={{
-                margin: "0",
+                margin: '0',
                 color: theme.palette.text.secondary,
                 ...labelProps,
             }}
             label={<Typography sx={labelProps}>{inputOption.label}</Typography>}
         />
-    );
+    )
 }
 
 const Storage = () => {
-    const theme = useTheme();
-    const userId = useAuth();
-    const [isFavorite, setIsFavorite] = React.useState(false);
+    const theme = useTheme()
+    const userId = useAuth()
+    const [isFavorite, setIsFavorite] = React.useState(false)
     const { getProjectByTypeAndStatus, getProjectsByType, fetchAllProjects } =
-        useProjectContext();
+        useProjectContext()
     const [selectedProject, setSelectedProject] =
-        React.useState<Project | null>(null);
-    const [isPopUpOpen, setIsPopUpOpen] = React.useState(false);
+        React.useState<Project | null>(null)
+    const [isPopUpOpen, setIsPopUpOpen] = React.useState(false)
     const [projectTypeFilter, setProjectTypeFilter] = useState<
         Set<ProjectType>
     >(
@@ -105,8 +106,8 @@ const Storage = () => {
             ProjectType.Lipsync,
             ProjectType.TextGeneration,
             ProjectType.TextTranslation,
-        ])
-    );
+        ]),
+    )
     const [projectStatusFilter, setProjectStatusFilter] = useState<
         Set<ProjectStatus>
     >(
@@ -115,14 +116,14 @@ const Storage = () => {
             ProjectStatus.Processing,
             ProjectStatus.Raw,
             ProjectStatus.Succeeded,
-        ])
-    );
-    const [displayProjects, setDisplayProjects] = useState<Project[]>([]);
+        ]),
+    )
+    const [displayProjects, setDisplayProjects] = useState<Project[]>([])
 
     const [categoryOption, setCategoryOption] = useState<categoryProjectType[]>(
         [
             {
-                label: "All",
+                label: 'All',
                 filterList: [
                     ProjectType.Audio,
                     ProjectType.Video,
@@ -136,52 +137,52 @@ const Storage = () => {
                 checkStatus: true,
             },
             {
-                label: "Video Translation",
+                label: 'Video Translation',
                 filterList: [ProjectType.Fullpipeline],
                 checkStatus: true,
             },
             {
-                label: "Text Genartion",
+                label: 'Text Genartion',
                 filterList: [ProjectType.TextGeneration],
                 checkStatus: true,
             },
             {
-                label: "Text Translation",
+                label: 'Text Translation',
                 filterList: [ProjectType.TextTranslation],
                 checkStatus: true,
             },
             {
-                label: "Voice Generation",
+                label: 'Voice Generation',
                 filterList: [ProjectType.AudioGeneration],
                 checkStatus: true,
             },
             {
-                label: "Lip Synchronization",
+                label: 'Lip Synchronization',
                 filterList: [ProjectType.Lipsync],
                 checkStatus: true,
             },
             {
-                label: "Video",
+                label: 'Video',
                 filterList: [ProjectType.Video],
                 checkStatus: true,
             },
             {
-                label: "Text",
+                label: 'Text',
                 filterList: [ProjectType.Text],
                 checkStatus: true,
             },
             {
-                label: "Audio",
+                label: 'Audio',
                 filterList: [ProjectType.Audio],
                 checkStatus: true,
             },
-            { label: "My Favorites", filterList: [], checkStatus: true },
-        ]
-    );
+            { label: 'My Favorites', filterList: [], checkStatus: true },
+        ],
+    )
 
     const [statusOption, setStatusOption] = useState<categoryProjectStatus[]>([
         {
-            label: "All",
+            label: 'All',
             filterList: [
                 ProjectStatus.Failed,
                 ProjectStatus.Processing,
@@ -192,86 +193,86 @@ const Storage = () => {
             color: theme.palette.text.secondary,
         },
         {
-            label: "Succeeded",
+            label: 'Succeeded',
             color: theme.palette.success.main,
             filterList: [ProjectStatus.Succeeded],
             checkStatus: true,
         },
         {
-            label: "Processing",
+            label: 'Processing',
             color: theme.palette.warning.main,
             filterList: [ProjectStatus.Processing],
             checkStatus: true,
         },
         {
-            label: "Failed",
+            label: 'Failed',
             color: theme.palette.error.main,
             filterList: [ProjectStatus.Failed],
             checkStatus: true,
         },
         {
-            label: "Raw",
+            label: 'Raw',
             color: theme.palette.neutral.main,
             filterList: [ProjectStatus.Raw],
             checkStatus: true,
         },
-    ]);
+    ])
 
     const handleAddProjectTypeFilter = (inputList: ProjectType[]) => {
         setProjectTypeFilter(
             (prev: Set<ProjectType>) =>
-                new Set(Array.from(prev).concat(inputList))
-        );
-    };
+                new Set(Array.from(prev).concat(inputList)),
+        )
+    }
 
     const handleRemoveProjectTypeFilter = (inputList: ProjectType[]) => {
         setProjectTypeFilter((prev: Set<ProjectType>) => {
-            const newSet = new Set(prev);
-            inputList.forEach((element) => newSet.delete(element)); // Remove each project in the array
-            return newSet;
-        });
-    };
+            const newSet = new Set(prev)
+            inputList.forEach((element) => newSet.delete(element)) // Remove each project in the array
+            return newSet
+        })
+    }
 
     const handleAddProjectStatusFilter = (inputList: ProjectStatus[]) => {
         setProjectStatusFilter(
             (prev: Set<ProjectStatus>) =>
-                new Set(Array.from(prev).concat(inputList))
-        );
-    };
+                new Set(Array.from(prev).concat(inputList)),
+        )
+    }
 
     const handleRemoveProjectStatusFilter = (inputList: ProjectStatus[]) => {
         setProjectStatusFilter((prev: Set<ProjectStatus>) => {
-            const newSet = new Set(prev);
-            inputList.forEach((element) => newSet.delete(element)); // Remove each project in the array
-            return newSet;
-        });
-    };
+            const newSet = new Set(prev)
+            inputList.forEach((element) => newSet.delete(element)) // Remove each project in the array
+            return newSet
+        })
+    }
 
     const onCheckProjectFilter = <
-        T extends categoryProjectType | categoryProjectStatus
+        T extends categoryProjectType | categoryProjectStatus,
     >(
         allOption: T[],
         setAllOption: React.Dispatch<React.SetStateAction<T[]>>,
-        selectOption: T
+        selectOption: T,
     ) => {
-        if (selectOption.label === "All") {
+        if (selectOption.label === 'All') {
             setAllOption((prevOptions) =>
-                prevOptions.map((option) => ({ ...option, checkStatus: true }))
-            );
+                prevOptions.map((option) => ({ ...option, checkStatus: true })),
+            )
         } else {
             const checkCount = (
                 allOption as (categoryProjectType | categoryProjectStatus)[]
-            ).filter((option) => option.checkStatus).length;
+            ).filter((option) => option.checkStatus).length
             // case "All" filter will be checked on along with the selected filter
             if (checkCount === allOption.length - 2) {
                 setAllOption((prevOptions) =>
                     prevOptions.map((option) =>
                         option.label === selectOption.label ||
-                        option.label === "All"
+                        option.label === 'All'
                             ? { ...option, checkStatus: true }
-                            : option
-                    )
-                );
+                            : option,
+                    ),
+                )
             }
             // case just the selected filter will be checked on
             else {
@@ -279,97 +280,98 @@ const Storage = () => {
                     prevOptions.map((option) =>
                         option.label === selectOption.label
                             ? { ...option, checkStatus: true }
-                            : option
-                    )
-                );
+                            : option,
+                    ),
+                )
             }
         }
-        if ("color" in selectOption) {
+        if ('color' in selectOption) {
             handleAddProjectStatusFilter(
-                selectOption.filterList as ProjectStatus[]
-            );
+                selectOption.filterList as ProjectStatus[],
+            )
         } else {
-            handleAddProjectTypeFilter(
-                selectOption.filterList as ProjectType[]
-            );
+            handleAddProjectTypeFilter(selectOption.filterList as ProjectType[])
         }
-    };
+    }
 
     const onUnCheckProjectFilter = <
-        T extends categoryProjectType | categoryProjectStatus
+        T extends categoryProjectType | categoryProjectStatus,
     >(
         setAllOption: React.Dispatch<React.SetStateAction<T[]>>,
-        selectOption: T
+        selectOption: T,
     ) => {
         // case "All" filter is checked
-        if (selectOption.label === "All") {
+        if (selectOption.label === 'All') {
             setAllOption((prevOptions) =>
-                prevOptions.map((option) => ({ ...option, checkStatus: false }))
-            );
+                prevOptions.map((option) => ({
+                    ...option,
+                    checkStatus: false,
+                })),
+            )
         }
         // case other fileter is checked
         else {
             setAllOption((prevOptions) =>
                 prevOptions.map((option) =>
                     option.label === selectOption.label ||
-                    option.label === "All"
+                    option.label === 'All'
                         ? { ...option, checkStatus: false }
-                        : option
-                )
-            );
+                        : option,
+                ),
+            )
         }
 
-        if ("color" in selectOption) {
+        if ('color' in selectOption) {
             handleRemoveProjectStatusFilter(
-                selectOption.filterList as ProjectStatus[]
-            );
+                selectOption.filterList as ProjectStatus[],
+            )
         } else {
             handleRemoveProjectTypeFilter(
-                selectOption.filterList as ProjectType[]
-            );
+                selectOption.filterList as ProjectType[],
+            )
         }
-    };
+    }
 
     const handleCardClick = (project: Project) => {
-        setSelectedProject(project);
-        setIsPopUpOpen(true);
-    };
+        setSelectedProject(project)
+        setIsPopUpOpen(true)
+    }
 
     const handleClosePopUp = () => {
-        setIsPopUpOpen(false);
-        setSelectedProject(null);
-    };
+        setIsPopUpOpen(false)
+        setSelectedProject(null)
+    }
 
     useEffect(() => {
-        fetchAllProjects();
-    }, [userId, fetchAllProjects]);
+        fetchAllProjects()
+    }, [userId, fetchAllProjects])
 
     useEffect(() => {
-        const projectTypeList: ProjectType[] = Array.from(projectTypeFilter);
+        const projectTypeList: ProjectType[] = Array.from(projectTypeFilter)
         const projectStatusList: ProjectStatus[] =
-            Array.from(projectStatusFilter);
+            Array.from(projectStatusFilter)
         const projects = getProjectByTypeAndStatus(
             projectTypeList,
-            projectStatusList
-        );
-        setDisplayProjects(projects);
+            projectStatusList,
+        )
+        setDisplayProjects(projects)
     }, [
         userId,
         getProjectByTypeAndStatus,
         projectTypeFilter,
         projectStatusFilter,
         getProjectsByType,
-    ]);
+    ])
 
     const handleFavoriteClicked = (e: any) => {
-        e.stopPropagation();
-        console.log("Favorite clicked");
-        setIsFavorite(!isFavorite);
-    };
+        e.stopPropagation()
+        console.log('Favorite clicked')
+        setIsFavorite(!isFavorite)
+    }
 
     useEffect(() => {
-        console.log("Display project: ", displayProjects);
-    }, [displayProjects]);
+        console.log('Display project: ', displayProjects)
+    }, [displayProjects])
 
     return (
         <Layout>
@@ -383,11 +385,11 @@ const Storage = () => {
                 >
                     <Typography
                         sx={{
-                            fontFamily: "Poppins, sans-serif",
-                            fontSize: "2rem",
+                            fontFamily: 'Poppins, sans-serif',
+                            fontSize: '2rem',
                             fontWeight: 600,
                             color: theme.palette.primary.main,
-                            marginBottom: "30px",
+                            marginBottom: '30px',
                         }}
                     >
                         My Storage
@@ -399,21 +401,21 @@ const Storage = () => {
                                 key={index}
                                 inputOption={option}
                                 labelProps={{
-                                    fontFamily: "Poppins, sans-serif",
-                                    fontSize: "0.9rem",
+                                    fontFamily: 'Poppins, sans-serif',
+                                    fontSize: '0.9rem',
                                 }}
                                 color={theme.palette.text.secondary}
                                 onCheck={() =>
                                     onCheckProjectFilter(
                                         categoryOption,
                                         setCategoryOption,
-                                        option
+                                        option,
                                     )
                                 }
                                 onUncheck={() =>
                                     onUnCheckProjectFilter(
                                         setCategoryOption,
-                                        option
+                                        option,
                                     )
                                 }
                             />
@@ -423,38 +425,38 @@ const Storage = () => {
                         <Box
                             onClick={handleFavoriteClicked}
                             sx={{
-                                marginLeft: "0",
+                                marginLeft: '0',
                                 color: theme.palette.text.secondary,
-                                height: "2.625rem",
-                                display: "flex",
-                                flexDirection: "row",
-                                alignItems: "center",
-                                "&:hover": {
-                                    cursor: "pointer",
+                                height: '2.625rem',
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                '&:hover': {
+                                    cursor: 'pointer',
                                 },
                             }}
                         >
-                            <IconButton sx={{ padding: "5px" }}>
+                            <IconButton sx={{ padding: '5px' }}>
                                 {isFavorite ? (
                                     <Bookmark
                                         sx={{
                                             color: theme.palette.warning.main,
-                                            fontSize: "2rem",
+                                            fontSize: '2rem',
                                         }}
                                     />
                                 ) : (
                                     <BookmarkBorder
                                         sx={{
                                             color: theme.palette.warning.main,
-                                            fontSize: "2rem",
+                                            fontSize: '2rem',
                                         }}
                                     />
                                 )}
                             </IconButton>
                             <Typography
                                 sx={{
-                                    fontFamily: "Poppins, sans-serif",
-                                    fontSize: "0.9rem",
+                                    fontFamily: 'Poppins, sans-serif',
+                                    fontSize: '0.9rem',
                                 }}
                             >
                                 Favorite
@@ -464,13 +466,13 @@ const Storage = () => {
                         <Divider
                             orientation="horizontal"
                             flexItem
-                            sx={{ borderBottomWidth: 1, marginY: "15px" }}
+                            sx={{ borderBottomWidth: 1, marginY: '15px' }}
                         />
 
                         <Typography
                             sx={{
-                                fontFamily: "Poppins, sans-serif",
-                                fontSize: "0.9rem",
+                                fontFamily: 'Poppins, sans-serif',
+                                fontSize: '0.9rem',
                                 fontWeight: 600,
                             }}
                         >
@@ -484,8 +486,8 @@ const Storage = () => {
                                     key={index}
                                     inputOption={option}
                                     labelProps={{
-                                        fontFamily: "Poppins, sans-serif",
-                                        fontSize: "0.9rem",
+                                        fontFamily: 'Poppins, sans-serif',
+                                        fontSize: '0.9rem',
                                     }}
                                     color={
                                         option.color ||
@@ -495,13 +497,13 @@ const Storage = () => {
                                         onCheckProjectFilter(
                                             statusOption,
                                             setStatusOption,
-                                            option
+                                            option,
                                         )
                                     }
                                     onUncheck={() =>
                                         onUnCheckProjectFilter(
                                             setStatusOption,
-                                            option
+                                            option,
                                         )
                                     }
                                 />
@@ -523,25 +525,25 @@ const Storage = () => {
                         justifyContent="flex-end"
                         margin="0.5rem auto"
                         gap={2}
-                        sx={{ alignItems: "center" }}
+                        sx={{ alignItems: 'center' }}
                         padding="0 0.8rem"
                     >
                         {/* <CustomSearchBar /> */}
-                        <Box sx={{ width: "80%" }}>
+                        <Box sx={{ width: '80%' }}>
                             <SearchBar
                                 placeholder="Search"
-                                onChange={() => console.log("Search changed")}
+                                onChange={() => console.log('Search changed')}
                                 searchBarWidth="40rem"
                             />
                         </Box>
                         <AlignHorizontalRightIcon
                             fontSize="medium"
-                            sx={{ cursor: "pointer" }}
+                            sx={{ cursor: 'pointer' }}
                         />
                     </Box>
 
                     {/* Grid of videos */}
-                    <Grid container rowSpacing={3} sx={{ marginTop: "1rem" }}>
+                    <Grid container rowSpacing={3} sx={{ marginTop: '1rem' }}>
                         {displayProjects.map((project, index) => (
                             <Grid
                                 item
@@ -568,9 +570,9 @@ const Storage = () => {
                             count={3}
                             color="primary"
                             sx={{
-                                "& .MuiPaginationItem-root": {
-                                    fontFamily: "Poppins, sans-serif",
-                                    fontSize: "0.9rem",
+                                '& .MuiPaginationItem-root': {
+                                    fontFamily: 'Poppins, sans-serif',
+                                    fontSize: '0.9rem',
                                 },
                             }}
                         />
@@ -586,7 +588,7 @@ const Storage = () => {
                 />
             )}
         </Layout>
-    );
-};
+    )
+}
 
-export default Storage;
+export default Storage

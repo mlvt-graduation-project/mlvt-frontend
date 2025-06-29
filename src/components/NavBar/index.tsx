@@ -1,61 +1,61 @@
-import React, { useCallback, useMemo } from "react";
-import { AppBar, Toolbar, Box, Link, Typography } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { Link as RouterLink } from "react-router-dom";
+import { AppBar, Box, Link, Toolbar, Typography } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
+import React, { useCallback, useMemo } from 'react'
+import { Link as RouterLink } from 'react-router-dom'
 
-import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
-import TextFieldsIcon from "@mui/icons-material/TextFields";
-import TranslateIcon from "@mui/icons-material/Translate";
-import MicIcon from "@mui/icons-material/Mic";
-import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
+import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions'
+import MicIcon from '@mui/icons-material/Mic'
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo'
+import TextFieldsIcon from '@mui/icons-material/TextFields'
+import TranslateIcon from '@mui/icons-material/Translate'
 
-import UploadVideoButton from "./components/UploadVideoButton";
-import UserMenu from "./components/UserMenu";
-import LoadingBackdrop from "../LoadingBackdrop";
-import { useGetUserDetails } from "src/hooks/useGetUserDetails";
+import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
+import LoadingBackdrop from '../LoadingBackdrop'
+import UploadVideoButton from './components/UploadVideoButton'
+import UserMenu from './components/UserMenu'
 
 interface NavbarProps {
-    onOpenVideoTranslation: () => void;
-    onOpenTextGeneration: () => void;
-    onOpenTextTranslation: () => void;
-    onOpenVoiceGeneration: () => void;
-    onOpenLipsync: () => void;
+    onOpenVideoTranslation: () => void
+    onOpenTextGeneration: () => void
+    onOpenTextTranslation: () => void
+    onOpenVoiceGeneration: () => void
+    onOpenLipsync: () => void
 }
 
 /* --------  navigation config  -------- */
 const NAV_LINKS = [
     {
         icon: <OndemandVideoIcon />,
-        text: "Video Translation",
-        action: "onOpenVideoTranslation",
+        text: 'Video Translation',
+        action: 'onOpenVideoTranslation',
     },
     {
         icon: <TextFieldsIcon />,
-        text: "Text Generation",
-        action: "onOpenTextGeneration",
+        text: 'Text Generation',
+        action: 'onOpenTextGeneration',
     },
     {
         icon: <TranslateIcon />,
-        text: "Text Translation",
-        action: "onOpenTextTranslation",
+        text: 'Text Translation',
+        action: 'onOpenTextTranslation',
     },
     {
         icon: <MicIcon />,
-        text: "Voice Generation",
-        action: "onOpenVoiceGeneration",
+        text: 'Voice Generation',
+        action: 'onOpenVoiceGeneration',
     },
     {
         icon: <EmojiEmotionsIcon />,
-        text: "Lip Sync Video",
-        action: "onOpenLipsync",
+        text: 'Lip Sync Video',
+        action: 'onOpenLipsync',
     },
-] as const;
+] as const
 
 /* ------------------------------------- */
 
 const NavBar: React.FC<NavbarProps> = (callbacks) => {
-    const theme = useTheme();
-    const { data: userDetails, isLoading: loading } = useGetUserDetails();
+    const theme = useTheme()
+    const { data: userDetails, isLoading: loading } = useGetUserDetails()
 
     const actionMap = useMemo(
         () => ({
@@ -65,22 +65,22 @@ const NavBar: React.FC<NavbarProps> = (callbacks) => {
             onOpenVoiceGeneration: callbacks.onOpenVoiceGeneration,
             onOpenLipsync: callbacks.onOpenLipsync,
         }),
-        [callbacks]
-    );
+        [callbacks],
+    )
 
     const handleNavClick = useCallback(
         (action: keyof typeof actionMap) =>
             actionMap[action] && actionMap[action](),
-        [actionMap]
-    );
+        [actionMap],
+    )
 
-    const user = userDetails?.user;
+    const user = userDetails?.user
 
-    const { first_name = "", last_name = "", premium = false } = user ?? {};
+    const { first_name = '', last_name = '', premium = false } = user ?? {}
 
     const avatarSrc = user?.avatar
-        ? user?.avatar.split("?X-Amz-Algorithm")[0]
-        : "";
+        ? user?.avatar.split('?X-Amz-Algorithm')[0]
+        : ''
 
     return (
         <>
@@ -90,18 +90,18 @@ const NavBar: React.FC<NavbarProps> = (callbacks) => {
                 sx={{
                     backgroundColor: theme.palette.background.default,
                     color: theme.palette.primary.main,
-                    boxShadow: "none",
-                    borderBottom: "2px solid" + theme.palette.secondary.main,
-                    width: "100%",
-                    overflowX: "hidden",
+                    boxShadow: 'none',
+                    borderBottom: '2px solid' + theme.palette.secondary.main,
+                    width: '100%',
+                    overflowX: 'hidden',
                 }}
             >
                 <Toolbar
                     sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
                         px: { xs: 1, sm: 2.2, md: 3, lg: 4 },
                         py: { xs: 1.2, sm: 2 },
                     }}
@@ -109,12 +109,12 @@ const NavBar: React.FC<NavbarProps> = (callbacks) => {
                     <UploadVideoButton />
 
                     {/* ----------------  centre nav links  ---------------- */}
-                    <Box sx={{ display: "flex" }}>
+                    <Box sx={{ display: 'flex' }}>
                         <Box
                             component="nav"
                             sx={{
-                                display: { xs: "none", md: "none", lg: "flex" },
-                                alignItems: "center",
+                                display: { xs: 'none', md: 'none', lg: 'flex' },
+                                alignItems: 'center',
                                 gap: { md: 4, lg: 6 },
                                 mr: 2,
                             }}
@@ -127,32 +127,32 @@ const NavBar: React.FC<NavbarProps> = (callbacks) => {
                                     underline="none"
                                     color="inherit"
                                     onClick={(e) => {
-                                        e.preventDefault();
-                                        handleNavClick(action);
+                                        e.preventDefault()
+                                        handleNavClick(action)
                                     }}
                                 >
                                     <Box
                                         sx={{
-                                            display: "flex",
+                                            display: 'flex',
                                             flexDirection: {
-                                                sx: "column",
-                                                lg: "column",
+                                                sx: 'column',
+                                                lg: 'column',
                                             },
-                                            alignItems: "center",
+                                            alignItems: 'center',
                                             color: theme.palette.text.primary,
-                                            textDecoration: "none",
+                                            textDecoration: 'none',
                                             gap: 0.8,
                                         }}
                                     >
                                         <Box
                                             sx={{
-                                                borderRadius: "0.8rem",
-                                                width: "3.5rem",
-                                                height: "2rem",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                "&:hover": {
+                                                borderRadius: '0.8rem',
+                                                width: '3.5rem',
+                                                height: '2rem',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                '&:hover': {
                                                     backgroundColor:
                                                         theme.palette.tertiary
                                                             .main,
@@ -163,23 +163,23 @@ const NavBar: React.FC<NavbarProps> = (callbacks) => {
                                                 sx: {
                                                     color: theme.palette.text
                                                         .primary,
-                                                    width: "1.3rem",
+                                                    width: '1.3rem',
                                                 },
                                             })}
                                         </Box>
 
                                         <Box
                                             sx={{
-                                                width: "4.5rem",
-                                                textAlign: "center",
+                                                width: '4.5rem',
+                                                textAlign: 'center',
                                             }}
                                         >
                                             <Typography
                                                 sx={{
                                                     fontFamily:
-                                                        "Poppins, sans-serif",
+                                                        'Poppins, sans-serif',
                                                     fontWeight: 500,
-                                                    fontSize: "0.8rem",
+                                                    fontSize: '0.8rem',
                                                 }}
                                             >
                                                 {text}
@@ -202,7 +202,7 @@ const NavBar: React.FC<NavbarProps> = (callbacks) => {
                 </Toolbar>
             </AppBar>
         </>
-    );
-};
+    )
+}
 
-export default NavBar;
+export default NavBar
