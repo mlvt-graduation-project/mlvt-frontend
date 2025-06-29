@@ -1,8 +1,9 @@
 import { Box, CircularProgress } from '@mui/material'
 import React from 'react'
-import { useProjectContext } from '../../../../../../contexts/ProjectContext'
-import { Project, ProjectType } from '../../../../../../types/Project'
-import SearchBar from '../../../../../SearchBar'
+
+import SearchBar from 'src/components/SearchBar'
+import { useProjectContext } from 'src/contexts/ProjectContext'
+import { Project, ProjectType } from 'src/types/Project'
 import { BrowseFileCard } from '../../BrowseFileCard'
 import { GenerateButton } from '../../GenerateButton'
 

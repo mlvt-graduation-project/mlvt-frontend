@@ -14,13 +14,14 @@ import {
 import { useTheme } from '@mui/material/styles'
 import React, { useEffect, useState } from 'react'
 import CardFeature from '../../components/CardFeature'
+
 import SearchBar from '../../components/SearchBar'
-import { ProcessedVideoPopUp } from '../../components/VideoPopup/ProjectPopup'
 import { useAuth } from '../../contexts/AuthContext'
 import { useProjectContext } from '../../contexts/ProjectContext'
 import Layout from '../../layout/HomePage'
 import { Project, ProjectType } from '../../types/Project'
 import { ProjectStatus } from '../../types/ProjectStatus'
+import { ProcessedVideoPopUp } from '../core-feature-popup/ProjectPopup'
 
 interface categoryProjectType {
     label: string

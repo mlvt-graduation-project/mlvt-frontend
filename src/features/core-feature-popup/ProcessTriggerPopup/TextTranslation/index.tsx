@@ -1,20 +1,21 @@
-import React, { useCallback } from "react";
-import { DialogContent, TextTranslationData } from "./PopupContent";
-import { BasePopup } from "../../BasePopup";
-import { uploadText } from "../../../../utils/ProcessTriggerPopup/TextService";
-import { translateText } from "../../../../utils/ProcessTriggerPopup/PipelineService";
-import { getLanguageCode } from "../../../../utils/ProcessTriggerPopup/VideoPopup.utils";
-import { TextFileType } from "../../../../types/FileType";
-import UploadNotification from "../../../UploadNotification";
+import React, { useCallback } from 'react'
+import UploadNotification from 'src/components/UploadNotification'
+
+import { TextFileType } from 'src/types/FileType'
+import { translateText } from 'src/utils/ProcessTriggerPopup/PipelineService'
+import { uploadText } from 'src/utils/ProcessTriggerPopup/TextService'
+import { getLanguageCode } from 'src/utils/ProcessTriggerPopup/VideoPopup.utils'
+import { BasePopup } from '../../BasePopup'
+import { DialogContent, TextTranslationData } from './PopupContent'
 
 interface NotificationState {
-    isOpen: boolean;
-    status: "success" | "fail" | "loading";
-    content: string | null;
+    isOpen: boolean
+    status: 'success' | 'fail' | 'loading'
+    content: string | null
 }
 interface VideoTranslationPopupProps {
-    isOpen: boolean;
-    onClose: () => void;
+    isOpen: boolean
+    onClose: () => void
 }
 
 export const TextTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
@@ -23,99 +24,99 @@ export const TextTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
 }) => {
     const [notification, setNotification] = React.useState<NotificationState>({
         isOpen: false,
-        status: "loading",
+        status: 'loading',
         content: null,
-    });
+    })
 
     const handleCloseNotification = () => {
-        setNotification({ ...notification, isOpen: false });
-    };
+        setNotification({ ...notification, isOpen: false })
+    }
 
     const handleStartGeneration = useCallback(
         async (data: TextTranslationData) => {
-            onClose();
+            onClose()
             setNotification({
                 isOpen: true,
-                status: "loading",
-                content: "Processing request...",
-            });
+                status: 'loading',
+                content: 'Processing request...',
+            })
 
             try {
-                let textId: number | undefined;
+                let textId: number | undefined
 
                 // Add source language to textData before uploading
                 if (data.sourceLanguage) {
-                    data.textData.lang = getLanguageCode(data.sourceLanguage);
+                    data.textData.lang = getLanguageCode(data.sourceLanguage)
                 }
 
                 // Determine the text source and get its ID
-                if (data.viewState === "upload" && data.deviceFile) {
+                if (data.viewState === 'upload' && data.deviceFile) {
                     setNotification((prev) => ({
                         ...prev,
-                        content: "Uploading text file...",
-                    }));
+                        content: 'Uploading text file...',
+                    }))
                     textId = await uploadText(
                         data.deviceFile,
                         data.textData,
-                        TextFileType.PlainText
-                    );
-                } else if (data.viewState === "enter text" && data.inputText) {
+                        TextFileType.PlainText,
+                    )
+                } else if (data.viewState === 'enter text' && data.inputText) {
                     setNotification((prev) => ({
                         ...prev,
-                        content: "Uploading input text...",
-                    }));
+                        content: 'Uploading input text...',
+                    }))
                     const textBlob = new Blob([data.inputText], {
-                        type: "text/plain",
-                    });
-                    const textFile = new File([textBlob], "input.txt", {
-                        type: "text/plain",
-                    });
+                        type: 'text/plain',
+                    })
+                    const textFile = new File([textBlob], 'input.txt', {
+                        type: 'text/plain',
+                    })
                     textId = await uploadText(
                         textFile,
                         data.textData,
-                        TextFileType.PlainText
-                    );
-                } else if (data.viewState === "browse" && data.MLVTText) {
-                    textId = data.MLVTText.id;
+                        TextFileType.PlainText,
+                    )
+                } else if (data.viewState === 'browse' && data.MLVTText) {
+                    textId = data.MLVTText.id
                 }
 
                 if (!textId || !data.sourceLanguage || !data.targetLanguage) {
-                    throw new Error("Missing required data for translation.");
+                    throw new Error('Missing required data for translation.')
                 }
 
                 // Start the translation process
                 setNotification((prev) => ({
                     ...prev,
-                    content: "Translating text...",
-                }));
+                    content: 'Translating text...',
+                }))
                 await translateText(
                     textId,
                     data.sourceLanguage,
-                    data.targetLanguage
-                );
+                    data.targetLanguage,
+                )
 
                 // On success
                 setNotification({
                     isOpen: true,
-                    status: "success",
-                    content: "Upload data successfully! 🎉",
-                });
+                    status: 'success',
+                    content: 'Upload data successfully! 🎉',
+                })
             } catch (error) {
-                console.error("Text translation process failed:", error);
+                console.error('Text translation process failed:', error)
                 const errorMessage =
                     error instanceof Error
                         ? error.message
-                        : "An unknown error occurred.";
+                        : 'An unknown error occurred.'
                 // On failure
                 setNotification({
                     isOpen: true,
-                    status: "fail",
+                    status: 'fail',
                     content: `Process failed: ${errorMessage}`,
-                });
+                })
             }
         },
-        [onClose]
-    );
+        [onClose],
+    )
     return (
         <>
             <BasePopup
@@ -134,5 +135,5 @@ export const TextTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
                 onClose={handleCloseNotification}
             />
         </>
-    );
-};
+    )
+}

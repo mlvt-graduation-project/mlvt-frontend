@@ -1,18 +1,19 @@
-import React, { useCallback, useState } from "react";
-import { DialogContent, GenerateVideoData } from "./PopupContent";
-import UploadNotification from "../../../UploadNotification";
-import { BasePopup } from "../../BasePopup";
-import { uploadVideo } from "../../../../utils/ProcessTriggerPopup/VideoService";
-import { translateVideo } from "../../../../utils/ProcessTriggerPopup/PipelineService";
+import React, { useCallback, useState } from 'react'
+import { DialogContent, GenerateVideoData } from './PopupContent'
+
+import UploadNotification from 'src/components/UploadNotification'
+import { translateVideo } from '../../../../utils/ProcessTriggerPopup/PipelineService'
+import { uploadVideo } from '../../../../utils/ProcessTriggerPopup/VideoService'
+import { BasePopup } from '../../BasePopup'
 
 interface NotificationState {
-    isOpen: boolean;
-    status: "success" | "fail" | "loading";
-    content: string | null;
+    isOpen: boolean
+    status: 'success' | 'fail' | 'loading'
+    content: string | null
 }
 interface VideoTranslationPopupProps {
-    isOpen: boolean;
-    onClose: () => void;
+    isOpen: boolean
+    onClose: () => void
 }
 
 export const VideoTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
@@ -21,57 +22,57 @@ export const VideoTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
 }) => {
     const [notification, setNotification] = useState<NotificationState>({
         isOpen: false,
-        status: "loading",
+        status: 'loading',
         content: null,
-    });
+    })
     const handleCloseNotification = () => {
-        setNotification({ ...notification, isOpen: false });
-    };
+        setNotification({ ...notification, isOpen: false })
+    }
     const handleStartGeneration = useCallback(
         async (data: GenerateVideoData) => {
-            onClose();
+            onClose()
             setNotification({
                 isOpen: true,
-                status: "loading",
-                content: "Uploading video...",
-            });
+                status: 'loading',
+                content: 'Uploading video...',
+            })
 
             try {
-                let videoId: number | undefined;
-                if (data.viewState === "upload" && data.deviceFile) {
-                    videoId = await uploadVideo(data.deviceFile, data.fileData);
-                } else if (data.viewState === "browse" && data.MLVTVideo) {
-                    videoId = data.MLVTVideo.id;
-                } else if (data.viewState === "url") {
-                    throw new Error("URL upload not implemented yet.");
+                let videoId: number | undefined
+                if (data.viewState === 'upload' && data.deviceFile) {
+                    videoId = await uploadVideo(data.deviceFile, data.fileData)
+                } else if (data.viewState === 'browse' && data.MLVTVideo) {
+                    videoId = data.MLVTVideo.id
+                } else if (data.viewState === 'url') {
+                    throw new Error('URL upload not implemented yet.')
                 }
 
                 if (!videoId || !data.sourceLanguage || !data.targetLanguage) {
-                    throw new Error("Missing required data for translation.");
+                    throw new Error('Missing required data for translation.')
                 }
 
                 await translateVideo(
                     videoId,
                     data.sourceLanguage,
-                    data.targetLanguage
-                );
+                    data.targetLanguage,
+                )
 
                 setNotification({
                     isOpen: true,
-                    status: "success",
+                    status: 'success',
                     content: null,
-                });
+                })
             } catch (error) {
-                console.error("Video translation process failed:", error);
+                console.error('Video translation process failed:', error)
                 setNotification({
                     isOpen: true,
-                    status: "fail",
+                    status: 'fail',
                     content: null,
-                });
+                })
             }
         },
-        [onClose]
-    );
+        [onClose],
+    )
     return (
         <>
             <BasePopup
@@ -91,5 +92,5 @@ export const VideoTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
                 title="Video Translation Status"
             />
         </>
-    );
-};
+    )
+}

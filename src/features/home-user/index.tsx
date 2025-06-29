@@ -1,58 +1,58 @@
-import React, { useState } from "react";
-import HomePage from "../../layout/HomePage";
-import HomeContent from "./components/HomeContent";
-import NavBar from "../../components/NavBar";
-import { TextGenerationPopup } from "../../components/VideoPopup/ProcessTriggerPopup/TextGeneration";
-import { TextTranslationPopup } from "../../components/VideoPopup/ProcessTriggerPopup/TextTranslation";
-import { VideoTranslationPopup } from "../../components/VideoPopup/ProcessTriggerPopup/VideoTranslation";
-import { LipsyncPopup } from "../../components/VideoPopup/ProcessTriggerPopup/LipSync";
-import { VoiceGenerationPopup } from "../../components/VideoPopup/ProcessTriggerPopup/VoiceGeneration";
+import { useState } from 'react'
+
+import NavBar from '../../components/NavBar'
+import HomePage from '../../layout/HomePage'
+import { LipsyncPopup } from '../core-feature-popup/ProcessTriggerPopup/LipSync'
+import { TextGenerationPopup } from '../core-feature-popup/ProcessTriggerPopup/TextGeneration'
+import { TextTranslationPopup } from '../core-feature-popup/ProcessTriggerPopup/TextTranslation'
+import { VideoTranslationPopup } from '../core-feature-popup/ProcessTriggerPopup/VideoTranslation'
+import { VoiceGenerationPopup } from '../core-feature-popup/ProcessTriggerPopup/VoiceGeneration'
+import HomeContent from './components/HomeContent'
 
 const HomeUser = () => {
-    const [isVideoTranslation, setIsVideoTranslation] =
-        useState<boolean>(false);
-    const [isTextGeneration, setIsTextGeneration] = useState<boolean>(false);
-    const [isTextTranslation, setIsTextTranslation] = useState<boolean>(false);
-    const [isVoiceGeneration, setIsVoiceGeneration] = useState<boolean>(false);
-    const [isLipsync, setIsLipSync] = useState<boolean>(false);
+    const [isVideoTranslation, setIsVideoTranslation] = useState<boolean>(false)
+    const [isTextGeneration, setIsTextGeneration] = useState<boolean>(false)
+    const [isTextTranslation, setIsTextTranslation] = useState<boolean>(false)
+    const [isVoiceGeneration, setIsVoiceGeneration] = useState<boolean>(false)
+    const [isLipsync, setIsLipSync] = useState<boolean>(false)
 
     const handleOpenVideoTranslationDialog = () => {
-        setIsVideoTranslation(true);
-    };
+        setIsVideoTranslation(true)
+    }
 
     const handleCloseVideoTranslationDialog = () => {
-        setIsVideoTranslation(false);
-    };
+        setIsVideoTranslation(false)
+    }
 
     const handleOpenTextGenerationDialog = () => {
-        setIsTextGeneration(true);
-    };
+        setIsTextGeneration(true)
+    }
 
     const handleOpenLipsyncDialog = () => {
-        setIsLipSync(true);
-    };
+        setIsLipSync(true)
+    }
     const handleOpenVoiceGenerationDialog = () => {
-        setIsVoiceGeneration(true);
-    };
+        setIsVoiceGeneration(true)
+    }
 
     const handleCloseTextGenerationDialog = () => {
-        setIsTextGeneration(false);
-    };
+        setIsTextGeneration(false)
+    }
 
     const handleOpenTextTranslationDialog = () => {
-        setIsTextTranslation(true);
-    };
+        setIsTextTranslation(true)
+    }
 
     const handleCloseTextTranslationDialogg = () => {
-        setIsTextTranslation(false);
-    };
+        setIsTextTranslation(false)
+    }
 
     const handleCloseLipsyncDialog = () => {
-        setIsLipSync(false);
-    };
+        setIsLipSync(false)
+    }
     const handleCloseVoiceGenerationDialog = () => {
-        setIsVoiceGeneration(false);
-    };
+        setIsVoiceGeneration(false)
+    }
 
     return (
         <HomePage>
@@ -85,7 +85,7 @@ const HomeUser = () => {
                 onClose={handleCloseLipsyncDialog}
             />
         </HomePage>
-    );
-};
+    )
+}
 
-export default HomeUser;
+export default HomeUser

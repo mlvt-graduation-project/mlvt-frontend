@@ -1,59 +1,59 @@
-import React, { useState, useContext, useRef, useEffect } from "react";
 import {
     Box,
+    Button,
+    FormHelperText,
     InputLabel,
+    styled,
     TextField,
     ToggleButton,
     ToggleButtonGroup,
-    Button,
-    styled,
-    FormHelperText,
     Typography,
-} from "@mui/material";
-import { PipelineContext } from "../../context/PipelineContext";
-import { PipelineInputs } from "../../types";
-import { BrowseFile } from "../../../../components/VideoPopup/ProcessTriggerPopup/BaseComponent/BrowseMLVTFile";
-import { Project, ProjectType } from "../../../../types/Project";
+} from '@mui/material'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { BrowseFile } from 'src/features/core-feature-popup/ProcessTriggerPopup/BaseComponent/BrowseMLVTFile'
+import { Project, ProjectType } from 'src/types/Project'
+import { PipelineContext } from '../../context/PipelineContext'
+import { PipelineInputs } from '../../types'
 
 const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
-    fontFamily: "Poppins, sans-serif",
+    fontFamily: 'Poppins, sans-serif',
     color: theme.palette.grey[700],
-    "&.Mui-selected": {
+    '&.Mui-selected': {
         color: theme.palette.tertiary.main,
         backgroundColor: theme.palette.primary.main,
     },
 
-    "&.Mui-selected:hover": {
+    '&.Mui-selected:hover': {
         backgroundColor: theme.palette.primary.dark,
-        cursor: "pointer",
+        cursor: 'pointer',
     },
 
-    "&:not(.Mui-selected):hover": {
+    '&:not(.Mui-selected):hover': {
         backgroundColor: theme.palette.action.hover,
     },
-}));
+}))
 
 function includes<T extends U, U>(coll: ReadonlyArray<T>, el: U): el is T {
-    return coll.includes(el as T);
+    return coll.includes(el as T)
 }
 
 // --- Define the configuration for each input type ---
 const configs = {
     video: {
-        firstMode: { mode: "url", label: "URL" },
-        acceptedTypes: ["video/mp4", "video/webm", "video/quicktime"],
-        acceptAttr: "video/mp4,video/webm,video/quicktime",
-        uploadErrorMsg: "Please upload a video file (MP4, WebM, MOV).",
+        firstMode: { mode: 'url', label: 'URL' },
+        acceptedTypes: ['video/mp4', 'video/webm', 'video/quicktime'],
+        acceptAttr: 'video/mp4,video/webm,video/quicktime',
+        uploadErrorMsg: 'Please upload a video file (MP4, WebM, MOV).',
         renderPreview: (url: string) => (
             <Box
                 component="video"
                 sx={{
                     mt: 2,
-                    width: "100%",
-                    maxHeight: "240px",
+                    width: '100%',
+                    maxHeight: '240px',
                     borderRadius: 1,
-                    border: "1px solid",
-                    borderColor: "divider",
+                    border: '1px solid',
+                    borderColor: 'divider',
                 }}
                 src={url}
                 controls
@@ -61,35 +61,35 @@ const configs = {
         ),
     },
     audio: {
-        firstMode: { mode: "url", label: "URL" },
-        acceptedTypes: ["audio/mpeg", "audio/wav", "audio/ogg"],
-        acceptAttr: "audio/mpeg,audio/wav,audio/ogg",
-        uploadErrorMsg: "Please upload an audio file (MP3, WAV, OGG).",
+        firstMode: { mode: 'url', label: 'URL' },
+        acceptedTypes: ['audio/mpeg', 'audio/wav', 'audio/ogg'],
+        acceptAttr: 'audio/mpeg,audio/wav,audio/ogg',
+        uploadErrorMsg: 'Please upload an audio file (MP3, WAV, OGG).',
         renderPreview: (url: string) => (
             <Box
                 component="audio"
-                sx={{ mt: 2, width: "100%" }}
+                sx={{ mt: 2, width: '100%' }}
                 src={url}
                 controls
             />
         ),
     },
     text: {
-        firstMode: { mode: "text", label: "Enter Text" },
-        acceptedTypes: ["text/plain"],
-        acceptAttr: "text/plain",
-        uploadErrorMsg: "Please upload a plain text file (.txt).",
+        firstMode: { mode: 'text', label: 'Enter Text' },
+        acceptedTypes: ['text/plain'],
+        acceptAttr: 'text/plain',
+        uploadErrorMsg: 'Please upload a plain text file (.txt).',
         renderPreview: () => null,
     },
-} as const;
+} as const
 
-type InputMode = "url" | "upload" | "mlvt" | "text";
-type InputType = keyof typeof configs;
+type InputMode = 'url' | 'upload' | 'mlvt' | 'text'
+type InputType = keyof typeof configs
 
 interface MultiSourceInputProps {
-    label: string;
-    field: keyof PipelineInputs;
-    inputType: InputType;
+    label: string
+    field: keyof PipelineInputs
+    inputType: InputType
 }
 
 const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
@@ -97,115 +97,113 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
     field,
     inputType,
 }) => {
-    const config = configs[inputType];
-    const { state, dispatch } = useContext(PipelineContext);
-    const [inputMode, setInputMode] = useState<InputMode>(
-        config.firstMode.mode
-    );
+    const config = configs[inputType]
+    const { state, dispatch } = useContext(PipelineContext)
+    const [inputMode, setInputMode] = useState<InputMode>(config.firstMode.mode)
 
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-    const [uploadError, setUploadError] = useState<string | null>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+    const [uploadError, setUploadError] = useState<string | null>(null)
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const [textContentPreview, setTextContentPreview] = useState<string | null>(
-        null
-    );
-    const [mlvtProject, setMlvtProject] = useState<Project | null>(null);
+        null,
+    )
+    const [mlvtProject, setMlvtProject] = useState<Project | null>(null)
 
     useEffect(() => {
         return () => {
             if (previewUrl) {
-                URL.revokeObjectURL(previewUrl);
+                URL.revokeObjectURL(previewUrl)
             }
-        };
-    }, [previewUrl]);
+        }
+    }, [previewUrl])
 
     const handleModeChange = (
         event: React.MouseEvent<HTMLElement>,
-        newMode: InputMode | null
+        newMode: InputMode | null,
     ) => {
         if (newMode !== null) {
-            setInputMode(newMode);
-            dispatch({ type: "UPDATE_INPUT", payload: { field, value: "" } });
-            setPreviewUrl(null);
-            setUploadError(null);
-            setTextContentPreview(null);
-            setMlvtProject(null);
+            setInputMode(newMode)
+            dispatch({ type: 'UPDATE_INPUT', payload: { field, value: '' } })
+            setPreviewUrl(null)
+            setUploadError(null)
+            setTextContentPreview(null)
+            setMlvtProject(null)
         }
-    };
+    }
 
     const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         dispatch({
-            type: "UPDATE_INPUT",
+            type: 'UPDATE_INPUT',
             payload: { field, value: event.target.value },
-        });
-    };
+        })
+    }
 
     const handleMlvtProjectChange = (selectedProject: Project | null) => {
         // 1. Update the local state to re-render the BrowseFile component
-        setMlvtProject(selectedProject);
+        setMlvtProject(selectedProject)
 
         // 2. Update the global context state with the project's ID
         dispatch({
-            type: "UPDATE_INPUT",
+            type: 'UPDATE_INPUT',
             payload: {
                 field,
                 value: selectedProject ? selectedProject.id : null,
             },
-        });
-    };
+        })
+    }
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setUploadError(null);
-        setTextContentPreview(null);
+        setUploadError(null)
+        setTextContentPreview(null)
         if (previewUrl) {
-            URL.revokeObjectURL(previewUrl);
-            setPreviewUrl(null);
+            URL.revokeObjectURL(previewUrl)
+            setPreviewUrl(null)
         }
 
-        const file = event.target.files?.[0];
+        const file = event.target.files?.[0]
         if (!file) {
-            dispatch({ type: "UPDATE_INPUT", payload: { field, value: null } });
-            return;
+            dispatch({ type: 'UPDATE_INPUT', payload: { field, value: null } })
+            return
         }
 
         if (!includes(config.acceptedTypes, file.type)) {
-            setUploadError(config.uploadErrorMsg);
-            dispatch({ type: "UPDATE_INPUT", payload: { field, value: null } });
-            if (event.target) event.target.value = "";
-            return;
+            setUploadError(config.uploadErrorMsg)
+            dispatch({ type: 'UPDATE_INPUT', payload: { field, value: null } })
+            if (event.target) event.target.value = ''
+            return
         }
 
-        dispatch({ type: "UPDATE_INPUT", payload: { field, value: file } });
+        dispatch({ type: 'UPDATE_INPUT', payload: { field, value: file } })
 
-        if (inputType === "text") {
-            const reader = new FileReader();
+        if (inputType === 'text') {
+            const reader = new FileReader()
             reader.onload = (e) => {
-                const text = e.target?.result;
-                if (typeof text === "string") {
-                    setTextContentPreview(text);
+                const text = e.target?.result
+                if (typeof text === 'string') {
+                    setTextContentPreview(text)
                 }
-            };
+            }
             reader.onerror = () => {
-                setUploadError("Error reading the file.");
-            };
-            reader.readAsText(file);
+                setUploadError('Error reading the file.')
+            }
+            reader.readAsText(file)
         } else {
-            const objectUrl = URL.createObjectURL(file);
-            setPreviewUrl(objectUrl);
+            const objectUrl = URL.createObjectURL(file)
+            setPreviewUrl(objectUrl)
         }
-    };
+    }
 
     const handleUploadClick = () => {
-        fileInputRef.current?.click();
-    };
+        fileInputRef.current?.click()
+    }
 
     // Dynamically get the current value from the global state using the 'field' prop
-    const currentValue = state.inputs[field] || "";
+    const currentValue = state.inputs[field] || ''
 
     const renderInput = () => {
         switch (inputMode) {
-            case "text":
+            case 'text':
                 return (
                     <TextField
                         fullWidth
@@ -214,32 +212,32 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                         variant="outlined"
                         label={config.firstMode.label}
                         value={
-                            typeof currentValue === "string" ? currentValue : ""
+                            typeof currentValue === 'string' ? currentValue : ''
                         }
                         onChange={handleTextChange}
                         placeholder="Type or paste your text here..."
                         sx={{
-                            "& .MuiInputBase-input": {
-                                fontFamily: "Poppins, sans-serif",
-                                fontSize: "0.9rem",
+                            '& .MuiInputBase-input': {
+                                fontFamily: 'Poppins, sans-serif',
+                                fontSize: '0.9rem',
                             },
-                            "& .MuiInputLabel-root": {
-                                fontFamily: "Poppins, sans-serif",
-                                fontSize: "0.9rem",
+                            '& .MuiInputLabel-root': {
+                                fontFamily: 'Poppins, sans-serif',
+                                fontSize: '0.9rem',
                             },
-                            "& .MuiInputLabel-root.Mui-focused": {
-                                color: "primary.main",
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: 'primary.main',
                             },
                         }}
                     />
-                );
-            case "upload":
+                )
+            case 'upload':
                 return (
                     <Box>
                         <Button
                             variant="outlined"
                             onClick={handleUploadClick}
-                            sx={{ fontFamily: "Poppins, sans-serif" }}
+                            sx={{ fontFamily: 'Poppins, sans-serif' }}
                         >
                             Choose File
                         </Button>
@@ -248,23 +246,23 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                             accept={config.acceptAttr}
                             ref={fileInputRef}
                             onChange={handleFileChange}
-                            style={{ display: "none" }}
+                            style={{ display: 'none' }}
                         />
                         {uploadError && (
                             <FormHelperText error sx={{ mt: 1 }}>
                                 {uploadError}
                             </FormHelperText>
                         )}
-                        {inputType === "text" &&
+                        {inputType === 'text' &&
                             textContentPreview !== null && (
                                 <Box
                                     sx={{
                                         mt: 2,
                                         p: 2,
-                                        border: "1px solid",
-                                        borderColor: "divider",
+                                        border: '1px solid',
+                                        borderColor: 'divider',
                                         borderRadius: 1,
-                                        bgcolor: "action.active",
+                                        bgcolor: 'action.active',
                                     }}
                                 >
                                     <Typography
@@ -272,49 +270,49 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                                         display="block"
                                         sx={{
                                             mb: 1,
-                                            color: "text.secondary",
-                                            fontFamily: "Poppins, sans-serif",
+                                            color: 'text.secondary',
+                                            fontFamily: 'Poppins, sans-serif',
                                         }}
                                     >
                                         {(state.inputs[field] as File)?.name ||
-                                            "..."}
+                                            '...'}
                                     </Typography>
                                     <Typography
                                         component="pre"
                                         sx={{
-                                            fontFamily: "monospace",
-                                            fontSize: "0.875rem",
-                                            maxHeight: "150px",
-                                            overflowY: "auto",
-                                            whiteSpace: "pre-wrap",
-                                            wordBreak: "break-word",
+                                            fontFamily: 'monospace',
+                                            fontSize: '0.875rem',
+                                            maxHeight: '150px',
+                                            overflowY: 'auto',
+                                            whiteSpace: 'pre-wrap',
+                                            wordBreak: 'break-word',
                                             scrollbarColor:
-                                                "rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0.1)",
-                                            scrollbarWidth: "thin",
+                                                'rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0.1)',
+                                            scrollbarWidth: 'thin',
                                         }}
                                     >
                                         {textContentPreview}
                                     </Typography>
                                 </Box>
                             )}
-                        {(inputType === "video" || inputType === "audio") &&
+                        {(inputType === 'video' || inputType === 'audio') &&
                             previewUrl &&
                             config.renderPreview(previewUrl)}
                     </Box>
-                );
-            case "mlvt": {
+                )
+            case 'mlvt': {
                 const mapInputTypeToAllowed = (): ProjectType[] => {
                     switch (inputType) {
-                        case "video":
-                            return [ProjectType.Video];
-                        case "audio":
-                            return [ProjectType.Audio];
-                        case "text":
-                            return [ProjectType.Text];
+                        case 'video':
+                            return [ProjectType.Video]
+                        case 'audio':
+                            return [ProjectType.Audio]
+                        case 'text':
+                            return [ProjectType.Text]
                         default:
-                            return [];
+                            return []
                     }
-                };
+                }
 
                 return (
                     <BrowseFile
@@ -322,7 +320,7 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                         handleChangeSelectedProject={handleMlvtProjectChange}
                         allowTypes={mapInputTypeToAllowed()}
                     />
-                );
+                )
             }
 
             default:
@@ -333,44 +331,44 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                         variant="outlined"
                         label="Enter URL"
                         value={
-                            typeof currentValue === "string" ? currentValue : ""
+                            typeof currentValue === 'string' ? currentValue : ''
                         }
                         onChange={handleTextChange}
                         sx={{
-                            "& label": {
-                                fontFamily: "Poppins, sans-serif",
-                                fontSize: "0.9rem",
+                            '& label': {
+                                fontFamily: 'Poppins, sans-serif',
+                                fontSize: '0.9rem',
                             },
-                            "& .MuiFormHelperText-root": {
-                                fontSize: "0.8rem",
-                                color: "text.secondary",
-                                fontFamily: "Poppins, sans-serif",
+                            '& .MuiFormHelperText-root': {
+                                fontSize: '0.8rem',
+                                color: 'text.secondary',
+                                fontFamily: 'Poppins, sans-serif',
                             },
-                            "& label.Mui-focused": {
-                                color: "primary.main",
-                                fontFamily: "Poppins, sans-serif",
+                            '& label.Mui-focused': {
+                                color: 'primary.main',
+                                fontFamily: 'Poppins, sans-serif',
                             },
-                            "& .MuiInputBase-input": {
-                                fontFamily: "Poppins, sans-serif",
-                                fontSize: "0.9rem",
+                            '& .MuiInputBase-input': {
+                                fontFamily: 'Poppins, sans-serif',
+                                fontSize: '0.9rem',
                             },
                         }}
                     />
-                );
+                )
         }
-    };
+    }
 
     return (
         <Box>
             <InputLabel
                 sx={{
                     mb: 1,
-                    fontWeight: "500",
-                    fontFamily: "Poppins, sans-serif",
-                    fontSize: "0.9rem",
+                    fontWeight: '500',
+                    fontFamily: 'Poppins, sans-serif',
+                    fontSize: '0.9rem',
                 }}
             >
-                {label} 
+                {label}
             </InputLabel>
             <ToggleButtonGroup
                 value={inputMode}
@@ -379,7 +377,7 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                 aria-label="input mode"
                 size="small"
                 fullWidth
-                sx={{ mb: 2, display: "flex", justifyContent: "center" }}
+                sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}
             >
                 <StyledToggleButton
                     value={config.firstMode.mode}
@@ -397,7 +395,7 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
 
             {renderInput()}
         </Box>
-    );
-};
+    )
+}
 
-export default MultiSourceInput;
+export default MultiSourceInput
