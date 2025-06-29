@@ -3,10 +3,10 @@ import { Avatar, Box, Grid, TextField, Typography } from '@mui/material'
 import { alpha, useTheme } from '@mui/material/styles'
 import axios from 'axios'
 import React, { useRef, useState } from 'react'
+import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import { getPresignedImageURL } from '../../../api/video.api'
 import { CustomButton } from '../../../components/CustomButton'
 import SuccessPopup from '../../../components/SuccessPopup'
-import { useAuth } from '../../../contexts/AuthContext'
 import { UserUpdateData, UserWithAvatar } from '../../../types/Response/User'
 import { updateAvatar, updateUser } from '../apis/user.api'
 
@@ -62,7 +62,8 @@ const PersonalDetails: React.FC<UserDetails> = ({ user }) => {
     const [showSuccessPopup, setShowSuccessPopup] = useState(false)
 
     const theme = useTheme()
-    const { userId } = useAuth()
+    const { data: userDetails } = useGetUserDetails()
+    const userId = userDetails?.user.id.toString() || ''
 
     const [avatarPreview, setAvatarPreview] = useState<string>(
         user.avatar?.split('?X-Amz-Algorithm')[0] || '',

@@ -1,44 +1,43 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
-import bg_1 from "../../../../assets/background_1.png";
-import bg_2 from "../../../../assets/background_2.png";
-import bg_3 from "../../../../assets/background_3.png";
-import CardSlider from "../CardSlider";
-import ProjectSection from "./ProjectSection";
-import MLVTLogo from "../../../../assets/mlvt_logo.png";
+import { Box, Container, Typography } from '@mui/material'
+import React from 'react'
+import bg_1 from '../../../../assets/background_1.png'
+import bg_2 from '../../../../assets/background_2.png'
+import bg_3 from '../../../../assets/background_3.png'
+import MLVTLogo from '../../../../assets/mlvt_logo.png'
+import CardSlider from '../CardSlider'
+import ProjectSection from './ProjectSection'
 
 const HomeContent: React.FC = () => {
     return (
-        <Box
+        <Container
+            maxWidth="xl" // Or "lg", "md", etc., to control the max width
             sx={{
-                padding: "20px",
-                display: "flex",
-                flexDirection: "column",
-                width: "93%",
+                paddingY: '20px', // Use paddingY for vertical padding
+                display: 'flex',
+                flexDirection: 'column',
                 gap: 3,
-                marginLeft: "3.5rem",
-                marginTop: "1.5rem",
+                marginTop: '1.5rem',
             }}
         >
             {/* Carousel 1 */}
             <Box
                 sx={{
-                    width: "100%", // fill parent
-                    borderRadius: "15px",
+                    width: '100%', // fill parent
+                    borderRadius: '15px',
                     p: 3,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "100%",
-                    padding: "2rem",
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    padding: '2rem',
                     backgroundImage: [
                         `url(${bg_1})`,
                         `url(${bg_2})`,
                         `url(${bg_3})`,
-                    ].join(","),
-                    backgroundRepeat: "no-repeat, no-repeat, no-repeat",
-                    backgroundPosition: "0% center, 37% center, 100% center",
-                    backgroundSize: "20.2% 100%, 45% 100%, 34.5% 100%",
+                    ].join(','),
+                    backgroundRepeat: 'no-repeat, no-repeat, no-repeat',
+                    backgroundPosition: '0% center, 37% center, 100% center',
+                    backgroundSize: '20.2% 100%, 45% 100%, 34.5% 100%',
                 }}
             >
                 <CardSlider />
@@ -49,38 +48,36 @@ const HomeContent: React.FC = () => {
             <Box
                 sx={{
                     background:
-                        "linear-gradient(to left, #FFE1FF,#ECECEC, #D69ADE)",
+                        'linear-gradient(to left, #FFE1FF,#ECECEC, #D69ADE)',
                     paddingY: 4,
                     paddingX: 4,
-                    marginTop: 10,
+                    marginTop: 20,
                     marginBottom: 15,
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    borderRadius: "0.5rem",
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    borderRadius: '0.5rem',
                 }}
             >
                 <Box
-                    display={"flex"}
+                    display={'flex'}
                     flexDirection="column"
                     alignItems="flex-start"
                     gap={2}
                 >
                     <Typography
                         sx={{
-                            fontFamily: "Poppins, sans-serif",
                             fontWeight: 450,
-                            fontSize: "1.2rem",
-                            color: "#001D57",
+                            fontSize: '1.2rem',
+                            color: '#001D57',
                         }}
                     >
                         Global stories, local understanding
                         <span
                             style={{
-                                fontFamily: "Poppins, sans-serif",
                                 fontWeight: 600,
-                                fontSize: "1.5rem",
-                                marginInline: "0.5rem",
+                                fontSize: '1.5rem',
+                                marginInline: '0.5rem',
                             }}
                         >
                             TODAY
@@ -88,10 +85,9 @@ const HomeContent: React.FC = () => {
                     </Typography>
                     <Typography
                         sx={{
-                            fontFamily: "Poppins, sans-serif",
                             fontWeight: 400,
-                            fontSize: "0.88rem",
-                            color: "black",
+                            fontSize: '0.88rem',
+                            color: 'black',
                         }}
                     >
                         Break language barriers. Translate your video message
@@ -100,21 +96,21 @@ const HomeContent: React.FC = () => {
                     </Typography>
                 </Box>
                 <Box
-                    component={"img"}
+                    component={'img'}
                     src={MLVTLogo}
                     alt="MLVT Logo"
                     sx={{
-                        width: "5rem",
-                        height: "5rem",
-                        objectFit: "contain",
-                        borderRadius: "0.5rem",
-                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                        transition: "transform 0.3s ease",
+                        width: '5rem',
+                        height: '5rem',
+                        objectFit: 'contain',
+                        borderRadius: '0.5rem',
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                        transition: 'transform 0.3s ease',
                     }}
                 />
             </Box>
-        </Box>
-    );
-};
+        </Container>
+    )
+}
 
-export default HomeContent;
+export default HomeContent

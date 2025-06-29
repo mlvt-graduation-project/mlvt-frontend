@@ -1,6 +1,7 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { Box, Grid, TextField, Typography, useTheme } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import { UseRedeemCode } from '../../../../../api/voucher.api'
 import { CustomButton } from '../../../../../components/CustomButton'
 import UploadNotification from '../../../../../components/UploadNotification'
@@ -20,7 +21,9 @@ export const RedeemCode: React.FC<RedeemCodeProps> = ({ handleChangeView }) => {
     const theme = useTheme()
     const [redeemCode, setRedeemCode] = useState('')
     const [loading, setLoading] = useState(false)
-    const { userId, AddRemainingToken } = useAuth()
+    const { data: userDetails } = useGetUserDetails()
+    const userId = userDetails?.user.id.toString() || ''
+    const { AddRemainingToken } = useAuth()
     const [uploadNoti, setUploadNoti] = useState<UploadNoti>({
         isOpen: false,
         status: 'success',

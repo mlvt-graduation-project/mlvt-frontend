@@ -1,43 +1,41 @@
-import { getVideosByUserId } from "../api/video.api";
+import { getListTextByUserId } from '../api/text.api'
+import { getVideosByUserId } from '../api/video.api'
 import {
+    AudioGenerationProject,
+    FullPipelineProject,
+    LipSyncProject,
     Project,
+    ProjectType,
     RawAudio,
+    RawText,
     RawVideo,
     TextGenerationProject,
-    LipSyncProject,
-    AudioGenerationProject,
     TextTranslationProject,
-    FullPipelineProject,
-} from "../types/Project";
-import {
-    mapStatusToProjectStatus,
-    ProjectStatus,
-} from "../types/ProjectStatus";
-import { ProjectType, RawText } from "../types/Project";
-import { getListTextByUserId } from "../api/text.api";
+} from '../types/Project'
+import { mapStatusToProjectStatus, ProjectStatus } from '../types/ProjectStatus'
 
-import { Text } from "../types/Response/Text";
-import { getListAudioByUserId } from "../api/audio.api";
-import { Audio } from "../types/Response/Audio";
-import { checkSuccessResponse } from "./checkResponseStatus";
-import { getProjectProgress } from "../api/pipeline.api";
+import { getListAudioByUserId } from '../api/audio.api'
+import { getProjectProgress } from '../api/pipeline.api'
+import { Audio } from '../types/Response/Audio'
+import { Text } from '../types/Response/Text'
+import { checkSuccessResponse } from './checkResponseStatus'
 
 export function combineAndSortProjects(
     ...projectLists: Project[][]
 ): Project[] {
     return projectLists
         .flat()
-        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 }
 
 export const handleGetVideosProjectByUserId = async (
-    userId: string
+    userId: string,
 ): Promise<RawVideo[]> => {
     try {
-        const videoListResponse = await getVideosByUserId(userId);
+        const videoListResponse = await getVideosByUserId(userId)
 
         if (!videoListResponse?.videos) {
-            return [];
+            return []
         }
 
         return videoListResponse.videos.map((videoData) => ({
@@ -48,24 +46,24 @@ export const handleGetVideosProjectByUserId = async (
             createdAt: new Date(videoData.video.created_at),
             updatedAt: new Date(videoData.video.updated_at),
             type_project: ProjectType.Video,
-        }));
+        }))
     } catch (error) {
-        console.error("Failed to fetch video or image URLs:", error);
-        return [];
+        console.error('Failed to fetch video or image URLs:', error)
+        return []
     }
-};
+}
 
 export const handleGetTextProjectByUserId = async (
-    userId: string
+    userId: string,
 ): Promise<RawText[]> => {
     try {
-        const response = await getListTextByUserId(parseInt(userId));
-       const successTextProject: Text[] = response.transcriptions.filter(
+        const response = await getListTextByUserId(parseInt(userId))
+        const successTextProject: Text[] = response.transcriptions.filter(
             (data) =>
                 mapStatusToProjectStatus(data.status) ===
                     ProjectStatus.Succeeded ||
-                mapStatusToProjectStatus(data.status) === ProjectStatus.Raw
-        );
+                mapStatusToProjectStatus(data.status) === ProjectStatus.Raw,
+        )
         const TextProject: RawText[] = successTextProject.map(
             (transcriptionData) => ({
                 id: transcriptionData.id,
@@ -75,26 +73,26 @@ export const handleGetTextProjectByUserId = async (
                 createdAt: new Date(transcriptionData.updated_at),
                 updatedAt: new Date(transcriptionData.updated_at),
                 type_project: ProjectType.Text,
-            })
-        );
-        return TextProject;
+            }),
+        )
+        return TextProject
     } catch (error) {
-        console.error("Failed to fetch transcription list: ", error);
-        return [];
+        console.error('Failed to fetch transcription list: ', error)
+        return []
     }
-};
+}
 
 export const handleGetAudioProjectByUserId = async (
-    userId: string
+    userId: string,
 ): Promise<RawAudio[]> => {
     try {
-        const response = await getListAudioByUserId(parseInt(userId));
+        const response = await getListAudioByUserId(parseInt(userId))
         const successTextProject: Audio[] = response.audios.filter(
             (data) =>
                 mapStatusToProjectStatus(data.status) ===
                     ProjectStatus.Succeeded ||
-                mapStatusToProjectStatus(data.status) === ProjectStatus.Raw
-        );
+                mapStatusToProjectStatus(data.status) === ProjectStatus.Raw,
+        )
         const AudioProject: RawAudio[] = successTextProject.map(
             (audioData) => ({
                 id: audioData.id,
@@ -105,14 +103,14 @@ export const handleGetAudioProjectByUserId = async (
                 createdAt: new Date(audioData.updated_at),
                 updatedAt: new Date(audioData.updated_at),
                 type_project: ProjectType.Audio,
-            })
-        );
-        return AudioProject;
+            }),
+        )
+        return AudioProject
     } catch (error) {
-        console.error("Failed to fetch transcription list: ", error);
-        return [];
+        console.error('Failed to fetch transcription list: ', error)
+        return []
     }
-};
+}
 
 // export const getSpeakToTextProjects = (videoList: RawVideo[], transcriptionList: RawText[]) => {
 //     const isValidTranscription = (data: RawText): data is RawText & { original_videoId: number } => {
@@ -137,72 +135,75 @@ export const handleGetAudioProjectByUserId = async (
 // };
 
 export const getAllProgressProjects = async (
-    userId: number
+    userId: number,
 ): Promise<Project[]> => {
     try {
-        const response = await getProjectProgress(userId);
+        const response = await getProjectProgress(userId)
         if (!checkSuccessResponse(response.status)) {
-            throw new Error("Receive error response from server");
+            throw new Error('Receive error response from server')
         }
 
-        const progresses = response.data.progresses;
+        const progresses = response.data.progresses
+        if (!progresses) {
+            return []
+        }
 
         // Đếm tổng số lượng project theo từng loại
-        const projectTotalCountMap: Record<string, number> = {};
+        const projectTotalCountMap: Record<string, number> = {}
 
         progresses.forEach((progress) => {
             const projectType = (() => {
                 switch (progress.progress_type) {
-                    case "stt":
-                        return ProjectType.TextGeneration;
-                    case "ttt":
-                        return ProjectType.TextTranslation;
-                    case "tts":
-                        return ProjectType.AudioGeneration;
-                    case "fp":
-                        return ProjectType.Fullpipeline;
-                    case "ls":
-                        return ProjectType.Lipsync;
+                    case 'stt':
+                        return ProjectType.TextGeneration
+                    case 'ttt':
+                        return ProjectType.TextTranslation
+                    case 'tts':
+                        return ProjectType.AudioGeneration
+                    case 'fp':
+                        return ProjectType.Fullpipeline
+                    case 'ls':
+                        return ProjectType.Lipsync
                     default:
                         throw new Error(
-                            `Unknown project type: ${progress.progress_type}`
-                        );
+                            `Unknown project type: ${progress.progress_type}`,
+                        )
                 }
-            })();
+            })()
 
             // Tăng tổng số lượng project của từng loại
             projectTotalCountMap[projectType] =
-                (projectTotalCountMap[projectType] || 0) + 1;
-        });
+                (projectTotalCountMap[projectType] || 0) + 1
+        })
 
         // Map lại danh sách và giảm dần số thứ tự
         const projectCurrentCountMap: Record<string, number> = {
             ...projectTotalCountMap,
-        };
+        }
 
         const progressProjectList: Project[] = progresses.map((progress) => {
             const projectType = (() => {
                 switch (progress.progress_type) {
-                    case "stt":
-                        return ProjectType.TextGeneration;
-                    case "ttt":
-                        return ProjectType.TextTranslation;
-                    case "tts":
-                        return ProjectType.AudioGeneration;
-                    case "fp":
-                        return ProjectType.Fullpipeline;
-                    case "ls":
-                        return ProjectType.Lipsync;
+                    case 'stt':
+                        return ProjectType.TextGeneration
+                    case 'ttt':
+                        return ProjectType.TextTranslation
+                    case 'tts':
+                        return ProjectType.AudioGeneration
+                    case 'fp':
+                        return ProjectType.Fullpipeline
+                    case 'ls':
+                        return ProjectType.Lipsync
                     default:
                         throw new Error(
-                            `Unknown project type: ${progress.progress_type}`
-                        );
+                            `Unknown project type: ${progress.progress_type}`,
+                        )
                 }
-            })();
+            })()
 
             // Lấy số thứ tự giảm dần
-            const orderNumber = projectCurrentCountMap[projectType]--;
-            const title = `${projectType} - ${orderNumber}`;
+            const orderNumber = projectCurrentCountMap[projectType]--
+            const title = `${projectType} - ${orderNumber}`
 
             const baseProject = {
                 id: Number(progress.id),
@@ -210,35 +211,35 @@ export const getAllProgressProjects = async (
                 status: progress.status,
                 createdAt: new Date(progress.created_at),
                 updatedAt: new Date(progress.updated_at),
-            };
+            }
 
             switch (progress.progress_type) {
-                case "stt":
+                case 'stt':
                     return {
                         ...baseProject,
                         type_project: projectType,
                         thumbnail: progress.thumbnail_url,
                         original_videoId: progress.original_video_id,
                         extracted_textId: progress.original_transcription_id,
-                    } as TextGenerationProject;
+                    } as TextGenerationProject
 
-                case "ttt":
+                case 'ttt':
                     return {
                         ...baseProject,
                         type_project: projectType,
                         original_textId: progress.original_transcription_id,
                         translated_textId: progress.translated_transcription_id,
-                    } as TextTranslationProject;
+                    } as TextTranslationProject
 
-                case "tts":
+                case 'tts':
                     return {
                         ...baseProject,
                         type_project: projectType,
                         original_textId: progress.translated_transcription_id,
                         generated_audioId: progress.audio_id,
-                    } as AudioGenerationProject;
+                    } as AudioGenerationProject
 
-                case "fp":
+                case 'fp':
                     return {
                         ...baseProject,
                         type_project: projectType,
@@ -248,9 +249,9 @@ export const getAllProgressProjects = async (
                         translated_audioId: progress.audio_id,
                         translated_textId: progress.translated_transcription_id,
                         extracted_textId: progress.original_transcription_id,
-                    } as FullPipelineProject;
+                    } as FullPipelineProject
 
-                case "ls":
+                case 'ls':
                     return {
                         ...baseProject,
                         type_project: projectType,
@@ -259,27 +260,27 @@ export const getAllProgressProjects = async (
                         original_audioId:
                             progress.audio_id === 0 ? null : progress.audio_id,
                         generated_videoId: progress.progressed_video_id,
-                    } as LipSyncProject;
+                    } as LipSyncProject
 
                 default:
                     throw new Error(
-                        `Unknown project type: ${progress.progress_type}`
-                    );
+                        `Unknown project type: ${progress.progress_type}`,
+                    )
             }
-        });
+        })
 
-        return progressProjectList;
+        return progressProjectList
     } catch (error) {
-        throw error;
+        throw error
     }
-};
+}
 
 export function hasThumbnail(
-    project: Project
+    project: Project,
 ): project is
     | RawVideo
     | TextGenerationProject
     | FullPipelineProject
     | LipSyncProject {
-    return "thumbnail" in project;
+    return 'thumbnail' in project
 }

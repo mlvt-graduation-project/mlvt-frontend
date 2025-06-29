@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useAuth } from '../../../../../contexts/AuthContext'
+import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import { VideoData } from '../../../../../types/FileData'
 import { VideoFileType } from '../../../../../types/FileType'
 import { Project, ProjectType, RawVideo } from '../../../../../types/Project'
@@ -30,7 +30,8 @@ interface DialogContentProps {
 }
 
 export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
-    const { userId } = useAuth()
+    const { data: userDetails } = useGetUserDetails()
+    const userId = userDetails?.user.id.toString() || ''
     const parsedUserId = userId ? parseInt(userId) : 0
     const [viewState, setViewState] = useState<'upload' | 'url' | 'browse'>(
         'upload',

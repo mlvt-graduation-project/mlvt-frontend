@@ -2,7 +2,7 @@ import FileUploadIcon from '@mui/icons-material/FileUpload'
 import { Box, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { useAuth } from '../../../../contexts/AuthContext'
+import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import { FileData } from '../../../../types/FileData'
 import {
     AudioFileType,
@@ -41,7 +41,8 @@ export const UploadFileFromDevice: React.FC<UploadVideoFromDeviceProps> = ({
     handleChangeFileData,
     fileTypeList,
 }) => {
-    const { userId } = useAuth()
+    const { data: userDetails } = useGetUserDetails()
+    const userId = userDetails?.user.id.toString() || ''
     const [isDragActive, setIsDragActive] = useState(false)
     const [localURL, setLocalURL] = useState<string | null>(null)
     const [localFileType, setLocalFileType] = useState<

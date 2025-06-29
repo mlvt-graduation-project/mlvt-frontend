@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 interface AuthContextType {
-    userId: string | null;
     login: (token: string, userId: string) => void;
     logout: () => void;
     remainingToken: number;
@@ -13,19 +12,16 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [userId, setUserId] = useState<string | null>(null);
     const [remainingToken, setRemainingToken] = useState<number>(0);
 
     const login = (token: string, userId: string) => {
         console.log("Logging in userId:", userId);
-        setUserId(userId);
         localStorage.setItem("authToken", token);
     };
 
     const logout = () => {
         console.log("Logging out...");
         localStorage.removeItem("authToken");
-        setUserId(null);
         window.location.href = "/login"; // Redirect to login page
     };
 
@@ -44,7 +40,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return (
         <AuthContext.Provider
             value={{
-                userId,
                 login,
                 logout,
                 remainingToken,
