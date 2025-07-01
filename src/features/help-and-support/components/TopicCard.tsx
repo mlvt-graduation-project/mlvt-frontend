@@ -1,12 +1,14 @@
-import React from "react";
+// TopicCard.tsx (Corrected)
+
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import {
   Card,
   CardContent,
-  Typography,
   Link as MuiLink,
   Stack,
+  Typography,
 } from "@mui/material";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import React from "react";
 
 export interface TopicCardProps {
   title: string;
@@ -15,26 +17,37 @@ export interface TopicCardProps {
   href: string;
 }
 
-const TopicCard: React.FC<TopicCardProps> = ({
+interface ClickableTopicCardProps extends TopicCardProps {
+  onClick: () => void;
+}
+
+const TopicCard: React.FC<ClickableTopicCardProps> = ({
   title,
   description,
   linkText,
-  href,
+  onClick,
 }) => {
   return (
     <Card
+      onClick={onClick} 
       variant="outlined"
       sx={{
         height: "100%",
+        cursor: "pointer", 
         display: "flex",
         flexDirection: "column",
-        transition: "box-shadow 0.3s",
-        background: "linear-gradient(135deg, #210F37 0%, #1B1033 100%)",
-        border: "none",
-        borderRadius: "15px",
+        transition: "transform 0.2s, box-shadow 0.2s",
+        background: "rgba(30, 20, 50, 0.6)", 
+        border: "1px solid rgba(255, 255, 255, 0.1)",
+        borderRadius: "16px",
+        backdropFilter: 'blur(10px)',
+        '&:hover': {
+            transform: 'translateY(-5px)',
+            boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)'
+        }
       }}
     >
-      <CardContent sx={{ flexGrow: 1 }}>
+      <CardContent sx={{ flexGrow: 1, color: "white" }}>
         <Typography
           variant="h6"
           component="h4"
@@ -42,14 +55,13 @@ const TopicCard: React.FC<TopicCardProps> = ({
           fontWeight="600"
           sx={{
             fontFamily: "Poppins, sans-serif",
-            color: "#E0E0E0",
           }}
         >
           {title}
         </Typography>
         <Typography
           variant="body2"
-          color="#B0B0B0"
+          color="rgba(255, 255, 255, 0.7)"
           paragraph
           sx={{
             fontFamily: "Poppins, sans-serif",
@@ -60,7 +72,7 @@ const TopicCard: React.FC<TopicCardProps> = ({
       </CardContent>
       <Stack sx={{ p: 2, pt: 0 }}>
         <MuiLink
-          href={href}
+          component="div" 
           underline="none"
           variant="body2"
           sx={{
