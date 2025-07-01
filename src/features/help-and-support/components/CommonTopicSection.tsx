@@ -2,11 +2,12 @@ import { Container, Grid, Typography } from '@mui/material'
 import TopicCard, { TopicCardProps } from './TopicCard'
 
 interface CommonTopicsSectionProps {
-    topics: TopicCardProps[]
+    topics: TopicCardProps[];
+    onTopicClick: (topic: TopicCardProps) => void;
 }
 
 const CommonTopicsSection: React.FC<CommonTopicsSectionProps> = ({
-    topics,
+    topics, onTopicClick
 }) => {
     return (
         <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 }, mb: 10 }}>
@@ -31,6 +32,7 @@ const CommonTopicsSection: React.FC<CommonTopicsSectionProps> = ({
                             description={topic.description}
                             linkText={topic.linkText}
                             href={topic.href}
+                            onClick={() => onTopicClick(topic)}
                         />
                     </Grid>
                 ))}
