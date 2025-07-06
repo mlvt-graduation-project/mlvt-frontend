@@ -2,7 +2,6 @@ import { Alert, Box, Button, CircularProgress, Typography } from '@mui/material'
 import { useContext, useEffect, useRef } from 'react'
 import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import { getAllPipelineProgress } from '../apis/pipeline-progress.api'
-import WaitBackdrop from '../assets/wait-backdrop.png'
 import { PipelineContext } from '../context/PipelineContext'
 import { executePipeline } from '../services/pipelineExecutor'
 import {
@@ -11,6 +10,7 @@ import {
     PipelineType,
     VideoTranslationResult,
 } from '../types'
+import { VideoTranslationResultDisplay } from './results/VideoTranslationResultDisplay'
 
 const POLLING_INTERVAL = 10000
 const POLLING_TIMEOUT = 3000000
@@ -71,7 +71,7 @@ const ResultsPanel = () => {
                             payload: result,
                         })
                     } else if (project.status === 'failed') {
-                        stopPolling() 
+                        stopPolling()
                         dispatch({
                             type: 'GENERATION_FAILURE',
                             payload: 'Processing failed.',
@@ -124,28 +124,10 @@ const ResultsPanel = () => {
     const renderResults = (results: PipelineResult) => {
         switch (results.pipelineType) {
             case PipelineType.VideoTranslation:
-                const { progressData } = results
                 return (
-                    <Box mt={2}>
-                        <Typography variant="h6" color="primary">
-                            Translation Complete!
-                        </Typography>
-                        {progressData.thumbnail_url && (
-                            <img
-                                src={progressData.thumbnail_url}
-                                alt="Video thumbnail"
-                                style={{
-                                    maxWidth: '300px',
-                                    borderRadius: '8px',
-                                    marginTop: '10px',
-                                }}
-                            />
-                        )}
-                        <Typography variant="body2" mt={1}>
-                            Processed Video ID:{' '}
-                            {progressData.progressed_video_id}
-                        </Typography>
-                    </Box>
+                    <VideoTranslationResultDisplay
+                        progressData={results.progressData}
+                    />
                 )
             default:
                 return (
@@ -176,13 +158,6 @@ const ResultsPanel = () => {
             height="100%"
             sx={{
                 transition: 'background-image 0.3s ease-in-out',
-                backgroundImage:
-                    state.isGenerating || state.selectedPipeline
-                        ? `
-                        // linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-                        url(${WaitBackdrop})
-                      `
-                        : 'none',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
@@ -230,7 +205,6 @@ const ResultsPanel = () => {
                             </Alert>
                         )}
 
-                        {/* **THIS IS THE KEY FIX**: Use the renderResults function */}
                         {state.results &&
                             !state.isGenerating &&
                             renderResults(state.results)}

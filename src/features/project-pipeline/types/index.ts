@@ -44,7 +44,12 @@ export interface VideoTranslationResult {
     progressData: PipelineProgress
 }
 
-export type PipelineResult = VideoTranslationResult
+export interface TextGenerationResult {
+    pipelineType: PipelineType.TextGeneration
+    progressData: PipelineProgress
+}
+
+export type PipelineResult = VideoTranslationResult | TextGenerationResult
 
 // The complete state for our page
 export interface PipelineState {

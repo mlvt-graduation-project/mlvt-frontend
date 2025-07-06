@@ -35,7 +35,7 @@ export const TextView = ({
                         width: "100%",
                         display: "flex",
                         flexDirection: "column",
-                        overflow: "hidden",
+                        overflow: "none",
                         position: "relative",
                         ...customizeSx,
                     }}
