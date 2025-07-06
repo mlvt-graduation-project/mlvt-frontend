@@ -36,7 +36,7 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
                     translatedTextData,
                     audioResponse,
                 ] = await Promise.all([
-                    getOneVideoById(inputProject.original_videoId),
+                    getOneVideoById(inputProject.generated_videoId),
                     getTextContent(inputProject.extracted_textId),
                     getTextContent(inputProject.translated_textId),
                     getAudioById(inputProject.translated_audioId),

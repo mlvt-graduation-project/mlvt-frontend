@@ -1,14 +1,13 @@
-// src/features/pipeline/FeaturePage.tsx
-import React, { useReducer } from "react";
-import { Grid, Paper } from "@mui/material";
-import { pipelineReducer, initialState } from "./reducer/pipelineReducer";
-import { PipelineContext } from "./context/PipelineContext";
-import HomePage from "../../layout/HomePage";
-import ControlsPanel from "./components/ControlPanel";
-import ResultsPanel from "./components/ResultPanel";
+import { Grid, Paper } from '@mui/material'
+import { useReducer } from 'react'
+import HomePage from '../../layout/HomePage'
+import ControlsPanel from './components/ControlPanel'
+import ResultsPanel from './components/ResultsPanel'
+import { PipelineContext } from './context/PipelineContext'
+import { initialState, pipelineReducer } from './reducer/pipelineReducer'
 
 const FeaturePage = () => {
-    const [state, dispatch] = useReducer(pipelineReducer, initialState);
+    const [state, dispatch] = useReducer(pipelineReducer, initialState)
 
     return (
         <HomePage>
@@ -17,7 +16,7 @@ const FeaturePage = () => {
                     <Grid item xs={12} md={5}>
                         <Paper
                             elevation={3}
-                            sx={{ padding: 3, height: "100%" }}
+                            sx={{ padding: 3, height: '100%' }}
                         >
                             <ControlsPanel />
                         </Paper>
@@ -25,7 +24,7 @@ const FeaturePage = () => {
                     <Grid item xs={12} md={7}>
                         <Paper
                             elevation={3}
-                            sx={{ padding: 3, height: "100%" }}
+                            sx={{ padding: 3, height: '100%' }}
                         >
                             <ResultsPanel />
                         </Paper>
@@ -33,6 +32,6 @@ const FeaturePage = () => {
                 </Grid>
             </PipelineContext.Provider>
         </HomePage>
-    );
-};
-export default FeaturePage;
+    )
+}
+export default FeaturePage
