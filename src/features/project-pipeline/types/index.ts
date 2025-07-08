@@ -8,8 +8,8 @@ export enum PipelineType {
 
 // Represents the state of all possible input fields
 export interface PipelineInputs {
-    video?: string | File | null
-    audio?: string | File | null
+    video?: string | File | number | null
+    audio?: string | File | number | null
     text?: string | File | number | null
     sourceLanguage?: string
     targetLanguage?: string

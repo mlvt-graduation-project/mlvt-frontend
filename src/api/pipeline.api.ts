@@ -12,6 +12,7 @@ export const postVideoTranslation = (
             source_language: sourceLanguage,
             target_language: targetLanguage,
         },
+        getFullResponse: true,
     });
 };
 

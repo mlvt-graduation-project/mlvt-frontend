@@ -105,7 +105,7 @@ export const TextTranslationResultDisplay = ({
                     },
                 },
             ]}
-            splitTwoColumn={true}
+            splitTwoColumn={false}
         />
     )
 }

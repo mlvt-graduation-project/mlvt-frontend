@@ -1,4 +1,3 @@
-import { AxiosResponse } from 'axios'
 import {
     postAudioGeneration,
     postLipSync,
@@ -9,13 +8,16 @@ import {
 import { TranslateLanguage } from '../../types/Translation'
 import { checkSuccessResponse } from '../checkResponseStatus'
 import { getLanguageCode } from './VideoPopup.utils'
-
+export interface JobCreationResponse {
+    message: string
+    id: number
+}
 // Service for TextTranslation
 export const translateText = async (
     textId: number,
     sourceLanguage: TranslateLanguage,
     targetLanguage: TranslateLanguage,
-): Promise<AxiosResponse<any>> => {
+): Promise<JobCreationResponse> => {
     const sourceLanguageCode = getLanguageCode(sourceLanguage)
     const targetLanguageCode = getLanguageCode(targetLanguage)
 
@@ -26,12 +28,6 @@ export const translateText = async (
     )
 
     if (!checkSuccessResponse(postTranslationResponse.status)) {
-        const errorData = postTranslationResponse.data
-        console.error(
-            'Text translation API returned a non-success status:',
-            postTranslationResponse.status,
-            errorData,
-        )
         throw new Error('Server indicated an error during text translation.')
     }
 
@@ -66,19 +62,17 @@ export const lipSync = async (videoId: number, audioId: number) => {
 export const generateText = async (
     videoId: number,
     sourceLanguage: TranslateLanguage,
-) => {
-    try {
-        const sourceLanguageCode = getLanguageCode(sourceLanguage)
-        const postTextGenerationResponse = await postTextGeneration(
-            videoId,
-            sourceLanguageCode,
-        )
+): Promise<JobCreationResponse> => {
+    const sourceLanguageCode = getLanguageCode(sourceLanguage)
+    const postTextGenerationResponse = await postTextGeneration(
+        videoId,
+        sourceLanguageCode,
+    )
 
-        console.log('postTextGenerationResponse', postTextGenerationResponse)
-    } catch (error) {
-        console.error('Error during text generation:', error)
-        throw new Error('Error when transcribing video')
+    if (postTextGenerationResponse.message === 'Accepted for processing') {
+        throw new Error('Server indicated an error during text generation.')
     }
+    return postTextGenerationResponse as JobCreationResponse
 }
 
 // Service for fullpipeline (VideoTranslation)
@@ -86,19 +80,19 @@ export const translateVideo = async (
     videoId: number,
     sourceLanguage: TranslateLanguage,
     targetLanguage: TranslateLanguage,
-) => {
-    try {
-        const sourceLanguageCode = getLanguageCode(sourceLanguage)
-        const targetLanguageCode = getLanguageCode(targetLanguage)
-        const postVideoTranslationResponse = await postVideoTranslation(
-            videoId,
-            sourceLanguageCode,
-            targetLanguageCode,
-        )
-        if (!checkSuccessResponse(postVideoTranslationResponse.status)) {
-            console.log('Failed translate video')
-        }
-    } catch (error) {
-        throw error
+): Promise<JobCreationResponse> => {
+    const sourceLanguageCode = getLanguageCode(sourceLanguage)
+    const targetLanguageCode = getLanguageCode(targetLanguage)
+    const postVideoTranslationResponse = await postVideoTranslation(
+        videoId,
+        sourceLanguageCode,
+        targetLanguageCode,
+    )
+
+    console.log('postVideoTranslationResponse', postVideoTranslationResponse)
+    if (!checkSuccessResponse(postVideoTranslationResponse.status)) {
+        throw new Error('Server indicated an error during video translation.')
     }
+
+    return postVideoTranslationResponse.data as JobCreationResponse
 }

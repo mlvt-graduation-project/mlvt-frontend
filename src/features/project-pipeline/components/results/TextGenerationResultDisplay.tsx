@@ -105,7 +105,7 @@ export const TextGenerationResultDisplay = ({
                     },
                 },
             ]}
-            splitTwoColumn={true}
+            splitTwoColumn={false}
         />
     )
 }
