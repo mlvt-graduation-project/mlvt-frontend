@@ -15,15 +15,20 @@ export const postVideoTranslation = (
     });
 };
 
-export const postTextGeneration = (
+interface TriggerResponse {
+    id: number;
+    message: string;
+}
+export const postTextGeneration = async (
     videoId: number,
     sourceLanguage: string
-): Promise<any> => {
-    return post(`/mlvt/stt/${videoId}`, null, {
+): Promise<TriggerResponse> => {
+    const response = await post<TriggerResponse>(`/mlvt/stt/${videoId}`, null, {
         params: {
             source_language: sourceLanguage,
-        },
+        }
     });
+    return response;
 };
 
 export const postTextTranslation = (

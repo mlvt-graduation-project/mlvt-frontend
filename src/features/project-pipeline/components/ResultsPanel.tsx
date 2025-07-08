@@ -8,8 +8,12 @@ import {
     PipelineProgress,
     PipelineResult,
     PipelineType,
+    TextGenerationResult,
+    TextTranslationResult,
     VideoTranslationResult,
 } from '../types'
+import { TextGenerationResultDisplay } from './results/TextGenerationResultDisplay'
+import { TextTranslationResultDisplay } from './results/TextTranslationResultDisplay'
 import { VideoTranslationResultDisplay } from './results/VideoTranslationResultDisplay'
 
 const POLLING_INTERVAL = 10000
@@ -59,6 +63,21 @@ const ResultsPanel = () => {
                                     progressData: project,
                                 } as VideoTranslationResult
                                 break
+
+                            case 'stt':
+                                result = {
+                                    pipelineType: PipelineType.TextGeneration,
+                                    progressData: project,
+                                } as TextGenerationResult
+                                break
+
+                            case 'ttt':
+                                result = {
+                                    pipelineType: PipelineType.TextTranslation,
+                                    progressData: project,
+                                } as TextTranslationResult
+                                break
+
                             default:
                                 dispatch({
                                     type: 'GENERATION_FAILURE',
@@ -129,6 +148,20 @@ const ResultsPanel = () => {
                         progressData={results.progressData}
                     />
                 )
+
+            case PipelineType.TextGeneration:
+                return (
+                    <TextGenerationResultDisplay
+                        progressData={results.progressData}
+                    />
+                )
+
+            case PipelineType.TextTranslation:
+                return (
+                    <TextTranslationResultDisplay
+                        progressData={results.progressData}
+                    />
+                )
             default:
                 return (
                     <Typography variant="body1">
@@ -156,12 +189,6 @@ const ResultsPanel = () => {
             flexDirection="column"
             justifyContent="space-between"
             height="100%"
-            sx={{
-                transition: 'background-image 0.3s ease-in-out',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-            }}
         >
             <Box>
                 <Box

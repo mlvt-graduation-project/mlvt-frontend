@@ -10,6 +10,7 @@ import { TranslateLanguage } from '../../types/Translation'
 import { checkSuccessResponse } from '../checkResponseStatus'
 import { getLanguageCode } from './VideoPopup.utils'
 
+// Service for TextTranslation
 export const translateText = async (
     textId: number,
     sourceLanguage: TranslateLanguage,
@@ -73,11 +74,10 @@ export const generateText = async (
             sourceLanguageCode,
         )
 
-        if (!checkSuccessResponse(postTextGenerationResponse.status)) {
-            throw new Error('Error when transcribing video')
-        }
+        console.log('postTextGenerationResponse', postTextGenerationResponse)
     } catch (error) {
-        throw error
+        console.error('Error during text generation:', error)
+        throw new Error('Error when transcribing video')
     }
 }
 

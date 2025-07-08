@@ -10,7 +10,7 @@ export enum PipelineType {
 export interface PipelineInputs {
     video?: string | File | null
     audio?: string | File | null
-    text?: string
+    text?: string | File | number | null
     sourceLanguage?: string
     targetLanguage?: string
     language?: string // For single-language contexts
@@ -49,7 +49,15 @@ export interface TextGenerationResult {
     progressData: PipelineProgress
 }
 
-export type PipelineResult = VideoTranslationResult | TextGenerationResult
+export interface TextTranslationResult {
+    pipelineType: PipelineType.TextTranslation
+    progressData: PipelineProgress
+}
+
+export type PipelineResult =
+    | VideoTranslationResult
+    | TextGenerationResult
+    | TextTranslationResult
 
 // The complete state for our page
 export interface PipelineState {

@@ -67,16 +67,11 @@ export const pipelineReducer = (
 
         case 'UPDATE_INPUT':
             return {
-                ...state, // ...copying all existing state properties.
+                ...state,
                 inputs: {
-                    // ...but create a new 'inputs' object.
-                    ...state.inputs, // Copy all existing inputs.
-                    // And then set or overwrite the specific field that was changed.
-                    // [action.payload.field] is a "computed property name".
+                    ...state.inputs,
                     [action.payload.field]: action.payload.value,
                 },
-                // If the user is changing inputs, any previous result or error is now outdated.
-                // Clearing them provides a better user experience.
                 results: null,
                 error: null,
             }
@@ -95,7 +90,7 @@ export const pipelineReducer = (
         case 'START_POLLING':
             return {
                 ...state,
-                isGenerating: true, 
+                isGenerating: true,
                 pollingInfo: action.payload,
             }
 
@@ -113,7 +108,7 @@ export const pipelineReducer = (
             return {
                 ...state,
                 isGenerating: false, // Turn off loading.
-                error: action.payload, 
+                error: action.payload,
                 pollingInfo: null, // Clear any polling info.
             }
 
