@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Divider, Grid, Typography } from '@mui/material'
 import { Navigate, useLocation } from 'react-router-dom'
 import HomePage from '../../../layout/HomePage'
 import { PaymentResponse } from '../apis/tokenPlan.api'
@@ -53,15 +53,120 @@ const MembershipCheckoutPage: React.FC = () => {
                             p: 1,
                         }}
                     />
-                    <Typography
-                        variant="h6"
-                        color="primary"
-                        fontWeight={450}
-                        sx={{ mt: 1 }}
+                    <Box
+                        sx={{
+                            marginTop: 3,
+                            width: '100%',
+                            padding: 3,
+                            border: '1px solid',
+                            borderColor: 'divider',
+                            borderRadius: 2,
+                        }}
                     >
-                        TOTAL:{' '}
-                        {paymentDetails.vnd_amount.toLocaleString('vi-VN')} VND
-                    </Typography>
+                        <Typography
+                            fontWeight={600}
+                            color="primary"
+                            variant="h6"
+                            marginBottom={3}
+                        >
+                            PAYMENT DETAILS
+                        </Typography>
+
+                        {/* Using a Grid for each row for perfect alignment */}
+                        <Grid container rowSpacing={1.5}>
+                            <Grid item xs={6}>
+                                <Typography
+                                    variant="body1"
+                                    color="text.secondary"
+                                >
+                                    Amount
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={6} textAlign="right">
+                                <Typography variant="body1" fontWeight={500}>
+                                    {paymentDetails.vnd_amount.toLocaleString(
+                                        'vi-VN',
+                                    )}{' '}
+                                    VND
+                                </Typography>
+                            </Grid>
+
+                            <Grid item xs={6}>
+                                <Typography
+                                    variant="body1"
+                                    color="text.secondary"
+                                >
+                                    Token Package
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={6} textAlign="right">
+                                <Typography variant="body1" fontWeight={500}>
+                                    {paymentDetails.payment_option}
+                                </Typography>
+                            </Grid>
+
+                            <Grid item xs={6}>
+                                <Typography
+                                    variant="body1"
+                                    color="text.secondary"
+                                >
+                                    Transaction ID
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={6} textAlign="right">
+                                <Typography
+                                    variant="body1"
+                                    fontWeight={500}
+                                    sx={{ wordBreak: 'break-all' }}
+                                >
+                                    {paymentDetails.transaction_id}
+                                </Typography>
+                            </Grid>
+
+                            <Grid item xs={6}>
+                                <Typography
+                                    variant="body1"
+                                    color="text.secondary"
+                                >
+                                    Payment Status
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={6} textAlign="right">
+                                <Typography variant="body1" fontWeight={500}>
+                                    {/* You can improve this further with a Chip, see Option 2 */}
+                                    {paymentDetails.status}
+                                </Typography>
+                            </Grid>
+                        </Grid>
+
+                        <Divider sx={{ my: 3 }} />
+
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <Typography
+                                variant="h6"
+                                color="text.primary"
+                                fontWeight={600}
+                            >
+                                TOTAL
+                            </Typography>
+                            <Typography
+                                variant="h5"
+                                color="primary"
+                                fontWeight={700}
+                            >
+                                {paymentDetails.vnd_amount.toLocaleString(
+                                    'vi-VN',
+                                )}{' '}
+                                VND
+                            </Typography>
+                        </Box>
+                    </Box>
                 </Box>
             </Box>
         </HomePage>
