@@ -63,15 +63,10 @@ export const TextGenerationPopup: React.FC<TextGenerationPopupProps> = ({
                     content: 'Upload data successfully! 🎉',
                 })
             } catch (error) {
-                console.error('Text generation process failed:', error)
-                const errorMessage =
-                    error instanceof Error
-                        ? error.message
-                        : 'An unknown error occurred.'
                 setNotification({
                     isOpen: true,
                     status: 'fail',
-                    content: `Process failed: ${errorMessage}`,
+                    content: `Text Generation process failed`,
                 })
             }
         },

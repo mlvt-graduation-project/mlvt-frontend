@@ -40,7 +40,7 @@ function includes<T extends U, U>(coll: ReadonlyArray<T>, el: U): el is T {
 // --- Define the configuration for each input type ---
 const configs = {
     video: {
-        firstMode: { mode: 'url', label: 'URL' },
+        firstMode: { mode: 'upload', label: 'Upload File' },
         acceptedTypes: ['video/mp4', 'video/webm', 'video/quicktime'],
         acceptAttr: 'video/mp4,video/webm,video/quicktime',
         uploadErrorMsg: 'Please upload a video file (MP4, WebM, MOV).',
@@ -61,7 +61,7 @@ const configs = {
         ),
     },
     audio: {
-        firstMode: { mode: 'url', label: 'URL' },
+        firstMode: { mode: 'upload', label: 'Upload File' },
         acceptedTypes: ['audio/mpeg', 'audio/wav', 'audio/ogg'],
         acceptAttr: 'audio/mpeg,audio/wav,audio/ogg',
         uploadErrorMsg: 'Please upload an audio file (MP3, WAV, OGG).',
@@ -83,7 +83,7 @@ const configs = {
     },
 } as const
 
-type InputMode = 'url' | 'upload' | 'mlvt' | 'text'
+type InputMode = 'upload' | 'mlvt' | 'text'
 type InputType = keyof typeof configs
 
 interface MultiSourceInputProps {
@@ -325,35 +325,9 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
 
             default:
                 return (
-                    <TextField
-                        fullWidth
-                        size="small"
-                        variant="outlined"
-                        label="Enter URL"
-                        value={
-                            typeof currentValue === 'string' ? currentValue : ''
-                        }
-                        onChange={handleTextChange}
-                        sx={{
-                            '& label': {
-                                fontFamily: 'Poppins, sans-serif',
-                                fontSize: '0.9rem',
-                            },
-                            '& .MuiFormHelperText-root': {
-                                fontSize: '0.8rem',
-                                color: 'text.secondary',
-                                fontFamily: 'Poppins, sans-serif',
-                            },
-                            '& label.Mui-focused': {
-                                color: 'primary.main',
-                                fontFamily: 'Poppins, sans-serif',
-                            },
-                            '& .MuiInputBase-input': {
-                                fontFamily: 'Poppins, sans-serif',
-                                fontSize: '0.9rem',
-                            },
-                        }}
-                    />
+                    <Typography variant="body2" color="text.secondary">
+                        Unsupported input mode.
+                    </Typography>
                 )
         }
     }
@@ -384,9 +358,6 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                     aria-label={config.firstMode.mode}
                 >
                     {config.firstMode.label}
-                </StyledToggleButton>
-                <StyledToggleButton value="upload" aria-label="upload">
-                    Upload File
                 </StyledToggleButton>
                 <StyledToggleButton value="mlvt" aria-label="browse mlvt">
                     Browse MLVT

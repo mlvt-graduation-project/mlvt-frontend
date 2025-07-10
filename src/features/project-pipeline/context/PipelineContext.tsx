@@ -1,8 +1,6 @@
-// src/features/pipeline/PipelineContext.ts
-
 import { createContext } from "react";
 import { PipelineState, PipelineAction } from "../types";
-import { initialState } from "../reducer/pipelineReducer"; // We'll get the initial state from the reducer file
+import { initialState } from "../reducer/pipelineReducer"; 
 
 // 1. Define the type for the context's value.
 // This is a "contract" that says our context will provide an object
@@ -22,7 +20,5 @@ export const PipelineContext = createContext<PipelineContextType>({
         throw new Error(
             "dispatch function was called outside of the PipelineProvider"
         );
-        // This error will immediately tell you if you forgot to wrap a component
-        // in the provider, which is a common mistake.
     },
 });

@@ -1,55 +1,38 @@
-import React from "react";
-import {
-    Box,
-    Card,
-    CardContent,
-    Typography,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    useTheme,
-} from "@mui/material";
-import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
-import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
-import { CustomButton } from "../../../components/CustomButton";
+import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined'
+import { Box, Card, CardContent, Typography, useTheme } from '@mui/material'
+import React from 'react'
+import { CustomButton } from '../../../components/CustomButton'
 
 interface MembershipCardProps {
-    title: string;
-    price: string;
-    period: string;
-    perks: string[];
-    onButtonClick: () => void;
-    priceColor?: string;
-    buttonText?: string;
+    option: string
+    token_amount: number
+    onButtonClick: () => void
+    loading?: boolean
 }
 
 const MembershipCard: React.FC<MembershipCardProps> = ({
-    title,
-    price,
-    period,
-    perks,
+    option,
+    token_amount,
     onButtonClick,
-    priceColor,
-    buttonText,
+    loading = false,
 }) => {
-    const theme = useTheme();
-
+    const theme = useTheme()
+    const formatNumber = (num: number) => num.toLocaleString('en-US')
     return (
         <Card
             sx={{
-                borderRadius: "15px",
+                borderRadius: '15px',
                 boxShadow:
-                    theme.palette.mode === "light"
-                        ? "0px 4px 8px rgba(0, 0, 0, 0.25)"
-                        : "0px 4px 8px rgba(220, 196, 196, 0.09)",
+                    theme.palette.mode === 'light'
+                        ? '0px 4px 8px rgba(0, 0, 0, 0.25)'
+                        : '0px 4px 8px rgba(220, 196, 196, 0.09)',
                 width: 370,
             }}
         >
             <CardContent
                 sx={{
-                    display: "flex",
-                    flexDirection: "column",
+                    display: 'flex',
+                    flexDirection: 'column',
                     gap: 2,
                     my: 1.2,
                 }}
@@ -57,17 +40,17 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
                 {/* 1) Header icon, centered */}
                 <Box
                     sx={{
-                        display: "flex",
-                        justifyContent: "center",
+                        display: 'flex',
+                        justifyContent: 'center',
                     }}
                 >
                     <LayersOutlinedIcon
                         sx={{
-                            fontSize: "2.5rem",
-                            color: "#2E073F",
-                            bgcolor: "#C8A1E0",
-                            borderRadius: "50%",
-                            padding: "0.35rem",
+                            fontSize: '2.5rem',
+                            color: '#2E073F',
+                            bgcolor: '#C8A1E0',
+                            borderRadius: '50%',
+                            padding: '0.35rem',
                             border: `5px solid #EBD3F8`,
                         }}
                     />
@@ -75,45 +58,69 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
 
                 {/* 2) Card title */}
                 <Typography
-                    variant="h6"
+                    variant="h2"
                     align="center"
                     sx={{
-                        color: theme.palette.primary.main,
+                        color: '#A9C52F',
                         fontWeight: 600,
-                        fontFamily: "Poppins, sans-serif",
+                        fontFamily: 'Poppins, sans-serif',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'baseline',
+                        gap: 1.5,
                     }}
                 >
-                    {title}
-                </Typography>
-
-                {/* 3) Price + period */}
-                <Typography
-                    variant="h3"
-                    align="center"
-                    sx={{
-                        color: priceColor ?? theme.palette.text.primary,
-                        fontWeight: 600,
-                        fontFamily: "Poppins, sans-serif",
-                        lineHeight: 1.1,
-                    }}
-                >
-                    {price}
+                    <span>{`${option}`.toUpperCase()}</span>{' '}
                     <Typography
                         component="span"
                         sx={{
-                            fontSize: "1rem",
-                            fontWeight: 400,
+                            fontSize: '1.2rem',
                             color: theme.palette.text.secondary,
-                            fontFamily: "Poppins, sans-serif",
-                            ml: 0.5,
+                            fontWeight: 500,
                         }}
                     >
-                        {period}
+                        PACKAGE
                     </Typography>
                 </Typography>
 
+                {/* 3) Price */}
+                <Box gap={0.9} mb={1.5}>
+                    <Typography
+                        variant="body2"
+                        align="center"
+                        sx={{
+                            color: theme.palette.text.primary,
+                            fontWeight: 400,
+                        }}
+                    >
+                        You will receive{' '}
+                    </Typography>
+                    <Typography
+                        variant="h3"
+                        align="center"
+                        sx={{
+                            color: '#6EACDA',
+                            fontWeight: 600,
+                            fontFamily: 'Poppins, sans-serif',
+                            lineHeight: 1.1,
+                        }}
+                    >
+                        {formatNumber(token_amount)}
+                        <Typography
+                            component="span"
+                            sx={{
+                                fontSize: '1rem',
+                                color: theme.palette.text.secondary,
+                                fontWeight: 500,
+                            }}
+                        >
+                            {' tokens'}
+                        </Typography>
+                    </Typography>
+                </Box>
+
                 {/* 4) Vertical list of perks */}
-                <List sx={{ mt: 1, px: 1, gap: 1 }}>
+                {/* <List sx={{ mt: 1, px: 1, gap: 1 }}>
                     {perks.map((perk, idx) => (
                         <ListItem
                             key={idx}
@@ -153,17 +160,19 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
                             />
                         </ListItem>
                     ))}
-                </List>
+                </List> */}
 
                 {/* 5) “Get started” button */}
                 <CustomButton
-                    text={buttonText ?? "Get started"}
+                    text={'Buy Now'}
                     onClick={onButtonClick}
                     variant="contained"
+                    loading={loading}
+                    disabled={loading}
                 />
             </CardContent>
         </Card>
-    );
-};
+    )
+}
 
-export default MembershipCard;
+export default MembershipCard

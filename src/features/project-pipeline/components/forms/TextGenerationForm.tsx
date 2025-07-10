@@ -15,7 +15,6 @@ const TextGenerationForm = () => {
         TranslateLanguage.Japanese,
     ]
     const handleChangeAudioLanguage = (value: string) => {
-        // We'll map this to 'sourceLanguage' in the global state
         dispatch({
             type: 'UPDATE_INPUT',
             payload: { field: 'sourceLanguage', value },
