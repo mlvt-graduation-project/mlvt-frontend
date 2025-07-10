@@ -1,30 +1,29 @@
-import { Box, Container, Divider, Stack, Typography } from "@mui/material";
-import { PlanDetails } from "../../../types/MembershipPlan";
-import MLVTLogo from "../../../assets/mlvt_logo.png";
+import { Box, Container, Divider, Stack, Typography } from '@mui/material'
+import MLVTLogo from '../../../assets/mlvt_logo.png'
+import { TokenPlan } from '../types/TokenPlan'
 
 interface CheckoutInformationProps {
-    plan: PlanDetails;
-    total: number;
+    plan: TokenPlan
 }
 
-const CheckoutInformation: React.FC<CheckoutInformationProps> = ({
-    plan,
-    total,
-}) => {
+const CheckoutInformation: React.FC<CheckoutInformationProps> = ({ plan }) => {
+    const formattedAmount = plan.vnd_amount.toLocaleString('en-US')
+    const formattedVndTotal = `VND ${formattedAmount}`
+
     return (
         <Container maxWidth="xs">
             {/* Header Section */}
-            <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
                 <Typography
                     variant="body1"
                     sx={{
-                        fontWeight: "bold",
+                        fontWeight: 'bold',
                         color: (theme) => theme.palette.primary.main,
-                        fontFamily: "Poppins, Roboto, sans-serif",
-                        fontSize: "1.8rem",
+
+                        fontSize: '1.5rem',
                     }}
                 >
-                    CHECK OUT YOUR PLAN
+                    CHECK OUT YOUR PURCHASE
                 </Typography>
             </Box>
 
@@ -33,60 +32,42 @@ const CheckoutInformation: React.FC<CheckoutInformationProps> = ({
                 <Typography
                     variant="body1"
                     color="text.secondary"
-                    fontFamily={"Poppins, Roboto, sans-serif"}
-                    fontWeight={550}
+                    fontFamily={'Poppins, Roboto, sans-serif'}
+                    fontWeight={500}
                 >
-                    Start your {plan.title}
+                    Start your journey with more tokens
                 </Typography>
                 <Box
                     sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+                        display: 'flex',
+                        alignItems: 'left',
                     }}
                 >
-                    <Box sx={{ display: "flex", alignItems: "baseline" }}>
+                    <Box sx={{ display: 'flex', alignItems: 'baseline' }}>
                         <Typography
                             component="span"
                             sx={{
-                                fontWeight: "600",
-                                fontFamily: "Poppins, Roboto, sans-serif",
-                                fontSize: "3rem",
-                                color: plan.priceColor || "#d32f2f",
+                                fontWeight: '600',
+                                fontSize: '3rem',
+                                color: '#F564A9',
                             }}
                         >
-                            {plan.priceString}
+                            {plan.token_amount}
+                            <Typography
+                                component="span"
+                                sx={{
+                                    fontSize: '1rem',
+                                    color: (theme) =>
+                                        theme.palette.text.secondary,
+                                    fontWeight: 500,
+                                }}
+                            >
+                                {' '}
+                                tokens
+                            </Typography>
                         </Typography>
                     </Box>
-                    <Typography
-                        color="text.secondary"
-                        sx={{
-                            textAlign: "left",
-                            fontFamily: "Poppins, Roboto, sans-serif",
-                            fontSize: "0.8rem",
-                        }}
-                    >
-                        Complete your payment today
-                    </Typography>
                 </Box>
-                <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    fontFamily={"Poppins, Roboto, sans-serif"}
-                    sx={{ fontSize: "0.8rem" }}
-                >
-                    <Typography
-                        component={"span"}
-                        color={"#F89D13"}
-                        fontFamily={"Poppins, sans-serif"}
-                        fontWeight={600}
-                        sx={{ fontSize: "0.9rem" }}
-                    >
-                        Note
-                    </Typography>
-                    <br />
-                    This is a recurring payment. You can cancel anytime.
-                </Typography>
             </Stack>
 
             {/* Order Summary Section */}
@@ -94,21 +75,21 @@ const CheckoutInformation: React.FC<CheckoutInformationProps> = ({
                 {/* Premium Price Row */}
                 <Box
                     sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                     }}
                 >
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <Box
                             sx={{
                                 p: 1,
-                                bgcolor: "#ede7f6",
+                                bgcolor: '#ede7f6',
                                 borderRadius: 2,
                                 mr: 2,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
                             }}
                         >
                             <Box
@@ -118,7 +99,7 @@ const CheckoutInformation: React.FC<CheckoutInformationProps> = ({
                                 sx={{
                                     width: 50,
                                     height: 50,
-                                    objectFit: "contain",
+                                    objectFit: 'contain',
                                 }}
                             />
                         </Box>
@@ -127,36 +108,29 @@ const CheckoutInformation: React.FC<CheckoutInformationProps> = ({
                                 variant="body2"
                                 sx={{
                                     fontWeight: 550,
-                                    fontFamily: "Poppins, Roboto, sans-serif",
                                 }}
                             >
-                                Premium Price
+                                Token Price
                             </Typography>
-                            <Typography variant="body2" color="text.secondary" fontFamily={"Poppins, Roboto, sans-serif"} mt={0.5}>
-                                {plan.title} - {plan.period}
+                            <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                fontFamily={'Poppins, Roboto, sans-serif'}
+                                mt={0.5}
+                            >
+                                {plan.option.charAt(0).toUpperCase() +
+                                    plan.option.slice(1)}{' '}
+                                Plan
                             </Typography>
                         </Stack>
                     </Box>
-                    <Typography variant="body1" sx={{ fontWeight: 550, fontFamily: "Poppins, Roboto, sans-serif" }}>
-                        {plan.priceString}
-                    </Typography>
-                </Box>
-
-                {/* Discounts Row */}
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                    }}
-                >
-                    <Typography variant="body2" sx={{ fontWeight: 500, fontFamily: "Poppins, Roboto, sans-serif" }}>
-                        Discounts
-                    </Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 500, fontFamily: "Poppins, Roboto, sans-serif" }}>
-                        {plan.discount > 0
-                            ? `-$${plan.discount.toFixed(2)}`
-                            : "$0.00"}
+                    <Typography
+                        variant="body1"
+                        sx={{
+                            fontWeight: 550,
+                        }}
+                    >
+                        {formattedVndTotal}
                     </Typography>
                 </Box>
 
@@ -165,23 +139,33 @@ const CheckoutInformation: React.FC<CheckoutInformationProps> = ({
                 {/* Total Row */}
                 <Box
                     sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                     }}
                 >
-                    <Typography variant="h6" sx={{ fontWeight: "550", fontFamily: "Poppins, Roboto, sans-serif" }}>
+                    <Typography
+                        variant="h6"
+                        sx={{
+                            fontWeight: '550',
+                            color: '#A7D477',
+                        }}
+                    >
                         TOTAL
                     </Typography>
-                    <Typography variant="h6" sx={{ fontWeight: "500", fontFamily: "Poppins, Roboto, sans-serif" }}>
-                        {total > 0
-                            ? `$${total.toFixed(2)}`
-                            : "$0.00"}
+                    <Typography
+                        variant="h6"
+                        sx={{
+                            fontWeight: '500',
+                            color: '#A7D477',
+                        }}
+                    >
+                        {formattedVndTotal}
                     </Typography>
                 </Box>
             </Stack>
         </Container>
-    );
-};
+    )
+}
 
-export default CheckoutInformation;
+export default CheckoutInformation

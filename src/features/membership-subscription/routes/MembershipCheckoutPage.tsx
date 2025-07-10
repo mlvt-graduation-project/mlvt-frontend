@@ -1,41 +1,71 @@
-import { Box } from "@mui/material";
-import HomePage from "../../../layout/HomePage";
-import CheckoutInformation from "../components/CheckoutInformation";
-import CheckoutMethod from "../components/CheckoutMethod";
-import { Navigate, useParams } from "react-router-dom";
-import { PLANS_DATA, PlanId } from "../../../types/MembershipPlan";
+import { Box, Typography } from '@mui/material'
+import { Navigate, useLocation } from 'react-router-dom'
+import HomePage from '../../../layout/HomePage'
+import { PaymentResponse } from '../apis/tokenPlan.api'
+import CheckoutInformation from '../components/CheckoutInformation'
+import { TokenPlan } from '../types/TokenPlan'
 
 const MembershipCheckoutPage: React.FC = () => {
-    const { planId } = useParams<{ planId: PlanId }>();
-    const selectedPlan = planId ? PLANS_DATA[planId] : undefined;
-    if (!selectedPlan || selectedPlan.id === "standard") {
-        return <Navigate to="/membership" replace />;
+    const { state } = useLocation()
+
+    const { plan, paymentDetails } = (state as {
+        plan: TokenPlan
+        paymentDetails: PaymentResponse
+    }) || { plan: null, paymentDetails: null }
+
+    if (!plan || !paymentDetails) {
+        return <Navigate to="/premium-plan" replace />
     }
 
-    const total = selectedPlan.price - selectedPlan.discount;
     return (
         <HomePage>
-            <Box p={0} minHeight="100vh" display={"flex"} flexDirection={"row"}>
+            <Box p={0} minHeight="100vh" display={'flex'} flexDirection={'row'}>
                 <Box
-                    width={"50%"}
+                    width={'50%'}
                     bgcolor={(theme) => theme.palette.accent.main}
                 >
                     <Box p={10}>
-                        <CheckoutInformation
-                            plan={selectedPlan}
-                            total={total}
-                        />
+                        <CheckoutInformation plan={plan} />
                     </Box>
                 </Box>
-                <Box p={10}>
-                    <CheckoutMethod
-                        email="mm@example.com"
-                        totalAmount={total}
+                <Box
+                    width={{ xs: '100%', md: '50%' }}
+                    p={{ xs: 4, md: 10 }}
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    gap={3}
+                >
+                    <Typography variant="h5" align="center" fontWeight={600}>
+                        Scan with your Banking App
+                    </Typography>
+                    <Box
+                        component="img"
+                        src={paymentDetails.qr_data_url}
+                        alt="Payment QR Code"
+                        sx={{
+                            width: 280,
+                            height: 280,
+                            border: '1px solid',
+                            borderColor: 'divider',
+                            borderRadius: 2,
+                            p: 1,
+                        }}
                     />
+                    <Typography
+                        variant="h6"
+                        color="primary"
+                        fontWeight={450}
+                        sx={{ mt: 1 }}
+                    >
+                        TOTAL:{' '}
+                        {paymentDetails.vnd_amount.toLocaleString('vi-VN')} VND
+                    </Typography>
                 </Box>
             </Box>
         </HomePage>
-    );
-};
+    )
+}
 
-export default MembershipCheckoutPage;
+export default MembershipCheckoutPage

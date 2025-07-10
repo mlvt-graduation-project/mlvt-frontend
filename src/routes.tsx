@@ -107,7 +107,7 @@ const routes: RouteObject[] = [
                 ),
             },
             {
-                path: '/checkout/:planId',
+                path: '/checkout/:option',
                 element: (
                     <ProtectedRoute>
                         <MembershipCheckoutPage />
