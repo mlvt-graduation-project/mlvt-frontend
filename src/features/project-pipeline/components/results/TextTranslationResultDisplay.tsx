@@ -48,7 +48,7 @@ export const TextTranslationResultDisplay = ({
                         translatedText: {
                             data: null,
                             isLoading: false,
-                            error: 'Missing original transcription ID',
+                            error: 'Missing translated transcription ID',
                         },
                     })
                 }
