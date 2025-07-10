@@ -147,7 +147,7 @@ export const CustomAudioPlayer = ({
                 padding: "20px",
                 borderRadius: "20px",
                 width: "100%",
-                // height: "85%",
+                height: "100%",
                 position: "relative",
                 overflow: "visible",
                 ...customizeSx,

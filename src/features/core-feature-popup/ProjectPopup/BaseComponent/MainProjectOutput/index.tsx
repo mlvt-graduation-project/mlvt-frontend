@@ -5,7 +5,7 @@ import { ImageInProgress } from './ImageInProgress';
 interface MainProjectOutputProps {
     status: string;
     videoUrl: string | null;
-    imageUrl: string | null;
+    imageUrl: string | null;  
 }
 
 export const MainProjectOutput: React.FC<MainProjectOutputProps> = ({ status, videoUrl, imageUrl }) => {

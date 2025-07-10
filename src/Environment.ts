@@ -1,4 +1,5 @@
-export const apiUrl = `https://capiarys.com/api`;
+export const apiUrl = `https://capiarys.com/api`
+
 // const ENV = {
 //   dev: {
 //     apiUrl: apiUrl,

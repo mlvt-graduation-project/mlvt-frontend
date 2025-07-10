@@ -11,7 +11,6 @@ const VideoTranslationForm = () => {
 
     // 4. Define handlers that dispatch actions to the global reducer
     const handleChangeAudioLanguage = (value: string) => {
-        // We'll map this to 'sourceLanguage' in the global state
         dispatch({
             type: 'UPDATE_INPUT',
             payload: { field: 'sourceLanguage', value },
@@ -19,7 +18,6 @@ const VideoTranslationForm = () => {
     }
 
     const handleChangeTargetLanguage = (value: string) => {
-        // We'll map this to 'targetLanguage' in the global state
         dispatch({
             type: 'UPDATE_INPUT',
             payload: { field: 'targetLanguage', value },
@@ -39,7 +37,6 @@ const VideoTranslationForm = () => {
             {/* This component already correctly uses the context */}
             <MultiSourceInput label="Video" field="video" inputType="video" />
             <Divider sx={{ borderColor: 'divider', my: 2 }} />
-
             <Box
                 sx={{
                     display: 'flex',

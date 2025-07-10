@@ -1,95 +1,140 @@
-import { Box } from "@mui/material";
-import { CustomAudioPlayer } from "./CustomizedVideoBox";
-import { TextView } from "./CustomizedTextBox";
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
+import { Box, CircularProgress, Tooltip } from '@mui/material'
+import { TextView } from './CustomizedTextBox'
+import { CustomAudioPlayer } from './CustomizedVideoBox'
 
+// --- Types are correct, no changes needed ---
 interface AudioProps {
-    type: "audio/video";
+    type: 'audio/video'
     props: {
-        audioSrc: string;
-        audioTitle: string;
-        sourceType: "audio" | "video";
-    };
+        audioSrc: string
+        audioTitle: string
+        sourceType: 'audio' | 'video'
+        isLoading?: boolean
+        error?: string | null
+    }
 }
-
 interface TextProps {
-    type: "text";
+    type: 'text'
     props: {
-        displayText: string;
-        textTitle: string;
-    };
+        displayText: string
+        textTitle: string
+        isLoading?: boolean
+        error?: string | null
+    }
 }
-
-type ChildComponentProps = AudioProps | TextProps;
-
+type ChildComponentProps = AudioProps | TextProps
 interface RelatedOutputProps {
-    childrenData: ChildComponentProps[];
-    splitTwoColumn: boolean;
+    childrenData: ChildComponentProps[]
+    splitTwoColumn: boolean
 }
 
 export const RelatedOutput: React.FC<RelatedOutputProps> = ({
     childrenData,
     splitTwoColumn,
 }) => {
-    // const defaultSx = {};
-
-    const splitTwoColumnSx = splitTwoColumn
-        ? {
-              display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
-              padding: "5px",
-              gap: 2,
-              height: "40px",
-              mt: 2,
-              paddingTop: "0",
-          }
-        : {
-              width: "100%",
-          };
-
-    const customChildSx = splitTwoColumn
-        ? {
-              height: "100%",
-          }
-        : {
-              width: "80%",
-              height: "100%",
-          };
-
     return (
         <Box
-            sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                ...splitTwoColumnSx,
-            }}
+            sx={
+                splitTwoColumn
+                    ? {
+                          display: 'grid',
+                          gridTemplateColumns: {
+                              xs: '1fr',
+                              md: 'repeat(2, 1fr)',
+                          },
+                          gap: 2,
+                          width: '100%',
+                          padding: 2,
+                      }
+                    : {
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 2,
+                          width: '100%',
+                      }
+            }
         >
             {childrenData.map((child, index) => {
-                if (child.type === "audio/video") {
-                    return (
-                        <CustomAudioPlayer
-                            key={index}
-                            audioSrc={child.props.audioSrc}
-                            audioTitle={child.props.audioTitle}
-                            customizeSx={customChildSx}
-                            sourceType={child.props.sourceType}
-                        />
-                    );
-                }
-                if (child.type === "text") {
-                    return (
-                        <TextView
-                            key={index}
-                            displayText={child.props.displayText}
-                            textTitle={child.props.textTitle}
-                            customizeSx={customChildSx}
-                            centerTitle={true}
-                        />
-                    );
-                }
-                return null;
+                const { isLoading, error } = child.props
+                const title =
+                    child.type === 'text'
+                        ? child.props.textTitle
+                        : child.props.audioTitle
+
+                return (
+                    <Box
+                        key={index}
+                        sx={{
+                            border: 1,
+                            borderColor: error ? 'error.main' : 'divider',
+                            borderRadius: 2,
+                            p: 2,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            height: '300px',
+                        }}
+                    >
+                        {/* This inner box will hold the dynamic content */}
+                        <Box
+                            sx={{
+                                flex: 1,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                overflow: 'auto',
+                            }}
+                        >
+                            {(() => {
+                                if (isLoading) {
+                                    return <CircularProgress />
+                                }
+                                if (error) {
+                                    return (
+                                        <Tooltip title={error}>
+                                            <ErrorOutlineIcon
+                                                color="error"
+                                                fontSize="large"
+                                            />
+                                        </Tooltip>
+                                    )
+                                }
+                                return (
+                                    <Box
+                                        sx={{
+                                            width: '100%',
+                                            height: '100%',
+                                            overflowY: 'none',
+                                            backgroundColor: (theme) =>
+                                                theme.palette.tertiary.main,
+                                            borderRadius: '20px',
+                                        }}
+                                    >
+                                        {child.type === 'audio/video' && (
+                                            <CustomAudioPlayer
+                                                audioSrc={child.props.audioSrc}
+                                                audioTitle={title}
+                                                sourceType={
+                                                    child.props.sourceType
+                                                }
+                                            />
+                                        )}
+                                        {child.type === 'text' && (
+                                            <TextView
+                                                displayText={
+                                                    child.props.displayText
+                                                }
+                                                textTitle={title}
+                                                centerTitle={false}
+                                            />
+                                        )}
+                                    </Box>
+                                )
+                            })()}
+                        </Box>
+                    </Box>
+                )
             })}
         </Box>
-    );
-};
+    )
+}
