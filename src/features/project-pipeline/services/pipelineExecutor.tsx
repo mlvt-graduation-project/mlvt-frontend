@@ -20,7 +20,7 @@ export const executePipeline = async (
     userId: number | null,
 ): Promise<{ key: keyof PipelineProgress; value: number }> => {
     switch (pipelineType) {
-        case 'video_translation': {
+        case PipelineType.VideoTranslation: {
             if (!inputs.sourceLanguage) {
                 return Promise.reject(
                     new Error('Missing required field: Source Language.'),
@@ -78,7 +78,7 @@ export const executePipeline = async (
             }
         }
 
-        case 'text_generation':
+        case PipelineType.TextGeneration:
             if (!inputs.sourceLanguage) {
                 return Promise.reject(
                     new Error('Missing required field: Source Language.'),
@@ -131,7 +131,7 @@ export const executePipeline = async (
                 throw error
             }
 
-        case 'text_translation': {
+        case PipelineType.TextTranslation: {
             if (!inputs.text) {
                 return Promise.reject(new Error('Text input is required.'))
             }
@@ -182,10 +182,7 @@ export const executePipeline = async (
                     inputs.sourceLanguage as TranslateLanguage,
                     inputs.targetLanguage as TranslateLanguage,
                 )
-                console.log(
-                    'Text translation job response:',
-                    jobResponse.id,
-                )
+                console.log('Text translation job response:', jobResponse.id)
 
                 return {
                     key: 'original_transcription_id',

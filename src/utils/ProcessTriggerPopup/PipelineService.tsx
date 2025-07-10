@@ -69,7 +69,7 @@ export const generateText = async (
         sourceLanguageCode,
     )
 
-    if (postTextGenerationResponse.message === 'Accepted for processing') {
+    if (postTextGenerationResponse.message !== 'Accepted for processing') {
         throw new Error('Server indicated an error during text generation.')
     }
     return postTextGenerationResponse as JobCreationResponse

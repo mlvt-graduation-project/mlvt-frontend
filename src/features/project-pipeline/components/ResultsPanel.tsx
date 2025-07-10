@@ -49,12 +49,6 @@ const ResultsPanel = () => {
 
                 const project = progresses.find(
                     (p: PipelineProgress) => (p as any)[key] === value,
-                    console.log(
-                        'Polling for project with key:',
-                        key,
-                        'and value:',
-                        value,
-                    ),
                 )
                 if (project) {
                     if (project.status === 'succeeded') {
