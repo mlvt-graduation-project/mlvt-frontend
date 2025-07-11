@@ -42,7 +42,7 @@ const navLinks: NavLink[] = [
         link: '/my-storage',
     },
     {
-        name: 'Premium',
+        name: 'Buy Token',
         icon: <LocalActivityIcon />,
         link: '/premium-plan',
     },
