@@ -227,11 +227,11 @@ const MembershipCheckoutPage: React.FC = () => {
                                         boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
                                         fontWeight: 700,
                                         fontSize: '1rem',
-                                        color: '#222222'
+                                        color: 'white'
                                     }}
                                     disabled={loading}
                                 >
-                                    Buy Tokens Now
+                                    Complete Payment Now
                                 </Button>
                             </Box>
                         </Box>
