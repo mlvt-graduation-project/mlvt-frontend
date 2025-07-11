@@ -3,14 +3,14 @@ import { Box, Card, CardContent, Typography, useTheme } from '@mui/material'
 import React from 'react'
 import { CustomButton } from '../../../components/CustomButton'
 
-interface MembershipCardProps {
+interface TokenPlanProps {
     option: string
     token_amount: number
     onButtonClick: () => void
     loading?: boolean
 }
 
-const MembershipCard: React.FC<MembershipCardProps> = ({
+const TokenPlanCard: React.FC<TokenPlanProps> = ({
     option,
     token_amount,
     onButtonClick,
@@ -175,4 +175,4 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
     )
 }
 
-export default MembershipCard
+export default TokenPlanCard

@@ -21,7 +21,7 @@ import Footer from '../../components/Footer'
 import LoadingBackdrop from '../../components/LoadingBackdrop'
 import ChangePassword from './components/ChangePassword'
 import PersonalDetails from './components/PersonalDetails'
-import Voucher from './components/SubscriptionPlan'
+import Voucher from './components/TokenWallet'
 
 type TabKey = 'personal' | 'password' | 'subscription'
 
@@ -49,7 +49,7 @@ const AccountSettings: React.FC = () => {
     const navigate = useNavigate()
 
     if (loading) {
-        return <LoadingBackdrop open={loading} /> // Show loading backdrop while fetching user details
+        return <LoadingBackdrop open={loading} /> 
     }
 
     const renderContent = () => {
@@ -72,7 +72,7 @@ const AccountSettings: React.FC = () => {
 
     return (
         <Box>
-            <Box sx={{ display: 'flex', padding: 4, height: '100vh' }}>
+            <Box sx={{ display: 'flex', padding: 4 }}>
                 {/* Left Sidebar */}
                 <Box
                     sx={{
@@ -85,7 +85,7 @@ const AccountSettings: React.FC = () => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Box>
+                    <Box marginBottom={30}>
                         <Link href="/">
                             <Box
                                 component="img"
