@@ -1,12 +1,45 @@
 import LinearScaleOutlinedIcon from '@mui/icons-material/LinearScaleOutlined'
 import TokenIcon from '@mui/icons-material/Token'
 import { Box, Button, Typography } from '@mui/material'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CustomButton } from 'src/components/CustomButton'
+import { useAuth } from 'src/contexts/AuthContext'
+import { getWalletBalance } from 'src/features/account-settings/apis/wallet.api'
+import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
+import { getDailyToken } from '../../apis/get-daily-token.api'
 import PipelineIcon from '../../assets/pipeline-icon.png'
 
 const TokenRetrieve = () => {
     const navigate = useNavigate()
+
+    const { remainingToken, SetRemainingToken } = useAuth()
+    const { data: userDetails } = useGetUserDetails()
+    const userId = userDetails?.user.id.toString() || ''
+
+    useEffect(() => {
+        const fetchToken = async () => {
+            try {
+                const walletResponse = await getWalletBalance(userId)
+                SetRemainingToken(walletResponse)
+            } catch (error) {
+                console.error('Error fetching wallet balance:', error)
+            }
+        }
+        fetchToken()
+    })
+
+    const handleRetrieveToken = async () => {
+        try {
+            const response = await getDailyToken(userId)
+            if (response) {
+                alert('Token retrieved successfully!')
+            }
+        } catch (error) {
+            console.error('Error retrieving token:', error)
+            alert('Failed to retrieve token. Please try again later.')
+        }
+    }
     return (
         <Box
             sx={{
@@ -42,7 +75,7 @@ const TokenRetrieve = () => {
                             color: 'primary.contrastText',
                         }}
                     >
-                        500 Tokens
+                        {remainingToken} Tokens
                     </Typography>
                     <Typography
                         color="primary.contrastText"
@@ -54,9 +87,7 @@ const TokenRetrieve = () => {
 
                 <CustomButton
                     text="Retrieve Token"
-                    onClick={() => {
-                        navigate('/token-retrieve')
-                    }}
+                    onClick={handleRetrieveToken}
                     sx={{
                         bgcolor: (theme) => theme.palette.tertiary.main,
                         color: (theme) => theme.palette.tertiary.contrastText,
@@ -122,7 +153,6 @@ const TokenRetrieve = () => {
                             fontWeight: '600',
                             fontSize: '1rem',
                         }}
-                        // onClick={onRetrieve}
                     >
                         EXPLORE THE PIPELINE
                     </Button>
