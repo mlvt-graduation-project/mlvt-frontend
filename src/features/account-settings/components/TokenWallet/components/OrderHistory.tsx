@@ -3,6 +3,7 @@ import CircleIcon from '@mui/icons-material/Circle'
 import {
     Box,
     CircularProgress,
+    Pagination,
     Paper,
     Table,
     TableBody,
@@ -14,11 +15,10 @@ import {
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import React, { useEffect, useState } from 'react'
-import { getUserPayments, PaymentHistory } from 'src/features/account-settings/apis/payment-history.api'
-// Import the API call and interface
-
-
-// ---- MOCK DATA REMOVED ----
+import {
+    getUserPayments,
+    PaymentHistory,
+} from 'src/features/account-settings/apis/payment-history.api'
 
 const headerStyle = {
     fontWeight: '600',
@@ -47,10 +47,18 @@ const OrderHistory: React.FC<orderHistoryProps> = ({
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [error, setError] = useState<string | null>(null)
 
+    // pagination
+    const rowsPerPage = 10
+    const [page, setPage] = useState(1)
+    const pageCount = Math.ceil(payments.length / rowsPerPage)
+
+    useEffect(() => {
+        setPage(1)
+    }, [payments])
+
     // Fetch data when the component mounts
     useEffect(() => {
         const fetchPaymentHistory = async () => {
-            // Ensure we have a userId before making the call
             if (!userId) {
                 setError('User not identified.')
                 setIsLoading(false)
@@ -134,6 +142,9 @@ const OrderHistory: React.FC<orderHistoryProps> = ({
         )
     }
 
+    const startIdx = (page - 1) * rowsPerPage
+    const paginated = payments.slice(startIdx, startIdx + rowsPerPage)
+
     return (
         <Box sx={{ padding: 4 }}>
             <Typography
@@ -159,72 +170,97 @@ const OrderHistory: React.FC<orderHistoryProps> = ({
                 Your order history is saved and displayed here
             </Typography>
             {payments.length > 0 ? (
-                <TableContainer
-                    component={Paper}
-                    elevation={0}
-                    sx={{ border: 0 }}
-                >
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={headerStyle}>
-                                    Date Issued
-                                </TableCell>
-                                <TableCell sx={headerStyle}>
-                                    Transaction ID
-                                </TableCell>
-                                <TableCell sx={headerStyle}>Package</TableCell>
-                                <TableCell sx={headerStyle}>
-                                    VND Amount
-                                </TableCell>
-                                <TableCell sx={headerStyle}>
-                                    Token Retrieved
-                                </TableCell>
-                                <TableCell sx={headerStyle}>Status</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {/* Map over the fetched payment data */}
-                            {payments.map((payment) => (
-                                <TableRow
-                                    key={payment.id} // Use a unique key from your data
-                                    sx={{
-                                        '&:last-child td, &:last-child th': {
-                                            border: 0,
-                                        },
-                                    }}
-                                >
-                                    <TableCell sx={cellStyle}>
-                                        {new Date(
-                                            payment.updated_at,
-                                        ).toLocaleDateString()}
+                <>
+                    <TableContainer
+                        component={Paper}
+                        elevation={0}
+                        sx={{ border: 0 }}
+                    >
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell sx={headerStyle}>
+                                        Date Issued
                                     </TableCell>
-                                    <TableCell sx={cellStyle}>
-                                        {payment.transaction_id}
+                                    <TableCell sx={headerStyle}>
+                                        Transaction ID
                                     </TableCell>
-                                    <TableCell sx={cellStyle}>
-                                        {payment.payment_option}
+                                    <TableCell sx={headerStyle}>
+                                        Package
                                     </TableCell>
-                                    <TableCell sx={cellStyle}>
-                                        {payment.vnd_amount.toLocaleString(
-                                            'vi-VN',
-                                            {
-                                                style: 'currency',
-                                                currency: 'VND',
-                                            },
-                                        )}
+                                    <TableCell sx={headerStyle}>
+                                        VND Amount
                                     </TableCell>
-                                    <TableCell sx={cellStyle}>
-                                        {payment.token_amount.toLocaleString()}
+                                    <TableCell sx={headerStyle}>
+                                        Token Retrieved
                                     </TableCell>
-                                    <TableCell>
-                                        {getStatusChip(payment.status)}
+                                    <TableCell sx={headerStyle}>
+                                        Status
                                     </TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                            </TableHead>
+                            <TableBody>
+                                {/* Map over the fetched payment data */}
+                                {paginated.map((payment) => (
+                                    <TableRow
+                                        key={payment.id}
+                                        sx={{
+                                            '&:last-child td, &:last-child th':
+                                                {
+                                                    border: 0,
+                                                },
+                                        }}
+                                    >
+                                        <TableCell sx={cellStyle}>
+                                            {new Date(
+                                                payment.updated_at,
+                                            ).toLocaleDateString()}
+                                        </TableCell>
+                                        <TableCell sx={cellStyle}>
+                                            {payment.transaction_id}
+                                        </TableCell>
+                                        <TableCell sx={cellStyle}>
+                                            {payment.payment_option}
+                                        </TableCell>
+                                        <TableCell sx={cellStyle}>
+                                            {payment.vnd_amount.toLocaleString(
+                                                'vi-VN',
+                                                {
+                                                    style: 'currency',
+                                                    currency: 'VND',
+                                                },
+                                            )}
+                                        </TableCell>
+                                        <TableCell sx={cellStyle}>
+                                            {payment.token_amount.toLocaleString()}
+                                        </TableCell>
+                                        <TableCell>
+                                            {getStatusChip(payment.status)}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+
+                    {/* Pagination controls */}
+                    {pageCount > 1 && (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                mt: 2,
+                            }}
+                        >
+                            <Pagination
+                                count={pageCount}
+                                page={page}
+                                onChange={(_, value) => setPage(value)}
+                                color="primary"
+                            />
+                        </Box>
+                    )}
+                </>
             ) : (
                 <Typography
                     sx={{

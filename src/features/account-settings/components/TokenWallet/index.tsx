@@ -270,7 +270,6 @@ const TokenWallet: React.FC = () => {
                     {activePlanTab === 'planSummary' && (
                         <>
                             <PlanSummaryCard
-                                planType="MONTHLY PREMIUM"
                                 nextChargeDate={
                                     new Date(
                                         Date.now() + 30 * 24 * 60 * 60 * 1000,
