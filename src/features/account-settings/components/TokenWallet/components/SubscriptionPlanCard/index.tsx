@@ -31,11 +31,9 @@ const SubscriptionPlanCard: React.FC<SubscriptionPlanCardProps> = ({
         >
             <Box>
                 <Typography
-                    // onClick={onManagePlanClick}
                     sx={{
                         color: theme.palette.text.secondary,
                         fontSize: '0.8rem',
-                        fontFamily: 'Poppins, sans-serif',
                         paddingBottom: 1,
                     }}
                 >
@@ -47,7 +45,6 @@ const SubscriptionPlanCard: React.FC<SubscriptionPlanCardProps> = ({
                         fontWeight: 700,
                         color: theme.palette.primary.main,
                         fontSize: '1.8rem',
-                        fontFamily: 'Poppins, sans-serif',
                         paddingBottom: 1,
                     }}
                 >
@@ -57,7 +54,6 @@ const SubscriptionPlanCard: React.FC<SubscriptionPlanCardProps> = ({
                 <Typography
                     sx={{
                         fontSize: '0.9rem',
-                        fontFamily: 'Poppins, sans-serif',
                         color: theme.palette.text.primary,
                         marginTop: 1,
                     }}
@@ -69,7 +65,6 @@ const SubscriptionPlanCard: React.FC<SubscriptionPlanCardProps> = ({
                     sx={{
                         fontSize: '2.5rem',
                         color: theme.palette.text.primary,
-                        fontFamily: 'Poppins, sans-serif',
                         marginTop: 1,
                     }}
                 >
@@ -83,7 +78,6 @@ const SubscriptionPlanCard: React.FC<SubscriptionPlanCardProps> = ({
                 sx={{
                     fontSize: '0.85rem',
                     color: theme.palette.primary.main,
-                    fontFamily: 'Poppins, sans-serif',
                     textAlign: 'right',
                     marginTop: 2,
                     '& span:hover': {

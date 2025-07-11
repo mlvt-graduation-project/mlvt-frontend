@@ -158,7 +158,7 @@ const TokenWallet: React.FC = () => {
         return (
             <OrderHistory
                 handleChangeView={() => handleViewChange('subscription')}
-                userId={parseInt(userId)}
+                userId={typeof userId === 'number' ? userId : Number(userId)}
             />
         )
     if (currentView === 'redeemCode')

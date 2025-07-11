@@ -24,7 +24,7 @@ export interface PaymentResponse {
     payment_option: string
     token_amount: number
     vnd_amount: number
-    status: 'pending' | 'completed' | 'failed' | 'cancelled'
+    status: 'pending' | 'completed' | 'failed' | 'canceled'
     qr_code: string
     qr_data_url: string
     created_at: string

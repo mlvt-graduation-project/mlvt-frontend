@@ -4,7 +4,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
 import { Chip } from '@mui/material'
 
-type PaymentStatus = 'pending' | 'completed' | 'failed' | 'cancelled'
+type PaymentStatus = 'pending' | 'completed' | 'failed' | 'canceled'
 
 interface PaymentStatusChipProps {
     status: PaymentStatus
@@ -27,8 +27,8 @@ const PaymentStatusChip: React.FC<PaymentStatusChipProps> = ({ status }) => {
             color: 'error',
             icon: <ErrorOutlineIcon fontSize="small" />,
         },
-        cancelled: {
-            label: 'Cancelled',
+        canceled: {
+            label: 'Canceled',
             color: 'default',
             icon: <CancelOutlinedIcon fontSize="small" />,
         },
