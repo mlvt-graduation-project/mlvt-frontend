@@ -11,6 +11,7 @@ import {
     useTheme,
 } from '@mui/material'
 import React, { ReactNode, useEffect, useState } from 'react'
+import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import UploadNotification from '../../../../components/UploadNotification'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { getWalletBalance } from '../../apis/wallet.api'
@@ -19,7 +20,6 @@ import { RedeemCode } from './components/RedeemCode'
 import SubscriptionPlanCard from './components/SubscriptionPlanCard'
 import PaymentPlan from './components/SubscriptionPlanCard/components/PaymentPlan'
 import PlanSummaryCard from './components/SubscriptionPlanCard/components/PlanSummaryCard'
-import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 
 interface ErrNoti {
     isOpen: boolean
@@ -89,7 +89,7 @@ const PLAN_MANAGEMENT_TABS: {
     },
 ]
 
-const SubscriptionPlan: React.FC = () => {
+const TokenWallet: React.FC = () => {
     const theme = useTheme()
     type ViewType =
         | 'subscription'
@@ -158,6 +158,7 @@ const SubscriptionPlan: React.FC = () => {
         return (
             <OrderHistory
                 handleChangeView={() => handleViewChange('subscription')}
+                userId={typeof userId === 'number' ? userId : Number(userId)}
             />
         )
     if (currentView === 'redeemCode')
@@ -269,7 +270,6 @@ const SubscriptionPlan: React.FC = () => {
                     {activePlanTab === 'planSummary' && (
                         <>
                             <PlanSummaryCard
-                                planType="MONTHLY PREMIUM"
                                 nextChargeDate={
                                     new Date(
                                         Date.now() + 30 * 24 * 60 * 60 * 1000,
@@ -325,7 +325,7 @@ const SubscriptionPlan: React.FC = () => {
                     color: theme.palette.primary.main,
                 }}
             >
-                Subscription Plan – Wallet
+                Your Token Wallet
             </Typography>
             <Typography
                 sx={{
@@ -343,7 +343,6 @@ const SubscriptionPlan: React.FC = () => {
             <Box sx={{ display: 'flex', gap: 2 }}>
                 <Box width="75%">
                     <SubscriptionPlanCard
-                        planType="MONTHLY PREMIUM"
                         remainingToken={remainingToken}
                         onManagePlanClick={() =>
                             handleViewChange('planManagement')
@@ -392,4 +391,4 @@ const SubscriptionPlan: React.FC = () => {
     )
 }
 
-export default SubscriptionPlan
+export default TokenWallet

@@ -16,7 +16,6 @@ import {
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 export interface PlanSummaryCardProps {
-    planType: string;
     nextChargeDate: Date;
     nextChargeAmount: number;
     benefits: string[];
@@ -26,7 +25,6 @@ export interface PlanSummaryCardProps {
 }
 
 const PlanSummaryCard: React.FC<PlanSummaryCardProps> = ({
-    planType,
     nextChargeDate,
     nextChargeAmount,
     benefits,
@@ -73,7 +71,7 @@ const PlanSummaryCard: React.FC<PlanSummaryCardProps> = ({
                         letterSpacing: 0.5,
                     }}
                 >
-                    {planType}
+                    Token Wallet Plan
                 </Typography>
                 <Typography sx={{
                     fontWeight: 400,

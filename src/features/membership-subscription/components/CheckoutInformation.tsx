@@ -11,16 +11,21 @@ const CheckoutInformation: React.FC<CheckoutInformationProps> = ({ plan }) => {
     const formattedVndTotal = `VND ${formattedAmount}`
 
     return (
-        <Container maxWidth="xs">
+        <Container maxWidth="sm">
             {/* Header Section */}
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    mb: { xs: 3, sm: 4 },
+                }}
+            >
                 <Typography
                     variant="body1"
                     sx={{
                         fontWeight: 'bold',
                         color: (theme) => theme.palette.primary.main,
-
-                        fontSize: '1.5rem',
+                        fontSize: { xs: '1.25rem', sm: '1.5rem' },
                     }}
                 >
                     CHECK OUT YOUR PURCHASE
@@ -28,7 +33,8 @@ const CheckoutInformation: React.FC<CheckoutInformationProps> = ({ plan }) => {
             </Box>
 
             {/* Main Price Display Section */}
-            <Stack spacing={2} sx={{ mb: 6 }}>
+            {/* Responsive margin-bottom */}
+            <Stack spacing={2} sx={{ mb: { xs: 4, sm: 6 } }}>
                 <Typography
                     variant="body1"
                     color="text.secondary"
@@ -48,7 +54,8 @@ const CheckoutInformation: React.FC<CheckoutInformationProps> = ({ plan }) => {
                             component="span"
                             sx={{
                                 fontWeight: '600',
-                                fontSize: '3rem',
+                                // Responsive font size for the large token amount
+                                fontSize: { xs: '2.5rem', sm: '3rem' },
                                 color: '#F564A9',
                             }}
                         >
@@ -56,13 +63,14 @@ const CheckoutInformation: React.FC<CheckoutInformationProps> = ({ plan }) => {
                             <Typography
                                 component="span"
                                 sx={{
-                                    fontSize: '1rem',
+                                    // Responsive font size for the "tokens" label
+                                    fontSize: { xs: '0.9rem', sm: '1rem' },
                                     color: (theme) =>
                                         theme.palette.text.secondary,
                                     fontWeight: 500,
+                                    ml: 0.5, // Add a slight margin-left for spacing
                                 }}
                             >
-                                {' '}
                                 tokens
                             </Typography>
                         </Typography>
@@ -71,7 +79,8 @@ const CheckoutInformation: React.FC<CheckoutInformationProps> = ({ plan }) => {
             </Stack>
 
             {/* Order Summary Section */}
-            <Stack spacing={2.5}>
+            {/* Responsive spacing for the stack */}
+            <Stack spacing={{ xs: 2, sm: 2.5 }}>
                 {/* Premium Price Row */}
                 <Box
                     sx={{
@@ -83,10 +92,10 @@ const CheckoutInformation: React.FC<CheckoutInformationProps> = ({ plan }) => {
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <Box
                             sx={{
-                                p: 1,
+                                p: { xs: 0.8, sm: 1 },
+                                mr: { xs: 1.5, sm: 2 },
                                 bgcolor: '#ede7f6',
                                 borderRadius: 2,
-                                mr: 2,
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
@@ -97,8 +106,8 @@ const CheckoutInformation: React.FC<CheckoutInformationProps> = ({ plan }) => {
                                 src={MLVTLogo}
                                 alt="Premium plan mascot"
                                 sx={{
-                                    width: 50,
-                                    height: 50,
+                                    width: { xs: 40, sm: 50 },
+                                    height: { xs: 40, sm: 50 },
                                     objectFit: 'contain',
                                 }}
                             />
@@ -128,6 +137,7 @@ const CheckoutInformation: React.FC<CheckoutInformationProps> = ({ plan }) => {
                         variant="body1"
                         sx={{
                             fontWeight: 550,
+                            overflowWrap: 'revert',
                         }}
                     >
                         {formattedVndTotal}
@@ -147,8 +157,9 @@ const CheckoutInformation: React.FC<CheckoutInformationProps> = ({ plan }) => {
                     <Typography
                         variant="h6"
                         sx={{
-                            fontWeight: '550',
-                            color: '#A7D477',
+                            // Use a standard bold weight for consistency
+                            fontWeight: '600',
+                            color: '#89AC46',
                         }}
                     >
                         TOTAL
@@ -156,8 +167,9 @@ const CheckoutInformation: React.FC<CheckoutInformationProps> = ({ plan }) => {
                     <Typography
                         variant="h6"
                         sx={{
-                            fontWeight: '500',
-                            color: '#A7D477',
+                            // Use a matching bold weight for the total amount
+                            fontWeight: '600',
+                            color: '#89AC46',
                         }}
                     >
                         {formattedVndTotal}

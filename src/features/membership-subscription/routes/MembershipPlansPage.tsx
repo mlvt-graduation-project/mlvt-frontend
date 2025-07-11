@@ -5,8 +5,8 @@ import CustomLoadingDot from 'src/components/CustomLoadingDot'
 import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import { CustomButton } from '../../../components/CustomButton'
 import HomePage from '../../../layout/HomePage'
-import { createPayment, getTokenPlans } from '../apis/tokenPlan.api'
-import MembershipCard from '../components/MembershipCard'
+import { getTokenPlans } from '../apis/tokenPlan.api'
+import TokenPlanCard from '../components/TokenPlanCard'
 import { TokenPlan } from '../types/TokenPlan'
 
 const MembershipPlansPage: React.FC = () => {
@@ -18,9 +18,6 @@ const MembershipPlansPage: React.FC = () => {
 
     const { data } = useGetUserDetails()
     const user = data?.user
-    const [loadingPlanOption, setLoadingPlanOption] = useState<string | null>(
-        null,
-    )
 
     useEffect(() => {
         const fetchPlans = async () => {
@@ -38,28 +35,12 @@ const MembershipPlansPage: React.FC = () => {
         fetchPlans()
     }, [])
 
-    const handleBuyClick = async (plan: TokenPlan) => {
+    const handleBuyClick = (plan: TokenPlan) => {
         if (!user?.id) {
             alert('Please log in to make a purchase.')
             return
         }
-
-        setLoadingPlanOption(plan.option)
-        try {
-            const paymentDetails = await createPayment(user.id, plan.option)
-
-            navigate(`/checkout/${plan.option}`, {
-                state: {
-                    plan: plan,
-                    paymentDetails: paymentDetails,
-                },
-            })
-        } catch (apiError) {
-            alert('Failed to create payment. Please try again.')
-            console.error('Payment creation failed:', apiError)
-        } finally {
-            setLoadingPlanOption(null)
-        }
+        navigate(`/checkout/${plan.option}`, { state: { plan } })
     }
 
     const renderContent = () => {
@@ -88,12 +69,11 @@ const MembershipPlansPage: React.FC = () => {
                 gap={8}
             >
                 {plans.map((plan) => (
-                    <MembershipCard
+                    <TokenPlanCard
                         key={plan.option}
                         option={plan.option}
                         token_amount={plan.token_amount}
                         onButtonClick={() => handleBuyClick(plan)}
-                        loading={loadingPlanOption === plan.option}
                     />
                 ))}
             </Box>
