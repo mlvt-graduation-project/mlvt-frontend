@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react'
 import UploadNotification from 'src/components/UploadNotification'
 
+import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import { TextFileType } from 'src/types/FileType'
 import { translateText } from 'src/utils/ProcessTriggerPopup/PipelineService'
 import { uploadText } from 'src/utils/ProcessTriggerPopup/TextService'
@@ -27,6 +28,9 @@ export const TextTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
         status: 'loading',
         content: null,
     })
+
+    const { data: userDetails } = useGetUserDetails()
+    const userId = userDetails?.user.id.toString() || ''
 
     const handleCloseNotification = () => {
         setNotification({ ...notification, isOpen: false })
@@ -68,9 +72,11 @@ export const TextTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
                     const textBlob = new Blob([data.inputText], {
                         type: 'text/plain',
                     })
-                    const textFile = new File([textBlob], 'input.txt', {
+                    const newFileName = `${userId}_${Math.floor(Date.now() / 1000)}`
+                    const textFile = new File([textBlob], newFileName, {
                         type: 'text/plain',
                     })
+                    data.textData.file_name = newFileName
                     textId = await uploadText(
                         textFile,
                         data.textData,
@@ -115,7 +121,7 @@ export const TextTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
                 })
             }
         },
-        [onClose],
+        [onClose, userId],
     )
     return (
         <>

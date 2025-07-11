@@ -11,7 +11,7 @@ import {
 } from '@mui/material'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { BrowseFile } from 'src/features/core-feature-popup/ProcessTriggerPopup/BaseComponent/BrowseMLVTFile'
-import { Project, ProjectType } from 'src/types/Project'
+import { MediaType, Project, ProjectType } from 'src/types/Project'
 import { PipelineContext } from '../../context/PipelineContext'
 import { PipelineInputs } from '../../types'
 
@@ -301,7 +301,7 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                     </Box>
                 )
             case 'mlvt': {
-                const mapInputTypeToAllowed = (): ProjectType[] => {
+                const mapInputTypeToAllowed = (): MediaType[] => {
                     switch (inputType) {
                         case 'video':
                             return [ProjectType.Video]

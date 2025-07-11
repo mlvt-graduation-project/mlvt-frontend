@@ -3,7 +3,6 @@ import React, { Suspense } from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import CustomLoadingDot from './components/CustomLoadingDot'
 import { AuthProvider } from './contexts/AuthContext'
-import { ProjectProvider } from './contexts/ProjectContext'
 import { AppRoutes } from './routes'
 import { ColorModeProvider } from './themes/ColorModeContext'
 
@@ -20,11 +19,9 @@ const App: React.FC = () => (
         <BrowserRouter>
             <ColorModeProvider>
                 <AuthProvider>
-                    <ProjectProvider>
-                        <Suspense fallback={<CustomLoadingDot />}>
-                            <AppRoutes />
-                        </Suspense>
-                    </ProjectProvider>
+                    <Suspense fallback={<CustomLoadingDot />}>
+                        <AppRoutes />
+                    </Suspense>
                 </AuthProvider>
             </ColorModeProvider>
         </BrowserRouter>

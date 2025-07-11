@@ -1,27 +1,90 @@
-import { Box, FormControl, MenuItem, Select, Typography } from '@mui/material'
+import {
+    Box,
+    FormControl,
+    MenuItem,
+    Pagination,
+    Select,
+    Typography,
+} from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import React, { useEffect, useState } from 'react'
 import CardFeature from 'src/components/CardFeature'
 import SearchBar from 'src/components/SearchBar'
-import { useProjectContext } from 'src/contexts/ProjectContext'
 import { ProcessedVideoPopUp } from 'src/features/core-feature-popup/ProjectPopup'
 import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
-import { Project, ProjectType } from 'src/types/Project'
+import {
+    GetAllProjectRequest,
+    PipelineShortForm,
+    Project,
+} from 'src/types/Project'
+import { ProjectStatus } from 'src/types/ProjectStatus'
+import { getAllProgressProjects } from 'src/utils/project.utils'
 
 const ProjectSection = () => {
     const theme = useTheme()
     const { data: userDetails } = useGetUserDetails()
     const userId = userDetails?.user.id.toString() || ''
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log()
-    }
-    const { projects, getProjectsByType, fetchAllProjects } =
-        useProjectContext()
+
+    const [getProjectRequest, setGetProjectRequest] =
+        useState<GetAllProjectRequest>({
+            search_key: null,
+            project_type: [
+                PipelineShortForm.TextGeneration,
+                PipelineShortForm.AudioGeneration,
+                PipelineShortForm.Fullpipeline,
+                PipelineShortForm.TextTranslation,
+                PipelineShortForm.Lipsync,
+            ],
+            media_type: [],
+            status: [
+                ProjectStatus.Failed,
+                ProjectStatus.Processing,
+                ProjectStatus.Succeeded,
+            ],
+            offset: 0,
+            limit: 9,
+        })
     const [selectedProject, setSelectedProject] =
         React.useState<Project | null>(null)
     const [isPopUpOpen, setIsPopUpOpen] = React.useState(false)
-    const [dropdownValue, setDropdownValue] = React.useState('')
     const [displayProjects, setDisplayProjects] = useState<Project[]>([])
+    const [totalCount, setTotalCount] = useState(0)
+    const currentPage =
+        Math.floor(getProjectRequest.offset / getProjectRequest.limit) + 1
+    const totalPages = Math.ceil(totalCount / getProjectRequest.limit)
+
+    const handleChangeProjectType = (input: PipelineShortForm | 'All') => {
+        if (input === 'All') {
+            setGetProjectRequest((prev) => ({
+                ...prev,
+                project_type: [
+                    PipelineShortForm.TextGeneration,
+                    PipelineShortForm.AudioGeneration,
+                    PipelineShortForm.Fullpipeline,
+                    PipelineShortForm.TextTranslation,
+                    PipelineShortForm.Lipsync,
+                ],
+                offset: 0,
+            }))
+        } else {
+            setGetProjectRequest((prev) => ({
+                ...prev,
+                project_type: [input],
+                offset: 0,
+            }))
+        }
+    }
+
+    const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            const keyword = e.currentTarget.value.trim()
+            setGetProjectRequest((prev) => ({
+                ...prev,
+                search_key: keyword === '' ? null : keyword,
+                offset: 0,
+            }))
+        }
+    }
 
     const handleCardClick = (project: Project) => {
         setSelectedProject(project)
@@ -37,28 +100,19 @@ const ProjectSection = () => {
         const fetchData = async () => {
             try {
                 if (!userId) {
-                    setError('No user ID found in local storage')
                     return
                 }
-                fetchAllProjects()
+                const [fetchedProject, totalCount] =
+                    await getAllProgressProjects(userId, getProjectRequest)
+                setDisplayProjects(fetchedProject)
+                setTotalCount(totalCount)
             } catch (error) {
-                console.error('Failed to fetch video or image URLs:', error)
+                setDisplayProjects([])
+                setTotalCount(0)
             }
         }
-
         fetchData()
-    }, [userId, fetchAllProjects])
-
-    useEffect(() => {
-        const progress = getProjectsByType([
-            ProjectType.AudioGeneration,
-            ProjectType.Fullpipeline,
-            ProjectType.Lipsync,
-            ProjectType.TextGeneration,
-            ProjectType.TextTranslation,
-        ])
-        setDisplayProjects(progress)
-    }, [getProjectsByType, projects])
+    }, [userId, getProjectRequest])
 
     return (
         <Box>
@@ -113,7 +167,7 @@ const ProjectSection = () => {
                 <Box>
                     <SearchBar
                         placeholder="Search"
-                        onChange={handleSearchChange}
+                        onKeyDown={handleSearchKeyDown}
                         searchBarWidth="20rem"
                     />
                 </Box>
@@ -128,8 +182,16 @@ const ProjectSection = () => {
                 >
                     <Select
                         labelId="dropdown-label"
-                        value={dropdownValue}
-                        onChange={(e) => setDropdownValue(e.target.value)}
+                        value={
+                            getProjectRequest.project_type.length === 1
+                                ? getProjectRequest.project_type[0]
+                                : 'All'
+                        }
+                        onChange={(e) =>
+                            handleChangeProjectType(
+                                e.target.value as PipelineShortForm | 'All',
+                            )
+                        }
                         displayEmpty
                         sx={{
                             height: '100%',
@@ -169,16 +231,25 @@ const ProjectSection = () => {
                             },
                         }}
                     >
-                        <MenuItem value="">None</MenuItem>
-                        <MenuItem value="1">Video Translation</MenuItem>
-                        <MenuItem value="2">Text Generation</MenuItem>
-                        <MenuItem value="3">Subtitle Generation</MenuItem>
-                        <MenuItem value="4">Voice Generation</MenuItem>
-                        <MenuItem value="5">Lip Synchronization</MenuItem>
+                        <MenuItem value="All">All</MenuItem>
+                        <MenuItem value={PipelineShortForm.Fullpipeline}>
+                            Video Translation
+                        </MenuItem>
+                        <MenuItem value={PipelineShortForm.TextGeneration}>
+                            Text Generation
+                        </MenuItem>
+                        <MenuItem value={PipelineShortForm.TextTranslation}>
+                            Text Translation
+                        </MenuItem>
+                        <MenuItem value={PipelineShortForm.AudioGeneration}>
+                            Voice Generation
+                        </MenuItem>
+                        <MenuItem value={PipelineShortForm.Lipsync}>
+                            Lip Synchronization
+                        </MenuItem>
                     </Select>
                 </FormControl>
             </Box>
-
             {/* PROJECTS */}
             <Box
                 sx={{
@@ -189,14 +260,37 @@ const ProjectSection = () => {
                     rowGap: '3rem',
                 }}
             >
-                {displayProjects.map((project, index) => (
+                {displayProjects.map((project) => (
                     <CardFeature
-                        key={index}
+                        key={project.type_project + project.id}
                         project={project}
                         onclick={() => handleCardClick(project)}
                     />
                 ))}
             </Box>
+
+            {totalPages >= 1 && (
+                <Box
+                    sx={{
+                        mt: '2rem',
+                        display: 'flex',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <Pagination
+                        count={totalPages}
+                        page={currentPage}
+                        onChange={(event, value) => {
+                            setGetProjectRequest((prev) => ({
+                                ...prev,
+                                offset: (value - 1) * prev.limit,
+                            }))
+                        }}
+                        color="primary"
+                        shape="rounded"
+                    />
+                </Box>
+            )}
 
             {selectedProject && (
                 <ProcessedVideoPopUp
@@ -211,7 +305,3 @@ const ProjectSection = () => {
 }
 
 export default ProjectSection
-
-function setError(arg0: string) {
-    throw new Error('Function not implemented.')
-}
