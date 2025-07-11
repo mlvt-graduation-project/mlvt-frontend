@@ -13,12 +13,10 @@ import ChangeViewBox from '../../BaseComponent/ChangeView'
 import { GenerateButton } from '../../BaseComponent/GenerateButton'
 import { SingleOptionBox } from '../../BaseComponent/SingleOptionBox'
 import { UploadFileFromDevice } from '../../BaseComponent/UploadFileFromDevice'
-import { UploadVideoFromUrl } from '../../BaseComponent/UploadVideoURL'
 
 export interface GenerateVideoData {
     viewState: 'upload' | 'url' | 'browse'
     deviceFile: File | null
-    videoUrl: string | null
     MLVTVideo: RawVideo | null
     sourceLanguage: TranslateLanguage | null
     targetLanguage: TranslateLanguage | null
@@ -42,7 +40,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
 
     const [deviceFile, setDeviceFile] = useState<File | null>(null)
     const [MLVTVideo, setMLVTVideo] = useState<RawVideo | null>(null)
-    const [videoUrl, setVideoUrl] = useState<string | null>(null)
     const [targetLanguage, setTargetLanguage] = useState<TranslateLanguage>(
         TranslateLanguage.Vietnamese,
     )
@@ -77,10 +74,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             setTargetLanguage(value as TranslateLanguage)
         }
     }
-
-    const handleChangeDisableGenerate = useCallback((value: boolean) => {
-        setDisableGenerate(value)
-    }, [])
 
     const handleChangeFileData = useCallback((update: Partial<VideoData>) => {
         setFileData((prevData) => ({
@@ -136,18 +129,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 ),
             },
             {
-                text: 'URL',
-                viewState: 'url',
-                component: (
-                    <UploadVideoFromUrl
-                        handleChangeDisableGenerate={
-                            handleChangeDisableGenerate
-                        }
-                        setURLInput={setVideoUrl}
-                    />
-                ),
-            },
-            {
                 text: 'BROWSE MLVT',
                 viewState: 'browse',
                 handleSubmit:
@@ -166,7 +147,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         [
             deviceFile,
             handleChangeFileData,
-            handleChangeDisableGenerate,
             handleChangeMLVTVideo,
             MLVTVideo,
             uploadVideoFromDevice,
@@ -175,7 +155,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
 
     useEffect(() => {
         if (
-            !checkValidGenerate(viewState, deviceFile, videoUrl, MLVTVideo) ||
+            !checkValidGenerate(viewState, deviceFile, MLVTVideo) ||
             !sourceLanguage ||
             !targetLanguage
         ) {
@@ -183,14 +163,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         } else {
             setDisableGenerate(false)
         }
-    }, [
-        viewState,
-        deviceFile,
-        videoUrl,
-        sourceLanguage,
-        targetLanguage,
-        MLVTVideo,
-    ])
+    }, [viewState, deviceFile, sourceLanguage, targetLanguage, MLVTVideo])
 
     const activeView = Views.find((view) => view.viewState === viewState)
     const ActiveComponent = activeView?.component || null
@@ -199,7 +172,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         const generationData: GenerateVideoData = {
             viewState,
             deviceFile,
-            videoUrl,
             MLVTVideo,
             sourceLanguage,
             targetLanguage,
@@ -211,7 +183,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     }, [
         viewState,
         deviceFile,
-        videoUrl,
         MLVTVideo,
         sourceLanguage,
         targetLanguage,

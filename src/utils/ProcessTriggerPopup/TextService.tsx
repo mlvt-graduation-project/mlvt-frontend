@@ -11,11 +11,6 @@ export const uploadText = async (
     fileType: string,
 ) => {
     try {
-        const postResponse = await postText(fileData)
-        if (!checkSuccessResponse(postResponse.status)) {
-            throw new Error('Post text to server failed')
-        }
-
         const getPresignedResponse = await getPresignedTextURL(
             fileData.file_name,
             fileType,
@@ -37,6 +32,12 @@ export const uploadText = async (
                 throw new Error('Upload content to S3 failed')
             }
         }
+
+        const postResponse = await postText(fileData)
+        if (!checkSuccessResponse(postResponse.status)) {
+            throw new Error('Post text to server failed')
+        }
+
         return postResponse.data.id
     } catch (error) {
         throw error

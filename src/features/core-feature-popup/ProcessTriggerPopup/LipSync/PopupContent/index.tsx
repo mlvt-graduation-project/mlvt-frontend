@@ -20,19 +20,16 @@ import ChangeViewBox from '../../BaseComponent/ChangeView'
 import { GenerateButton } from '../../BaseComponent/GenerateButton'
 import { SingleOptionBox } from '../../BaseComponent/SingleOptionBox'
 import { UploadFileFromDevice } from '../../BaseComponent/UploadFileFromDevice'
-import { UploadVideoFromUrl } from '../../BaseComponent/UploadVideoURL'
 
 const modelList = ['Model 1', 'Model 2', 'Model 3']
 type modelType = (typeof modelList)[number]
 export interface GenerateLipsyncData {
     videoViewState: 'upload' | 'url' | 'browse'
     deviceVideo: File | null
-    videoUrl: string | null
     MLVTVideo: RawVideo | null
     videoData: VideoData
     audioViewState: 'upload' | 'url' | 'browse'
     deviceAudio: File | null
-    audioUrl: string | null
     MLVTAudio: RawAudio | null
     audioData: AudioData
     audioLanguage: TranslateLanguage | null
@@ -61,9 +58,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
 
     const [deviceVideo, setDeviceVideo] = useState<File | null>(null)
     const [deviceAudio, setDeviceAudio] = useState<File | null>(null)
-
-    const [videoUrl, setVideoUrl] = useState<string | null>(null)
-    const [audioUrl, setAudioUrl] = useState<string | null>(null)
 
     const [MLVTAudio, setMLVTAudio] = useState<RawAudio | null>(null)
     const [MLVTVideo, setMLVTVideo] = useState<RawVideo | null>(null)
@@ -102,10 +96,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             setAudioLanguage(value as TranslateLanguage)
         }
     }
-
-    const handleChangeDisableGenerate = useCallback((value: boolean) => {
-        setDisableGenerate(value)
-    }, [])
 
     const handleChangeVideoData = useCallback((update: Partial<VideoData>) => {
         setVideoData((prevData) => ({
@@ -200,18 +190,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 ),
             },
             {
-                text: 'URL',
-                viewState: 'url',
-                component: (
-                    <UploadVideoFromUrl
-                        handleChangeDisableGenerate={
-                            handleChangeDisableGenerate
-                        }
-                        setURLInput={setVideoUrl}
-                    />
-                ),
-            },
-            {
                 text: 'BROWSE MLVT',
                 viewState: 'browse',
                 component: (
@@ -230,7 +208,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         [
             deviceVideo,
             handleChangeVideoData,
-            handleChangeDisableGenerate,
             uploadVideoFromDevice,
             handleChangeMLVTVideo,
             MLVTVideo,
@@ -253,18 +230,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 ),
             },
             {
-                text: 'URL',
-                viewState: 'url',
-                component: (
-                    <UploadVideoFromUrl
-                        handleChangeDisableGenerate={
-                            handleChangeDisableGenerate
-                        }
-                        setURLInput={setAudioUrl}
-                    />
-                ),
-            },
-            {
                 text: 'BROWSE MLVT',
                 viewState: 'browse',
                 component: (
@@ -283,7 +248,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         [
             deviceAudio,
             handleChangeAudioData,
-            handleChangeDisableGenerate,
             uploadAudioFromDevice,
             handleChangeMLVTAudio,
             MLVTAudio,
@@ -292,18 +256,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
 
     useEffect(() => {
         if (
-            !checkValidGenerate(
-                audioViewState,
-                deviceAudio,
-                audioUrl,
-                MLVTAudio,
-            ) ||
-            !checkValidGenerate(
-                videoViewState,
-                deviceVideo,
-                videoUrl,
-                MLVTVideo,
-            ) ||
+            !checkValidGenerate(audioViewState, deviceAudio, MLVTAudio) ||
+            !checkValidGenerate(videoViewState, deviceVideo, MLVTVideo) ||
             !audioLanguage ||
             !model
         ) {
@@ -313,11 +267,9 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         }
     }, [
         deviceAudio,
-        audioUrl,
         audioViewState,
         videoViewState,
         deviceVideo,
-        videoUrl,
         audioLanguage,
         model,
         MLVTAudio,
@@ -339,12 +291,10 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         const generationData: GenerateLipsyncData = {
             videoViewState,
             deviceVideo,
-            videoUrl,
             MLVTVideo,
             videoData,
             audioViewState,
             deviceAudio,
-            audioUrl,
             MLVTAudio,
             audioData,
             audioLanguage,
@@ -356,12 +306,10 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         onGenerate,
         videoViewState,
         deviceVideo,
-        videoUrl,
         MLVTVideo,
         videoData,
         audioViewState,
         deviceAudio,
-        audioUrl,
         MLVTAudio,
         audioData,
         audioLanguage,

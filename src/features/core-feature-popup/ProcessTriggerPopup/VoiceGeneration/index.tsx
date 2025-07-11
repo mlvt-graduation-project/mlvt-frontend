@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import UploadNotification from 'src/components/UploadNotification'
+import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import { TextFileType } from 'src/types/FileType'
 import { uploadAudio } from 'src/utils/ProcessTriggerPopup/AudioService'
 import { generateVoice } from 'src/utils/ProcessTriggerPopup/PipelineService'
@@ -28,6 +29,9 @@ export const VoiceGenerationPopup: React.FC<VoiceGenerationPopupProps> = ({
         status: 'loading',
         content: null,
     })
+
+    const { data: userDetails } = useGetUserDetails()
+    const userId = userDetails?.user.id.toString() || ''
 
     const handleCloseNotification = () => {
         setNotification({ ...notification, isOpen: false })
@@ -65,6 +69,8 @@ export const VoiceGenerationPopup: React.FC<VoiceGenerationPopupProps> = ({
                         const textFile = new File([textBlob], 'input.txt', {
                             type: 'text/plain',
                         })
+                        const newFileName = `${userId}_${Math.floor(Date.now() / 1000)}`
+                        data.textData.file_name = newFileName
                         return uploadText(
                             textFile,
                             data.textData,
@@ -152,7 +158,7 @@ export const VoiceGenerationPopup: React.FC<VoiceGenerationPopupProps> = ({
                 })
             }
         },
-        [onClose],
+        [onClose, userId],
     )
 
     return (

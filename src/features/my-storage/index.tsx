@@ -1,32 +1,36 @@
-import { Bookmark, BookmarkBorder } from '@mui/icons-material'
 import AlignHorizontalRightIcon from '@mui/icons-material/AlignHorizontalRight'
 import {
     Box,
     Checkbox,
-    CircularProgress,
     Divider,
     FormControlLabel,
     Grid,
-    IconButton,
     Pagination,
     SxProps,
     Theme,
     Typography,
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import React, { useCallback, useMemo, useState } from 'react'
-import CardFeature from 'src/components/CardFeature'
+import React, { useCallback, useEffect, useState } from 'react'
 
+import CardFeature from 'src/components/CardFeature'
 import SearchBar from 'src/components/SearchBar'
-import { useProjectContext } from 'src/contexts/ProjectContext'
+import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import Layout from 'src/layout/HomePage'
-import { Project, ProjectType } from 'src/types/Project'
+import {
+    GetAllProjectRequest,
+    MediaType,
+    PipelineShortForm,
+    Project,
+    ProjectType,
+} from 'src/types/Project'
 import { ProjectStatus } from 'src/types/ProjectStatus'
+import { getAllProgressProjects } from 'src/utils/project.utils'
 import { ProcessedVideoPopUp } from '../core-feature-popup/ProjectPopup'
 
 interface categoryProjectType {
     label: string
-    filterList: ProjectType[]
+    filterList: MediaType[] | PipelineShortForm[]
     checkStatus: boolean
 }
 
@@ -34,52 +38,73 @@ interface categoryProjectStatus {
     label: string
     filterList: ProjectStatus[]
     checkStatus: boolean
-    color: string
+    color?: string
 }
 
-const CATEGORY_OPTIONS = [
+const PipelineOption = [
+    {
+        label: 'All',
+        filterList: [
+            PipelineShortForm.AudioGeneration,
+            PipelineShortForm.Fullpipeline,
+            PipelineShortForm.Lipsync,
+            PipelineShortForm.TextGeneration,
+            PipelineShortForm.TextTranslation,
+        ],
+        checkStatus: true,
+    },
+    {
+        label: 'Video Translation',
+        filterList: [PipelineShortForm.Fullpipeline],
+        checkStatus: true,
+    },
+    {
+        label: 'Text Genartion',
+        filterList: [PipelineShortForm.TextGeneration],
+        checkStatus: true,
+    },
+    {
+        label: 'Text Translation',
+        filterList: [PipelineShortForm.TextTranslation],
+        checkStatus: true,
+    },
+    {
+        label: 'Voice Generation',
+        filterList: [PipelineShortForm.AudioGeneration],
+        checkStatus: true,
+    },
+    {
+        label: 'Lip Synchronization',
+        filterList: [PipelineShortForm.Lipsync],
+        checkStatus: true,
+    },
+]
+
+const MediaOption = [
     {
         label: 'All',
         filterList: [
             ProjectType.Audio,
             ProjectType.Video,
             ProjectType.Text,
-            ProjectType.AudioGeneration,
-            ProjectType.Fullpipeline,
-            ProjectType.Lipsync,
-            ProjectType.TextGeneration,
-            ProjectType.TextTranslation,
-        ],
-        checkStatus: true,
+        ] as MediaType[],
+        checkStatus: false,
     },
     {
-        label: 'Video Translation',
-        filterList: [ProjectType.Fullpipeline],
-        checkStatus: true,
+        label: 'Video',
+        filterList: [ProjectType.Video] as MediaType[],
+        checkStatus: false,
     },
     {
-        label: 'Text Genartion',
-        filterList: [ProjectType.TextGeneration],
-        checkStatus: true,
+        label: 'Text',
+        filterList: [ProjectType.Text] as MediaType[],
+        checkStatus: false,
     },
     {
-        label: 'Text Translation',
-        filterList: [ProjectType.TextTranslation],
-        checkStatus: true,
+        label: 'Audio',
+        filterList: [ProjectType.Audio] as MediaType[],
+        checkStatus: false,
     },
-    {
-        label: 'Voice Generation',
-        filterList: [ProjectType.AudioGeneration],
-        checkStatus: true,
-    },
-    {
-        label: 'Lip Synchronization',
-        filterList: [ProjectType.Lipsync],
-        checkStatus: true,
-    },
-    { label: 'Video', filterList: [ProjectType.Video], checkStatus: true },
-    { label: 'Text', filterList: [ProjectType.Text], checkStatus: true },
-    { label: 'Audio', filterList: [ProjectType.Audio], checkStatus: true },
 ]
 
 const getStatusOptions = (theme: Theme) => [
@@ -172,27 +197,91 @@ function CheckboxComponent({
 
 const Storage = () => {
     const theme = useTheme()
-    const { projects, isLoading } = useProjectContext()
+    const { data: userDetails } = useGetUserDetails()
+    const userId = userDetails?.user.id.toString() || ''
+    const [displayProjects, setDisplayProjects] = useState<Project[]>([])
 
     // State for filter options
-    const [categoryOption, setCategoryOption] = useState(() => CATEGORY_OPTIONS)
+    const [pipelineOption, setPipelineOption] = useState(() => PipelineOption)
+    const [mediaOption, setMediaOption] = useState(() => MediaOption)
     const [statusOption, setStatusOption] = useState(() =>
         getStatusOptions(theme),
     )
     const [projectTypeFilter, setProjectTypeFilter] = useState<
-        Set<ProjectType>
-    >(new Set(CATEGORY_OPTIONS.flatMap((opt) => opt.filterList)))
+        Set<PipelineShortForm>
+    >(new Set(PipelineOption.flatMap((opt) => opt.filterList)))
+    const [mediaTypeFilter, setMediaTypeFilter] = useState<Set<MediaType>>(
+        new Set(MediaOption.flatMap((opt) => opt.filterList as MediaType[])),
+    )
     const [projectStatusFilter, setProjectStatusFilter] = useState<
         Set<ProjectStatus>
     >(new Set(getStatusOptions(theme).flatMap((opt) => opt.filterList)))
 
     // State for favorite projects
-    const [isFavorite, setIsFavorite] = useState(false)
+    // const [isFavorite, setIsFavorite] = useState(false)
 
-    const [currentPage, setCurrentPage] = useState(1)
-    const ITEMS_PER_PAGE = 9
+    const [getProjectRequest, setGetProjectRequest] =
+        useState<GetAllProjectRequest>({
+            search_key: null,
+            project_type: [
+                PipelineShortForm.TextGeneration,
+                PipelineShortForm.AudioGeneration,
+                PipelineShortForm.Fullpipeline,
+                PipelineShortForm.TextTranslation,
+                PipelineShortForm.Lipsync,
+            ],
+            media_type: [],
+            status: [
+                ProjectStatus.Raw,
+                ProjectStatus.Failed,
+                ProjectStatus.Processing,
+                ProjectStatus.Succeeded,
+            ],
+            offset: 0,
+            limit: 9,
+        })
+
     const [selectedProject, setSelectedProject] = useState<Project | null>(null)
     const [isPopUpOpen, setIsPopUpOpen] = useState(false)
+    const [totalCount, setTotalCount] = useState(0)
+    const currentPage =
+        Math.floor(getProjectRequest.offset / getProjectRequest.limit) + 1
+    const totalPages = Math.ceil(totalCount / getProjectRequest.limit)
+    const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            const keyword = e.currentTarget.value.trim()
+            setGetProjectRequest((prev) => ({
+                ...prev,
+                search_key: keyword === '' ? null : keyword,
+                offset: 0,
+            }))
+        }
+    }
+
+    useEffect(() => {
+        setGetProjectRequest((prev) => ({
+            ...prev,
+            project_type: Array.from(projectTypeFilter),
+            media_type: Array.from(mediaTypeFilter),
+            status: Array.from(projectStatusFilter),
+            offset: 0,
+        }))
+    }, [projectTypeFilter, mediaTypeFilter, projectStatusFilter])
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [fetchedProject, totalCount] =
+                    await getAllProgressProjects(userId, getProjectRequest)
+                setDisplayProjects(fetchedProject)
+                setTotalCount(totalCount)
+            } catch (error) {
+                setDisplayProjects([])
+                setTotalCount(0)
+            }
+        }
+        fetchData()
+    }, [userId, getProjectRequest])
 
     const handleFilterChange = useCallback(
         <T extends { label: string; filterList: any[]; checkStatus: boolean }>(
@@ -200,6 +289,7 @@ const Storage = () => {
             allOptions: T[],
             setOptions: React.Dispatch<React.SetStateAction<T[]>>,
             setFilterSet: React.Dispatch<React.SetStateAction<Set<any>>>,
+            category: 'Pipeline' | 'Media' | 'Status',
         ) => {
             const isChecking = !optionToToggle.checkStatus
             let newOptions = [...allOptions]
@@ -235,33 +325,20 @@ const Storage = () => {
                     .flatMap((opt) => opt.filterList),
             )
             setFilterSet(newFilterSet)
+            if (category === 'Media') {
+                setPipelineOption((opts) =>
+                    opts.map((opt) => ({ ...opt, checkStatus: false })),
+                )
+                setProjectTypeFilter(new Set())
+            } else if (category === 'Pipeline') {
+                setMediaOption((opts) =>
+                    opts.map((opt) => ({ ...opt, checkStatus: false })),
+                )
+                setMediaTypeFilter(new Set())
+            }
         },
         [],
     )
-
-    // Memoized calculation for filtered projects. This is correct.
-    const filteredProjects = useMemo(() => {
-        return projects.filter(
-            (project) =>
-                projectTypeFilter.has(project.type_project) &&
-                projectStatusFilter.has(project.status),
-        )
-    }, [projects, projectTypeFilter, projectStatusFilter])
-
-    const paginatedProjects = useMemo(() => {
-        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-        const endIndex = startIndex + ITEMS_PER_PAGE
-        return filteredProjects.slice(startIndex, endIndex)
-    }, [filteredProjects, currentPage])
-
-    const pageCount = Math.ceil(filteredProjects.length / ITEMS_PER_PAGE)
-
-    const handlePageChange = (
-        event: React.ChangeEvent<unknown>,
-        value: number,
-    ) => {
-        setCurrentPage(value)
-    }
 
     const handleCardClick = (project: Project) => {
         setSelectedProject(project)
@@ -271,12 +348,6 @@ const Storage = () => {
     const handleClosePopUp = () => {
         setIsPopUpOpen(false)
         setSelectedProject(null)
-    }
-
-    const handleFavoriteClicked = (e: any) => {
-        e.stopPropagation()
-        console.log('Favorite clicked')
-        setIsFavorite(!isFavorite)
     }
 
     return (
@@ -301,8 +372,24 @@ const Storage = () => {
                         My Storage
                     </Typography>
                     <Box display="flex" flexDirection="column">
+                        <Divider
+                            orientation="horizontal"
+                            flexItem
+                            sx={{ borderBottomWidth: 1, marginY: '15px' }}
+                        />
+
+                        <Typography
+                            sx={{
+                                fontFamily: 'Poppins, sans-serif',
+                                fontSize: '0.9rem',
+                                fontWeight: 600,
+                            }}
+                        >
+                            Pipeline Projects
+                        </Typography>
+
                         {/* Checkbox filter: Project Type */}
-                        {categoryOption.map((option, index) => (
+                        {pipelineOption.map((option, index) => (
                             <CheckboxComponent
                                 key={option.label}
                                 inputOption={option}
@@ -311,67 +398,77 @@ const Storage = () => {
                                     fontSize: '0.9rem',
                                 }}
                                 color={theme.palette.text.secondary}
-                                onCheck={() =>
+                                onCheck={() => {
+                                    // resetMedia()
                                     handleFilterChange(
                                         option,
-                                        categoryOption,
-                                        setCategoryOption,
+                                        pipelineOption,
+                                        setPipelineOption,
                                         setProjectTypeFilter,
+                                        'Pipeline',
                                     )
-                                }
+                                }}
                                 onUncheck={() =>
                                     handleFilterChange(
                                         option,
-                                        categoryOption,
-                                        setCategoryOption,
+                                        pipelineOption,
+                                        setPipelineOption,
                                         setProjectTypeFilter,
+                                        'Pipeline',
                                     )
                                 }
                             />
                         ))}
 
-                        {/* Favorite */}
-                        <Box
-                            onClick={handleFavoriteClicked}
+                        <Divider
+                            orientation="horizontal"
+                            flexItem
+                            sx={{ borderBottomWidth: 1, marginY: '15px' }}
+                        />
+
+                        <Typography
                             sx={{
-                                marginLeft: '0',
-                                color: theme.palette.text.secondary,
-                                height: '2.625rem',
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                '&:hover': {
-                                    cursor: 'pointer',
-                                },
+                                fontFamily: 'Poppins, sans-serif',
+                                fontSize: '0.9rem',
+                                fontWeight: 600,
                             }}
                         >
-                            <IconButton sx={{ padding: '5px' }}>
-                                {isFavorite ? (
-                                    <Bookmark
-                                        sx={{
-                                            color: theme.palette.warning.main,
-                                            fontSize: '2rem',
-                                        }}
-                                    />
-                                ) : (
-                                    <BookmarkBorder
-                                        sx={{
-                                            color: theme.palette.warning.main,
-                                            fontSize: '2rem',
-                                        }}
-                                    />
-                                )}
-                            </IconButton>
-                            <Typography
-                                sx={{
+                            Media Projects
+                        </Typography>
+
+                        {/* Checkbox filter: Project Type */}
+                        {mediaOption.map((option, index) => (
+                            <CheckboxComponent
+                                key={option.label}
+                                inputOption={option}
+                                labelProps={{
                                     fontFamily: 'Poppins, sans-serif',
                                     fontSize: '0.9rem',
                                 }}
-                            >
-                                Favorite
-                            </Typography>
-                        </Box>
+                                color={theme.palette.text.secondary}
+                                onCheck={() => {
+                                    // resetPipeline()
+                                    handleFilterChange(
+                                        option,
+                                        mediaOption,
+                                        setMediaOption,
+                                        setMediaTypeFilter,
+                                        'Media',
+                                    )
+                                }}
+                                onUncheck={() =>
+                                    handleFilterChange(
+                                        option,
+                                        mediaOption,
+                                        setMediaOption,
+                                        setMediaTypeFilter,
+                                        'Media',
+                                    )
+                                }
+                            />
+                        ))}
 
+                        {/* Status Option */}
                         <Divider
                             orientation="horizontal"
                             flexItem
@@ -408,6 +505,7 @@ const Storage = () => {
                                             statusOption,
                                             setStatusOption,
                                             setProjectStatusFilter,
+                                            'Status',
                                         )
                                     }
                                     onUncheck={() =>
@@ -416,6 +514,7 @@ const Storage = () => {
                                             statusOption,
                                             setStatusOption,
                                             setProjectStatusFilter,
+                                            'Status',
                                         )
                                     }
                                 />
@@ -444,8 +543,8 @@ const Storage = () => {
                         <Box sx={{ width: '80%' }}>
                             <SearchBar
                                 placeholder="Search"
-                                onChange={() => console.log('Search changed')}
-                                searchBarWidth="40rem"
+                                onKeyDown={handleSearchKeyDown}
+                                searchBarWidth="20rem"
                             />
                         </Box>
                         <AlignHorizontalRightIcon
@@ -455,66 +554,47 @@ const Storage = () => {
                     </Box>
 
                     {/* Grid of videos */}
-                    {isLoading ? (
-                        <Box
-                            display="flex"
-                            justifyContent="center"
-                            alignItems="center"
-                            height="50vh"
-                        >
-                            <CircularProgress />
-                        </Box>
-                    ) : (
-                        <>
+                    <Grid container rowSpacing={3} sx={{ marginTop: '1rem' }}>
+                        {displayProjects.map((project) => (
                             <Grid
+                                item
+                                xs={12}
+                                sm={6}
+                                md={4}
+                                key={project.type_project + project.id}
                                 container
-                                rowSpacing={3}
-                                sx={{ marginTop: '1rem' }}
+                                justifyContent="center"
+                                alignItems="center"
                             >
-                                {paginatedProjects.map((project) => (
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        sm={6}
-                                        md={4}
-                                        key={project.id}
-                                        container
-                                        justifyContent="center"
-                                        alignItems="center"
-                                    >
-                                        <CardFeature
-                                            project={project}
-                                            onclick={() =>
-                                                handleCardClick(project)
-                                            }
-                                        />
-                                    </Grid>
-                                ))}
+                                <CardFeature
+                                    project={project}
+                                    onclick={() => handleCardClick(project)}
+                                />
                             </Grid>
-                            {/* Pagination */}
-                            {pageCount > 1 && (
-                                <Box
-                                    mt={4}
-                                    mb={10}
-                                    display="flex"
-                                    justifyContent="center"
-                                >
-                                    <Pagination
-                                        count={pageCount}
-                                        page={currentPage}
-                                        onChange={handlePageChange}
-                                        color="primary"
-                                        sx={{
-                                            '& .MuiPaginationItem-root': {
-                                                fontFamily:
-                                                    'Poppins, sans-serif',
-                                                fontSize: '0.9rem',
-                                            },
-                                        }}
-                                    />
-                                </Box>
-                            )}
-                        </>
+                        ))}
+                    </Grid>
+
+                    {totalPages >= 1 && (
+                        <Box
+                            sx={{
+                                mt: '2rem',
+                                display: 'flex',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <Pagination
+                                count={totalPages}
+                                page={currentPage}
+                                onChange={(event, value) => {
+                                    setGetProjectRequest((prev) => ({
+                                        ...prev,
+                                        offset: (value - 1) * prev.limit,
+                                    }))
+                                }}
+                                color="primary"
+                                shape="rounded"
+                            />
+                        </Box>
                     )}
                 </Box>
             </Box>
