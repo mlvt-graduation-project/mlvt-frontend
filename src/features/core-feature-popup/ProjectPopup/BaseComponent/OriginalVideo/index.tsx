@@ -1,16 +1,19 @@
-import React from 'react';
-import { Box } from '@mui/material';
+import { Box } from '@mui/material'
+import { useEffect } from 'react'
 
-import 'react-h5-audio-player/lib/styles.css';
+import 'react-h5-audio-player/lib/styles.css'
 
 export const OriginalVideo = ({ videoUrl }: { videoUrl: string | null }) => {
+    useEffect(() => {
+        console.log('Video url: ', videoUrl)
+    })
     return (
         <Box
             sx={{
                 position: 'relative',
                 width: '100%',
-                paddingTop: '56.25%', 
-                backgroundColor: 'black', 
+                paddingTop: '56.25%',
+                backgroundColor: 'black',
                 borderRadius: '10px',
                 marginTop: '20px',
             }}
@@ -35,5 +38,5 @@ export const OriginalVideo = ({ videoUrl }: { videoUrl: string | null }) => {
                 <p>Loading video...</p>
             )}
         </Box>
-    );
-};
+    )
+}

@@ -1,128 +1,167 @@
-import React, { useMemo, useState, useEffect } from "react";
-import ChangeViewBox from "../../ProcessTriggerPopup/BaseComponent/ChangeView";
-import { getOneVideoById } from "../../../../api/video.api";
-import { InfoNav } from "../BaseComponent/InfomationNavBar";
-import { OriginalVideo } from "../BaseComponent/OriginalVideo";
-import { RelatedOutput } from "../BaseComponent/RelatedOutput";
-import { MainProjectOutput } from "../BaseComponent/MainProjectOutput";
-import { FullPipelineProject } from "../../../../types/Project";
-import { getTextContent } from "../../../../utils/ProcessTriggerPopup/TextService";
-import { getAudioById } from "../../../../api/audio.api";
-import { Box } from "@mui/material";
+import { Box } from '@mui/material'
+import React, { useEffect, useMemo, useState } from 'react'
+import { getAudioById } from '../../../../api/audio.api'
+import { getOneVideoById } from '../../../../api/video.api'
+import { FullPipelineProject } from '../../../../types/Project'
+import { getTextContent } from '../../../../utils/ProcessTriggerPopup/TextService'
+import ChangeViewBox from '../../ProcessTriggerPopup/BaseComponent/ChangeView'
+import { InfoNav } from '../BaseComponent/InfomationNavBar'
+import { MainProjectOutput } from '../BaseComponent/MainProjectOutput'
+import { OriginalVideo } from '../BaseComponent/OriginalVideo'
+import { RelatedOutput } from '../BaseComponent/RelatedOutput'
 
 interface ContentProps {
-    inputProject: FullPipelineProject;
+    inputProject: FullPipelineProject
 }
 
 export const FullPipelineContent: React.FC<ContentProps> = ({
     inputProject,
 }) => {
     const [viewState, setViewState] = useState<
-        "original" | "translated video" | "related output"
-    >("original");
-    const [imageUrl, setImageUrl] = useState<string | null>(null);
-    const [videoUrl, setVideoUrl] = useState<string | null>(null);
-    const [videoStatus, setVideoStatus] = useState<string | null>(null);
-    const [extractedText, setExtractedText] = useState<string | null>(null);
-    const [translatedText, setTranslatedText] = useState<string | null>(null);
-    const [translatedAudio, setTranslatedAudio] = useState<string | null>(null);
+        'original' | 'translated video' | 'related output'
+    >('original')
+    const [imageUrl, setImageUrl] = useState<string | null>(null)
+    const [videoUrl, setVideoUrl] = useState<string | null>(null)
+    const [resultVideoUrl, setResultVideoUrl] = useState<string | null>(null)
+    const [videoStatus, setVideoStatus] = useState<string | null>(null)
+    const [extractedText, setExtractedText] = useState<string | null>(null)
+    const [translatedText, setTranslatedText] = useState<string | null>(null)
+    const [translatedAudio, setTranslatedAudio] = useState<string | null>(null)
 
     useEffect(() => {
         const fetchVideoData = async () => {
-            try {
-                const [
-                    videoResponse,
-                    extractedTextData,
-                    translatedTextData,
-                    audioResponse,
-                ] = await Promise.all([
-                    getOneVideoById(inputProject.generated_videoId),
-                    getTextContent(inputProject.extracted_textId),
-                    getTextContent(inputProject.translated_textId),
-                    getAudioById(inputProject.translated_audioId),
-                ]);
+            const [
+                originalVideo,
+                videoResult,
+                extractedTextResult,
+                translatedTextResult,
+                audioResult,
+            ] = await Promise.allSettled([
+                getOneVideoById(inputProject.original_videoId),
+                getOneVideoById(inputProject.generated_videoId),
+                getTextContent(inputProject.extracted_textId),
+                getTextContent(inputProject.translated_textId),
+                getAudioById(inputProject.translated_audioId),
+            ])
 
-                setVideoUrl(videoResponse.video_url.split("?")[0]);
-                setImageUrl(videoResponse.image_url.split("?")[0]);
-                setVideoStatus(videoResponse.video.status);
-                setExtractedText(extractedTextData[1]);
-                setTranslatedText(translatedTextData[1]);
-                setTranslatedAudio(audioResponse.download_url.split("?")[0]);
-            } catch (error) {
-                console.error("Error fetching video data:", error);
+            if (originalVideo.status === 'fulfilled') {
+                setVideoUrl(originalVideo.value.video_url.split('?')[0])
+            } else {
+                console.error(
+                    'FullPipelineContent get original video failed:',
+                    originalVideo.reason,
+                )
             }
-        };
 
-        fetchVideoData();
-    }, [inputProject]);
+            if (videoResult.status === 'fulfilled') {
+                setResultVideoUrl(videoResult.value.video_url.split('?')[0])
+                setImageUrl(videoResult.value.image_url.split('?')[0])
+                setVideoStatus(videoResult.value.video.status)
+            } else {
+                console.error(
+                    'FullPipelineContent get result video failed:',
+                    videoResult.reason,
+                )
+            }
+
+            if (extractedTextResult.status === 'fulfilled') {
+                setExtractedText(extractedTextResult.value[1])
+            } else {
+                console.error(
+                    'FullPipelineContent getTextContent (extracted) failed:',
+                    extractedTextResult.reason,
+                )
+            }
+
+            if (translatedTextResult.status === 'fulfilled') {
+                setTranslatedText(translatedTextResult.value[1])
+            } else {
+                console.error(
+                    'FullPipelineContent getTextContent (translated) failed:',
+                    translatedTextResult.reason,
+                )
+            }
+
+            if (audioResult.status === 'fulfilled') {
+                setTranslatedAudio(audioResult.value.download_url.split('?')[0])
+            } else {
+                console.error(
+                    'FullPipelineContent get audioResult failed:',
+                    audioResult.reason,
+                )
+            }
+        }
+
+        fetchVideoData()
+    }, [inputProject])
 
     const changeViewState = (view: string) => {
-        if (["original", "translated video", "related output"].includes(view)) {
+        if (['original', 'translated video', 'related output'].includes(view)) {
             setViewState(
-                view as "original" | "translated video" | "related output"
-            );
+                view as 'original' | 'translated video' | 'related output',
+            )
         }
-    };
+    }
 
     const Views = useMemo(
         () => [
             {
-                text: "ORIGINAL VIDEO",
-                viewState: "original",
+                text: 'ORIGINAL VIDEO',
+                viewState: 'original',
                 component: <OriginalVideo videoUrl={videoUrl} />,
             },
             {
-                text: "TRANSLATED VIDEO",
-                viewState: "translated video",
+                text: 'TRANSLATED VIDEO',
+                viewState: 'translated video',
                 component: (
                     <MainProjectOutput
                         imageUrl={imageUrl}
-                        videoUrl={videoUrl}
-                        status={videoStatus || "incomplete"}
+                        videoUrl={resultVideoUrl}
+                        status={videoStatus || 'incomplete'}
                     />
                 ),
             },
             {
-                text: "RELATED OUTPUT",
-                viewState: "related output",
+                text: 'RELATED OUTPUT',
+                viewState: 'related output',
                 component: (
                     <RelatedOutput
                         splitTwoColumn={true}
                         childrenData={[
                             {
-                                type: "audio/video",
+                                type: 'audio/video',
                                 props: {
-                                    audioSrc: videoUrl ? videoUrl : "",
-                                    audioTitle: "Original Audio",
-                                    sourceType: "audio",
+                                    audioSrc: videoUrl ? videoUrl : '',
+                                    audioTitle: 'Original Audio',
+                                    sourceType: 'audio',
                                 },
                             },
                             {
-                                type: "text",
+                                type: 'text',
                                 props: {
-                                    textTitle: "Original Text",
+                                    textTitle: 'Original Text',
                                     displayText: extractedText
                                         ? extractedText
-                                        : "",
+                                        : '',
                                 },
                             },
                             {
-                                type: "audio/video",
+                                type: 'audio/video',
                                 props: {
                                     audioSrc: translatedAudio
                                         ? translatedAudio
-                                        : "",
-                                    audioTitle: "Processed Audio",
-                                    sourceType: "audio",
+                                        : '',
+                                    audioTitle: 'Processed Audio',
+                                    sourceType: 'audio',
                                 },
                             },
                             {
-                                type: "text",
+                                type: 'text',
                                 props: {
-                                    textTitle: "Processed Text",
+                                    textTitle: 'Processed Text',
                                     displayText: translatedText
                                         ? translatedText
-                                        : "",
+                                        : '',
                                 },
                             },
                         ]}
@@ -131,32 +170,33 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
             },
         ],
         [
+            resultVideoUrl,
             imageUrl,
             videoUrl,
             extractedText,
             translatedAudio,
             translatedText,
             videoStatus,
-        ]
-    );
+        ],
+    )
 
-    const activeView = Views.find((view) => view.viewState === viewState);
-    const ActiveComponent = activeView?.component || null;
+    const activeView = Views.find((view) => view.viewState === viewState)
+    const ActiveComponent = activeView?.component || null
 
     return (
         <Box
             sx={{
-                overflowY: "auto",
-                minHeight: "35rem",
+                overflowY: 'auto',
+                minHeight: '35rem',
             }}
         >
             <InfoNav />
             <Box
                 sx={{
-                    mt: "10px",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
+                    mt: '10px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
                 }}
             >
                 <Box paddingX={1}>
@@ -168,5 +208,5 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
                 {ActiveComponent}
             </Box>
         </Box>
-    );
-};
+    )
+}

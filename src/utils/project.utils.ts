@@ -3,7 +3,9 @@ import { getVideosByUserId } from '../api/video.api'
 import {
     AudioGenerationProject,
     FullPipelineProject,
+    GetAllProjectRequest,
     LipSyncProject,
+    PipelineShortForm,
     Project,
     ProjectType,
     RawAudio,
@@ -14,8 +16,8 @@ import {
 } from '../types/Project'
 import { mapStatusToProjectStatus, ProjectStatus } from '../types/ProjectStatus'
 
+import { getAllProject } from 'src/api/project.api'
 import { getListAudioByUserId } from '../api/audio.api'
-import { getProjectProgress } from '../api/pipeline.api'
 import { Audio } from '../types/Response/Audio'
 import { Text } from '../types/Response/Text'
 import { checkSuccessResponse } from './checkResponseStatus'
@@ -112,165 +114,136 @@ export const handleGetAudioProjectByUserId = async (
     }
 }
 
-// export const getSpeakToTextProjects = (videoList: RawVideo[], transcriptionList: RawText[]) => {
-//     const isValidTranscription = (data: RawText): data is RawText & { original_videoId: number } => {
-//         return data.original_videoId !== null;
-//     };
-//     const copiedTranscriptionList = JSON.parse(JSON.stringify(transcriptionList.filter(isValidTranscription)));
-
-//     const modifiedList: TextGenerationProject[] = copiedTranscriptionList
-//         .map((transcription: RawText) => ({
-//             id: transcription.id,
-//             thumbnail: videoList.find((project) => project.id === transcription.original_videoId)?.thumbnail || '', // use image_url as thumbnail
-//             original_videoId: transcription.original_videoId,
-//             title: `Text Generation - ${transcription.id}`,
-//             status: mapStatusToProjectStatus(transcription.status),
-//             createdAt: new Date(transcription.createdAt),
-//             updatedAt: new Date(transcription.updatedAt),
-//             type_project: ProjectType.TextGeneration,
-//         }))
-//         .filter((project: TextGenerationProject) => project.status === ProjectStatus.Succeeded);
-
-//     return modifiedList;
-// };
-
 export const getAllProgressProjects = async (
-    userId: number,
-): Promise<Project[]> => {
+    userID: string,
+    request: GetAllProjectRequest,
+): Promise<[Project[], number]> => {
     try {
-        const response = await getProjectProgress(userId)
+        const response = await getAllProject(userID, request)
         if (!checkSuccessResponse(response.status)) {
             throw new Error('Receive error response from server')
         }
 
-        const progresses = response.data.progresses
-        if (!progresses) {
-            return []
-        }
-
-        // Đếm tổng số lượng project theo từng loại
-        const projectTotalCountMap: Record<string, number> = {}
-
-        progresses.forEach((progress) => {
-            const projectType = (() => {
-                switch (progress.progress_type) {
-                    case 'stt':
-                        return ProjectType.TextGeneration
-                    case 'ttt':
-                        return ProjectType.TextTranslation
-                    case 'tts':
-                        return ProjectType.AudioGeneration
-                    case 'fp':
-                        return ProjectType.Fullpipeline
-                    case 'ls':
-                        return ProjectType.Lipsync
-                    default:
-                        throw new Error(
-                            `Unknown project type: ${progress.progress_type}`,
-                        )
-                }
-            })()
-
-            // Tăng tổng số lượng project của từng loại
-            projectTotalCountMap[projectType] =
-                (projectTotalCountMap[projectType] || 0) + 1
-        })
-
-        // Map lại danh sách và giảm dần số thứ tự
-        const projectCurrentCountMap: Record<string, number> = {
-            ...projectTotalCountMap,
-        }
+        const progresses = response.data.process_list
+        if (!progresses || progresses.length === 0)
+            return [[], response.data.total_count]
 
         const progressProjectList: Project[] = progresses.map((progress) => {
-            const projectType = (() => {
-                switch (progress.progress_type) {
-                    case 'stt':
-                        return ProjectType.TextGeneration
-                    case 'ttt':
-                        return ProjectType.TextTranslation
-                    case 'tts':
-                        return ProjectType.AudioGeneration
-                    case 'fp':
-                        return ProjectType.Fullpipeline
-                    case 'ls':
-                        return ProjectType.Lipsync
-                    default:
-                        throw new Error(
-                            `Unknown project type: ${progress.progress_type}`,
-                        )
-                }
-            })()
-
-            // Lấy số thứ tự giảm dần
-            const orderNumber = projectCurrentCountMap[projectType]--
-            const title = `${projectType} - ${orderNumber}`
+            const progressType =
+                progress.progress_type !== '' ? progress.progress_type : null
+            const mediaType =
+                progress.media_type !== '' ? progress.media_type : null
 
             const baseProject = {
-                id: Number(progress.id),
-                title,
+                title: progress.title,
                 status: progress.status,
                 createdAt: new Date(progress.created_at),
                 updatedAt: new Date(progress.updated_at),
             }
 
-            switch (progress.progress_type) {
-                case 'stt':
-                    return {
-                        ...baseProject,
-                        type_project: projectType,
-                        thumbnail: progress.thumbnail_url,
-                        original_videoId: progress.original_video_id,
-                        extracted_textId: progress.original_transcription_id,
-                    } as TextGenerationProject
+            if (progressType) {
+                switch (progressType) {
+                    case PipelineShortForm.TextGeneration:
+                        return {
+                            ...baseProject,
+                            id: String(progress.id),
+                            type_project: ProjectType.TextGeneration,
+                            thumbnail: progress.thumbnail_url,
+                            original_videoId: progress.original_video_id,
+                            extracted_textId:
+                                progress.original_transcription_id,
+                        } as TextGenerationProject
 
-                case 'ttt':
-                    return {
-                        ...baseProject,
-                        type_project: projectType,
-                        original_textId: progress.original_transcription_id,
-                        translated_textId: progress.translated_transcription_id,
-                    } as TextTranslationProject
+                    case PipelineShortForm.TextTranslation:
+                        return {
+                            ...baseProject,
+                            id: String(progress.id),
+                            type_project: ProjectType.TextTranslation,
+                            original_textId: progress.original_transcription_id,
+                            translated_textId:
+                                progress.translated_transcription_id,
+                        } as TextTranslationProject
 
-                case 'tts':
-                    return {
-                        ...baseProject,
-                        type_project: projectType,
-                        original_textId: progress.translated_transcription_id,
-                        generated_audioId: progress.audio_id,
-                    } as AudioGenerationProject
+                    case PipelineShortForm.AudioGeneration:
+                        return {
+                            ...baseProject,
+                            id: String(progress.id),
+                            type_project: ProjectType.AudioGeneration,
+                            original_textId:
+                                progress.translated_transcription_id,
+                            generated_audioId: progress.audio_id,
+                        } as AudioGenerationProject
 
-                case 'fp':
-                    return {
-                        ...baseProject,
-                        type_project: projectType,
-                        original_videoId: progress.original_video_id,
-                        thumbnail: progress.thumbnail_url,
-                        generated_videoId: progress.progressed_video_id,
-                        translated_audioId: progress.audio_id,
-                        translated_textId: progress.translated_transcription_id,
-                        extracted_textId: progress.original_transcription_id,
-                    } as FullPipelineProject
+                    case PipelineShortForm.Fullpipeline:
+                        return {
+                            ...baseProject,
+                            type_project: ProjectType.Fullpipeline,
+                            id: String(progress.id),
+                            original_videoId: progress.original_video_id,
+                            thumbnail: progress.thumbnail_url,
+                            generated_videoId: progress.progressed_video_id,
+                            translated_audioId: progress.audio_id,
+                            translated_textId:
+                                progress.translated_transcription_id,
+                            extracted_textId:
+                                progress.original_transcription_id,
+                        } as FullPipelineProject
 
-                case 'ls':
-                    return {
-                        ...baseProject,
-                        type_project: projectType,
-                        original_videoId: progress.original_video_id,
-                        thumbnail: progress.thumbnail_url,
-                        original_audioId:
-                            progress.audio_id === 0 ? null : progress.audio_id,
-                        generated_videoId: progress.progressed_video_id,
-                    } as LipSyncProject
-
-                default:
-                    throw new Error(
-                        `Unknown project type: ${progress.progress_type}`,
-                    )
+                    case PipelineShortForm.Lipsync:
+                        return {
+                            ...baseProject,
+                            id: String(progress.id),
+                            type_project: ProjectType.Lipsync,
+                            original_videoId: progress.original_video_id,
+                            thumbnail: progress.thumbnail_url,
+                            original_audioId:
+                                progress.audio_id === 0
+                                    ? null
+                                    : progress.audio_id,
+                            generated_videoId: progress.progressed_video_id,
+                        } as LipSyncProject
+                }
             }
+
+            if (mediaType) {
+                switch (mediaType) {
+                    case ProjectType.Audio:
+                        return {
+                            ...baseProject,
+                            id: Number(progress.id),
+                            type_project: ProjectType.Audio,
+                        } as RawAudio
+                    case ProjectType.Text:
+                        return {
+                            ...baseProject,
+                            id: Number(progress.id),
+                            type_project: ProjectType.Text,
+                        } as RawText
+                    case 'transcription':
+                        return {
+                            ...baseProject,
+                            id: Number(progress.id),
+                            type_project: ProjectType.Text,
+                        } as RawText
+                    case ProjectType.Video:
+                        return {
+                            ...baseProject,
+                            id: Number(progress.id),
+                            type_project: ProjectType.Video,
+                            thumbnail: progress.thumbnail_url,
+                        } as RawVideo
+                }
+            }
+
+            // fallback nếu cả progressType và mediaType đều không hợp lệ
+            throw new Error(
+                `Invalid progress entry: both progress_type and media_type are empty (id=${progress.id})`,
+            )
         })
 
-        return progressProjectList
+        return [progressProjectList, response.data.total_count]
     } catch (error) {
+        console.error('getAllProgressProjects failed', error)
         throw error
     }
 }
@@ -283,4 +256,23 @@ export function hasThumbnail(
     | FullPipelineProject
     | LipSyncProject {
     return 'thumbnail' in project
+}
+
+export function convertProjectTypeToPipelineShortForm(
+    project: ProjectType,
+): PipelineShortForm | null {
+    switch (project) {
+        case ProjectType.Fullpipeline:
+            return PipelineShortForm.Fullpipeline
+        case ProjectType.TextGeneration:
+            return PipelineShortForm.TextGeneration
+        case ProjectType.TextTranslation:
+            return PipelineShortForm.TextTranslation
+        case ProjectType.AudioGeneration:
+            return PipelineShortForm.AudioGeneration
+        case ProjectType.Lipsync:
+            return PipelineShortForm.Lipsync
+        default:
+            return null
+    }
 }

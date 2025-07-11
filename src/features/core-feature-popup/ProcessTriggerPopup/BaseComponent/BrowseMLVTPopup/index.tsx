@@ -1,13 +1,13 @@
-import React from "react";
-import { BasePopup } from "../../../BasePopup";
-import { DialogContent } from "./PopupContent";
-import { ProjectType, Project } from "../../../../../types/Project";
+import React from 'react'
+import { MediaType, Project } from '../../../../../types/Project'
+import { BasePopup } from '../../../BasePopup'
+import { DialogContent } from './PopupContent'
 
 interface BrowseMLVTPopupProps {
-    isOpen: boolean;
-    onClose: () => void;
-    allowType?: ProjectType[];
-    handleChangeSelectedProject: (selectedProject: Project) => void;
+    isOpen: boolean
+    onClose: () => void
+    allowType?: MediaType[]
+    handleChangeSelectedProject: (selectedProject: Project) => void
 }
 
 export const BrowseMLVTPopup: React.FC<BrowseMLVTPopupProps> = ({
@@ -32,8 +32,8 @@ export const BrowseMLVTPopup: React.FC<BrowseMLVTPopupProps> = ({
                         }
                     />
                 }
-                customSx={{ maxHeight: "80%" }}
+                customSx={{ maxHeight: '80%' }}
             />
         </>
-    );
-};
+    )
+}

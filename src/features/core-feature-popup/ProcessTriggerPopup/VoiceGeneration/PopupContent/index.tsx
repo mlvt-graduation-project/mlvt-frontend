@@ -64,7 +64,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const [inputText, setInputText] = useState<string>('')
     const [disableGenerate, setDisableGenerate] = useState<boolean>(true)
     const [textLanguage, setTextLanguage] = useState<TranslateLanguage | null>(
-        null,
+        TranslateLanguage.English,
     )
 
     const [textData, setTextData] = useState<TextData>({

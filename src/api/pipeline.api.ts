@@ -1,11 +1,10 @@
-import { GetAllProjectResponse } from "../types/Response/Project";
-import { post, get } from "./base.api";
-import { AxiosResponse } from "axios";
+import { AxiosResponse } from 'axios'
+import { post } from './base.api'
 
 export const postVideoTranslation = (
     videoId: number,
     sourceLanguage: string,
-    targetLanguage: string
+    targetLanguage: string,
 ): Promise<any> => {
     return post(`/mlvt/pipeline/full/${videoId}`, null, {
         params: {
@@ -13,29 +12,29 @@ export const postVideoTranslation = (
             target_language: targetLanguage,
         },
         getFullResponse: true,
-    });
-};
+    })
+}
 
 interface TriggerResponse {
-    id: number;
-    message: string;
+    id: number
+    message: string
 }
 export const postTextGeneration = async (
     videoId: number,
-    sourceLanguage: string
+    sourceLanguage: string,
 ): Promise<TriggerResponse> => {
     const response = await post<TriggerResponse>(`/mlvt/stt/${videoId}`, null, {
         params: {
             source_language: sourceLanguage,
-        }
-    });
-    return response;
-};
+        },
+    })
+    return response
+}
 
 export const postTextTranslation = (
     transcriptionId: number,
     sourceLanguage: string,
-    targetLanguage: string
+    targetLanguage: string,
 ) => {
     return post(`/mlvt/ttt/${transcriptionId}`, null, {
         params: {
@@ -43,25 +42,25 @@ export const postTextTranslation = (
             target_language: targetLanguage,
         },
         getFullResponse: true,
-    }) as Promise<AxiosResponse<any>>;
-};
+    }) as Promise<AxiosResponse<any>>
+}
 
 export const postAudioGeneration = (transcriptionId: number): Promise<any> => {
     return post(`/mlvt/tts/${transcriptionId}`, null, {
         getFullResponse: true,
-    });
-};
+    })
+}
 
 export const postLipSync = (videoId: number, audioId: number): Promise<any> => {
     return post(`/mlvt/lipsync/${videoId}/${audioId}`, null, {
         getFullResponse: true,
-    });
-};
+    })
+}
 
-export const getProjectProgress = (
-    userId: number
-): Promise<AxiosResponse<GetAllProjectResponse>> => { 
-    return get<GetAllProjectResponse>(`/progress/${userId}`, undefined, {
-        getFullResponse: true,
-    }) as Promise<AxiosResponse<GetAllProjectResponse>>;
-};
+// export const getProjectProgress = (
+//     userId: number
+// ): Promise<AxiosResponse<GetAllProjectResponse>> => {
+//     return get<GetAllProjectResponse>(`/progress/${userId}`, undefined, {
+//         getFullResponse: true,
+//     }) as Promise<AxiosResponse<GetAllProjectResponse>>;
+// };
