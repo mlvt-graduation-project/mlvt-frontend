@@ -71,6 +71,9 @@ export const DialogContent: React.FC<DialogContentProps> = ({
     useEffect(() => {
         const fetchData = async () => {
             try {
+                if (!userId) {
+                    return
+                }
                 const [fetchedProject, totalCount] =
                     await getAllProgressProjects(userId, getProjectRequest)
                 setDisplayProjects(fetchedProject)

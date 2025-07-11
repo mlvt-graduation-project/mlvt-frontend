@@ -99,6 +99,9 @@ const ProjectSection = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                if (!userId) {
+                    return
+                }
                 const [fetchedProject, totalCount] =
                     await getAllProgressProjects(userId, getProjectRequest)
                 setDisplayProjects(fetchedProject)
@@ -302,7 +305,3 @@ const ProjectSection = () => {
 }
 
 export default ProjectSection
-
-function setError(arg0: string) {
-    throw new Error('Function not implemented.')
-}

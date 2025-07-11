@@ -59,7 +59,7 @@ const PipelineOption = [
         checkStatus: true,
     },
     {
-        label: 'Text Genartion',
+        label: 'Text Generation',
         filterList: [PipelineShortForm.TextGeneration],
         checkStatus: true,
     },
@@ -271,6 +271,9 @@ const Storage = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                if (!userId) {
+                    return
+                }
                 const [fetchedProject, totalCount] =
                     await getAllProgressProjects(userId, getProjectRequest)
                 setDisplayProjects(fetchedProject)
