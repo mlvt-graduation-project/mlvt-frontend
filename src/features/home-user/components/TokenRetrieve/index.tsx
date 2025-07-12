@@ -1,7 +1,7 @@
 import LinearScaleOutlinedIcon from '@mui/icons-material/LinearScaleOutlined'
 import TokenIcon from '@mui/icons-material/Token'
-import { Box, Button, Typography } from '@mui/material'
-import { useEffect } from 'react'
+import { Alert, AlertProps, Box, Button, Snackbar, Typography } from '@mui/material'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CustomButton } from 'src/components/CustomButton'
 import { useAuth } from 'src/contexts/AuthContext'
@@ -10,38 +10,69 @@ import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import { getDailyToken } from '../../apis/get-daily-token.api'
 import PipelineIcon from '../../assets/pipeline-icon.png'
 
+interface SnackbarState {
+    open: boolean
+    message: string
+    severity: AlertProps['severity']
+}
+
 const TokenRetrieve = () => {
     const navigate = useNavigate()
 
     const { remainingToken, SetRemainingToken } = useAuth()
     const { data: userDetails } = useGetUserDetails()
     const userId = userDetails?.user.id.toString() || ''
+    const [loading, setLoading] = useState(false)
+    const [fetchError, setFetchError] = useState<string | null>(null)
 
     useEffect(() => {
+        if (!userId) return
         const fetchToken = async () => {
             try {
+                setFetchError(null)
                 const walletResponse = await getWalletBalance(userId)
                 SetRemainingToken(walletResponse)
             } catch (error) {
                 console.error('Error fetching wallet balance:', error)
+                setFetchError('Could not load balance.')
             }
         }
         fetchToken()
     }, [userId, SetRemainingToken])
 
+    const [snackbar, setSnackbar] = useState<SnackbarState>({
+        open: false,
+        message: '',
+        severity: 'success',
+    })
     const handleRetrieveToken = async () => {
+        if (!userId) return
+        setLoading(true)
         try {
             const response = await getDailyToken(userId)
             if (response) {
-                alert('Token retrieved successfully!')
+                setSnackbar({
+                    open: true,
+                    message: 'Token retrieved successfully!',
+                    severity: 'success',
+                })
                 const walletResponse = await getWalletBalance(userId)
                 SetRemainingToken(walletResponse)
             }
         } catch (error) {
             console.error('Error retrieving token:', error)
-            alert('Failed to retrieve token. Please try again later.')
+            setSnackbar({
+                open: true,
+                message: 'Failed to retrieve token. Please try again later.',
+                severity: 'error',
+            })
+        } finally {
+            setLoading(false)
         }
     }
+    const handleCloseSnackbar = useCallback(() => {
+        setSnackbar((prev) => ({ ...prev, open: false }))
+    }, [])
     return (
         <Box
             sx={{
@@ -77,7 +108,9 @@ const TokenRetrieve = () => {
                             color: 'primary.contrastText',
                         }}
                     >
-                        {remainingToken} Tokens
+                        {fetchError
+                            ? 'Unavailable'
+                            : `${remainingToken} Tokens`}
                     </Typography>
                     <Typography
                         color="primary.contrastText"
@@ -89,6 +122,7 @@ const TokenRetrieve = () => {
 
                 <CustomButton
                     text="Retrieve Token"
+                    loading={loading}
                     onClick={handleRetrieveToken}
                     sx={{
                         bgcolor: (theme) => theme.palette.tertiary.main,
@@ -97,7 +131,7 @@ const TokenRetrieve = () => {
                     startIcon={
                         <TokenIcon
                             sx={{
-                                fontSize: '1.5rem !important',
+                                fontSize: '1.5rem',
                                 color: 'text.primary',
                             }}
                         />
@@ -158,6 +192,20 @@ const TokenRetrieve = () => {
                     </Button>
                 </Box>
             </Box>
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000} // Disappears after 6 seconds
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={handleCloseSnackbar}
+                    severity={snackbar.severity}
+                    sx={{ width: '100%' }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     )
 }
