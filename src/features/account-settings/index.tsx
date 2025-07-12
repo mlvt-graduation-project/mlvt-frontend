@@ -23,7 +23,7 @@ import ChangePassword from './components/ChangePassword'
 import PersonalDetails from './components/PersonalDetails'
 import Voucher from './components/TokenWallet'
 
-type TabKey = 'personal' | 'password' | 'subscription'
+type TabKey = 'personal' | 'password' | 'wallet'
 
 const TABS: {
     key: TabKey
@@ -32,7 +32,7 @@ const TABS: {
 }[] = [
     { key: 'personal', label: 'Personal details', icon: <AccountCircle /> },
     { key: 'password', label: 'Change password', icon: <Lock /> },
-    { key: 'subscription', label: 'Subscription', icon: <Subscriptions /> },
+    { key: 'wallet', label: 'Wallet', icon: <Subscriptions /> },
 ]
 
 const listItemCommonSx = {
@@ -62,7 +62,7 @@ const AccountSettings: React.FC = () => {
                 )
             case 'password':
                 return <ChangePassword />
-            case 'subscription':
+            case 'wallet':
                 return <Voucher />
         }
     }

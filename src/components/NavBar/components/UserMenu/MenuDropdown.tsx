@@ -4,8 +4,8 @@ import {
     Help,
     LightMode,
     Logout,
-    WorkspacePremiumSharp,
 } from '@mui/icons-material'
+import TokenIcon from '@mui/icons-material/Token'
 import {
     Avatar,
     Box,
@@ -66,8 +66,8 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
         },
         {
             type: MenuItemType.PREMIUM,
-            label: 'Premium membership',
-            icon: <WorkspacePremiumSharp />,
+            label: 'Token Purchase',
+            icon: <TokenIcon />,
             path: '/premium-plan',
         },
         {

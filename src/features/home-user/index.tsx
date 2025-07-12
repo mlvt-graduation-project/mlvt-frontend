@@ -8,6 +8,7 @@ import { TextTranslationPopup } from '../core-feature-popup/ProcessTriggerPopup/
 import { VideoTranslationPopup } from '../core-feature-popup/ProcessTriggerPopup/VideoTranslation'
 import { VoiceGenerationPopup } from '../core-feature-popup/ProcessTriggerPopup/VoiceGeneration'
 import HomeContent from './components/HomeContent'
+import TokenRetrieve from './components/TokenRetrieve'
 
 const HomeUser = () => {
     const [isVideoTranslation, setIsVideoTranslation] = useState<boolean>(false)
@@ -63,6 +64,8 @@ const HomeUser = () => {
                 onOpenLipsync={handleOpenLipsyncDialog}
                 onOpenVoiceGeneration={handleOpenVoiceGenerationDialog}
             />
+
+            <TokenRetrieve />
             <HomeContent />
             <VideoTranslationPopup
                 isOpen={isVideoTranslation}

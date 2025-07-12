@@ -10,13 +10,12 @@ import ProjectSection from './ProjectSection'
 const HomeContent: React.FC = () => {
     return (
         <Container
-            maxWidth="xl" // Or "lg", "md", etc., to control the max width
+            maxWidth="xl"
             sx={{
-                paddingY: '20px', // Use paddingY for vertical padding
+                paddingY: '20px',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 3,
-                marginTop: '1.5rem',
             }}
         >
             {/* Carousel 1 */}
