@@ -27,13 +27,15 @@ const TokenRetrieve = () => {
             }
         }
         fetchToken()
-    })
+    }, [userId, SetRemainingToken])
 
     const handleRetrieveToken = async () => {
         try {
             const response = await getDailyToken(userId)
             if (response) {
                 alert('Token retrieved successfully!')
+                const walletResponse = await getWalletBalance(userId)
+                SetRemainingToken(walletResponse)
             }
         } catch (error) {
             console.error('Error retrieving token:', error)
@@ -108,7 +110,6 @@ const TokenRetrieve = () => {
                     display: 'flex',
                     alignItems: 'flex-start',
                     justifyContent: 'center',
-                    bgcolor: 'pink',
                     borderRadius: '10px',
                     backgroundColor: (theme) => theme.palette.tertiary.main,
                     gap: 10,
