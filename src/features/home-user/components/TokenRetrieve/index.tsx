@@ -90,14 +90,13 @@ const TokenRetrieve = () => {
                     onClick={handleRetrieveToken}
                     sx={{
                         bgcolor: (theme) => theme.palette.tertiary.main,
-                        color: (theme) => theme.palette.tertiary.contrastText,
+                        color: 'text.primary',
                     }}
                     startIcon={
                         <TokenIcon
                             sx={{
                                 fontSize: '1.5rem !important',
-                                color: (theme) =>
-                                    theme.palette.tertiary.contrastText,
+                                color: 'text.primary',
                             }}
                         />
                     }
