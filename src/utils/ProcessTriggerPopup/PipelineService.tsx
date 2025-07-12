@@ -47,15 +47,17 @@ export const generateVoice = async (textId: number) => {
 }
 
 // Service for Lipsync
-export const lipSync = async (videoId: number, audioId: number) => {
-    try {
-        const lipSyncRespsonse = await postLipSync(videoId, audioId)
-        if (!checkSuccessResponse(lipSyncRespsonse.status)) {
-            throw new Error('Error when lipSync')
-        }
-    } catch (error) {
-        throw error
+export const lipSync = async (
+    videoId: number,
+    audioId: number,
+): Promise<JobCreationResponse> => {
+    const lipSyncRespsonse = await postLipSync(videoId, audioId)
+    if (!checkSuccessResponse(lipSyncRespsonse.status)) {
+        throw new Error('Error when lipSync')
     }
+    console.log('lipSyncRespsonse', lipSyncRespsonse)
+
+    return lipSyncRespsonse.data as JobCreationResponse
 }
 
 // Service for extract text from video (TextGeneration)

@@ -1,6 +1,13 @@
 import LinearScaleOutlinedIcon from '@mui/icons-material/LinearScaleOutlined'
 import TokenIcon from '@mui/icons-material/Token'
-import { Alert, AlertProps, Box, Button, Snackbar, Typography } from '@mui/material'
+import {
+    Alert,
+    AlertProps,
+    Box,
+    Button,
+    Snackbar,
+    Typography,
+} from '@mui/material'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CustomButton } from 'src/components/CustomButton'
@@ -142,18 +149,18 @@ const TokenRetrieve = () => {
                 sx={{
                     flex: 1,
                     display: 'flex',
-                    alignItems: 'flex-start',
+                    alignItems: 'center',
                     justifyContent: 'center',
                     borderRadius: '10px',
                     backgroundColor: (theme) => theme.palette.tertiary.main,
-                    gap: 10,
+                    gap: 20,
                     paddingY: 1,
                 }}
             >
                 <img
                     src={PipelineIcon}
                     alt="Pipeline Icon"
-                    style={{ width: '100px', height: '100px', padding: '10px' }}
+                    style={{ width: '200px', height: '110px' }}
                 />
                 <Box>
                     <Typography

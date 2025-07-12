@@ -5,6 +5,7 @@ import { getAllPipelineProgress } from '../apis/pipeline-progress.api'
 import { PipelineContext } from '../context/PipelineContext'
 import { executePipeline } from '../services/pipelineExecutor'
 import {
+    LipSynchronizationResult,
     PipelineProgress,
     PipelineResult,
     PipelineType,
@@ -12,6 +13,7 @@ import {
     TextTranslationResult,
     VideoTranslationResult,
 } from '../types'
+import { LipSynchronizationResultDisplay } from './results/LipSynchronizationResultDisplay'
 import { TextGenerationResultDisplay } from './results/TextGenerationResultDisplay'
 import { TextTranslationResultDisplay } from './results/TextTranslationResultDisplay'
 import { VideoTranslationResultDisplay } from './results/VideoTranslationResultDisplay'
@@ -76,6 +78,14 @@ const ResultsPanel = () => {
                                     pipelineType: PipelineType.TextTranslation,
                                     progressData: project,
                                 } as TextTranslationResult
+                                break
+
+                            case 'ls':
+                                result = {
+                                    pipelineType:
+                                        PipelineType.LipSynchronization,
+                                    progressData: project,
+                                } as LipSynchronizationResult
                                 break
 
                             default:
@@ -159,6 +169,13 @@ const ResultsPanel = () => {
             case PipelineType.TextTranslation:
                 return (
                     <TextTranslationResultDisplay
+                        progressData={results.progressData}
+                    />
+                )
+
+            case PipelineType.LipSynchronization:
+                return (
+                    <LipSynchronizationResultDisplay
                         progressData={results.progressData}
                     />
                 )

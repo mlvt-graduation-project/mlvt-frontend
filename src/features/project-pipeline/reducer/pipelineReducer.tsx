@@ -43,8 +43,6 @@ const defaultInputs: Partial<Record<PipelineType, Partial<PipelineInputs>>> = {
     lip_synchronization: {
         video: null,
         audio: null,
-        sourceLanguage: TranslateLanguage.English,
-        model: 'Model 1', // Default model, can be changed by user
     },
 }
 // 2. Define the Reducer Function

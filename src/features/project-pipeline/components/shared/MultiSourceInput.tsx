@@ -11,6 +11,7 @@ import {
 } from '@mui/material'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { BrowseFile } from 'src/features/core-feature-popup/ProcessTriggerPopup/BaseComponent/BrowseMLVTFile'
+import { VideoFileType, AudioFileType } from 'src/types/FileType'
 import { MediaType, Project, ProjectType } from 'src/types/Project'
 import { PipelineContext } from '../../context/PipelineContext'
 import { PipelineInputs } from '../../types'
@@ -33,17 +34,15 @@ const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
     },
 }))
 
-function includes<T extends U, U>(coll: ReadonlyArray<T>, el: U): el is T {
-    return coll.includes(el as T)
-}
-
 // --- Define the configuration for each input type ---
 const configs = {
     video: {
         firstMode: { mode: 'upload', label: 'Upload File' },
-        acceptedTypes: ['video/mp4', 'video/webm', 'video/quicktime'],
-        acceptAttr: 'video/mp4,video/webm,video/quicktime',
-        uploadErrorMsg: 'Please upload a video file (MP4, WebM, MOV).',
+        acceptedTypes: Object.values(VideoFileType),
+        acceptAttr: Object.values(VideoFileType).join(','),
+        uploadErrorMsg: `Please upload a video file (${Object.keys(
+            VideoFileType,
+        ).join(', ')}).`,
         renderPreview: (url: string) => (
             <Box
                 component="video"
@@ -62,9 +61,11 @@ const configs = {
     },
     audio: {
         firstMode: { mode: 'upload', label: 'Upload File' },
-        acceptedTypes: ['audio/mpeg', 'audio/wav', 'audio/ogg'],
-        acceptAttr: 'audio/mpeg,audio/wav,audio/ogg',
-        uploadErrorMsg: 'Please upload an audio file (MP3, WAV, OGG).',
+        acceptedTypes: Object.values(AudioFileType),
+        acceptAttr: Object.values(AudioFileType).join(','),
+        uploadErrorMsg: `Please upload an audio file (${Object.keys(
+            AudioFileType,
+        ).join(', ')}).`,
         renderPreview: (url: string) => (
             <Box
                 component="audio"
@@ -167,7 +168,7 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
             return
         }
 
-        if (!includes(config.acceptedTypes, file.type)) {
+        if (!(config.acceptedTypes as readonly string[]).includes(file.type)) {
             setUploadError(config.uploadErrorMsg)
             dispatch({ type: 'UPDATE_INPUT', payload: { field, value: null } })
             if (event.target) event.target.value = ''

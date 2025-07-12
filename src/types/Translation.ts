@@ -1,18 +1,4 @@
 export enum TranslateLanguage {
     English = 'English',
     Vietnamese = 'Vietnamese',
-    Spanish = 'Spanish',
-    French = 'French',
-    German = 'German',
-    Italian = 'Italian',
-    Mandarin = 'Mandarin',
-    Japanese = 'Japanese',
-    Korean = 'Korean',
-    Russian = 'Russian',
-    Arabic = 'Arabic',
-    Hindi = 'Hindi',
-    Portuguese = 'Portuguese',
-    Bengali = 'Bengali',
-    Malay = 'Malay',
-    Thai = 'Thai',
 }

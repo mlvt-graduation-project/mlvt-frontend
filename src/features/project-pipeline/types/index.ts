@@ -54,10 +54,16 @@ export interface TextTranslationResult {
     progressData: PipelineProgress
 }
 
+export interface LipSynchronizationResult {
+    pipelineType: PipelineType.LipSynchronization
+    progressData: PipelineProgress
+}
+
 export type PipelineResult =
     | VideoTranslationResult
     | TextGenerationResult
     | TextTranslationResult
+    | LipSynchronizationResult
 
 // The complete state for our page
 export interface PipelineState {
