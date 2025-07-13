@@ -12,11 +12,13 @@ import {
     TextGenerationResult,
     TextTranslationResult,
     VideoTranslationResult,
+    VoiceGenerationResult,
 } from '../types'
 import { LipSynchronizationResultDisplay } from './results/LipSynchronizationResultDisplay'
 import { TextGenerationResultDisplay } from './results/TextGenerationResultDisplay'
 import { TextTranslationResultDisplay } from './results/TextTranslationResultDisplay'
 import { VideoTranslationResultDisplay } from './results/VideoTranslationResultDisplay'
+import { VoiceGenerationResultDisplay } from './results/VoiceGenerationResultDisplay'
 
 const POLLING_INTERVAL = 10000
 const POLLING_TIMEOUT = 3000000
@@ -78,6 +80,13 @@ const ResultsPanel = () => {
                                     pipelineType: PipelineType.TextTranslation,
                                     progressData: project,
                                 } as TextTranslationResult
+                                break
+
+                            case 'tts':
+                                result = {
+                                    pipelineType: PipelineType.VoiceGeneration,
+                                    progressData: project,
+                                } as VoiceGenerationResult
                                 break
 
                             case 'ls':
@@ -169,6 +178,13 @@ const ResultsPanel = () => {
             case PipelineType.TextTranslation:
                 return (
                     <TextTranslationResultDisplay
+                        progressData={results.progressData}
+                    />
+                )
+
+            case PipelineType.VoiceGeneration:
+                return (
+                    <VoiceGenerationResultDisplay
                         progressData={results.progressData}
                     />
                 )

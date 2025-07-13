@@ -11,10 +11,17 @@ import {
 } from '@mui/material'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { BrowseFile } from 'src/features/core-feature-popup/ProcessTriggerPopup/BaseComponent/BrowseMLVTFile'
-import { VideoFileType, AudioFileType } from 'src/types/FileType'
+import { AudioFileType, VideoFileType } from 'src/types/FileType'
 import { MediaType, Project, ProjectType } from 'src/types/Project'
 import { PipelineContext } from '../../context/PipelineContext'
 import { PipelineInputs } from '../../types'
+
+// Human-readable labels for each mode
+const modeLabels: Record<InputMode, string> = {
+    upload: 'Upload File',
+    text: 'Enter Text',
+    mlvt: 'Browse MLVT',
+}
 
 const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
     fontFamily: 'Poppins, sans-serif',
@@ -332,6 +339,9 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                 )
         }
     }
+    // which tabs to show
+    const modes: InputMode[] =
+        inputType === 'text' ? ['text', 'upload', 'mlvt'] : ['upload', 'mlvt']
 
     return (
         <Box>
@@ -354,15 +364,17 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                 fullWidth
                 sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}
             >
-                <StyledToggleButton
-                    value={config.firstMode.mode}
-                    aria-label={config.firstMode.mode}
-                >
-                    {config.firstMode.label}
-                </StyledToggleButton>
-                <StyledToggleButton value="mlvt" aria-label="browse mlvt">
-                    Browse MLVT
-                </StyledToggleButton>
+                {modes.map((mode) => (
+                    <StyledToggleButton
+                        key={mode}
+                        value={mode}
+                        aria-label={modeLabels[mode]}
+                    >
+                        {mode === config.firstMode.mode
+                            ? config.firstMode.label
+                            : modeLabels[mode]}
+                    </StyledToggleButton>
+                ))}
             </ToggleButtonGroup>
 
             {renderInput()}

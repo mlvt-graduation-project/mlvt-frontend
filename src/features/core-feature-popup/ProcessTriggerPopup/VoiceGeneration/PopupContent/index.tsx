@@ -142,65 +142,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         }
     }
 
-    // const uploadTextFromDevice = useCallback(async (): Promise<number> => {
-    //     if (deviceTextFile && textLanguage) {
-    //         try {
-    //             handleChangeTextData({ lang: getLanguageCode(textLanguage) });
-    //             const textId = await uploadText(
-    //                 deviceTextFile,
-    //                 textData,
-    //                 TextFileType.PlainText
-    //             );
-    //             return textId;
-    //         } catch (error) {
-    //             throw error;
-    //         }
-    //     } else {
-    //         throw new Error("No file provided for translation.");
-    //     }
-    // }, [deviceTextFile, textData, textLanguage, handleChangeTextData]);
-
-    // const handleGenerateEnteringText =
-    //     useCallback(async (): Promise<number> => {
-    //         if (inputText && textLanguage) {
-    //             try {
-    //                 const tmpTextData: TextData = {
-    //                     file_name:
-    //                         userId +
-    //                         "_" +
-    //                         Math.floor(Date.now() / 1000) +
-    //                         ".txt",
-    //                     folder: S3Folder.text,
-    //                     user_id: parsedUserId,
-    //                     lang: getLanguageCode(textLanguage),
-    //                 };
-    //                 const textId = await uploadText(
-    //                     inputText,
-    //                     tmpTextData,
-    //                     TextFileType.PlainText
-    //                 );
-    //                 return textId;
-    //             } catch (error) {
-    //                 throw error;
-    //             }
-    //         } else {
-    //             throw new Error("No text provided for translation.");
-    //         }
-    //     }, [inputText, parsedUserId, userId, textLanguage]);
-
-    // const uploadAudioFromDevice = useCallback(async (): Promise<number> => {
-    //     if (deviceAudioFile) {
-    //         try {
-    //             const audioId = await uploadAudio(deviceAudioFile, audioData);
-    //             return audioId;
-    //         } catch (error) {
-    //             throw error;
-    //         }
-    //     } else {
-    //         throw new Error("Failed uploading Audio file to Server");
-    //     }
-    // }, [deviceAudioFile, audioData]);
-
     const TextViews = useMemo(
         () => [
             {
@@ -267,7 +208,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                     <UploadFileFromDevice
                         handleChangeFileData={handleChangeAudioData}
                         selectedFile={deviceAudioFile}
-                        fileTypeList={[AudioFileType.MP3]}
+                        fileTypeList={[AudioFileType.MP3, AudioFileType.WAV]}
                         handleChangeSelectedFile={handleChangeDeviceAudioFile}
                     />
                 ),

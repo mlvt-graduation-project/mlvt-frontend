@@ -59,10 +59,16 @@ export interface LipSynchronizationResult {
     progressData: PipelineProgress
 }
 
+export interface VoiceGenerationResult {
+    pipelineType: PipelineType.VoiceGeneration
+    progressData: PipelineProgress
+}
+
 export type PipelineResult =
     | VideoTranslationResult
     | TextGenerationResult
     | TextTranslationResult
+    | VoiceGenerationResult
     | LipSynchronizationResult
 
 // The complete state for our page

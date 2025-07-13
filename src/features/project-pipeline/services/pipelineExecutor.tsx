@@ -4,6 +4,7 @@ import { TranslateLanguage } from 'src/types/Translation'
 import { uploadAudio } from 'src/utils/ProcessTriggerPopup/AudioService'
 import {
     generateText,
+    generateVoice,
     lipSync,
     translateText,
     translateVideo,
@@ -192,6 +193,66 @@ export const executePipeline = async (
                 }
             } catch (error) {
                 console.error('Error during text translation pipeline:', error)
+                throw error
+            }
+        }
+
+        case PipelineType.VoiceGeneration: {
+            if (!inputs.text) {
+                return Promise.reject(new Error('Text input is required.'))
+            }
+
+            if (!inputs.voice) {
+                return Promise.reject(new Error('Voice input is required.'))
+            }
+
+            try {
+                let textId: number
+
+                if (typeof inputs.text === 'number') {
+                    textId = inputs.text
+                } else if (
+                    typeof inputs.text === 'string' ||
+                    inputs.text instanceof File
+                ) {
+                    const content = inputs.text
+                    const fileName =
+                        content instanceof File
+                            ? content.name
+                            : 'voice-generation-input.txt'
+
+                    const fileData: TextData = {
+                        file_name: fileName,
+                        folder: S3Folder.text,
+                        user_id: userId,
+                        lang: getLanguageCode(
+                            inputs.sourceLanguage as TranslateLanguage,
+                        ),
+                    }
+
+                    textId = await uploadText(content, fileData, 'text/plain')
+                } else {
+                    throw new Error(
+                        'Invalid input type for voice generation. Expected string, File, or number.',
+                    )
+                }
+
+                const opts = {
+                    videoId:
+                        typeof inputs.video === 'number'
+                            ? inputs.video
+                            : undefined,
+                    audioId:
+                        typeof inputs.audio === 'number'
+                            ? inputs.audio
+                            : undefined,
+                }
+
+                const audioId = await generateVoice(textId, opts)
+
+                return { key: 'audio_id', value: audioId }
+            } catch (error) {
+                console.error('Error during voice generation pipeline:', error)
                 throw error
             }
         }
