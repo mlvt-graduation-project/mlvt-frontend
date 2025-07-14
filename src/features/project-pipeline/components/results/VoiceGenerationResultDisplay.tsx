@@ -82,7 +82,7 @@ export const VoiceGenerationResultDisplay = ({
             ) : audioUrl.error ? (
                 <Alert severity="error">{audioUrl.error}</Alert>
             ) : (
-                <audio controls />
+                <audio controls src={audioUrl.data || undefined} />
             )}
         </Box>
     )
