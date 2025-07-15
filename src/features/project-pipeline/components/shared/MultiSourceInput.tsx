@@ -89,6 +89,33 @@ const configs = {
         uploadErrorMsg: 'Please upload a plain text file (.txt).',
         renderPreview: () => null,
     },
+    voice: {
+        firstMode: { mode: 'upload', label: 'Upload File' },
+        acceptedTypes: [
+            ...Object.values(VideoFileType),
+            ...Object.values(AudioFileType),
+        ],
+        acceptAttr: [
+            ...Object.values(VideoFileType),
+            ...Object.values(AudioFileType),
+        ].join(','),
+        uploadErrorMsg: `Please upload a video or audio file (${[
+            ...Object.keys(VideoFileType),
+            ...Object.keys(AudioFileType),
+        ].join(', ')}).`,
+        renderPreview: (url: string) => (
+            // Check if the URL is a video or audio file then render accordingly
+            <Box
+                component={url.endsWith('.mp4') ? 'video' : 'audio'}
+                sx={{
+                    mt: 2,
+                    width: '100%',
+                }}
+                src={url}
+                controls
+            />
+        ),
+    },
 } as const
 
 type InputMode = 'upload' | 'mlvt' | 'text'
@@ -182,7 +209,16 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
             return
         }
 
-        dispatch({ type: 'UPDATE_INPUT', payload: { field, value: file } })
+        let internalField = field
+        if (inputType === 'voice') {
+            internalField = Object.values(VideoFileType).includes(file.type as VideoFileType)
+                ? 'video'
+                : 'audio'
+        }
+
+        console.log('Selected file:', file, 'Field:', internalField)
+
+        dispatch({ type: 'UPDATE_INPUT', payload: { field: internalField, value: file } })
 
         if (inputType === 'text') {
             const reader = new FileReader()
@@ -303,7 +339,9 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                                     </Typography>
                                 </Box>
                             )}
-                        {(inputType === 'video' || inputType === 'audio') &&
+                        {(inputType === 'video' ||
+                            inputType === 'audio' ||
+                            inputType === 'voice') &&
                             previewUrl &&
                             config.renderPreview(previewUrl)}
                     </Box>
@@ -317,6 +355,8 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                             return [ProjectType.Audio]
                         case 'text':
                             return [ProjectType.Text]
+                        case 'voice':
+                            return [ProjectType.Audio, ProjectType.Video]
                         default:
                             return []
                     }

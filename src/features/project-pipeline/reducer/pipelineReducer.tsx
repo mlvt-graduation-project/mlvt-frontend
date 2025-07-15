@@ -35,8 +35,6 @@ const defaultInputs: Partial<Record<PipelineType, Partial<PipelineInputs>>> = {
     voice_generation: {
         text: '',
         sourceLanguage: TranslateLanguage.English,
-        voice: 'build_in',
-        buildInVoiceId: '',
         customVoiceFile: null,
     },
 
