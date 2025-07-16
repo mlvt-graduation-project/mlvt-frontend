@@ -397,8 +397,8 @@ const executeVoiceGeneration = async (
         })
 
         return {
-            key: 'progressed_video_id',
-            value: generationResponse.id,
+            key: 'audio_id',
+            value: generationResponse.data.id,
         }
     } catch (error) {
         console.error('Error during media processing pipeline:', error)

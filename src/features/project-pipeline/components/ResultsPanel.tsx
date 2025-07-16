@@ -20,7 +20,7 @@ import { TextTranslationResultDisplay } from './results/TextTranslationResultDis
 import { VideoTranslationResultDisplay } from './results/VideoTranslationResultDisplay'
 import { VoiceGenerationResultDisplay } from './results/VoiceGenerationResultDisplay'
 
-const POLLING_INTERVAL = 10000
+const POLLING_INTERVAL = 5000
 const POLLING_TIMEOUT = 3000000
 
 const ResultsPanel = () => {
@@ -51,9 +51,11 @@ const ResultsPanel = () => {
             try {
                 const { progresses } = await getAllPipelineProgress(userId)
 
+                console.log('state.pollingInfo:', state)
                 const project = progresses.find(
                     (p: PipelineProgress) => (p as any)[key] === value,
                 )
+                console.log('Polling project:', project)
                 if (project) {
                     if (project.status === 'succeeded') {
                         stopPolling() // Stop polling on success
@@ -139,7 +141,7 @@ const ResultsPanel = () => {
         return () => {
             stopPolling()
         }
-    }, [state.pollingInfo, userId, dispatch])
+    }, [state.pollingInfo, userId, dispatch, state])
 
     const handleGenerate = async () => {
         if (!userId) {
@@ -153,6 +155,7 @@ const ResultsPanel = () => {
                 state.inputs,
                 userId,
             )
+            console.log('Polling details:', pollingDetails)
             dispatch({ type: 'START_POLLING', payload: pollingDetails })
         } catch (err: any) {
             dispatch({ type: 'GENERATION_FAILURE', payload: err.message })

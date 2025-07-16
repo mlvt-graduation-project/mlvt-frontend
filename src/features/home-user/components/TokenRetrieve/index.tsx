@@ -56,7 +56,7 @@ const TokenRetrieve = () => {
         if (!userId) return
         setLoading(true)
         try {
-            const response = await getDailyToken(userId)
+            const response = await getDailyToken(parseInt(userId))
             if (response) {
                 setSnackbar({
                     open: true,
@@ -150,10 +150,9 @@ const TokenRetrieve = () => {
                     flex: 1,
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
+                    justifyContent: 'space-between',
                     borderRadius: '10px',
                     backgroundColor: (theme) => theme.palette.tertiary.main,
-                    gap: 20,
                     paddingY: 1,
                 }}
             >
@@ -162,12 +161,12 @@ const TokenRetrieve = () => {
                     alt="Pipeline Icon"
                     style={{ width: '200px', height: '110px' }}
                 />
-                <Box>
+                <Box sx={{ flex: 1, textAlign: 'center' }}>
                     <Typography
                         variant="body2"
                         color="text.secondary"
+                        paddingX={5}
                         sx={{ mt: 2, textAlign: 'center' }}
-                        gap={5}
                     >
                         Dive into our video pipeline—generate your script,
                         translate it instantly, and sync the lips
@@ -189,10 +188,11 @@ const TokenRetrieve = () => {
                         fullWidth
                         sx={{
                             mt: 2,
-                            width: '100%',
+                            width: '60%',
                             padding: '10px 20px',
                             fontWeight: '600',
                             fontSize: '1rem',
+                            marginRight: '10px',
                         }}
                     >
                         EXPLORE THE PIPELINE
