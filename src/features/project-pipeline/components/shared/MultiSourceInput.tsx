@@ -178,6 +178,18 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
         // 1. Update the local state to re-render the BrowseFile component
         setMlvtProject(selectedProject)
 
+        if (inputType === 'voice') {
+            if (selectedProject) {
+                if (selectedProject.type_project === 'video') {
+                    field = 'video'
+                } else if (selectedProject.type_project === 'audio') {
+                    field = 'audio'
+                }
+            } else {
+                field = 'video'
+            }
+        }
+
         // 2. Update the global context state with the project's ID
         dispatch({
             type: 'UPDATE_INPUT',
@@ -211,14 +223,19 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
 
         let internalField = field
         if (inputType === 'voice') {
-            internalField = Object.values(VideoFileType).includes(file.type as VideoFileType)
+            internalField = Object.values(VideoFileType).includes(
+                file.type as VideoFileType,
+            )
                 ? 'video'
                 : 'audio'
         }
 
         console.log('Selected file:', file, 'Field:', internalField)
 
-        dispatch({ type: 'UPDATE_INPUT', payload: { field: internalField, value: file } })
+        dispatch({
+            type: 'UPDATE_INPUT',
+            payload: { field: internalField, value: file },
+        })
 
         if (inputType === 'text') {
             const reader = new FileReader()

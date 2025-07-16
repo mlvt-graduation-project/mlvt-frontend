@@ -8,8 +8,6 @@ export const getDailyToken = async (userId: number): Promise<string> => {
         return response.message
     } catch (error) {
         console.error('Error getting daily token:', error)
-        console.log('User ID:', userId)
-        console.log('Type of userId:', typeof userId)
         throw error
     }
 }
