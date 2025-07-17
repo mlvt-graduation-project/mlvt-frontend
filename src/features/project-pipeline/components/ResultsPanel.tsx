@@ -51,11 +51,10 @@ const ResultsPanel = () => {
             try {
                 const { progresses } = await getAllPipelineProgress(userId)
 
-                console.log('state.pollingInfo:', state)
                 const project = progresses.find(
                     (p: PipelineProgress) => (p as any)[key] === value,
                 )
-                console.log('Polling project:', project)
+
                 if (project) {
                     if (project.status === 'succeeded') {
                         stopPolling() // Stop polling on success
@@ -119,7 +118,6 @@ const ResultsPanel = () => {
                     }
                 }
             } catch (error) {
-                console.error('Polling error:', error)
                 dispatch({
                     type: 'GENERATION_FAILURE',
                     payload: 'Polling failed.',
@@ -155,7 +153,6 @@ const ResultsPanel = () => {
                 state.inputs,
                 userId,
             )
-            console.log('Polling details:', pollingDetails)
             dispatch({ type: 'START_POLLING', payload: pollingDetails })
         } catch (err: any) {
             dispatch({ type: 'GENERATION_FAILURE', payload: err.message })

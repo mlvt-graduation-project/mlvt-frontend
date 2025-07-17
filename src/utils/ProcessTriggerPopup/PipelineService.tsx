@@ -71,7 +71,6 @@ export const lipSync = async (
     if (!checkSuccessResponse(lipSyncRespsonse.status)) {
         throw new Error('Error when lipSync')
     }
-    console.log('lipSyncRespsonse', lipSyncRespsonse)
 
     return lipSyncRespsonse.data as JobCreationResponse
 }

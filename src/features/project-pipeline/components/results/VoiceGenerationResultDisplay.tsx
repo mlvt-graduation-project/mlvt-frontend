@@ -73,7 +73,7 @@ export const VoiceGenerationResultDisplay = ({
         return () => {
             isMounted = false
         }
-    })
+    }, [progressData.progressed_video_id])
 
     return (
         <Box>
