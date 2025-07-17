@@ -11,9 +11,17 @@ import {
 } from '@mui/material'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { BrowseFile } from 'src/features/core-feature-popup/ProcessTriggerPopup/BaseComponent/BrowseMLVTFile'
+import { AudioFileType, VideoFileType } from 'src/types/FileType'
 import { MediaType, Project, ProjectType } from 'src/types/Project'
 import { PipelineContext } from '../../context/PipelineContext'
 import { PipelineInputs } from '../../types'
+
+// Human-readable labels for each mode
+const modeLabels: Record<InputMode, string> = {
+    upload: 'Upload File',
+    text: 'Enter Text',
+    mlvt: 'Browse MLVT',
+}
 
 const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
     fontFamily: 'Poppins, sans-serif',
@@ -33,17 +41,15 @@ const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
     },
 }))
 
-function includes<T extends U, U>(coll: ReadonlyArray<T>, el: U): el is T {
-    return coll.includes(el as T)
-}
-
 // --- Define the configuration for each input type ---
 const configs = {
     video: {
         firstMode: { mode: 'upload', label: 'Upload File' },
-        acceptedTypes: ['video/mp4', 'video/webm', 'video/quicktime'],
-        acceptAttr: 'video/mp4,video/webm,video/quicktime',
-        uploadErrorMsg: 'Please upload a video file (MP4, WebM, MOV).',
+        acceptedTypes: Object.values(VideoFileType),
+        acceptAttr: Object.values(VideoFileType).join(','),
+        uploadErrorMsg: `Please upload a video file (${Object.keys(
+            VideoFileType,
+        ).join(', ')}).`,
         renderPreview: (url: string) => (
             <Box
                 component="video"
@@ -62,9 +68,11 @@ const configs = {
     },
     audio: {
         firstMode: { mode: 'upload', label: 'Upload File' },
-        acceptedTypes: ['audio/mpeg', 'audio/wav', 'audio/ogg'],
-        acceptAttr: 'audio/mpeg,audio/wav,audio/ogg',
-        uploadErrorMsg: 'Please upload an audio file (MP3, WAV, OGG).',
+        acceptedTypes: Object.values(AudioFileType),
+        acceptAttr: Object.values(AudioFileType).join(','),
+        uploadErrorMsg: `Please upload an audio file (${Object.keys(
+            AudioFileType,
+        ).join(', ')}).`,
         renderPreview: (url: string) => (
             <Box
                 component="audio"
@@ -80,6 +88,33 @@ const configs = {
         acceptAttr: 'text/plain',
         uploadErrorMsg: 'Please upload a plain text file (.txt).',
         renderPreview: () => null,
+    },
+    voice: {
+        firstMode: { mode: 'upload', label: 'Upload File' },
+        acceptedTypes: [
+            ...Object.values(VideoFileType),
+            ...Object.values(AudioFileType),
+        ],
+        acceptAttr: [
+            ...Object.values(VideoFileType),
+            ...Object.values(AudioFileType),
+        ].join(','),
+        uploadErrorMsg: `Please upload a video or audio file (${[
+            ...Object.keys(VideoFileType),
+            ...Object.keys(AudioFileType),
+        ].join(', ')}).`,
+        renderPreview: (url: string) => (
+            // Check if the URL is a video or audio file then render accordingly
+            <Box
+                component={url.endsWith('.mp4') ? 'video' : 'audio'}
+                sx={{
+                    mt: 2,
+                    width: '100%',
+                }}
+                src={url}
+                controls
+            />
+        ),
     },
 } as const
 
@@ -143,6 +178,18 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
         // 1. Update the local state to re-render the BrowseFile component
         setMlvtProject(selectedProject)
 
+        if (inputType === 'voice') {
+            if (selectedProject) {
+                if (selectedProject.type_project === 'video') {
+                    field = 'video'
+                } else if (selectedProject.type_project === 'audio') {
+                    field = 'audio'
+                }
+            } else {
+                field = 'video'
+            }
+        }
+
         // 2. Update the global context state with the project's ID
         dispatch({
             type: 'UPDATE_INPUT',
@@ -167,14 +214,28 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
             return
         }
 
-        if (!includes(config.acceptedTypes, file.type)) {
+        if (!(config.acceptedTypes as readonly string[]).includes(file.type)) {
             setUploadError(config.uploadErrorMsg)
             dispatch({ type: 'UPDATE_INPUT', payload: { field, value: null } })
             if (event.target) event.target.value = ''
             return
         }
 
-        dispatch({ type: 'UPDATE_INPUT', payload: { field, value: file } })
+        let internalField = field
+        if (inputType === 'voice') {
+            internalField = Object.values(VideoFileType).includes(
+                file.type as VideoFileType,
+            )
+                ? 'video'
+                : 'audio'
+        }
+
+        console.log('Selected file:', file, 'Field:', internalField)
+
+        dispatch({
+            type: 'UPDATE_INPUT',
+            payload: { field: internalField, value: file },
+        })
 
         if (inputType === 'text') {
             const reader = new FileReader()
@@ -295,7 +356,9 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                                     </Typography>
                                 </Box>
                             )}
-                        {(inputType === 'video' || inputType === 'audio') &&
+                        {(inputType === 'video' ||
+                            inputType === 'audio' ||
+                            inputType === 'voice') &&
                             previewUrl &&
                             config.renderPreview(previewUrl)}
                     </Box>
@@ -309,6 +372,8 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                             return [ProjectType.Audio]
                         case 'text':
                             return [ProjectType.Text]
+                        case 'voice':
+                            return [ProjectType.Audio, ProjectType.Video]
                         default:
                             return []
                     }
@@ -331,6 +396,9 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                 )
         }
     }
+    // which tabs to show
+    const modes: InputMode[] =
+        inputType === 'text' ? ['text', 'upload', 'mlvt'] : ['upload', 'mlvt']
 
     return (
         <Box>
@@ -353,15 +421,17 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                 fullWidth
                 sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}
             >
-                <StyledToggleButton
-                    value={config.firstMode.mode}
-                    aria-label={config.firstMode.mode}
-                >
-                    {config.firstMode.label}
-                </StyledToggleButton>
-                <StyledToggleButton value="mlvt" aria-label="browse mlvt">
-                    Browse MLVT
-                </StyledToggleButton>
+                {modes.map((mode) => (
+                    <StyledToggleButton
+                        key={mode}
+                        value={mode}
+                        aria-label={modeLabels[mode]}
+                    >
+                        {mode === config.firstMode.mode
+                            ? config.firstMode.label
+                            : modeLabels[mode]}
+                    </StyledToggleButton>
+                ))}
             </ToggleButtonGroup>
 
             {renderInput()}

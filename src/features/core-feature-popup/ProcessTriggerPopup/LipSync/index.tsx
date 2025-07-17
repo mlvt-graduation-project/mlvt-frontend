@@ -54,9 +54,6 @@ export const LipsyncPopup: React.FC<LipsyncPopupProps> = ({
                     if (data.videoViewState === 'browse' && data.MLVTVideo) {
                         return data.MLVTVideo.id
                     }
-                    if (data.videoViewState === 'url') {
-                        throw new Error('URL video upload not implemented yet.')
-                    }
                     throw new Error('No valid video source provided.')
                 })()
 
@@ -71,9 +68,7 @@ export const LipsyncPopup: React.FC<LipsyncPopupProps> = ({
                     if (data.audioViewState === 'browse' && data.MLVTAudio) {
                         return data.MLVTAudio.id
                     }
-                    if (data.audioViewState === 'url') {
-                        throw new Error('URL audio upload not implemented yet.')
-                    }
+
                     throw new Error('No valid audio source provided.')
                 })()
 

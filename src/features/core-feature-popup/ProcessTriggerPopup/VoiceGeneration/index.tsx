@@ -127,22 +127,23 @@ export const VoiceGenerationPopup: React.FC<VoiceGenerationPopupProps> = ({
                     content: 'Generating voice...',
                 }))
 
-                /*let voiceId: number | undefined = undefined;
-                let voiceName: string | undefined = undefined;
-
-                if (typeof voiceSource === "number") {
-                    voiceId = voiceSource;
+                let audioId: number
+                if (typeof voiceSource === 'number') {
+                    // voiceSource is an existing audio file ID
+                    audioId = await generateVoice(textId, {
+                        audioId: voiceSource,
+                    })
                 } else {
-                    voiceName = voiceSource;
-                }*/
+                    // build-in voices aren’t supported by this endpoint yet
+                    throw new Error(
+                        `Build-in voice "${voiceSource}" not supported for TTS.`,
+                    )
+                }
 
-                await generateVoice(textId)
-
-                // --- Step 5: Success ---
                 setNotification({
                     isOpen: true,
                     status: 'success',
-                    content: 'Data upload successfully! 🎉',
+                    content: `Voice generation started! Audio ID: ${audioId}`,
                 })
             } catch (error) {
                 console.error('Voice generation process failed:', error)

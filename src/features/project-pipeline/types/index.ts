@@ -8,14 +8,12 @@ export enum PipelineType {
 
 // Represents the state of all possible input fields
 export interface PipelineInputs {
-    video?: string | File | number | null
-    audio?: string | File | number | null
+    video?: File | number | null
+    audio?: File | number | null
     text?: string | File | number | null
     sourceLanguage?: string
     targetLanguage?: string
-    language?: string // For single-language contexts
-    voice?: 'build_in' | 'custom'
-    buildInVoiceId?: string
+    language?: string
     customVoiceFile?: File | null
     model?: string
 }
@@ -54,10 +52,22 @@ export interface TextTranslationResult {
     progressData: PipelineProgress
 }
 
+export interface LipSynchronizationResult {
+    pipelineType: PipelineType.LipSynchronization
+    progressData: PipelineProgress
+}
+
+export interface VoiceGenerationResult {
+    pipelineType: PipelineType.VoiceGeneration
+    progressData: PipelineProgress
+}
+
 export type PipelineResult =
     | VideoTranslationResult
     | TextGenerationResult
     | TextTranslationResult
+    | VoiceGenerationResult
+    | LipSynchronizationResult
 
 // The complete state for our page
 export interface PipelineState {

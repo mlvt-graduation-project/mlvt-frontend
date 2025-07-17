@@ -10,30 +10,22 @@ import {
     RawVideo,
 } from '../../../../../types/Project'
 import { S3Folder } from '../../../../../types/S3FolderStorage'
-import { TranslateLanguage } from '../../../../../types/Translation'
 import { uploadAudio } from '../../../../../utils/ProcessTriggerPopup/AudioService'
 import { checkValidGenerate } from '../../../../../utils/ProcessTriggerPopup/CheckValidGenerate'
-import { getLanguageCode } from '../../../../../utils/ProcessTriggerPopup/VideoPopup.utils'
 import { uploadVideo } from '../../../../../utils/ProcessTriggerPopup/VideoService'
 import { BrowseFile } from '../../BaseComponent/BrowseMLVTFile'
 import ChangeViewBox from '../../BaseComponent/ChangeView'
 import { GenerateButton } from '../../BaseComponent/GenerateButton'
-import { SingleOptionBox } from '../../BaseComponent/SingleOptionBox'
 import { UploadFileFromDevice } from '../../BaseComponent/UploadFileFromDevice'
-
-const modelList = ['Model 1', 'Model 2', 'Model 3']
-type modelType = (typeof modelList)[number]
 export interface GenerateLipsyncData {
-    videoViewState: 'upload' | 'url' | 'browse'
+    videoViewState: 'upload' | 'browse'
     deviceVideo: File | null
     MLVTVideo: RawVideo | null
     videoData: VideoData
-    audioViewState: 'upload' | 'url' | 'browse'
+    audioViewState: 'upload' | 'browse'
     deviceAudio: File | null
     MLVTAudio: RawAudio | null
     audioData: AudioData
-    audioLanguage: TranslateLanguage | null
-    model: modelType | null
 }
 
 interface DialogContentProps {
@@ -44,17 +36,13 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const { data: userDetails } = useGetUserDetails()
     const userId = userDetails?.user.id.toString() || ''
     const parsedUserId = userId ? parseInt(userId) : 0
-    const [model, setModel] = useState<modelType>(modelList[0])
-    const [audioLanguage, setAudioLanguage] = useState<TranslateLanguage>(
-        TranslateLanguage.English,
-    )
 
-    const [videoViewState, setVideoViewState] = useState<
-        'upload' | 'url' | 'browse'
-    >('upload')
-    const [audioViewState, setAudioViewState] = useState<
-        'upload' | 'url' | 'browse'
-    >('upload')
+    const [videoViewState, setVideoViewState] = useState<'upload' | 'browse'>(
+        'upload',
+    )
+    const [audioViewState, setAudioViewState] = useState<'upload' | 'browse'>(
+        'upload',
+    )
 
     const [deviceVideo, setDeviceVideo] = useState<File | null>(null)
     const [deviceAudio, setDeviceAudio] = useState<File | null>(null)
@@ -80,22 +68,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         user_id: parsedUserId,
         duration: 0,
     })
-
-    const handleChangeModel = useCallback((model: string) => {
-        if (modelList.includes(model as modelType)) {
-            setModel(model as modelType)
-        }
-    }, [])
-
-    const handleChangeAudioLanguage = (value: string) => {
-        if (
-            Object.values(TranslateLanguage).includes(
-                value as TranslateLanguage,
-            )
-        ) {
-            setAudioLanguage(value as TranslateLanguage)
-        }
-    }
 
     const handleChangeVideoData = useCallback((update: Partial<VideoData>) => {
         setVideoData((prevData) => ({
@@ -136,21 +108,20 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     }
 
     const changeVideoViewState = (view: string) => {
-        if (['upload', 'url', 'browse'].includes(view)) {
-            setVideoViewState(view as 'upload' | 'url' | 'browse')
+        if (['upload', 'browse'].includes(view)) {
+            setVideoViewState(view as 'upload' | 'browse')
         }
     }
 
     const changeAudioViewState = (view: string) => {
-        if (['upload', 'url', 'browse'].includes(view)) {
-            setAudioViewState(view as 'upload' | 'url' | 'browse')
+        if (['upload', 'browse'].includes(view)) {
+            setAudioViewState(view as 'upload' | 'browse')
         }
     }
 
     const uploadAudioFromDevice = useCallback(async (): Promise<number> => {
-        if (deviceAudio && audioLanguage) {
+        if (deviceAudio) {
             try {
-                handleChangeAudioData({ lang: getLanguageCode(audioLanguage) })
                 const audioId = await uploadAudio(deviceAudio, audioData)
                 return audioId
             } catch (error) {
@@ -159,7 +130,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         } else {
             throw new Error('Failed uploading Audio file to Server')
         }
-    }, [deviceAudio, audioData, handleChangeAudioData, audioLanguage])
+    }, [deviceAudio, audioData])
 
     const uploadVideoFromDevice = useCallback(async (): Promise<number> => {
         if (deviceVideo) {
@@ -225,7 +196,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                         selectedFile={deviceAudio}
                         handleChangeSelectedFile={handleChangeDeviceAudio}
                         handleChangeFileData={handleChangeAudioData}
-                        fileTypeList={[AudioFileType.MP3]}
+                        fileTypeList={[AudioFileType.MP3, AudioFileType.WAV]}
                     />
                 ),
             },
@@ -257,9 +228,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     useEffect(() => {
         if (
             !checkValidGenerate(audioViewState, deviceAudio, MLVTAudio) ||
-            !checkValidGenerate(videoViewState, deviceVideo, MLVTVideo) ||
-            !audioLanguage ||
-            !model
+            !checkValidGenerate(videoViewState, deviceVideo, MLVTVideo)
         ) {
             setDisableGenerate(true)
         } else {
@@ -270,8 +239,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         audioViewState,
         videoViewState,
         deviceVideo,
-        audioLanguage,
-        model,
         MLVTAudio,
         MLVTVideo,
     ])
@@ -297,8 +264,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             deviceAudio,
             MLVTAudio,
             audioData,
-            audioLanguage,
-            model,
         }
         // Call the function passed down from the parent
         onGenerate(generationData)
@@ -312,8 +277,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         deviceAudio,
         MLVTAudio,
         audioData,
-        audioLanguage,
-        model,
     ])
 
     return (
@@ -369,59 +332,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                     setViewState={changeAudioViewState}
                 />
                 {activeAudioComponent}
-            </Box>
-
-            {/* Choosing audio language and model section */}
-            <Box
-                marginTop="10px"
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    width: '100%',
-                }}
-            >
-                {/* Choosing audio language seciton */}
-                <Box paddingX={1.5}>
-                    <Typography
-                        variant="body2"
-                        sx={{
-                            marginBottom: '10px',
-                            marginTop: '15px',
-                            fontFamily: 'Poppins, sans-serif',
-                        }}
-                    >
-                        Audio language:
-                    </Typography>
-                    <SingleOptionBox
-                        choices={[
-                            TranslateLanguage.English,
-                            TranslateLanguage.Vietnamese,
-                            TranslateLanguage.French,
-                            TranslateLanguage.Japanese,
-                        ]}
-                        handleChangeOption={handleChangeAudioLanguage}
-                        value={TranslateLanguage.English}
-                    />
-                </Box>
-                {/* choosing model section */}
-                <Box>
-                    <Typography
-                        variant="body2"
-                        sx={{
-                            marginBottom: '10px',
-                            marginTop: '15px',
-                            fontFamily: 'Poppins, sans-serif',
-                        }}
-                    >
-                        Model:
-                    </Typography>
-                    <SingleOptionBox
-                        choices={modelList}
-                        handleChangeOption={handleChangeModel}
-                        value={modelList[0]}
-                    />
-                </Box>
             </Box>
 
             {/* Generate button */}

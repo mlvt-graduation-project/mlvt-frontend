@@ -4,7 +4,6 @@ import { SingleOptionBox } from 'src/features/core-feature-popup/ProcessTriggerP
 import { TranslateLanguage } from 'src/types/Translation'
 import { PipelineContext } from '../../context/PipelineContext'
 import MultiSourceInput from '../shared/MultiSourceInput'
-import VoiceSelectionInput from '../shared/VoiceSelectionInput'
 
 const VoiceGenerationForm = () => {
     const { state, dispatch } = useContext(PipelineContext)
@@ -45,7 +44,22 @@ const VoiceGenerationForm = () => {
             </Box>
 
             <Divider sx={{ borderColor: 'divider', my: 2 }} />
-            <VoiceSelectionInput />
+            <Box>
+                <Typography
+                    variant="body2"
+                    fontFamily={'Poppins, sans-serif'}
+                    color={'text.secondary'}
+                    fontWeight={500}
+                >
+                    Voice Selection
+                </Typography>
+
+                <Box sx={{ pt: 1 }}>
+                    <Box>
+                        <MultiSourceInput label="" field="customVoiceFile" inputType="voice" />
+                    </Box>
+                </Box>
+            </Box>
         </Stack>
     )
 }

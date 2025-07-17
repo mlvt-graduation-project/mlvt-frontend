@@ -35,27 +35,44 @@ export const translateText = async (
 }
 
 // Service for VoiceGeneration
-export const generateVoice = async (textId: number) => {
+export const generateVoice = async (
+    transcriptionId: number,
+    opts: { videoId?: number; audioId?: number },
+): Promise<number> => {
+    const { videoId, audioId } = opts
+    if (videoId == null && audioId == null) {
+        throw new Error(
+            'generateVoice: you must pass either videoId or audioId',
+        )
+    }
+
     try {
-        const postVoiceGenerationResponse = await postAudioGeneration(textId)
-        if (!checkSuccessResponse(postVoiceGenerationResponse.status)) {
-            throw new Error('Error when generate voice')
+        const resp = await postAudioGeneration(transcriptionId, opts)
+        if (!checkSuccessResponse(resp.status)) {
+            throw new Error(
+                `Voice generation failed with status ${resp.status}`,
+            )
         }
-    } catch (error) {
-        throw error
+        // Assuming your 202 response body is { message: string; id: number }
+        const { id } = resp.data as { message: string; id: number }
+        return id
+    } catch (err) {
+        console.error('generateVoice error:', err)
+        throw err
     }
 }
 
 // Service for Lipsync
-export const lipSync = async (videoId: number, audioId: number) => {
-    try {
-        const lipSyncRespsonse = await postLipSync(videoId, audioId)
-        if (!checkSuccessResponse(lipSyncRespsonse.status)) {
-            throw new Error('Error when lipSync')
-        }
-    } catch (error) {
-        throw error
+export const lipSync = async (
+    videoId: number,
+    audioId: number,
+): Promise<JobCreationResponse> => {
+    const lipSyncRespsonse = await postLipSync(videoId, audioId)
+    if (!checkSuccessResponse(lipSyncRespsonse.status)) {
+        throw new Error('Error when lipSync')
     }
+
+    return lipSyncRespsonse.data as JobCreationResponse
 }
 
 // Service for extract text from video (TextGeneration)
