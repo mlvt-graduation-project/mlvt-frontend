@@ -6,6 +6,7 @@ import ChangeViewBox from '../../ProcessTriggerPopup/BaseComponent/ChangeView'
 import { InfoNav } from '../BaseComponent/InfomationNavBar'
 import { MainProjectOutput } from '../BaseComponent/MainProjectOutput'
 import { OriginalVideo } from '../BaseComponent/OriginalVideo'
+import { SharePopup } from 'src/components/SharePopup'
 
 interface ContentProps {
     inputProject: LipSyncProject
@@ -19,6 +20,16 @@ export const LipSyncContent: React.FC<ContentProps> = ({ inputProject }) => {
     const [resultVideoURL, setResultVideoURL] = useState<string | null>(null)
     const [videoStatus, setVideoStatus] = useState<string | null>(null)
     const [imageUrl, setInputImageUrl] = useState<string | null>(null)
+
+    const [isSharePopupOpen, setSharePopupOpen] = useState(false);
+    
+    const handleShare = () => {
+        setSharePopupOpen(true);
+    };
+
+    const handleCloseSharePopup = () => {
+        setSharePopupOpen(false);
+    };
 
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -80,11 +91,17 @@ export const LipSyncContent: React.FC<ContentProps> = ({ inputProject }) => {
 
     return (
         <>
-            <InfoNav />
+            <InfoNav onShare={handleShare} />
             <Box sx={{ marginTop: '15px', height: '31rem' }}>
                 <ChangeViewBox Views={Views} setViewState={changeViewState} />
                 <Box sx={{ marginTop: '20px' }}>{ActiveComponent}</Box>
             </Box>
+
+            <SharePopup
+                open={isSharePopupOpen}
+                onClose={handleCloseSharePopup}
+                url={window.location.href} 
+            />
         </>
     )
 }

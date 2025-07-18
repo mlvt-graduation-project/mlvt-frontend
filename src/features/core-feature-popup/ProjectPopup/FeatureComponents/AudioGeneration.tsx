@@ -7,6 +7,7 @@ import { RelatedOutput } from '../BaseComponent/RelatedOutput'
 import { getAudioById } from '../../../../api/audio.api'
 import { AudioGenerationProject } from '../../../../types/Project'
 import { getTextContent } from '../../../../utils/ProcessTriggerPopup/TextService'
+import { SharePopup } from 'src/components/SharePopup'
 
 interface ContentProps {
     inputProject: AudioGenerationProject
@@ -24,6 +25,16 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
         string | null
     >(null)
     const [resultAudio, setResultAudio] = useState<string | null>(null)
+
+    const [isSharePopupOpen, setSharePopupOpen] = useState(false);
+
+    const handleShare = () => {
+        setSharePopupOpen(true);
+    };
+
+    const handleCloseSharePopup = () => {
+        setSharePopupOpen(false);
+    };
 
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -106,7 +117,9 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
 
     return (
         <>
-            <InfoNav />
+            <InfoNav
+                onShare={handleShare} 
+            />
             <Box
                 sx={{
                     mt: '10px',
@@ -123,6 +136,12 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
                 </Box>
                 {ActiveComponent}
             </Box>
+
+            <SharePopup
+                open={isSharePopupOpen}
+                onClose={handleCloseSharePopup}
+                url={window.location.href} // Lấy URL hiện tại của trang
+            />
         </>
     )
 }

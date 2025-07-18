@@ -7,11 +7,17 @@ import { useTheme } from "@mui/material/styles";
 interface InfoNavProps {
     CreatedAt?: Date | string;
     Language?: string;
+    onShare?: () => void;
+    onReplay?: () => void;
+    onDelete?: () => void;
 }
 
 export const InfoNav: React.FC<InfoNavProps> = ({
     CreatedAt = "None-detected",
     Language = "None-detected",
+    onShare,
+    onReplay,
+    onDelete,
 }) => {
     const theme = useTheme();
     return (
@@ -29,7 +35,7 @@ export const InfoNav: React.FC<InfoNavProps> = ({
                 <Box
                     sx={{
                         display: "flex",
-                        flexDirection: "rpw",
+                        flexDirection: "row",
                         gap: 1,
                         backgroundColor: theme.palette.action.hover,
                         padding: "10px 10px",
@@ -119,18 +125,21 @@ export const InfoNav: React.FC<InfoNavProps> = ({
                 <IconButton
                     size="medium"
                     sx={{ color: theme.palette.text.primary }}
+                    onClick={onShare}
                 >
                     <ShareIcon />
                 </IconButton>
                 <IconButton
                     size="medium"
                     sx={{ color: theme.palette.text.primary }}
+                    onClick={onReplay}
                 >
                     <ReplayIcon />
                 </IconButton>
                 <IconButton
                     size="medium"
                     sx={{ color: theme.palette.text.primary }}
+                    onClick={onDelete}
                 >
                     <DeleteIcon />
                 </IconButton>

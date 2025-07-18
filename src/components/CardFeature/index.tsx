@@ -26,15 +26,22 @@ import { mapStatusToColor } from "../../utils/mapProjectStatus.util";
 interface CardFeatureProps {
     project: Project;
     onclick: () => void;
+    onUpdateTitle: (projectId: string, newTitle: string) => Promise<void>;
 }
 
-const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
+const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick, onUpdateTitle }) => {
     const theme = useTheme();
     const [isBookmarked, setIsBookmarked] = React.useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [title, setTitle] = useState(project.title);
+    const [isSaving, setIsSaving] = useState(false);
 
-    const handleEditClick = () => {
+    useEffect(() => {
+        setTitle(project.title);
+    }, [project.title]);
+
+    const handleEditClick = (e: React.MouseEvent) => {
+        e.stopPropagation(); // Prevent the main card click event
         setIsEditing(true);
     };
 
@@ -42,19 +49,45 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
         setTitle(e.target.value);
     };
 
+    const handleSaveTitle = async () => {
+        // Don't make an API call if the title hasn't changed
+        if (title.trim() === project.title) {
+            setIsEditing(false);
+            return;
+        }
+
+        setIsSaving(true);
+        try {
+            // Call the async function passed from the parent
+            await onUpdateTitle(project.id.toString(), title.trim());
+            // If the API call succeeds, the parent's state will update,
+            // which will re-render this component with the new project prop.
+        } catch (error) {
+            console.error("Failed to update title:", error);
+            // If API call fails, revert the title to the original
+            setTitle(project.title);
+        } finally {
+            // Whether it succeeded or failed, stop the saving process.
+            setIsSaving(false);
+            setIsEditing(false);
+        }
+    };
+
     const handleTitleBlur = () => {
-        setIsEditing(false);
-        // onUpdateTitle(project.id, title); // Call the update function to save changes
+        handleSaveTitle();
     };
 
     const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
+            handleSaveTitle();
+        } else if (e.key === "Escape") {
             setIsEditing(false);
-            // onUpdateTitle(project.id, title); // Save changes on Enter key press
+            setTitle(project.title); // Revert changes on Escape
         }
     };
 
     const handleClick = () => {
+        if (isEditing) return;
         onclick();
     };
 
@@ -74,6 +107,7 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
     return (
         <Card
             variant="outlined"
+            onClick={handleClick}
             sx={{
                 width: "90%",
                 aspectRatio: 25 / 22,

@@ -64,6 +64,8 @@ export const BasePopup: FC<BasePopupProps> = ({
         }
     };
 
+    console.log("Child component in BasePopup:", childComponent);
+
     return (
         <Dialog
             open={isOpen}

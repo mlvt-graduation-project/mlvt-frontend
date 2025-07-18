@@ -219,9 +219,9 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
             {selectedProject && (
                 <ProcessedVideoPopUp
                     inputObject={project}
+                    type={project.type_project}
                     isOpen={!!selectedProject}
                     onClose={handleCloseViewContent}
-                    type={project.type_project}
                     hideNavBar={true}
                     hideDownloadButton={true}
                 />

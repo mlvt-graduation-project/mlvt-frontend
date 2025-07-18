@@ -5,9 +5,13 @@ import {
     Pagination,
     Select,
     Typography,
+    AlertColor,
+    Alert,
+    Snackbar
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import React, { useEffect, useState } from 'react'
+import { updateProjectTitle } from 'src/api/project.api'
 import CardFeature from 'src/components/CardFeature'
 import SearchBar from 'src/components/SearchBar'
 import { ProcessedVideoPopUp } from 'src/features/core-feature-popup/ProjectPopup'
@@ -24,6 +28,11 @@ const ProjectSection = () => {
     const theme = useTheme()
     const { data: userDetails } = useGetUserDetails()
     const userId = userDetails?.user.id.toString() || ''
+    const [snackbar, setSnackbar] = useState<{
+        open: boolean;
+        message: string;
+        severity: AlertColor;
+    } | null>(null);
 
     const [getProjectRequest, setGetProjectRequest] =
         useState<GetAllProjectRequest>({
@@ -90,6 +99,30 @@ const ProjectSection = () => {
         setSelectedProject(project)
         setIsPopUpOpen(true)
     }
+
+    const handleUpdateProjectTitle = async (projectId: string, newTitle: string) => {
+        try {
+            await updateProjectTitle(projectId, newTitle);
+
+            // On success, update the local state to show the change immediately
+            setDisplayProjects(currentProjects =>
+                currentProjects.map(p =>
+                    p.id === projectId ? { ...p, title: newTitle } : p
+                )
+            );
+            
+            setSnackbar({ open: true, message: 'Project title updated successfully!', severity: 'success' });
+        } catch (error) {
+            console.error("Failed to update project title:", error);
+            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+            setSnackbar({ open: true, message: `Update failed: ${errorMessage}`, severity: 'error' });
+            // The title will revert automatically in the CardFeature component on error.
+        }
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbar(null);
+    };
 
     const handleClosePopUp = () => {
         setIsPopUpOpen(false)
@@ -265,6 +298,7 @@ const ProjectSection = () => {
                         key={project.type_project + project.id}
                         project={project}
                         onclick={() => handleCardClick(project)}
+                        onUpdateTitle={handleUpdateProjectTitle}
                     />
                 ))}
             </Box>
@@ -299,6 +333,23 @@ const ProjectSection = () => {
                     onClose={handleClosePopUp}
                     type={selectedProject.type_project}
                 />
+            )}
+
+            {snackbar && (
+                <Snackbar
+                    open={snackbar.open}
+                    autoHideDuration={5000}
+                    onClose={handleCloseSnackbar}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                >
+                    <Alert
+                        onClose={handleCloseSnackbar}
+                        severity={snackbar.severity}
+                        sx={{ width: '100%', fontWeight: 600 }}
+                    >
+                        {snackbar.message}
+                    </Alert>
+                </Snackbar>
             )}
         </Box>
     )

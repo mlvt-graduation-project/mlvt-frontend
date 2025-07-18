@@ -9,6 +9,9 @@ import {
     SxProps,
     Theme,
     Typography,
+    Snackbar,
+    Alert,
+    AlertColor
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -27,6 +30,7 @@ import {
 import { ProjectStatus } from 'src/types/ProjectStatus'
 import { getAllProgressProjects } from 'src/utils/project.utils'
 import { ProcessedVideoPopUp } from '../core-feature-popup/ProjectPopup'
+import { updateProjectTitle } from 'src/api/project.api'
 
 interface categoryProjectType {
     label: string
@@ -244,6 +248,13 @@ const Storage = () => {
     const [selectedProject, setSelectedProject] = useState<Project | null>(null)
     const [isPopUpOpen, setIsPopUpOpen] = useState(false)
     const [totalCount, setTotalCount] = useState(0)
+
+    const [snackbar, setSnackbar] = useState<{
+        open: boolean;
+        message: string;
+        severity: AlertColor;
+    } | null>(null);
+
     const currentPage =
         Math.floor(getProjectRequest.offset / getProjectRequest.limit) + 1
     const totalPages = Math.ceil(totalCount / getProjectRequest.limit)
@@ -257,6 +268,33 @@ const Storage = () => {
             }))
         }
     }
+
+
+    // --- ADDED: Handler to update a project's title ---
+    const handleUpdateProjectTitle = async (projectId: string, newTitle: string) => {
+        try {
+            console.log("Updating project title:", projectId, newTitle);
+            await updateProjectTitle(projectId, newTitle);
+
+            // On API success, update the local state to show the change immediately.
+            setDisplayProjects(currentProjects =>
+                currentProjects.map(p =>
+                    p.id === projectId ? { ...p, title: newTitle } : p
+                )
+            );
+            
+            setSnackbar({ open: true, message: 'Project title updated successfully!', severity: 'success' });
+        } catch (error) {
+            console.error("Failed to update project title:", error);
+            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+            setSnackbar({ open: true, message: `Update failed: ${errorMessage}`, severity: 'error' });
+            // The CardFeature component will handle reverting the title visually on error.
+        }
+    };
+    
+    const handleCloseSnackbar = () => {
+        setSnackbar(null);
+    };
 
     useEffect(() => {
         setGetProjectRequest((prev) => ({
@@ -572,6 +610,7 @@ const Storage = () => {
                                 <CardFeature
                                     project={project}
                                     onclick={() => handleCardClick(project)}
+                                    onUpdateTitle={handleUpdateProjectTitle}
                                 />
                             </Grid>
                         ))}
@@ -608,6 +647,23 @@ const Storage = () => {
                     onClose={handleClosePopUp}
                     type={selectedProject.type_project}
                 />
+            )}
+
+            {snackbar && (
+                <Snackbar
+                    open={snackbar.open}
+                    autoHideDuration={5000}
+                    onClose={handleCloseSnackbar}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                >
+                    <Alert
+                        onClose={handleCloseSnackbar}
+                        severity={snackbar.severity}
+                        sx={{ width: '100%', fontWeight: 600 }}
+                    >
+                        {snackbar.message}
+                    </Alert>
+                </Snackbar>
             )}
         </Layout>
     )

@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 import { TextView } from "../BaseComponent/RelatedOutput/CustomizedTextBox";
 // import { Text } from '../../../types/Response/Text';
 import { getTextContent } from "../../../../utils/ProcessTriggerPopup/TextService";
+import { SharePopup } from "src/components/SharePopup";
 
 interface ContentProps {
     textId: number;
@@ -25,6 +26,17 @@ export const RawTextContent: React.FC<ContentProps> = ({
     );
     // const [textInfomation, setTextInfomation] = useState<Text | null>(null);
 
+    const [isSharePopupOpen, setSharePopupOpen] = useState(false);
+    
+    const handleShare = () => {
+        console.log("handleShare function was called! Setting popup to open.");
+        setSharePopupOpen(true);
+    };
+
+    const handleCloseSharePopup = () => {
+        setSharePopupOpen(false);
+    };
+
     useEffect(() => {
         const fetchTextData = async () => {
             try {
@@ -41,7 +53,7 @@ export const RawTextContent: React.FC<ContentProps> = ({
 
     return (
         <>
-            {!hideNavBar && <InfoNav />}
+            {!hideNavBar && <InfoNav onShare={handleShare} />}
             <Box
                 sx={{
                     display: "flex",
@@ -62,6 +74,12 @@ export const RawTextContent: React.FC<ContentProps> = ({
                     disableDownload={hideDownloadButton}
                 />
             </Box>
+
+            <SharePopup
+                open={isSharePopupOpen}
+                onClose={handleCloseSharePopup}
+                url={window.location.href} 
+            />
         </>
     );
 };

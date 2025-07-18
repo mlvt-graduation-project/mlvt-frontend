@@ -8,6 +8,7 @@ import ChangeViewBox from '../../ProcessTriggerPopup/BaseComponent/ChangeView'
 import { InfoNav } from '../BaseComponent/InfomationNavBar'
 import { OriginalVideo } from '../BaseComponent/OriginalVideo'
 import { RelatedOutput } from '../BaseComponent/RelatedOutput'
+import { SharePopup } from 'src/components/SharePopup'
 
 interface ContentProps {
     inputProject: TextGenerationProject
@@ -22,6 +23,17 @@ export const TextGenerationContent: React.FC<ContentProps> = ({
     const [imageUrl, setImageUrl] = useState<string | null>(null)
     const [text, setText] = useState<string | null>(null)
     const [videoUrl, setVideoUrl] = useState<string | null>(null)
+
+    const [isSharePopupOpen, setSharePopupOpen] = useState(false);
+    
+    const handleShare = () => {
+        console.log("handleShare function was called! Setting popup to open.");
+        setSharePopupOpen(true);
+    };
+
+    const handleCloseSharePopup = () => {
+        setSharePopupOpen(false);
+    };
 
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -90,7 +102,7 @@ export const TextGenerationContent: React.FC<ContentProps> = ({
 
     return (
         <>
-            <InfoNav />
+            <InfoNav onShare={handleShare} />
             <Box
                 sx={{
                     mt: '10px',
@@ -107,6 +119,12 @@ export const TextGenerationContent: React.FC<ContentProps> = ({
                 </Box>
                 {ActiveComponent}
             </Box>
+
+            <SharePopup
+                open={isSharePopupOpen}
+                onClose={handleCloseSharePopup}
+                url={window.location.href} 
+            />
         </>
     )
 }

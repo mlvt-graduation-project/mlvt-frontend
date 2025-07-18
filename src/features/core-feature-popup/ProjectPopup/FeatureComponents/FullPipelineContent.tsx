@@ -9,6 +9,7 @@ import { InfoNav } from '../BaseComponent/InfomationNavBar'
 import { MainProjectOutput } from '../BaseComponent/MainProjectOutput'
 import { OriginalVideo } from '../BaseComponent/OriginalVideo'
 import { RelatedOutput } from '../BaseComponent/RelatedOutput'
+import { SharePopup } from 'src/components/SharePopup'
 
 interface ContentProps {
     inputProject: FullPipelineProject
@@ -27,6 +28,16 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
     const [extractedText, setExtractedText] = useState<string | null>(null)
     const [translatedText, setTranslatedText] = useState<string | null>(null)
     const [translatedAudio, setTranslatedAudio] = useState<string | null>(null)
+
+    const [isSharePopupOpen, setSharePopupOpen] = useState(false);
+    
+    const handleShare = () => {
+        setSharePopupOpen(true);
+    };
+
+    const handleCloseSharePopup = () => {
+        setSharePopupOpen(false);
+    };
 
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -190,7 +201,7 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
                 minHeight: '35rem',
             }}
         >
-            <InfoNav />
+            <InfoNav onShare={handleShare} />
             <Box
                 sx={{
                     mt: '10px',
@@ -207,6 +218,12 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
                 </Box>
                 {ActiveComponent}
             </Box>
+
+            <SharePopup
+                open={isSharePopupOpen}
+                onClose={handleCloseSharePopup}
+                url={window.location.href} // Share the current page URL
+            />
         </Box>
     )
 }

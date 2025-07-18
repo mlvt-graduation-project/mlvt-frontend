@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getOneVideoById } from "../../../../api/video.api";
 import { InfoNav } from "../BaseComponent/InfomationNavBar";
 import { OriginalVideo } from "../BaseComponent/OriginalVideo";
+import { SharePopup } from "src/components/SharePopup";
 
 interface ContentProps {
     videoId: number;
@@ -13,6 +14,17 @@ export const RawVideoContent: React.FC<ContentProps> = ({
     hideNavBar = false,
 }) => {
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
+
+    const [isSharePopupOpen, setSharePopupOpen] = useState(false);
+        
+    const handleShare = () => {
+        console.log("handleShare function was called! Setting popup to open.");
+        setSharePopupOpen(true);
+    };
+
+    const handleCloseSharePopup = () => {
+        setSharePopupOpen(false);
+    };
 
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -29,8 +41,14 @@ export const RawVideoContent: React.FC<ContentProps> = ({
 
     return (
         <>
-            {!hideNavBar && <InfoNav />}
+            {!hideNavBar && <InfoNav onShare={handleShare} />}
             <OriginalVideo videoUrl={videoUrl}></OriginalVideo>
+
+            <SharePopup
+                open={isSharePopupOpen}
+                onClose={handleCloseSharePopup}
+                url={window.location.href} 
+            />
         </>
     );
 };

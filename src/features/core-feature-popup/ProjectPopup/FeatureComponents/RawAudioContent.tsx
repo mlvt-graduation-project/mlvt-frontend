@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import { InfoNav } from "../BaseComponent/InfomationNavBar";
 import { CustomAudioPlayer } from "../BaseComponent/RelatedOutput/CustomizedVideoBox";
 import { getAudioById } from "../../../../api/audio.api";
+import { SharePopup } from "src/components/SharePopup";
 
 interface ContentProps {
     audioId: number;
@@ -14,6 +15,17 @@ export const RawAudioContent: React.FC<ContentProps> = ({
     hideNavBar = false,
 }) => {
     const [audioUrl, setAudioUrl] = useState<string | null>(null);
+
+    const [isSharePopupOpen, setSharePopupOpen] = useState(false);
+
+    const handleShare = () => {
+        console.log("handleShare function was called! Setting popup to open.");
+        setSharePopupOpen(true);
+    };
+
+    const handleCloseSharePopup = () => {
+        setSharePopupOpen(false);
+    };
 
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -30,7 +42,7 @@ export const RawAudioContent: React.FC<ContentProps> = ({
 
     return (
         <>
-            {!hideNavBar && <InfoNav />}
+            {!hideNavBar && <InfoNav onShare={handleShare} />}
 
             <Box
                 sx={{
@@ -51,6 +63,12 @@ export const RawAudioContent: React.FC<ContentProps> = ({
                     disableDownload={true}
                 />
             </Box>
+
+            <SharePopup
+                open={isSharePopupOpen}
+                onClose={handleCloseSharePopup}
+                url={window.location.href} 
+            />
         </>
     );
 };
