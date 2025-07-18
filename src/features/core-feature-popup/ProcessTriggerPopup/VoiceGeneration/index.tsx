@@ -96,10 +96,10 @@ export const VoiceGenerationPopup: React.FC<VoiceGenerationPopupProps> = ({
                             )
                         }
                         if (
-                            data.audioViewState === 'build-in' &&
-                            data.buildinVoice
+                            data.audioViewState === 'browse' &&
+                            data.MLVTVoice
                         ) {
-                            return data.buildinVoice
+                            return data.MLVTVoice.id
                         }
                         throw new Error('No valid voice source provided.')
                     })()

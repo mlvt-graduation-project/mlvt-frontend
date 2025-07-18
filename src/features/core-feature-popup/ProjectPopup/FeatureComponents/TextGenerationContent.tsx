@@ -1,9 +1,10 @@
 import { Box } from '@mui/material'
 import React, { useEffect, useMemo, useState } from 'react'
+import { getLanguageFromCode } from 'src/utils/ProcessTriggerPopup/VideoPopup.utils'
 import { getTextFileContent } from '../../../../api/aws.api'
-import { getTextDownloadUrl } from '../../../../api/text.api'
+import { getTextById } from '../../../../api/text.api'
 import { getOneVideoById } from '../../../../api/video.api'
-import { TextGenerationProject } from '../../../../types/Project'
+import { NavInfo, TextGenerationProject } from '../../../../types/Project'
 import ChangeViewBox from '../../ProcessTriggerPopup/BaseComponent/ChangeView'
 import { InfoNav } from '../BaseComponent/InfomationNavBar'
 import { OriginalVideo } from '../BaseComponent/OriginalVideo'
@@ -22,13 +23,15 @@ export const TextGenerationContent: React.FC<ContentProps> = ({
     const [imageUrl, setImageUrl] = useState<string | null>(null)
     const [text, setText] = useState<string | null>(null)
     const [videoUrl, setVideoUrl] = useState<string | null>(null)
+    const [navInfo, setNavInfo] = useState<NavInfo>({
+        created_at: inputProject.createdAt,
+        language: 'none-detected',
+    })
 
     useEffect(() => {
         const fetchVideoData = async () => {
             const videoPromise = getOneVideoById(inputProject.original_videoId)
-            const textUrlPromise = getTextDownloadUrl(
-                inputProject.extracted_textId,
-            )
+            const textUrlPromise = getTextById(inputProject.extracted_textId)
 
             try {
                 const videoResponse = await videoPromise
@@ -39,8 +42,16 @@ export const TextGenerationContent: React.FC<ContentProps> = ({
             }
 
             try {
-                const download_url = await textUrlPromise
-                const text = await getTextFileContent(download_url)
+                const textInfo = await textUrlPromise
+                const text = await getTextFileContent(
+                    textInfo.data.download_url,
+                )
+                setNavInfo((prev) => ({
+                    ...prev,
+                    language: getLanguageFromCode(
+                        textInfo.data.transcription.lang,
+                    ),
+                }))
                 setText(text)
             } catch (error) {
                 console.error('Error fetching text content:', error)
@@ -90,7 +101,10 @@ export const TextGenerationContent: React.FC<ContentProps> = ({
 
     return (
         <>
-            <InfoNav />
+            <InfoNav
+                CreatedAt={navInfo.created_at}
+                Language={navInfo.language}
+            />
             <Box
                 sx={{
                     mt: '10px',

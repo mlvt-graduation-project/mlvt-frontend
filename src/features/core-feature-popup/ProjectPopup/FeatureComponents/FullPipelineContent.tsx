@@ -1,5 +1,7 @@
 import { Box } from '@mui/material'
 import React, { useEffect, useMemo, useState } from 'react'
+import { NavInfo } from 'src/types/Project'
+import { getLanguageFromCode } from 'src/utils/ProcessTriggerPopup/VideoPopup.utils'
 import { getAudioById } from '../../../../api/audio.api'
 import { getOneVideoById } from '../../../../api/video.api'
 import { FullPipelineProject } from '../../../../types/Project'
@@ -27,6 +29,10 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
     const [extractedText, setExtractedText] = useState<string | null>(null)
     const [translatedText, setTranslatedText] = useState<string | null>(null)
     const [translatedAudio, setTranslatedAudio] = useState<string | null>(null)
+    const [navInfo, setNavInfo] = useState<NavInfo>({
+        created_at: inputProject.createdAt,
+        language: 'none-detected',
+    })
 
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -66,6 +72,12 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
 
             if (extractedTextResult.status === 'fulfilled') {
                 setExtractedText(extractedTextResult.value[1])
+                setNavInfo((prev) => ({
+                    ...prev,
+                    language: getLanguageFromCode(
+                        extractedTextResult.value[0].lang,
+                    ),
+                }))
             } else {
                 console.error(
                     'FullPipelineContent getTextContent (extracted) failed:',
@@ -190,7 +202,10 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
                 minHeight: '35rem',
             }}
         >
-            <InfoNav />
+            <InfoNav
+                CreatedAt={navInfo.created_at}
+                Language={navInfo.language}
+            />
             <Box
                 sx={{
                     mt: '10px',
