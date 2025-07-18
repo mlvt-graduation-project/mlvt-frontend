@@ -58,6 +58,8 @@ export const executePipeline = async (
                         user_id: userId,
                     }
 
+                    console.log('Video data for upload:', videoData)
+
                     videoId = await uploadVideo(videoFile, videoData)
                 } else {
                     throw new Error(
