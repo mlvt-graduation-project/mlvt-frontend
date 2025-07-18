@@ -1,6 +1,13 @@
 import LinearScaleOutlinedIcon from '@mui/icons-material/LinearScaleOutlined'
 import TokenIcon from '@mui/icons-material/Token'
-import { Alert, AlertProps, Box, Button, Snackbar, Typography } from '@mui/material'
+import {
+    Alert,
+    AlertProps,
+    Box,
+    Button,
+    Snackbar,
+    Typography,
+} from '@mui/material'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CustomButton } from 'src/components/CustomButton'
@@ -49,7 +56,7 @@ const TokenRetrieve = () => {
         if (!userId) return
         setLoading(true)
         try {
-            const response = await getDailyToken(userId)
+            const response = await getDailyToken(parseInt(userId))
             if (response) {
                 setSnackbar({
                     open: true,
@@ -142,25 +149,24 @@ const TokenRetrieve = () => {
                 sx={{
                     flex: 1,
                     display: 'flex',
-                    alignItems: 'flex-start',
-                    justifyContent: 'center',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
                     borderRadius: '10px',
                     backgroundColor: (theme) => theme.palette.tertiary.main,
-                    gap: 10,
                     paddingY: 1,
                 }}
             >
                 <img
                     src={PipelineIcon}
                     alt="Pipeline Icon"
-                    style={{ width: '100px', height: '100px', padding: '10px' }}
+                    style={{ width: '200px', height: '110px' }}
                 />
-                <Box>
+                <Box sx={{ flex: 1, textAlign: 'center' }}>
                     <Typography
                         variant="body2"
                         color="text.secondary"
+                        paddingX={5}
                         sx={{ mt: 2, textAlign: 'center' }}
-                        gap={5}
                     >
                         Dive into our video pipeline—generate your script,
                         translate it instantly, and sync the lips
@@ -182,10 +188,11 @@ const TokenRetrieve = () => {
                         fullWidth
                         sx={{
                             mt: 2,
-                            width: '100%',
+                            width: '60%',
                             padding: '10px 20px',
                             fontWeight: '600',
                             fontSize: '1rem',
+                            marginRight: '10px',
                         }}
                     >
                         EXPLORE THE PIPELINE

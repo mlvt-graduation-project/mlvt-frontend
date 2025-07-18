@@ -28,8 +28,6 @@ const VideoTranslationForm = () => {
     const languageChoices = [
         TranslateLanguage.English,
         TranslateLanguage.Vietnamese,
-        TranslateLanguage.French,
-        TranslateLanguage.Japanese,
     ]
 
     return (
