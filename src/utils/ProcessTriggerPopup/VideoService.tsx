@@ -1,4 +1,4 @@
-import { FileData } from "../../types/FileData";
+import { FileData, VideoData } from "../../types/FileData";
 import { putImageS3, putDynamicFileType } from "../../api/aws.api";
 import { postVideo } from "../../api/video.api";
 import {
@@ -105,6 +105,10 @@ export const uploadVideoImage = async (file: File, fileName: string) => {
     }
 };
 
+function isVideoData(data: FileData): data is VideoData {
+    return (data as VideoData).title !== undefined;
+}
+
 // This function is to upload video to server and upload s3
 
 // Service for upload video to Server include 2 steps:
@@ -117,11 +121,13 @@ export const uploadVideo = async (
 ): Promise<number> => {
     try {
         // Step 1. Extract first frame and upload image to server
-        if (file.type.includes("video")) {
+        if (file.type.includes("video") && isVideoData(fileData)) {
             const imageFile = await extractFirstFrame(file);
             const imageFileName =
                 fileData.file_name.split(".")[0] + "_thumbnail.jpg";
+            console.log("Uploading video thumbnail:", imageFileName);
             await uploadVideoImage(imageFile, imageFileName);
+            fileData.image = imageFileName; 
         }
 
         // Step 2. Upload video data to server
