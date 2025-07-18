@@ -123,7 +123,7 @@ export const BrowseFileCard: React.FC<BrowseFileCardProps> = ({
                                 fontSize: '0.7rem',
                             }}
                         >
-                            {project.id} - {project.title}
+                            {project.title}
                         </Typography>
                         <Typography
                             sx={{

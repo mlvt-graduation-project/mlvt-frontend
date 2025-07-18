@@ -8,7 +8,6 @@ import {
     ProjectType,
     RawAudio,
     RawText,
-    RawVideo,
 } from '../../../../../types/Project'
 import { S3Folder } from '../../../../../types/S3FolderStorage'
 import { TranslateLanguage } from '../../../../../types/Translation'
@@ -25,7 +24,7 @@ export interface VoiceGenerationData {
     deviceAudioFile: File | null
     deviceTextFile: File | null
     inputText: string
-    MLVTVoice: RawAudio | RawVideo | null
+    MLVTVoice: RawAudio | null
     textLanguage: TranslateLanguage | null
     MLVTText: RawText | null
     textData: TextData
@@ -55,7 +54,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         TranslateLanguage.English,
     )
 
-    const [MLVTVoice, setMLVTVoice] = useState<RawAudio | RawVideo | null>(null)
+    const [MLVTVoice, setMLVTVoice] = useState<RawAudio | null>(null)
 
     const [textData, setTextData] = useState<TextData>({
         file_name: '',
@@ -123,12 +122,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
 
     const handleChangeMLVTVoice = useCallback(
         (input: Project | null) => {
-            if (
-                input &&
-                input.type_project !== (ProjectType.Audio && ProjectType.Video)
-            )
-                return
-            setMLVTVoice(input as RawAudio | RawVideo | null)
+            if (input && input.type_project !== ProjectType.Audio) return
+            setMLVTVoice(input as RawAudio | null)
         },
         [setMLVTVoice],
     )
@@ -197,7 +192,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                 viewState: 'browse',
                 component: (
                     <BrowseFile
-                        allowTypes={[ProjectType.Video, ProjectType.Audio]}
+                        allowTypes={[ProjectType.Audio]}
                         handleChangeSelectedProject={handleChangeMLVTVoice}
                         selectedProject={MLVTVoice}
                     />
