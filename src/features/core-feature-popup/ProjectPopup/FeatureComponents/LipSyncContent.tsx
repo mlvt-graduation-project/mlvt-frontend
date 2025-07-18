@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import React, { useEffect, useMemo, useState } from 'react'
 import { getOneVideoById } from '../../../../api/video.api'
-import { LipSyncProject } from '../../../../types/Project'
+import { LipSyncProject, NavInfo } from '../../../../types/Project'
 import ChangeViewBox from '../../ProcessTriggerPopup/BaseComponent/ChangeView'
 import { InfoNav } from '../BaseComponent/InfomationNavBar'
 import { MainProjectOutput } from '../BaseComponent/MainProjectOutput'
@@ -19,6 +19,11 @@ export const LipSyncContent: React.FC<ContentProps> = ({ inputProject }) => {
     const [resultVideoURL, setResultVideoURL] = useState<string | null>(null)
     const [videoStatus, setVideoStatus] = useState<string | null>(null)
     const [imageUrl, setInputImageUrl] = useState<string | null>(null)
+
+    const [navInfo, setNavInfo] = useState<NavInfo>({
+        created_at: inputProject.createdAt,
+        language: 'none-detected',
+    })
 
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -80,7 +85,10 @@ export const LipSyncContent: React.FC<ContentProps> = ({ inputProject }) => {
 
     return (
         <>
-            <InfoNav />
+            <InfoNav
+                CreatedAt={navInfo.created_at}
+                Language={navInfo.language}
+            />
             <Box sx={{ marginTop: '15px', height: '31rem' }}>
                 <ChangeViewBox Views={Views} setViewState={changeViewState} />
                 <Box sx={{ marginTop: '20px' }}>{ActiveComponent}</Box>
