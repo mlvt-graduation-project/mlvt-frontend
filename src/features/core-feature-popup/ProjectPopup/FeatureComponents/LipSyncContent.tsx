@@ -80,7 +80,7 @@ export const LipSyncContent: React.FC<ContentProps> = ({ inputProject }) => {
 
     return (
         <>
-            <InfoNav />
+            <InfoNav CreatedAt={inputProject.createdAt} />
             <Box sx={{ marginTop: '15px', height: '31rem' }}>
                 <ChangeViewBox Views={Views} setViewState={changeViewState} />
                 <Box sx={{ marginTop: '20px' }}>{ActiveComponent}</Box>

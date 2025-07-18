@@ -105,3 +105,8 @@ export interface GetAllProjectRequest {
     offset: number
     limit: number
 }
+
+export interface NavInfo {
+    created_at: Date | string
+    language: string
+}
