@@ -36,6 +36,7 @@ export const BrowseFile: React.FC<BrowsFileProps> = ({
                 setProjectContent(null)
                 return
             }
+            console.log('Project type: ', selectedProject.type_project)
 
             try {
                 switch (selectedProject.type_project) {
