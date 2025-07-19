@@ -1,4 +1,4 @@
-import { get, post, put } from "./base.api";
+import { del, get, post, put } from "./base.api";
 import {
     GetPresignedURL,
     PostVideo,
@@ -161,3 +161,12 @@ export const uploadVideoToS3 = async (uploadUrl: string, file: File) => {
         throw error;
     }
 };
+
+export const deleteVideoById = async (videoId: string): Promise<void> => {
+    try {
+        return await del(`/videos/${videoId}`)
+    } catch (error) {
+        console.error(`Failed to delete video with ID ${videoId}:`, error)
+        throw error
+    }
+}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getOneVideoById } from "../../../../api/video.api";
+import { deleteVideoById, getOneVideoById } from "../../../../api/video.api";
 import { InfoNav } from "../BaseComponent/InfomationNavBar";
 import { OriginalVideo } from "../BaseComponent/OriginalVideo";
 import { SharePopup } from "src/components/SharePopup";
@@ -39,9 +39,20 @@ export const RawVideoContent: React.FC<ContentProps> = ({
         fetchVideoData();
     }, [videoId]);
 
+    const handleDelete = async (id: string) => {
+        console.log('Delete button is clicked with id:', id)
+        try {
+            await deleteVideoById(id);
+            console.log('Project deleted successfully. Reloading page...');
+            window.location.reload();
+        } catch (error) {
+            console.error('Error deleting project:', error)
+        }
+    }
+
     return (
         <>
-            {!hideNavBar && <InfoNav onShare={handleShare} />}
+            {!hideNavBar && <InfoNav id={String(videoId)} projectType="Video" onDelete={handleDelete} onShare={handleShare} />}
             <OriginalVideo videoUrl={videoUrl}></OriginalVideo>
 
             <SharePopup

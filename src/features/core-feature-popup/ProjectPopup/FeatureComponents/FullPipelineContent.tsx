@@ -10,6 +10,7 @@ import { MainProjectOutput } from '../BaseComponent/MainProjectOutput'
 import { OriginalVideo } from '../BaseComponent/OriginalVideo'
 import { RelatedOutput } from '../BaseComponent/RelatedOutput'
 import { SharePopup } from 'src/components/SharePopup'
+import { deleteProjectById } from 'src/api/pipeline.api'
 
 interface ContentProps {
     inputProject: FullPipelineProject
@@ -114,6 +115,19 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
         }
     }
 
+    const handleDelete = async (id: string) => {
+        console.log('Delete button is clicked with id:', id)
+        try {
+            const deleteResponse = await deleteProjectById(id);
+            if (deleteResponse) {
+                console.log('Project deleted successfully:', deleteResponse);
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('Error deleting project:', error)
+        }
+    }
+
     const Views = useMemo(
         () => [
             {
@@ -201,7 +215,12 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
                 minHeight: '35rem',
             }}
         >
-            <InfoNav onShare={handleShare} />
+            <InfoNav 
+                id={inputProject.id}
+                projectType={inputProject.type_project}
+                onShare={handleShare} 
+                onDelete={handleDelete}
+            />
             <Box
                 sx={{
                     mt: '10px',

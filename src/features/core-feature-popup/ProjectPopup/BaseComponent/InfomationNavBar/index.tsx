@@ -3,23 +3,38 @@ import ShareIcon from "@mui/icons-material/Share";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ReplayIcon from "@mui/icons-material/Replay";
 import { useTheme } from "@mui/material/styles";
+import { Project } from "src/types/Project";
 
 interface InfoNavProps {
+    id?: string;
+    projectType?: string;
     CreatedAt?: Date | string;
     Language?: string;
     onShare?: () => void;
     onReplay?: () => void;
-    onDelete?: () => void;
+    onDelete?: (id: string, projectType: string) => void;
 }
 
 export const InfoNav: React.FC<InfoNavProps> = ({
     CreatedAt = "None-detected",
     Language = "None-detected",
+    id,
+    projectType,
     onShare,
     onReplay,
     onDelete,
 }) => {
     const theme = useTheme();
+
+    const handleDeleteClick = () => {
+        if (onDelete) {
+            if (id && projectType) 
+                onDelete(id, projectType);
+        }
+    };
+
+    console.log("InfoNav rendered with id:", id, "and projectType:", projectType);
+
     return (
         <Grid
             container
@@ -139,7 +154,7 @@ export const InfoNav: React.FC<InfoNavProps> = ({
                 <IconButton
                     size="medium"
                     sx={{ color: theme.palette.text.primary }}
-                    onClick={onDelete}
+                    onClick={handleDeleteClick}
                 >
                     <DeleteIcon />
                 </IconButton>

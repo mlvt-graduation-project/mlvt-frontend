@@ -57,6 +57,10 @@ export const postLipSync = (videoId: number, audioId: number): Promise<any> => {
     })
 }
 
+export const deleteProjectById = async (id: string): Promise<any> => {
+    return post(`/progress/delete-progress/${id}`, null)
+}
+
 // export const getProjectProgress = (
 //     userId: number
 // ): Promise<AxiosResponse<GetAllProjectResponse>> => {

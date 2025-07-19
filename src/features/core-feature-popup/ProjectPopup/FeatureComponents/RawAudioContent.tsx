@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import { InfoNav } from "../BaseComponent/InfomationNavBar";
 import { CustomAudioPlayer } from "../BaseComponent/RelatedOutput/CustomizedVideoBox";
-import { getAudioById } from "../../../../api/audio.api";
+import { deleteAudioById, getAudioById } from "../../../../api/audio.api";
 import { SharePopup } from "src/components/SharePopup";
 
 interface ContentProps {
@@ -40,9 +40,20 @@ export const RawAudioContent: React.FC<ContentProps> = ({
         fetchVideoData();
     }, [audioId]);
 
+    const handleDelete = async (id: string) => {
+        console.log('Delete button is clicked with id:', id)
+        try {
+            await deleteAudioById(id);
+            console.log('Project deleted successfully. Reloading page...');
+            window.location.reload();
+        } catch (error) {
+            console.error('Error deleting project:', error)
+        }
+    }
+
     return (
         <>
-            {!hideNavBar && <InfoNav onShare={handleShare} />}
+            {!hideNavBar && <InfoNav id={String(audioId)} projectType="Audio" onDelete={handleDelete} onShare={handleShare} />}
 
             <Box
                 sx={{

@@ -9,6 +9,7 @@ import { InfoNav } from '../BaseComponent/InfomationNavBar'
 import { OriginalVideo } from '../BaseComponent/OriginalVideo'
 import { RelatedOutput } from '../BaseComponent/RelatedOutput'
 import { SharePopup } from 'src/components/SharePopup'
+import { deleteProjectById } from 'src/api/pipeline.api'
 
 interface ContentProps {
     inputProject: TextGenerationProject
@@ -100,9 +101,22 @@ export const TextGenerationContent: React.FC<ContentProps> = ({
     const activeView = Views.find((view) => view.viewState === viewState)
     const ActiveComponent = activeView?.component || null
 
+    const handleDelete = async (id: string) => {
+        console.log('Delete button is clicked with id:', id)
+        try {
+            const deleteResponse = await deleteProjectById(id);
+            if (deleteResponse) {
+                console.log('Project deleted successfully:', deleteResponse);
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('Error deleting project:', error)
+        }
+    }
+
     return (
         <>
-            <InfoNav onShare={handleShare} />
+            <InfoNav id={inputProject.id} projectType={inputProject.type_project} onShare={handleShare} onDelete={handleDelete} />
             <Box
                 sx={{
                     mt: '10px',

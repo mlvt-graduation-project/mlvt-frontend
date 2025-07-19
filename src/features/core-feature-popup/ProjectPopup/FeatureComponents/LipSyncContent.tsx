@@ -7,6 +7,7 @@ import { InfoNav } from '../BaseComponent/InfomationNavBar'
 import { MainProjectOutput } from '../BaseComponent/MainProjectOutput'
 import { OriginalVideo } from '../BaseComponent/OriginalVideo'
 import { SharePopup } from 'src/components/SharePopup'
+import { deleteProjectById } from 'src/api/pipeline.api'
 
 interface ContentProps {
     inputProject: LipSyncProject
@@ -89,9 +90,27 @@ export const LipSyncContent: React.FC<ContentProps> = ({ inputProject }) => {
     const activeView = Views.find((view) => view.viewState === viewState)
     const ActiveComponent = activeView?.component || null
 
+    const handleDelete = async (id: string) => {
+        console.log('Delete button is clicked with id:', id)
+        try {
+            const deleteResponse = await deleteProjectById(id);
+            if (deleteResponse) {
+                console.log('Project deleted successfully:', deleteResponse);
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('Error deleting project:', error)
+        }
+    }
+
     return (
         <>
-            <InfoNav onShare={handleShare} />
+            <InfoNav 
+                id={inputProject.id} 
+                projectType={inputProject.type_project}
+                onShare={handleShare} 
+                onDelete={handleDelete}
+            />
             <Box sx={{ marginTop: '15px', height: '31rem' }}>
                 <ChangeViewBox Views={Views} setViewState={changeViewState} />
                 <Box sx={{ marginTop: '20px' }}>{ActiveComponent}</Box>

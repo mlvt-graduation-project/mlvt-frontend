@@ -10,10 +10,11 @@ import {
     Snackbar
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { updateProjectTitle } from 'src/api/project.api'
 import CardFeature from 'src/components/CardFeature'
 import SearchBar from 'src/components/SearchBar'
+import { SharePopup } from 'src/components/SharePopup'
 import { ProcessedVideoPopUp } from 'src/features/core-feature-popup/ProjectPopup'
 import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import {
@@ -58,76 +59,75 @@ const ProjectSection = () => {
     const [isPopUpOpen, setIsPopUpOpen] = React.useState(false)
     const [displayProjects, setDisplayProjects] = useState<Project[]>([])
     const [totalCount, setTotalCount] = useState(0)
+    const [shareState, setShareState] = useState<{ open: boolean; content: string; }>({
+        open: false,
+        content: '',
+    });
     const currentPage =
         Math.floor(getProjectRequest.offset / getProjectRequest.limit) + 1
     const totalPages = Math.ceil(totalCount / getProjectRequest.limit)
 
-    const handleChangeProjectType = (input: PipelineShortForm | 'All') => {
-        if (input === 'All') {
-            setGetProjectRequest((prev) => ({
-                ...prev,
-                project_type: [
-                    PipelineShortForm.TextGeneration,
-                    PipelineShortForm.AudioGeneration,
-                    PipelineShortForm.Fullpipeline,
-                    PipelineShortForm.TextTranslation,
-                    PipelineShortForm.Lipsync,
-                ],
-                offset: 0,
-            }))
-        } else {
-            setGetProjectRequest((prev) => ({
-                ...prev,
-                project_type: [input],
-                offset: 0,
-            }))
-        }
-    }
+    const handleChangeProjectType = useCallback((input: PipelineShortForm | 'All') => {
+        const allTypes = [
+            PipelineShortForm.TextGeneration,
+            PipelineShortForm.AudioGeneration,
+            PipelineShortForm.Fullpipeline,
+            PipelineShortForm.TextTranslation,
+            PipelineShortForm.Lipsync,
+        ];
+        setGetProjectRequest((prev) => ({
+            ...prev,
+            project_type: input === 'All' ? allTypes : [input],
+            offset: 0,
+        }));
+    }, []);
 
-    const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleSearchKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
-            const keyword = e.currentTarget.value.trim()
+            const keyword = e.currentTarget.value.trim();
             setGetProjectRequest((prev) => ({
                 ...prev,
                 search_key: keyword === '' ? null : keyword,
                 offset: 0,
-            }))
+            }));
         }
-    }
+    }, []);
 
-    const handleCardClick = (project: Project) => {
-        setSelectedProject(project)
-        setIsPopUpOpen(true)
-    }
-
-    const handleUpdateProjectTitle = async (projectId: string, newTitle: string) => {
+    const handleUpdateProjectTitle = useCallback(async (projectId: string, newTitle: string) => {
         try {
             await updateProjectTitle(projectId, newTitle);
-
-            // On success, update the local state to show the change immediately
             setDisplayProjects(currentProjects =>
                 currentProjects.map(p =>
                     p.id === projectId ? { ...p, title: newTitle } : p
                 )
             );
-            
             setSnackbar({ open: true, message: 'Project title updated successfully!', severity: 'success' });
         } catch (error) {
             console.error("Failed to update project title:", error);
             const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
             setSnackbar({ open: true, message: `Update failed: ${errorMessage}`, severity: 'error' });
-            // The title will revert automatically in the CardFeature component on error.
         }
-    };
+    }, []);
+
+    const handleCardClick = useCallback((project: Project) => {
+        setSelectedProject(project);
+    }, []);
 
     const handleCloseSnackbar = () => {
         setSnackbar(null);
     };
 
-    const handleClosePopUp = () => {
-        setIsPopUpOpen(false)
-        setSelectedProject(null)
-    }
+    const handleClosePopUp = useCallback(() => {
+        setSelectedProject(null);
+    }, []);
+
+    const handleOpenSharePopup = useCallback((contentToShare: string) => {
+        setShareState({ open: true, content: contentToShare });
+    }, []);
+
+    const handleCloseSharePopup = useCallback(() => {
+        setShareState({ open: false, content: '' });
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -332,8 +332,14 @@ const ProjectSection = () => {
                     isOpen={isPopUpOpen}
                     onClose={handleClosePopUp}
                     type={selectedProject.type_project}
+                    // onShare={handleOpenSharePopup}
                 />
             )}
+
+            {/* <SharePopup
+                open={shareState.open}
+                onClose={handleCloseSharePopup}
+            /> */}
 
             {snackbar && (
                 <Snackbar

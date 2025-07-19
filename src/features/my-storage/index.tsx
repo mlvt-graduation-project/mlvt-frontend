@@ -391,6 +391,30 @@ const Storage = () => {
         setSelectedProject(null)
     }
 
+    const [shareState, setShareState] = useState<{
+        open: boolean;
+        content: string;
+    }>({
+        open: false,
+        content: '',
+    });
+
+    const handleOpenSharePopup = (contentToShare: string) => {
+        setShareState({ open: true, content: contentToShare });
+    };
+
+    const handleCloseSharePopup = () => {
+        setShareState({ open: false, content: '' });
+    };
+
+    const handleOpenProjectPopup = (project: Project) => {
+        setSelectedProject(project);
+    };
+
+    const handleCloseProjectPopup = () => {
+        setSelectedProject(null);
+    };
+
     return (
         <Layout>
             <Box display="flex" padding={2}>
@@ -648,6 +672,12 @@ const Storage = () => {
                     type={selectedProject.type_project}
                 />
             )}
+
+            {/* <SharePopup
+                open={shareState.open}
+                onClose={handleCloseSharePopup}
+                content={shareState.content}
+            /> */}
 
             {snackbar && (
                 <Snackbar
