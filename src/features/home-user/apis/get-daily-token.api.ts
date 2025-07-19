@@ -1,8 +1,8 @@
-import { get } from 'src/api/base.api'
+import { post } from 'src/api/base.api'
 
-export const getDailyToken = async (userId: string): Promise<string> => {
+export const getDailyToken = async (userId: number): Promise<string> => {
     try {
-        const response = await get<{ message: string }>(`/token/daily`, {
+        const response = await post<{ message: string }>(`/token/daily`, {
             user_id: userId,
         })
         return response.message

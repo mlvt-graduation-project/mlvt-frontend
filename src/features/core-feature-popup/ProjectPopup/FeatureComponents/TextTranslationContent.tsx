@@ -1,6 +1,7 @@
 import { Box } from '@mui/material'
 import React, { useEffect, useMemo, useState } from 'react'
-import { TextTranslationProject } from '../../../../types/Project'
+import { getLanguageFromCode } from 'src/utils/ProcessTriggerPopup/VideoPopup.utils'
+import { NavInfo, TextTranslationProject } from '../../../../types/Project'
 import { Text } from '../../../../types/Response/Text'
 import { getTextContent } from '../../../../utils/ProcessTriggerPopup/TextService'
 import ChangeViewBox from '../../ProcessTriggerPopup/BaseComponent/ChangeView'
@@ -27,6 +28,10 @@ export const TextTranslationContent: React.FC<ContentProps> = ({
     const [resultTextContent, setResultTextContent] = useState<string | null>(
         null,
     )
+    const [navInfo, setNavInfo] = useState<NavInfo>({
+        created_at: inputProject.createdAt,
+        language: 'none-detected',
+    })
 
     const [isSharePopupOpen, setSharePopupOpen] = useState(false);
 
@@ -47,6 +52,10 @@ export const TextTranslationContent: React.FC<ContentProps> = ({
                 )
                 setOriginalTextContent(originalText[1])
                 setOriginalTextInformation(originalText[0])
+                setNavInfo((prev) => ({
+                    ...prev,
+                    language: getLanguageFromCode(originalText[0].lang),
+                }))
             } catch (error) {
                 console.error('Error fetching original text:', error)
             }

@@ -1,19 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { InfoNav } from "../BaseComponent/InfomationNavBar";
-import { Box } from "@mui/material";
-import { TextView } from "../BaseComponent/RelatedOutput/CustomizedTextBox";
+import { Box } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { InfoNav } from '../BaseComponent/InfomationNavBar'
+import { TextView } from '../BaseComponent/RelatedOutput/CustomizedTextBox'
 // import { Text } from '../../../types/Response/Text';
-import { getTextContent } from "../../../../utils/ProcessTriggerPopup/TextService";
+import { NavInfo } from 'src/types/Project'
+import { getLanguageFromCode } from 'src/utils/ProcessTriggerPopup/VideoPopup.utils'
+import { getTextContent } from '../../../../utils/ProcessTriggerPopup/TextService'
 import { SharePopup } from "src/components/SharePopup";
 import { RawText } from "src/types/Project";
 import { deleteTextById } from "src/api/text.api";
 
 interface ContentProps {
-    textId: number;
-    hideNavBar?: boolean;
-    customSx?: object;
-    centerTitle?: boolean;
-    hideDownloadButton?: boolean;
+    textId: number
+    hideNavBar?: boolean
+    customSx?: object
+    centerTitle?: boolean
+    hideDownloadButton?: boolean
 }
 
 export const RawTextContent: React.FC<ContentProps> = ({
@@ -24,8 +26,12 @@ export const RawTextContent: React.FC<ContentProps> = ({
     hideDownloadButton = false,
 }) => {
     const [textContent, setTextContent] = useState<string>(
-        "Some text will be display here"
-    );
+        'Some text will be display here',
+    )
+    const [navInfo, setNavInfo] = useState<NavInfo>({
+        created_at: 'none-detected',
+        language: 'none-detected',
+    })
     // const [textInfomation, setTextInfomation] = useState<Text | null>(null);
 
     const [isSharePopupOpen, setSharePopupOpen] = useState(false);
@@ -42,16 +48,20 @@ export const RawTextContent: React.FC<ContentProps> = ({
     useEffect(() => {
         const fetchTextData = async () => {
             try {
-                const [, content] = await getTextContent(textId);
+                const [textInfo, content] = await getTextContent(textId)
                 // setTextInfomation(information);
-                setTextContent(content);
+                setTextContent(content)
+                setNavInfo({
+                    created_at: new Date(textInfo.created_at),
+                    language: getLanguageFromCode(textInfo.lang),
+                })
             } catch (error) {
-                console.error("Error fetching video URL:", error);
+                console.error('Error fetching video URL:', error)
             }
-        };
+        }
 
-        fetchTextData();
-    }, [textId]);
+        fetchTextData()
+    }, [textId])
 
     const handleDelete = async (id: string) => {
         console.log('Delete button is clicked with id:', id)
@@ -69,14 +79,14 @@ export const RawTextContent: React.FC<ContentProps> = ({
             {!hideNavBar && <InfoNav id={String(textId)} projectType="Text" onDelete={handleDelete} onShare={handleShare} />}
             <Box
                 sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    height: "90%",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: "20px",
-                    padding: "10px",
-                    paddingTop: "0",
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '90%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginTop: '20px',
+                    padding: '10px',
+                    paddingTop: '0',
                 }}
             >
                 <TextView
@@ -94,5 +104,5 @@ export const RawTextContent: React.FC<ContentProps> = ({
                 url={window.location.href} 
             />
         </>
-    );
-};
+    )
+}

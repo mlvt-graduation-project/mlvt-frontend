@@ -167,8 +167,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                     choices={[
                         TranslateLanguage.English,
                         TranslateLanguage.Vietnamese,
-                        TranslateLanguage.French,
-                        TranslateLanguage.Japanese,
                     ]}
                     handleChangeOption={handleChangeSourceLanguage}
                     value={TranslateLanguage.English}

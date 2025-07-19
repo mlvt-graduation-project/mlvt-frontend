@@ -45,8 +45,16 @@ export const postTextTranslation = (
     }) as Promise<AxiosResponse<any>>
 }
 
-export const postAudioGeneration = (transcriptionId: number): Promise<any> => {
+export const postAudioGeneration = (
+    transcriptionId: number,
+    opts: { videoId?: number; audioId?: number },
+): Promise<any> => {
     return post(`/mlvt/tts/${transcriptionId}`, null, {
+        params: {
+            // send exactly one of these:
+            ...(opts.videoId !== undefined ? { video_id: opts.videoId } : {}),
+            ...(opts.audioId !== undefined ? { audio_id: opts.audioId } : {}),
+        },
         getFullResponse: true,
     })
 }

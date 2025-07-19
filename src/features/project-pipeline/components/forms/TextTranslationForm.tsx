@@ -11,8 +11,6 @@ const TextTranslationForm = () => {
     const languageChoices = [
         TranslateLanguage.English,
         TranslateLanguage.Vietnamese,
-        TranslateLanguage.French,
-        TranslateLanguage.Japanese,
     ]
 
     const handleChangeAudioLanguage = (value: string) => {

@@ -5,18 +5,22 @@ import { getAllPipelineProgress } from '../apis/pipeline-progress.api'
 import { PipelineContext } from '../context/PipelineContext'
 import { executePipeline } from '../services/pipelineExecutor'
 import {
+    LipSynchronizationResult,
     PipelineProgress,
     PipelineResult,
     PipelineType,
     TextGenerationResult,
     TextTranslationResult,
     VideoTranslationResult,
+    VoiceGenerationResult,
 } from '../types'
+import { LipSynchronizationResultDisplay } from './results/LipSynchronizationResultDisplay'
 import { TextGenerationResultDisplay } from './results/TextGenerationResultDisplay'
 import { TextTranslationResultDisplay } from './results/TextTranslationResultDisplay'
 import { VideoTranslationResultDisplay } from './results/VideoTranslationResultDisplay'
+import { VoiceGenerationResultDisplay } from './results/VoiceGenerationResultDisplay'
 
-const POLLING_INTERVAL = 10000
+const POLLING_INTERVAL = 5000
 const POLLING_TIMEOUT = 3000000
 
 const ResultsPanel = () => {
@@ -50,6 +54,7 @@ const ResultsPanel = () => {
                 const project = progresses.find(
                     (p: PipelineProgress) => (p as any)[key] === value,
                 )
+
                 if (project) {
                     if (project.status === 'succeeded') {
                         stopPolling() // Stop polling on success
@@ -78,6 +83,21 @@ const ResultsPanel = () => {
                                 } as TextTranslationResult
                                 break
 
+                            case 'tts':
+                                result = {
+                                    pipelineType: PipelineType.VoiceGeneration,
+                                    progressData: project,
+                                } as VoiceGenerationResult
+                                break
+
+                            case 'ls':
+                                result = {
+                                    pipelineType:
+                                        PipelineType.LipSynchronization,
+                                    progressData: project,
+                                } as LipSynchronizationResult
+                                break
+
                             default:
                                 dispatch({
                                     type: 'GENERATION_FAILURE',
@@ -98,7 +118,6 @@ const ResultsPanel = () => {
                     }
                 }
             } catch (error) {
-                console.error('Polling error:', error)
                 dispatch({
                     type: 'GENERATION_FAILURE',
                     payload: 'Polling failed.',
@@ -120,7 +139,7 @@ const ResultsPanel = () => {
         return () => {
             stopPolling()
         }
-    }, [state.pollingInfo, userId, dispatch])
+    }, [state.pollingInfo, userId, dispatch, state])
 
     const handleGenerate = async () => {
         if (!userId) {
@@ -159,6 +178,20 @@ const ResultsPanel = () => {
             case PipelineType.TextTranslation:
                 return (
                     <TextTranslationResultDisplay
+                        progressData={results.progressData}
+                    />
+                )
+
+            case PipelineType.VoiceGeneration:
+                return (
+                    <VoiceGenerationResultDisplay
+                        progressData={results.progressData}
+                    />
+                )
+
+            case PipelineType.LipSynchronization:
+                return (
+                    <LipSynchronizationResultDisplay
                         progressData={results.progressData}
                     />
                 )

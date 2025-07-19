@@ -4,6 +4,8 @@ import ChangeViewBox from '../../ProcessTriggerPopup/BaseComponent/ChangeView'
 import { InfoNav } from '../BaseComponent/InfomationNavBar'
 import { RelatedOutput } from '../BaseComponent/RelatedOutput'
 // import { Text } from "../../../types/Response/Text";
+import { NavInfo } from 'src/types/Project'
+import { getLanguageFromCode } from 'src/utils/ProcessTriggerPopup/VideoPopup.utils'
 import { getAudioById } from '../../../../api/audio.api'
 import { AudioGenerationProject } from '../../../../types/Project'
 import { getTextContent } from '../../../../utils/ProcessTriggerPopup/TextService'
@@ -22,6 +24,11 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
     )
     // const [originalTextInformation, setOriginalTextInformation] =
     //     useState<Text | null>(null);
+
+    const [navInfo, setNavInfo] = useState<NavInfo>({
+        created_at: inputProject.createdAt,
+        language: 'none-detected',
+    })
     const [originalTextContent, setOriginalTextContent] = useState<
         string | null
     >(null)
@@ -54,6 +61,10 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
                 )
                 // setOriginalTextInformation(originalText[0]);
                 setOriginalTextContent(originalText[1])
+                setNavInfo({
+                    created_at: inputProject.createdAt,
+                    language: getLanguageFromCode(originalText[0].lang),
+                })
             } catch (error) {
                 console.error('Error fetching original text:', error)
             }

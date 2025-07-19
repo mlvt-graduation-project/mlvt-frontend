@@ -3,7 +3,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import { AudioData, TextData } from '../../../../../types/FileData'
 import { AudioFileType, TextFileType } from '../../../../../types/FileType'
-import { Project, ProjectType, RawText } from '../../../../../types/Project'
+import {
+    Project,
+    ProjectType,
+    RawAudio,
+    RawText,
+} from '../../../../../types/Project'
 import { S3Folder } from '../../../../../types/S3FolderStorage'
 import { TranslateLanguage } from '../../../../../types/Translation'
 import { BrowseFile } from '../../BaseComponent/BrowseMLVTFile'
@@ -15,11 +20,11 @@ import { UploadFileFromDevice } from '../../BaseComponent/UploadFileFromDevice'
 
 export interface VoiceGenerationData {
     textViewState: 'upload' | 'enter text' | 'browse'
-    audioViewState: 'build-in' | 'custom'
+    audioViewState: 'browse' | 'custom'
     deviceAudioFile: File | null
     deviceTextFile: File | null
     inputText: string
-    buildinVoice: string | null
+    MLVTVoice: RawAudio | null
     textLanguage: TranslateLanguage | null
     MLVTText: RawText | null
     textData: TextData
@@ -34,26 +39,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const { data: userDetails } = useGetUserDetails()
     const userId = userDetails?.user.id.toString() || ''
     const parsedUserId = userId ? parseInt(userId) : 0
-    const buildinVoiceList = useMemo(
-        () => [
-            'en-US-Wavenet-A',
-            'en-US-Wavenet-B',
-            'en-US-Wavenet-C',
-            'en-US-Wavenet-D',
-            'vi-VN-Wavenet-A',
-            'vi-VN-Wavenet-B',
-            'fr-FR-Wavenet-A',
-            'fr-FR-Wavenet-B',
-            'ja-JP-Wavenet-A',
-            'ja-JP-Wavenet-B',
-        ],
-        [],
-    )
-    type BuildinVoice = (typeof buildinVoiceList)[number]
-
-    const [buildinVoice, setBuildinVoice] = useState<BuildinVoice | null>(null)
-    const [audioViewState, setAudioViewState] = useState<'build-in' | 'custom'>(
-        'build-in',
+    const [audioViewState, setAudioViewState] = useState<'browse' | 'custom'>(
+        'browse',
     )
     const [textViewState, setTextViewState] = useState<
         'upload' | 'enter text' | 'browse'
@@ -66,6 +53,8 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const [textLanguage, setTextLanguage] = useState<TranslateLanguage | null>(
         TranslateLanguage.English,
     )
+
+    const [MLVTVoice, setMLVTVoice] = useState<RawAudio | null>(null)
 
     const [textData, setTextData] = useState<TextData>({
         file_name: '',
@@ -91,15 +80,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         }
     }
 
-    const handleChangeBuildinVoice = useCallback(
-        (voice: string) => {
-            if (buildinVoiceList.includes(voice as BuildinVoice)) {
-                setBuildinVoice(voice as BuildinVoice)
-            }
-        },
-        [buildinVoiceList],
-    )
-
     const handleChangeTextData = useCallback((update: Partial<TextData>) => {
         setTextData((prevData) => ({
             ...prevData,
@@ -116,7 +96,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
 
     const handleChangeMLVTText = useCallback(
         (input: Project | null) => {
-            if (input && input.type_project !== ProjectType.Text) return // Ensure it's an audio project
+            if (input && input.type_project !== ProjectType.Text) return
             setMLVTText(input as RawText | null)
         },
         [setMLVTText],
@@ -125,14 +105,12 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const handleChangeDeviceTextFile = (file: File | null) => {
         setDeviceTextFile(file)
     }
-
-    const handleChangeDeviceAudioFile = (file: File | null) => {
+    const handleChangeDeviceAudioFile = useCallback((file: File | null) => {
         setDeviceAudioFile(file)
-    }
-
+    }, [])
     const handleChangeAudioViewState = (view: string) => {
-        if (['build-in', 'custom'].includes(view)) {
-            setAudioViewState(view as 'build-in' | 'custom')
+        if (['browse', 'custom'].includes(view)) {
+            setAudioViewState(view as 'browse' | 'custom')
         }
     }
 
@@ -142,64 +120,13 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         }
     }
 
-    // const uploadTextFromDevice = useCallback(async (): Promise<number> => {
-    //     if (deviceTextFile && textLanguage) {
-    //         try {
-    //             handleChangeTextData({ lang: getLanguageCode(textLanguage) });
-    //             const textId = await uploadText(
-    //                 deviceTextFile,
-    //                 textData,
-    //                 TextFileType.PlainText
-    //             );
-    //             return textId;
-    //         } catch (error) {
-    //             throw error;
-    //         }
-    //     } else {
-    //         throw new Error("No file provided for translation.");
-    //     }
-    // }, [deviceTextFile, textData, textLanguage, handleChangeTextData]);
-
-    // const handleGenerateEnteringText =
-    //     useCallback(async (): Promise<number> => {
-    //         if (inputText && textLanguage) {
-    //             try {
-    //                 const tmpTextData: TextData = {
-    //                     file_name:
-    //                         userId +
-    //                         "_" +
-    //                         Math.floor(Date.now() / 1000) +
-    //                         ".txt",
-    //                     folder: S3Folder.text,
-    //                     user_id: parsedUserId,
-    //                     lang: getLanguageCode(textLanguage),
-    //                 };
-    //                 const textId = await uploadText(
-    //                     inputText,
-    //                     tmpTextData,
-    //                     TextFileType.PlainText
-    //                 );
-    //                 return textId;
-    //             } catch (error) {
-    //                 throw error;
-    //             }
-    //         } else {
-    //             throw new Error("No text provided for translation.");
-    //         }
-    //     }, [inputText, parsedUserId, userId, textLanguage]);
-
-    // const uploadAudioFromDevice = useCallback(async (): Promise<number> => {
-    //     if (deviceAudioFile) {
-    //         try {
-    //             const audioId = await uploadAudio(deviceAudioFile, audioData);
-    //             return audioId;
-    //         } catch (error) {
-    //             throw error;
-    //         }
-    //     } else {
-    //         throw new Error("Failed uploading Audio file to Server");
-    //     }
-    // }, [deviceAudioFile, audioData]);
+    const handleChangeMLVTVoice = useCallback(
+        (input: Project | null) => {
+            if (input && input.type_project !== ProjectType.Audio) return
+            setMLVTVoice(input as RawAudio | null)
+        },
+        [setMLVTVoice],
+    )
 
     const TextViews = useMemo(
         () => [
@@ -249,36 +176,35 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const AudioViews = useMemo(
         () => [
             {
-                text: 'BUILD-IN VOICE',
-                viewState: 'build-in',
-                component: (
-                    <SingleOptionBox
-                        choices={buildinVoiceList}
-                        handleChangeOption={handleChangeBuildinVoice}
-                        customSx={{ width: '100%' }}
-                        value={buildinVoice || ''}
-                    />
-                ),
-            },
-            {
                 text: 'CUSTOM VOICE',
                 viewState: 'custom',
                 component: (
                     <UploadFileFromDevice
                         handleChangeFileData={handleChangeAudioData}
                         selectedFile={deviceAudioFile}
-                        fileTypeList={[AudioFileType.MP3]}
+                        fileTypeList={[AudioFileType.MP3, AudioFileType.WAV]}
                         handleChangeSelectedFile={handleChangeDeviceAudioFile}
+                    />
+                ),
+            },
+            {
+                text: 'BROWSE MLVT',
+                viewState: 'browse',
+                component: (
+                    <BrowseFile
+                        allowTypes={[ProjectType.Audio]}
+                        handleChangeSelectedProject={handleChangeMLVTVoice}
+                        selectedProject={MLVTVoice}
                     />
                 ),
             },
         ],
         [
-            buildinVoiceList,
-            buildinVoice,
             deviceAudioFile,
-            handleChangeBuildinVoice,
             handleChangeAudioData,
+            handleChangeMLVTVoice,
+            handleChangeDeviceAudioFile,
+            MLVTVoice,
         ],
     )
 
@@ -288,7 +214,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             (textViewState === 'upload' && !!deviceTextFile) ||
             (textViewState === 'browse' && !!MLVTText)
         const isAudioValid =
-            (audioViewState === 'build-in' && !!buildinVoice) ||
+            (audioViewState === 'browse' && !!MLVTVoice) ||
             (audioViewState === 'custom' && !!deviceAudioFile)
 
         if (!isTextValid || !isAudioValid || !textLanguage) {
@@ -302,7 +228,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         deviceTextFile,
         MLVTText,
         audioViewState,
-        buildinVoice,
+        MLVTVoice,
         deviceAudioFile,
         textLanguage,
     ])
@@ -314,25 +240,25 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             deviceAudioFile,
             deviceTextFile,
             inputText,
-            buildinVoice,
             textLanguage,
             MLVTText,
             textData,
             audioData,
+            MLVTVoice,
         }
         onGenerate(data)
     }, [
-        onGenerate,
         textViewState,
         audioViewState,
         deviceAudioFile,
         deviceTextFile,
         inputText,
-        buildinVoice,
         textLanguage,
         MLVTText,
         textData,
         audioData,
+        MLVTVoice,
+        onGenerate,
     ])
 
     const activeAudioView = AudioViews.find(
@@ -380,8 +306,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                     choices={[
                         TranslateLanguage.English,
                         TranslateLanguage.Vietnamese,
-                        TranslateLanguage.French,
-                        TranslateLanguage.Japanese,
                     ]}
                     handleChangeOption={handleChangeTextLanguage}
                     customSx={{ width: '30%' }}
