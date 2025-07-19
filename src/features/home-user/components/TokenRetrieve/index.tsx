@@ -106,6 +106,7 @@ const TokenRetrieve = () => {
                     display="flex"
                     flexDirection="column"
                     alignItems="center"
+                    justifyContent="center"
                 >
                     <Typography
                         variant="h6"
@@ -166,17 +167,22 @@ const TokenRetrieve = () => {
                         variant="body2"
                         color="text.secondary"
                         paddingX={5}
-                        sx={{ mt: 2, textAlign: 'center' }}
+                        sx={{
+                            mt: 2,
+                            overflow: 'hidden',
+                            display: '-webkit-box',
+                            WebkitBoxOrient: 'vertical',
+                            WebkitLineClamp: 2,
+                        }}
                     >
                         Dive into our video pipeline—generate your script,
-                        translate it instantly, and sync the lips
+                        translate it instantly, and sync the lips to create
+                        amazing content.
                     </Typography>
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={() => {
-                            navigate('/project-pipeline')
-                        }}
+                        onClick={() => navigate('/project-pipeline')}
                         endIcon={
                             <LinearScaleOutlinedIcon
                                 sx={{
@@ -185,14 +191,12 @@ const TokenRetrieve = () => {
                                 }}
                             />
                         }
-                        fullWidth
                         sx={{
                             mt: 2,
-                            width: '60%',
+                            width: { xs: '90%', sm: '80%', md: '60%' },
                             padding: '10px 20px',
                             fontWeight: '600',
                             fontSize: '1rem',
-                            marginRight: '10px',
                         }}
                     >
                         EXPLORE THE PIPELINE

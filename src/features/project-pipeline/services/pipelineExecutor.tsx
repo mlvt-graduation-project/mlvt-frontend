@@ -84,15 +84,15 @@ const executeVideoTranslation = async (
                 .slice(0, -1)
                 .join('.')
 
-            const videoData: VideoData = {
-                title: fileNameWithoutExt,
-                duration: duration,
-                description: '',
-                file_name: videoFile.name,
-                folder: S3Folder.video as string,
-                image: 'avatar.jpg',
-                user_id: userId,
-            }
+                    const videoData: VideoData = {
+                        title: fileNameWithoutExt,
+                        duration: duration,
+                        description: '',
+                        file_name: videoFile.name,
+                        folder: S3Folder.video as string,
+                        image: 'avatar.jpg',
+                        user_id: userId,
+                    }
 
             videoId = await uploadVideo(videoFile, videoData)
         } else {
