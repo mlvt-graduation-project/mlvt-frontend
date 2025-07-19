@@ -34,7 +34,7 @@ export const VoiceGenerationResultDisplay = ({
                 })
             }
 
-            if (!progressData.progressed_video_id) {
+            if (!progressData.audio_id) {
                 if (isMounted) {
                     setAudioUrl({
                         data: null,
@@ -46,10 +46,7 @@ export const VoiceGenerationResultDisplay = ({
             }
 
             try {
-                const audioResult = await getAudioById(
-                    progressData.progressed_video_id,
-                )
-
+                const audioResult = await getAudioById(progressData.audio_id)
                 if (isMounted) {
                     setAudioUrl({
                         data: audioResult.download_url,
@@ -73,16 +70,20 @@ export const VoiceGenerationResultDisplay = ({
         return () => {
             isMounted = false
         }
-    }, [progressData.progressed_video_id])
+    }, [progressData.audio_id])
 
     return (
-        <Box>
+        <Box display={'flex'} width={'100%'} padding={2} borderRadius={4}>
             {audioUrl.isLoading ? (
                 <CircularProgress />
             ) : audioUrl.error ? (
                 <Alert severity="error">{audioUrl.error}</Alert>
             ) : (
-                <audio controls src={audioUrl.data || undefined} />
+                <audio
+                    controls
+                    src={audioUrl.data?.split('?')[0] || undefined}
+                    style={{ flex: 1 }}
+                />
             )}
         </Box>
     )
