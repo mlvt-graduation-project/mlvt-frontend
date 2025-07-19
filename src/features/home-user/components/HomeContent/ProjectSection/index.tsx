@@ -159,7 +159,7 @@ const ProjectSection = () => {
                             fontFamily: 'Poppins, sans-serif',
                         }}
                     >
-                        {displayProjects.length}
+                        {totalCount}
                     </Typography>
                 </Box>
 
