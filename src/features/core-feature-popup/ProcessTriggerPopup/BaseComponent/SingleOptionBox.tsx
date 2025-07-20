@@ -11,6 +11,7 @@ interface SingleSelectProps {
     handleChangeOption: (value: string) => void;
     customSx?: object;
     value: string;
+    disabled?: boolean;
 }
 
 export const SingleOptionBox: React.FC<SingleSelectProps> = ({
@@ -18,6 +19,7 @@ export const SingleOptionBox: React.FC<SingleSelectProps> = ({
     handleChangeOption,
     customSx = {},
     value,
+    disabled,
 }) => {
     const handleChange = (event: SelectChangeEvent<string>) => {
         handleChangeOption(event.target.value);
@@ -43,6 +45,7 @@ export const SingleOptionBox: React.FC<SingleSelectProps> = ({
                         fontSize: "0.9rem",
                     },
                 }}
+                disabled={disabled}
             >
                 {choices.map((choice) => (
                     <MenuItem

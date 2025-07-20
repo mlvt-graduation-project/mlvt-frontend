@@ -70,6 +70,7 @@ const VideoTranslationForm = () => {
                         choices={languageChoices}
                         handleChangeOption={handleChangeTargetLanguage}
                         value={state.inputs.targetLanguage || ''}
+                        disabled={state.isGenerating}
                     />
                 </Box>
             </Box>

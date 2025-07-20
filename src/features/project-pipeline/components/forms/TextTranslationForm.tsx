@@ -53,6 +53,7 @@ const TextTranslationForm = () => {
                         choices={languageChoices}
                         handleChangeOption={handleChangeAudioLanguage}
                         value={state.inputs.sourceLanguage || ''}
+                        disabled={state.isGenerating}
                     />
                 </Box>
                 <Box flex={1}>
@@ -67,9 +68,8 @@ const TextTranslationForm = () => {
                     <SingleOptionBox
                         choices={languageChoices}
                         handleChangeOption={handleChangeTargetLanguage}
-                        // 5. The value now comes directly from the global state
-                        // value={state.inputs.targetLanguage || ""}
                         value={state.inputs.targetLanguage || ''}
+                        disabled={state.isGenerating}
                     />
                 </Box>
             </Box>
