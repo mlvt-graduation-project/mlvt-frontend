@@ -131,10 +131,8 @@ const executeTextGeneration = async (
         let videoId: number
 
         if (typeof inputs.video === 'number') {
-            console.log('Using existing video ID:', inputs.video)
             videoId = inputs.video
         } else if (inputs.video instanceof File) {
-            console.log('Uploading new video file for text generation...')
             const videoFile = inputs.video
             const duration = await getMediaDuration(videoFile)
             const fileNameWithoutExt = videoFile.name
@@ -286,9 +284,8 @@ const executeLipSynchronization = async (
                 : ''
 
             // Generate new filename while preserving extension
-            const newFileName = `${userId}_${Math.floor(Date.now() / 1000)}`
-            const newVideoName =
-                `${userId}_${Math.floor(Date.now() / 1000)}` + fileExtension
+            const baseFileName = `${userId}_${Math.floor(Date.now() / 1000)}`
+            const newVideoName = baseFileName + fileExtension
 
             const videoData: VideoData = {
                 title: fileNameWithoutExt,
@@ -296,7 +293,7 @@ const executeLipSynchronization = async (
                 description: '',
                 file_name: newVideoName,
                 folder: S3Folder.video,
-                image: `${newFileName}_thumbnail.jpg`,
+                image: `${baseFileName}_thumbnail.jpg`,
                 user_id: userId,
             }
 
