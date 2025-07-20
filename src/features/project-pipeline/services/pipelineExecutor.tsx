@@ -84,15 +84,20 @@ const executeVideoTranslation = async (
                 .slice(0, -1)
                 .join('.')
 
-                    const videoData: VideoData = {
-                        title: fileNameWithoutExt,
-                        duration: duration,
-                        description: '',
-                        file_name: videoFile.name,
-                        folder: S3Folder.video as string,
-                        image: 'avatar.jpg',
-                        user_id: userId,
-                    }
+            const fileExtension = videoFile.name.includes('.')
+                ? videoFile.name.substring(videoFile.name.lastIndexOf('.'))
+                : ''
+            const newFileName = `${userId}_${Math.floor(Date.now() / 1000)}`
+            const newVideoName = newFileName + fileExtension
+            const videoData: VideoData = {
+                title: fileNameWithoutExt,
+                duration: duration,
+                description: '',
+                file_name: newVideoName,
+                folder: S3Folder.video,
+                image: `${newFileName}_thumbnail.jpg`,
+                user_id: userId,
+            }
 
             videoId = await uploadVideo(videoFile, videoData)
         } else {
@@ -136,13 +141,19 @@ const executeTextGeneration = async (
                 .split('.')
                 .slice(0, -1)
                 .join('.')
+
+            const fileExtension = videoFile.name.includes('.')
+                ? videoFile.name.substring(videoFile.name.lastIndexOf('.'))
+                : ''
+            const newFileName = `${userId}_${Math.floor(Date.now() / 1000)}`
+            const newVideoName = newFileName + fileExtension
             const videoData: VideoData = {
                 title: fileNameWithoutExt,
                 duration: duration,
                 description: '',
-                file_name: videoFile.name,
+                file_name: newVideoName,
                 folder: S3Folder.video,
-                image: 'avatar.jpg',
+                image: `${newFileName}_thumbnail.jpg`,
                 user_id: userId,
             }
 
