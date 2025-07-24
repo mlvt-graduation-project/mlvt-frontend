@@ -1,9 +1,16 @@
 import { Box, Typography } from '@mui/material'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { GetPipelineCost } from 'src/api/model.api'
+import ConfirmRunModal from 'src/components/ModelCostPopup'
 import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import { VideoData } from '../../../../../types/FileData'
 import { VideoFileType } from '../../../../../types/FileType'
-import { Project, ProjectType, RawVideo } from '../../../../../types/Project'
+import {
+    PipelineShortForm,
+    Project,
+    ProjectType,
+    RawVideo,
+} from '../../../../../types/Project'
 import { S3Folder } from '../../../../../types/S3FolderStorage'
 import { TranslateLanguage } from '../../../../../types/Translation'
 import { checkValidGenerate } from '../../../../../utils/ProcessTriggerPopup/CheckValidGenerate'
@@ -37,6 +44,9 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const [sourceLanguage, setSourceLanguage] = useState<TranslateLanguage>(
         TranslateLanguage.English,
     )
+
+    const [confirmPopup, setConfirmPopup] = useState<boolean>(false)
+    const [cost, setCost] = useState<number>(0)
 
     const [deviceFile, setDeviceFile] = useState<File | null>(null)
     const [MLVTVideo, setMLVTVideo] = useState<RawVideo | null>(null)
@@ -168,7 +178,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const activeView = Views.find((view) => view.viewState === viewState)
     const ActiveComponent = activeView?.component || null
 
-    const handleGenerate = useCallback(async () => {
+    const handlePipelineTrigger = useCallback(async () => {
         const generationData: GenerateVideoData = {
             viewState,
             deviceFile,
@@ -189,6 +199,25 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         fileData,
         onGenerate,
     ])
+
+    const handleYesConfirmPopup = handlePipelineTrigger
+    const handleCloseConfirmPopup = () => setConfirmPopup(false)
+
+    const handleGenerate = useCallback(async () => {
+        try {
+            const response = await GetPipelineCost(
+                PipelineShortForm.Fullpipeline,
+            )
+            if (!response.model_charge_active) {
+                handlePipelineTrigger()
+            } else {
+                setCost(response.cost)
+                setConfirmPopup(true)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }, [handlePipelineTrigger])
 
     return (
         <>
@@ -253,6 +282,13 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             <GenerateButton
                 isDisable={disableGenerate}
                 handleGenerate={handleGenerate}
+            />
+            <ConfirmRunModal
+                isOpen={confirmPopup}
+                onNo={handleCloseConfirmPopup}
+                onYes={handleYesConfirmPopup}
+                model={PipelineShortForm.Fullpipeline}
+                cost={cost}
             />
         </>
     )

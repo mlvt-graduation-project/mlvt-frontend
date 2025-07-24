@@ -2,6 +2,7 @@ import React, { useCallback } from 'react'
 import { BasePopup } from '../../BasePopup'
 import { DialogContent, GenerateLipsyncData } from './PopupContent'
 
+import axios from 'axios'
 import UploadNotification from 'src/components/UploadNotification'
 import { uploadAudio } from 'src/utils/ProcessTriggerPopup/AudioService'
 import { lipSync } from 'src/utils/ProcessTriggerPopup/PipelineService'
@@ -103,16 +104,27 @@ export const LipsyncPopup: React.FC<LipsyncPopupProps> = ({
                     content: 'Upload data successfully! 🎉',
                 })
             } catch (error) {
-                console.error('Upload failed:', error)
-                const errorMessage =
-                    error instanceof Error
-                        ? error.message
-                        : 'An unknown error occurred.'
-                // 6. If anything fails, update notification to 'fail'
+                let errorMessage = 'An unknown error occurred.'
+
+                if (axios.isAxiosError(error) && error.response?.data) {
+                    const data = error.response.data as {
+                        error?: string
+                        error_message?: string
+                        message?: string
+                    }
+
+                    errorMessage =
+                        data.error ||
+                        data.error_message ||
+                        data.message ||
+                        error.message
+                } else if (error instanceof Error) {
+                    errorMessage = error.message
+                }
                 setNotification({
                     isOpen: true,
                     status: 'fail',
-                    content: `Process failed: ${errorMessage}`,
+                    content: `Lip Synchronization failed: ${errorMessage}`,
                 })
             }
         },

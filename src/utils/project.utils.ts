@@ -276,3 +276,22 @@ export function convertProjectTypeToPipelineShortForm(
             return null
     }
 }
+
+export function convertPipelineShortFormToPipelineType(
+    input: PipelineShortForm,
+): ProjectType | 'not-detected' {
+    switch (input) {
+        case PipelineShortForm.AudioGeneration:
+            return ProjectType.AudioGeneration
+        case PipelineShortForm.Fullpipeline:
+            return ProjectType.Fullpipeline
+        case PipelineShortForm.TextGeneration:
+            return ProjectType.TextGeneration
+        case PipelineShortForm.Lipsync:
+            return ProjectType.Lipsync
+        case PipelineShortForm.TextTranslation:
+            return ProjectType.TextTranslation
+        default:
+            return 'not-detected'
+    }
+}

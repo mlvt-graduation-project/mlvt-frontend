@@ -1,9 +1,12 @@
 import { Box, Typography } from '@mui/material'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { GetPipelineCost } from 'src/api/model.api'
+import ConfirmRunModal from 'src/components/ModelCostPopup'
 import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import { AudioData, TextData } from '../../../../../types/FileData'
 import { AudioFileType, TextFileType } from '../../../../../types/FileType'
 import {
+    PipelineShortForm,
     Project,
     ProjectType,
     RawAudio,
@@ -54,6 +57,9 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const [textLanguage, setTextLanguage] = useState<TranslateLanguage | null>(
         TranslateLanguage.English,
     )
+
+    const [confirmPopup, setConfirmPopup] = useState<boolean>(false)
+    const [cost, setCost] = useState<number>(0)
 
     const [MLVTVoice, setMLVTVoice] = useState<RawAudio | RawVideo | null>(null)
 
@@ -242,7 +248,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         textLanguage,
     ])
 
-    const handleGenerate = useCallback(() => {
+    const handlePipelineTrigger = useCallback(() => {
         const data: VoiceGenerationData = {
             textViewState,
             audioViewState,
@@ -269,6 +275,25 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         MLVTVoice,
         onGenerate,
     ])
+
+    const handleYesConfirmPopup = handlePipelineTrigger
+    const handleCloseConfirmPopup = () => setConfirmPopup(false)
+
+    const handleGenerate = useCallback(async () => {
+        try {
+            const response = await GetPipelineCost(
+                PipelineShortForm.AudioGeneration,
+            )
+            if (!response.model_charge_active) {
+                handlePipelineTrigger()
+            } else {
+                setCost(response.cost)
+                setConfirmPopup(true)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }, [handlePipelineTrigger])
 
     const activeAudioView = AudioViews.find(
         (view) => view.viewState === audioViewState,
@@ -351,6 +376,13 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             <GenerateButton
                 isDisable={disableGenerate}
                 handleGenerate={handleGenerate}
+            />
+            <ConfirmRunModal
+                isOpen={confirmPopup}
+                onNo={handleCloseConfirmPopup}
+                onYes={handleYesConfirmPopup}
+                model={PipelineShortForm.AudioGeneration}
+                cost={cost}
             />
         </>
     )

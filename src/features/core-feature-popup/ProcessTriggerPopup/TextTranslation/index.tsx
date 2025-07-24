@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react'
 import UploadNotification from 'src/components/UploadNotification'
 
+import axios from 'axios'
 import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import { TextFileType } from 'src/types/FileType'
 import { translateText } from 'src/utils/ProcessTriggerPopup/PipelineService'
@@ -109,15 +110,28 @@ export const TextTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
                 })
             } catch (error) {
                 console.error('Text translation process failed:', error)
-                const errorMessage =
-                    error instanceof Error
-                        ? error.message
-                        : 'An unknown error occurred.'
+                let errorMessage = 'An unknown error occurred.'
+
+                if (axios.isAxiosError(error) && error.response?.data) {
+                    const data = error.response.data as {
+                        error?: string
+                        error_message?: string
+                        message?: string
+                    }
+
+                    errorMessage =
+                        data.error ||
+                        data.error_message ||
+                        data.message ||
+                        error.message
+                } else if (error instanceof Error) {
+                    errorMessage = error.message
+                }
                 // On failure
                 setNotification({
                     isOpen: true,
                     status: 'fail',
-                    content: `Process failed: ${errorMessage}`,
+                    content: `Text Translation failed: ${errorMessage}`,
                 })
             }
         },

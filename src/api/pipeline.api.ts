@@ -22,13 +22,13 @@ interface TriggerResponse {
 export const postTextGeneration = async (
     videoId: number,
     sourceLanguage: string,
-): Promise<TriggerResponse> => {
-    const response = await post<TriggerResponse>(`/mlvt/stt/${videoId}`, null, {
+): Promise<any> => {
+    return post<TriggerResponse>(`/mlvt/stt/${videoId}`, null, {
         params: {
             source_language: sourceLanguage,
         },
+        getFullResponse: true,
     })
-    return response
 }
 
 export const postTextTranslation = (
