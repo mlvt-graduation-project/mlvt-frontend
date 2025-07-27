@@ -84,15 +84,20 @@ const executeVideoTranslation = async (
                 .slice(0, -1)
                 .join('.')
 
-                    const videoData: VideoData = {
-                        title: fileNameWithoutExt,
-                        duration: duration,
-                        description: '',
-                        file_name: videoFile.name,
-                        folder: S3Folder.video as string,
-                        image: 'avatar.jpg',
-                        user_id: userId,
-                    }
+            const fileExtension = videoFile.name.includes('.')
+                ? videoFile.name.substring(videoFile.name.lastIndexOf('.'))
+                : ''
+            const newFileName = `${userId}_${Math.floor(Date.now() / 1000)}`
+            const newVideoName = newFileName + fileExtension
+            const videoData: VideoData = {
+                title: fileNameWithoutExt,
+                duration: duration,
+                description: '',
+                file_name: newVideoName,
+                folder: S3Folder.video,
+                image: `${newFileName}_thumbnail.jpg`,
+                user_id: userId,
+            }
 
             videoId = await uploadVideo(videoFile, videoData)
         } else {
@@ -126,23 +131,27 @@ const executeTextGeneration = async (
         let videoId: number
 
         if (typeof inputs.video === 'number') {
-            console.log('Using existing video ID:', inputs.video)
             videoId = inputs.video
         } else if (inputs.video instanceof File) {
-            console.log('Uploading new video file for text generation...')
             const videoFile = inputs.video
             const duration = await getMediaDuration(videoFile)
             const fileNameWithoutExt = videoFile.name
                 .split('.')
                 .slice(0, -1)
                 .join('.')
+
+            const fileExtension = videoFile.name.includes('.')
+                ? videoFile.name.substring(videoFile.name.lastIndexOf('.'))
+                : ''
+            const newFileName = `${userId}_${Math.floor(Date.now() / 1000)}`
+            const newVideoName = newFileName + fileExtension
             const videoData: VideoData = {
                 title: fileNameWithoutExt,
                 duration: duration,
                 description: '',
-                file_name: videoFile.name,
+                file_name: newVideoName,
                 folder: S3Folder.video,
-                image: 'avatar.jpg',
+                image: `${newFileName}_thumbnail.jpg`,
                 user_id: userId,
             }
 
@@ -222,7 +231,7 @@ const executeTextTranslation = async (
         console.log('Text translation job response:', jobResponse.id)
 
         return {
-            key: 'original_transcription_id',
+            key: 'translated_transcription_id',
             value: jobResponse.id,
         }
     } catch (error) {
@@ -269,13 +278,22 @@ const executeLipSynchronization = async (
                 .split('.')
                 .slice(0, -1)
                 .join('.')
+
+            const fileExtension = videoFile.name.includes('.')
+                ? videoFile.name.substring(videoFile.name.lastIndexOf('.'))
+                : ''
+
+            // Generate new filename while preserving extension
+            const baseFileName = `${userId}_${Math.floor(Date.now() / 1000)}`
+            const newVideoName = baseFileName + fileExtension
+
             const videoData: VideoData = {
                 title: fileNameWithoutExt,
                 duration: duration,
                 description: '',
-                file_name: videoFile.name,
+                file_name: newVideoName,
                 folder: S3Folder.video,
-                image: 'avatar.jpg',
+                image: `${baseFileName}_thumbnail.jpg`,
                 user_id: userId,
             }
 
@@ -322,14 +340,7 @@ const executeVoiceGeneration = async (
         return Promise.reject(new Error('Text input is required.'))
     }
 
-    console.log(
-        'Inputs for voice generation:',
-        { text, audio, video },
-        'types:',
-        { text: typeof text, audio: typeof audio, video: typeof video },
-    )
-
-    if (!audio) {
+    if (!audio && !video) {
         return Promise.reject(
             new Error('Please provide either a video or an audio input.'),
         )
@@ -371,13 +382,10 @@ const executeVoiceGeneration = async (
             inputs.text instanceof File
         ) {
             const content = inputs.text
-            const fileName =
-                content instanceof File
-                    ? content.name
-                    : 'text-translation-input.txt'
+            const newFileName = `${userId}_${Math.floor(Date.now() / 1000)}`
 
             const fileData: TextData = {
-                file_name: fileName,
+                file_name: newFileName,
                 folder: S3Folder.text,
                 user_id: userId,
                 lang: getLanguageCode(

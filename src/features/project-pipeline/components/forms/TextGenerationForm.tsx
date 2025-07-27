@@ -37,6 +37,7 @@ const TextGenerationForm = () => {
                     handleChangeOption={handleChangeAudioLanguage}
                     value={state.inputs.sourceLanguage || ''}
                     customSx={{ width: '35%' }}
+                    disabled={state.isGenerating}
                 />
             </Box>
         </Stack>
