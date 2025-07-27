@@ -1,3 +1,4 @@
+import axios from 'axios'
 import React, { useCallback, useState } from 'react'
 import UploadNotification from 'src/components/UploadNotification'
 import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
@@ -146,16 +147,27 @@ export const VoiceGenerationPopup: React.FC<VoiceGenerationPopupProps> = ({
                     content: `Voice generation started! Audio ID: ${audioId}`,
                 })
             } catch (error) {
-                console.error('Voice generation process failed:', error)
-                const errorMessage =
-                    error instanceof Error
-                        ? error.message
-                        : 'An unknown error occurred.'
-                // --- Step 6: Failure ---
+                let errorMessage = 'An unknown error occurred.'
+
+                if (axios.isAxiosError(error) && error.response?.data) {
+                    const data = error.response.data as {
+                        error?: string
+                        error_message?: string
+                        message?: string
+                    }
+
+                    errorMessage =
+                        data.error ||
+                        data.error_message ||
+                        data.message ||
+                        error.message
+                } else if (error instanceof Error) {
+                    errorMessage = error.message
+                }
                 setNotification({
                     isOpen: true,
                     status: 'fail',
-                    content: `Process failed: ${errorMessage}`,
+                    content: `Voice Generation failed: ${errorMessage}`,
                 })
             }
         },

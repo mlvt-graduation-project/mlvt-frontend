@@ -2,6 +2,7 @@ import React, { useCallback } from 'react'
 import { BasePopup } from '../../BasePopup'
 import { DialogContent, TextGenerationData } from './PopupContent'
 
+import axios from 'axios'
 import UploadNotification from 'src/components/UploadNotification'
 import { generateText } from 'src/utils/ProcessTriggerPopup/PipelineService'
 import { uploadVideo } from 'src/utils/ProcessTriggerPopup/VideoService'
@@ -63,10 +64,27 @@ export const TextGenerationPopup: React.FC<TextGenerationPopupProps> = ({
                     content: 'Upload data successfully! 🎉',
                 })
             } catch (error) {
+                let errorMessage = 'An unknown error occurred.'
+
+                if (axios.isAxiosError(error) && error.response?.data) {
+                    const data = error.response.data as {
+                        error?: string
+                        error_message?: string
+                        message?: string
+                    }
+
+                    errorMessage =
+                        data.error ||
+                        data.error_message ||
+                        data.message ||
+                        error.message
+                } else if (error instanceof Error) {
+                    errorMessage = error.message
+                }
                 setNotification({
                     isOpen: true,
                     status: 'fail',
-                    content: `Text Generation process failed`,
+                    content: `Text Generation failed: ${errorMessage}`,
                 })
             }
         },

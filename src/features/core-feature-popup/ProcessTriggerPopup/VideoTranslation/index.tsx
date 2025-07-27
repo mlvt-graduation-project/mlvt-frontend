@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { DialogContent, GenerateVideoData } from './PopupContent'
 
+import axios from 'axios'
 import UploadNotification from 'src/components/UploadNotification'
 import { translateVideo } from '../../../../utils/ProcessTriggerPopup/PipelineService'
 import { uploadVideo } from '../../../../utils/ProcessTriggerPopup/VideoService'
@@ -63,11 +64,27 @@ export const VideoTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
                     content: null,
                 })
             } catch (error) {
-                console.error('Video translation process failed:', error)
+                let errorMessage = 'An unknown error occurred.'
+
+                if (axios.isAxiosError(error) && error.response?.data) {
+                    const data = error.response.data as {
+                        error?: string
+                        error_message?: string
+                        message?: string
+                    }
+
+                    errorMessage =
+                        data.error ||
+                        data.error_message ||
+                        data.message ||
+                        error.message
+                } else if (error instanceof Error) {
+                    errorMessage = error.message
+                }
                 setNotification({
                     isOpen: true,
                     status: 'fail',
-                    content: null,
+                    content: `Video Translation failed: ${errorMessage}`,
                 })
             }
         },
