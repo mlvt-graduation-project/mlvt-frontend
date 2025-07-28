@@ -1,7 +1,7 @@
+import { Box } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { getOneVideoById } from 'src/api/video.api'
 import { PipelineProgress } from '../../types'
-import { OriginalVideo } from 'src/features/core-feature-popup/ProjectPopup/BaseComponent/OriginalVideo'
 
 type VideoState<T> = {
     data: T | null
@@ -9,7 +9,7 @@ type VideoState<T> = {
     error: string | null
 }
 
-interface AssetState{
+interface AssetState {
     lipSyncVideo: VideoState<string>
 }
 
@@ -55,9 +55,14 @@ export const LipSynchronizationResultDisplay = ({
             }
 
             try {
-                const videoResult = await getOneVideoById(
-                    progressData.progressed_video_id,
-                )
+                const videoResult = await (progressData.progressed_video_id
+                    ? getOneVideoById(progressData.progressed_video_id)
+                    : undefined)
+                if (!videoResult || !videoResult.video_url) {
+                    throw new Error('Video URL not found')
+                }
+                console.log('Lip sync video fetched:', videoResult)
+                console.log('Lip sync video URL:', videoResult.video_url)
 
                 if (isMounted) {
                     setAssets({
@@ -89,14 +94,20 @@ export const LipSynchronizationResultDisplay = ({
     }, [progressData.progressed_video_id])
 
     return (
-        <div>
+        <Box display={'flex'} width={'100%'} padding={2} borderRadius={4}>
             {assets.lipSyncVideo.isLoading ? (
                 <p>Loading...</p>
             ) : assets.lipSyncVideo.error ? (
                 <p>Error: {assets.lipSyncVideo.error}</p>
             ) : (
-                <OriginalVideo videoUrl={assets.lipSyncVideo.data}/>
+                assets.lipSyncVideo.data && (
+                    <video
+                        src={assets.lipSyncVideo.data}
+                        controls
+                        style={{ width: '100%', height: 'auto', borderRadius: '10px' }}
+                    />
+                )
             )}
-        </div>
+        </Box>
     )
 }

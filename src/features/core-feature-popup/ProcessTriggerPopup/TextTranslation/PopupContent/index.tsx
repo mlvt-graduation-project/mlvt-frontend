@@ -1,9 +1,16 @@
 import { Box, Typography } from '@mui/material'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { GetPipelineCost } from 'src/api/model.api'
+import ConfirmRunModal from 'src/components/ModelCostPopup'
 import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import { TextData } from '../../../../../types/FileData'
 import { TextFileType } from '../../../../../types/FileType'
-import { Project, ProjectType, RawText } from '../../../../../types/Project'
+import {
+    PipelineShortForm,
+    Project,
+    ProjectType,
+    RawText,
+} from '../../../../../types/Project'
 import { S3Folder } from '../../../../../types/S3FolderStorage'
 import { TranslateLanguage } from '../../../../../types/Translation'
 import { BrowseFile } from '../../BaseComponent/BrowseMLVTFile'
@@ -45,12 +52,38 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const [targetLanguage, setTargetLanguage] = useState<TranslateLanguage>(
         TranslateLanguage.Vietnamese,
     )
+    const [confirmPopup, setConfirmPopup] = useState<boolean>(false)
+    const [cost, setCost] = useState<number>(0)
     const [textData, setTextData] = useState<TextData>({
         file_name: '',
         folder: S3Folder.text,
         user_id: parsedUserId,
         lang: '',
     })
+
+    const handleCloseConfirmPopup = () => setConfirmPopup(false)
+    const handlePipelineTrigger = useCallback(async () => {
+        const data: TextTranslationData = {
+            viewState,
+            deviceFile,
+            MLVTText,
+            inputText,
+            sourceLanguage,
+            targetLanguage,
+            textData,
+        }
+        onGenerate(data)
+    }, [
+        onGenerate,
+        viewState,
+        deviceFile,
+        MLVTText,
+        inputText,
+        sourceLanguage,
+        targetLanguage,
+        textData,
+    ])
+    const handleYesConfirmPopup = handlePipelineTrigger
 
     const handleChangeSourceLanguage = (value: string) => {
         if (
@@ -166,26 +199,20 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const ActiveComponent = activeView?.component ?? null
 
     const handleGenerate = useCallback(async () => {
-        const data: TextTranslationData = {
-            viewState,
-            deviceFile,
-            MLVTText,
-            inputText,
-            sourceLanguage,
-            targetLanguage,
-            textData,
+        try {
+            const response = await GetPipelineCost(
+                PipelineShortForm.TextTranslation,
+            )
+            if (!response.model_charge_active) {
+                handlePipelineTrigger()
+            } else {
+                setCost(response.cost)
+                setConfirmPopup(true)
+            }
+        } catch (error) {
+            console.error(error)
         }
-        onGenerate(data)
-    }, [
-        onGenerate,
-        viewState,
-        deviceFile,
-        MLVTText,
-        inputText,
-        sourceLanguage,
-        targetLanguage,
-        textData,
-    ])
+    }, [handlePipelineTrigger])
 
     return (
         <>
@@ -254,6 +281,13 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             <GenerateButton
                 isDisable={disableGenerate}
                 handleGenerate={handleGenerate}
+            />
+            <ConfirmRunModal
+                isOpen={confirmPopup}
+                onNo={handleCloseConfirmPopup}
+                onYes={handleYesConfirmPopup}
+                model={PipelineShortForm.TextTranslation}
+                cost={cost}
             />
         </>
     )

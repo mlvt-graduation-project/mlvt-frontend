@@ -28,6 +28,9 @@ export const translateText = async (
     )
 
     if (!checkSuccessResponse(postTranslationResponse.status)) {
+        if (postTranslationResponse.status === 402) {
+            throw new Error('Not enough token in account')
+        }
         throw new Error('Server indicated an error during text translation.')
     }
 
@@ -85,8 +88,9 @@ export const generateText = async (
         videoId,
         sourceLanguageCode,
     )
+    console.log('Response', postTextGenerationResponse)
 
-    if (postTextGenerationResponse.message !== 'Accepted for processing') {
+    if (!checkSuccessResponse(postTextGenerationResponse.status)) {
         throw new Error('Server indicated an error during text generation.')
     }
     return postTextGenerationResponse as JobCreationResponse

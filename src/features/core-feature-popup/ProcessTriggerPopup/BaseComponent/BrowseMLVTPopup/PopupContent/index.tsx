@@ -47,7 +47,12 @@ export const DialogContent: React.FC<DialogContentProps> = ({
     const totalPages = Math.ceil(totalCount / getProjectRequest.limit)
 
     const handleCardClick = (project: Project) => {
-        setSelectedProject((prev) => (prev?.id === project.id ? null : project))
+        setSelectedProject((prev) =>
+            prev?.id === project.id &&
+            prev?.type_project === project.type_project
+                ? null
+                : project,
+        )
     }
 
     const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

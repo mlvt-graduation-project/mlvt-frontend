@@ -299,6 +299,7 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                             variant="outlined"
                             onClick={handleUploadClick}
                             sx={{ fontFamily: 'Poppins, sans-serif' }}
+                            disabled={state.isGenerating}
                         >
                             Choose File
                         </Button>
@@ -419,6 +420,7 @@ const MultiSourceInput: React.FC<MultiSourceInputProps> = ({
                 aria-label="input mode"
                 size="small"
                 fullWidth
+                disabled={state.isGenerating}
                 sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}
             >
                 {modes.map((mode) => (
