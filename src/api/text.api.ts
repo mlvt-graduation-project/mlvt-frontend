@@ -2,7 +2,7 @@ import { GetTextById, TextListResponse } from "../types/Response/Text";
 import { GetPresignedURL } from "../types/Response/Video";
 import { PostText } from "../types/Response/Text";
 import { AxiosResponse } from "axios";
-import { del, get, post } from "./base.api";
+import { del, get, patch, post } from "./base.api";
 
 /**
  * Generates a presigned URL for uploading a text file.
@@ -131,6 +131,15 @@ export const getTextById = async (
         throw new Error(`Failed to fetch text with ID ${id}: ${error}`);
     }
 };
+
+export const updateTextById = async (textId: number, title: string): Promise<void> => {
+    try {
+        return await patch(`/transcriptions/title/${textId}`, { title: title})
+    } catch (error) {
+        console.error(`Failed to update text with ID ${textId}:`, error)
+        throw error
+    }
+}
 
 export const deleteTextById = async (textId: string): Promise<void> => {
     try {

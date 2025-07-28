@@ -13,11 +13,13 @@ import { SharePopup } from 'src/components/SharePopup'
 import { deleteProjectById } from 'src/api/pipeline.api'
 
 interface ContentProps {
-    inputProject: AudioGenerationProject
+    inputProject: AudioGenerationProject,
+    onShare?: (url: string) => void; 
 }
 
 export const AudioGenerationContent: React.FC<ContentProps> = ({
     inputProject,
+    onShare
 }) => {
     const [viewState, setViewState] = useState<'original' | 'related output'>(
         'original',
@@ -37,7 +39,11 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
     const [isSharePopupOpen, setSharePopupOpen] = useState(false);
 
     const handleShare = () => {
-        setSharePopupOpen(true);
+        if (onShare && resultAudio) {
+            onShare(resultAudio); 
+        } else if (onShare) {
+            onShare(window.location.href);
+        }
     };
 
     const handleCloseSharePopup = () => {
@@ -164,12 +170,6 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
                 </Box>
                 {ActiveComponent}
             </Box>
-
-            <SharePopup
-                open={isSharePopupOpen}
-                onClose={handleCloseSharePopup}
-                url={window.location.href} // Lấy URL hiện tại của trang
-            />
         </>
     )
 }

@@ -10,10 +10,11 @@ import { SharePopup } from 'src/components/SharePopup'
 import { deleteProjectById } from 'src/api/pipeline.api'
 
 interface ContentProps {
-    inputProject: LipSyncProject
+    inputProject: LipSyncProject,
+    onShare?: (url: string) => void;
 }
 
-export const LipSyncContent: React.FC<ContentProps> = ({ inputProject }) => {
+export const LipSyncContent: React.FC<ContentProps> = ({ inputProject, onShare }) => {
     const [viewState, setViewState] = useState<'original' | 'related output'>(
         'original',
     )
@@ -24,8 +25,13 @@ export const LipSyncContent: React.FC<ContentProps> = ({ inputProject }) => {
 
     const [isSharePopupOpen, setSharePopupOpen] = useState(false);
     
-    const handleShare = () => {
-        setSharePopupOpen(true);
+   const handleShare = () => {
+        console.log("handleShare function was called! Setting popup to open.");
+        if (onShare && resultVideoURL) {
+            onShare(resultVideoURL); 
+        } else if (onShare) {
+            onShare(window.location.href);
+        }
     };
 
     const handleCloseSharePopup = () => {
@@ -119,7 +125,7 @@ export const LipSyncContent: React.FC<ContentProps> = ({ inputProject }) => {
             <SharePopup
                 open={isSharePopupOpen}
                 onClose={handleCloseSharePopup}
-                url={window.location.href} 
+                contentToShare={window.location.href} 
             />
         </>
     )

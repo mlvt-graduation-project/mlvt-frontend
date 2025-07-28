@@ -26,7 +26,7 @@ import { mapStatusToColor } from "../../utils/mapProjectStatus.util";
 interface CardFeatureProps {
     project: Project;
     onclick: () => void;
-    onUpdateTitle: (projectId: string, newTitle: string) => Promise<void>;
+    onUpdateTitle: (project: Project, newTitle: string) => Promise<void>;
 }
 
 const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick, onUpdateTitle }) => {
@@ -59,7 +59,7 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick, onUpdateTit
         setIsSaving(true);
         try {
             // Call the async function passed from the parent
-            await onUpdateTitle(project.id.toString(), title.trim());
+            await onUpdateTitle(project, title.trim());
             // If the API call succeeds, the parent's state will update,
             // which will re-render this component with the new project prop.
         } catch (error) {

@@ -101,7 +101,7 @@ export const RawTextContent: React.FC<ContentProps> = ({
             <SharePopup
                 open={isSharePopupOpen}
                 onClose={handleCloseSharePopup}
-                url={window.location.href} 
+                contentToShare={window.location.href} 
             />
         </>
     )

@@ -13,11 +13,14 @@ import { SharePopup } from 'src/components/SharePopup'
 import { deleteProjectById } from 'src/api/pipeline.api'
 
 interface ContentProps {
-    inputProject: TextGenerationProject
+    inputProject: TextGenerationProject,
+    onShare?: (url: string) => void;
+
 }
 
 export const TextGenerationContent: React.FC<ContentProps> = ({
     inputProject,
+    onShare
 }) => {
     const [viewState, setViewState] = useState<
         'translated video' | 'related output'
@@ -33,8 +36,13 @@ export const TextGenerationContent: React.FC<ContentProps> = ({
     const [isSharePopupOpen, setSharePopupOpen] = useState(false);
     
     const handleShare = () => {
-        console.log("handleShare function was called! Setting popup to open.");
-        setSharePopupOpen(true);
+        // Check if the onShare function was passed and if we have a URL to share
+        if (onShare && videoUrl) {
+            onShare(videoUrl); // Pass the original video URL up to the parent
+        } else if (onShare) {
+            // Provide a fallback if the video URL isn't ready
+            onShare(window.location.href);
+        }
     };
 
     const handleCloseSharePopup = () => {
@@ -144,12 +152,6 @@ export const TextGenerationContent: React.FC<ContentProps> = ({
                 </Box>
                 {ActiveComponent}
             </Box>
-
-            <SharePopup
-                open={isSharePopupOpen}
-                onClose={handleCloseSharePopup}
-                url={window.location.href} 
-            />
         </>
     )
 }

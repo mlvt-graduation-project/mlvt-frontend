@@ -33,8 +33,6 @@ export const InfoNav: React.FC<InfoNavProps> = ({
         }
     };
 
-    console.log("InfoNav rendered with id:", id, "and projectType:", projectType);
-
     return (
         <Grid
             container

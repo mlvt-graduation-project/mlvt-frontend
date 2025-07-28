@@ -16,10 +16,12 @@ import { deleteProjectById } from 'src/api/pipeline.api'
 
 interface ContentProps {
     inputProject: FullPipelineProject
+    onShare?: (url: string) => void; 
 }
 
 export const FullPipelineContent: React.FC<ContentProps> = ({
     inputProject,
+    onShare
 }) => {
     const [viewState, setViewState] = useState<
         'original' | 'translated video' | 'related output'
@@ -39,7 +41,12 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
     const [isSharePopupOpen, setSharePopupOpen] = useState(false);
     
     const handleShare = () => {
-        setSharePopupOpen(true);
+        console.log("handleShare function was called! Setting popup to open.");
+        if (onShare && resultVideoUrl) {
+            onShare(resultVideoUrl); 
+        } else if (onShare) {
+            onShare(window.location.href);
+        }
     };
 
     const handleCloseSharePopup = () => {
@@ -249,12 +256,6 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
                 </Box>
                 {ActiveComponent}
             </Box>
-
-            <SharePopup
-                open={isSharePopupOpen}
-                onClose={handleCloseSharePopup}
-                url={window.location.href} // Share the current page URL
-            />
         </Box>
     )
 }

@@ -11,11 +11,13 @@ import { SharePopup } from 'src/components/SharePopup'
 import { deleteProjectById } from 'src/api/pipeline.api'
 
 interface ContentProps {
-    inputProject: TextTranslationProject
+    inputProject: TextTranslationProject,
+    onShare?: (url: string) => void;
 }
 
 export const TextTranslationContent: React.FC<ContentProps> = ({
     inputProject,
+    onShare
 }) => {
     const [viewState, setViewState] = useState<'original' | 'related output'>(
         'original',
@@ -36,8 +38,13 @@ export const TextTranslationContent: React.FC<ContentProps> = ({
     const [isSharePopupOpen, setSharePopupOpen] = useState(false);
 
     const handleShare = () => {
-        console.log("handleShare function was called! Setting popup to open.");
-        setSharePopupOpen(true);
+        if (onShare && resultTextContent) {
+            // Pass the actual translated text to the parent. The parent's SharePopup
+            // will display this text in its text field for the user to copy.
+            onShare(resultTextContent);
+        } else if (onShare) {
+            onShare("Translated text is not available yet.");
+        }
     };
 
     const handleCloseSharePopup = () => {
@@ -149,12 +156,6 @@ export const TextTranslationContent: React.FC<ContentProps> = ({
                 <ChangeViewBox Views={Views} setViewState={changeViewState} />
                 <Box sx={{ marginTop: '30px' }}>{ActiveComponent}</Box>
             </Box>
-
-            <SharePopup
-                open={isSharePopupOpen}
-                onClose={handleCloseSharePopup}
-                url={window.location.href} 
-            />
         </>
     )
 }

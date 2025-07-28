@@ -31,6 +31,10 @@ import { ProjectStatus } from 'src/types/ProjectStatus'
 import { getAllProgressProjects } from 'src/utils/project.utils'
 import { ProcessedVideoPopUp } from '../core-feature-popup/ProjectPopup'
 import { updateProjectTitle } from 'src/api/project.api'
+import { updateVideoById } from 'src/api/video.api'
+import { updateTextById } from 'src/api/text.api'
+import { updateAudioById } from 'src/api/audio.api'
+import { SharePopup } from 'src/components/SharePopup'
 
 interface categoryProjectType {
     label: string
@@ -249,6 +253,14 @@ const Storage = () => {
     const [isPopUpOpen, setIsPopUpOpen] = useState(false)
     const [totalCount, setTotalCount] = useState(0)
 
+    const [shareState, setShareState] = useState<{
+        open: boolean;
+        url: string;
+    }>({
+        open: false,
+        url: '',
+    });
+
     const [snackbar, setSnackbar] = useState<{
         open: boolean;
         message: string;
@@ -271,24 +283,46 @@ const Storage = () => {
 
 
     // --- ADDED: Handler to update a project's title ---
-    const handleUpdateProjectTitle = async (projectId: string, newTitle: string) => {
+    const handleUpdateProjectTitle = async (project: Project, newTitle: string) => {
         try {
-            console.log("Updating project title:", projectId, newTitle);
-            await updateProjectTitle(projectId, newTitle);
+            // Use a switch statement to determine which API to call
+            switch (project.type_project) {
+                case ProjectType.Video:
+                    await updateVideoById(project.id, newTitle);
+                    break;
+
+                case ProjectType.Text:
+                    await updateTextById(project.id, newTitle);
+                    break;
+
+                case ProjectType.Audio:
+                    await updateAudioById(project.id, newTitle);
+                    break;
+
+                // The default case handles all other project types (Fullpipeline, Lipsync, etc.)
+                default:
+                    await updateProjectTitle(project.id, newTitle);
+                    break;
+            }
 
             // On API success, update the local state to show the change immediately.
             setDisplayProjects(currentProjects =>
                 currentProjects.map(p =>
-                    p.id === projectId ? { ...p, title: newTitle } : p
+                    p.id === project.id ? { ...p, title: newTitle } : p
                 )
             );
+
+            // Also update the selectedProject if it's the one being edited in the popup
+            if (selectedProject?.id === project.id) {
+                setSelectedProject(prev => prev ? { ...prev, title: newTitle } : null);
+            }
             
             setSnackbar({ open: true, message: 'Project title updated successfully!', severity: 'success' });
+
         } catch (error) {
             console.error("Failed to update project title:", error);
             const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
             setSnackbar({ open: true, message: `Update failed: ${errorMessage}`, severity: 'error' });
-            // The CardFeature component will handle reverting the title visually on error.
         }
     };
     
@@ -391,28 +425,13 @@ const Storage = () => {
         setSelectedProject(null)
     }
 
-    const [shareState, setShareState] = useState<{
-        open: boolean;
-        content: string;
-    }>({
-        open: false,
-        content: '',
-    });
-
     const handleOpenSharePopup = (contentToShare: string) => {
-        setShareState({ open: true, content: contentToShare });
+        console.log("handleOpenSharePopup is called");
+        setShareState({ open: true, url: contentToShare });
     };
 
     const handleCloseSharePopup = () => {
-        setShareState({ open: false, content: '' });
-    };
-
-    const handleOpenProjectPopup = (project: Project) => {
-        setSelectedProject(project);
-    };
-
-    const handleCloseProjectPopup = () => {
-        setSelectedProject(null);
+        setShareState({ open: false, url: '' });
     };
 
     return (
@@ -667,17 +686,18 @@ const Storage = () => {
             {selectedProject && (
                 <ProcessedVideoPopUp
                     inputObject={selectedProject}
-                    isOpen={isPopUpOpen}
+                    isOpen={!!selectedProject}
                     onClose={handleClosePopUp}
                     type={selectedProject.type_project}
+                    onShare={handleOpenSharePopup}
                 />
             )}
 
-            {/* <SharePopup
+            <SharePopup
                 open={shareState.open}
                 onClose={handleCloseSharePopup}
-                content={shareState.content}
-            /> */}
+                contentToShare={shareState.url}
+            />
 
             {snackbar && (
                 <Snackbar
