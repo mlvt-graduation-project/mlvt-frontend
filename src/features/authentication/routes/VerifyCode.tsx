@@ -82,7 +82,6 @@ const VerifyCodeInput: React.FC = () => {
             if (response.status === 200) {
                 console.log('Return to login')
                 setIsSuccess(true)
-                openDialog('Success', 'Verification successful!', 'success')
             } else {
                 openDialog(
                     'Error',
