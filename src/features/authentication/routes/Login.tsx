@@ -1,5 +1,5 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material'
-import { Box, Checkbox, Divider, TextField, Typography } from '@mui/material'
+import { Box, Checkbox, TextField, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { useSnackbar } from 'notistack'
 import React, { useEffect } from 'react'
@@ -8,8 +8,6 @@ import { CustomButton } from '../../../components/CustomButton'
 import { useAuth } from '../../../contexts/AuthContext'
 import LoginSignup from '../../../layout/LoginSignup'
 import { login as apiLogin } from '../api/auth.api'
-import FacebookLoginButton from '../components/SocialLoginButton/FacebookLoginButton'
-import GoogleLoginButton from '../components/SocialLoginButton/GoogleLoginButton'
 
 const InputStyles = (theme: any) => ({
     sx: {
@@ -313,7 +311,7 @@ const Login = () => {
             />
 
             {/* Divider */}
-            <Divider
+            {/* <Divider
                 sx={{
                     my: 1.5,
                     fontFamily: 'Poppins, sans-serif',
@@ -321,10 +319,10 @@ const Login = () => {
                 }}
             >
                 Or
-            </Divider>
+            </Divider> */}
 
             {/* Social Login Buttons */}
-            <Box
+            {/* <Box
                 sx={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -333,7 +331,7 @@ const Login = () => {
             >
                 <GoogleLoginButton />
                 <FacebookLoginButton />
-            </Box>
+            </Box> */}
 
             {/* Signup Link */}
             <Box
