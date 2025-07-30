@@ -11,7 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 // React.lazy expects a module with a `default` export.
 // If your component is a named export, we use .then() to create a module-like
 // object with a `default` property pointing to your named export.
-const { LoginPage, RegistrationPage } = {
+const { LoginPage, RegistrationPage, VerifyCodePage } = {
     LoginPage: lazy(() =>
         import('./features/authentication').then((module) => ({
             default: module.LoginPage,
@@ -20,6 +20,11 @@ const { LoginPage, RegistrationPage } = {
     RegistrationPage: lazy(() =>
         import('./features/authentication').then((module) => ({
             default: module.RegistrationPage,
+        })),
+    ),
+    VerifyCodePage: lazy(() =>
+        import('./features/authentication').then((module) => ({
+            default: module.VerifyCodePage,
         })),
     ),
 }
@@ -59,6 +64,7 @@ const routes: RouteObject[] = [
             // --- Public Routes ---
             { path: '/login', element: <LoginPage /> },
             { path: '/signup', element: <RegistrationPage /> },
+            { path: '/verifyCode', element: <VerifyCodePage /> },
             { path: '/landing', element: <LandingPage /> },
             { path: '/email-otp', element: <EmailOTP /> },
             { path: '/verify-otp', element: <VerifyOTP /> },
