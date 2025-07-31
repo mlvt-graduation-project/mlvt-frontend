@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import React, { useEffect, useMemo, useState } from 'react'
 import { getOneVideoById } from '../../../../api/video.api'
-import { LipSyncProject } from '../../../../types/Project'
+import { LipSyncProject, NavInfo } from '../../../../types/Project'
 import ChangeViewBox from '../../ProcessTriggerPopup/BaseComponent/ChangeView'
 import { InfoNav } from '../BaseComponent/InfomationNavBar'
 import { MainProjectOutput } from '../BaseComponent/MainProjectOutput'
@@ -24,6 +24,10 @@ export const LipSyncContent: React.FC<ContentProps> = ({ inputProject, onShare }
     const [imageUrl, setInputImageUrl] = useState<string | null>(null)
 
     const [isSharePopupOpen, setSharePopupOpen] = useState(false);
+    const [navInfo, setNavInfo] = useState<NavInfo>({
+            created_at: inputProject.createdAt,
+            language: 'none-detected',
+        })
     
    const handleShare = () => {
         console.log("handleShare function was called! Setting popup to open.");
@@ -116,6 +120,8 @@ export const LipSyncContent: React.FC<ContentProps> = ({ inputProject, onShare }
                 projectType={inputProject.type_project}
                 onShare={handleShare} 
                 onDelete={handleDelete}
+                CreatedAt={navInfo.created_at}
+                Language={navInfo.language}
             />
             <Box sx={{ marginTop: '15px', height: '31rem' }}>
                 <ChangeViewBox Views={Views} setViewState={changeViewState} />

@@ -61,7 +61,16 @@ export const RawVideoContent: React.FC<ContentProps> = ({
 
     return (
         <>
-            {!hideNavBar && <InfoNav id={String(videoId)} projectType="Video" onDelete={handleDelete} onShare={handleShare} />}
+            {!hideNavBar && 
+            <InfoNav 
+                id={String(videoId)} 
+                projectType="Video" 
+                onDelete={handleDelete} 
+                onShare={handleShare} 
+                CreatedAt={navInfo.created_at}
+                Language={navInfo.language}
+            />
+            }
             <OriginalVideo videoUrl={videoUrl}></OriginalVideo>
 
             <SharePopup

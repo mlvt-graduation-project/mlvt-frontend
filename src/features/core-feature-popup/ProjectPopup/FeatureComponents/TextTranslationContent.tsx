@@ -151,7 +151,14 @@ export const TextTranslationContent: React.FC<ContentProps> = ({
 
     return (
         <>
-            <InfoNav id={inputProject.id} projectType={inputProject.type_project} onShare={handleShare} onDelete={handleDelete} />
+            <InfoNav 
+                id={inputProject.id} 
+                projectType={inputProject.type_project} 
+                onShare={handleShare} 
+                onDelete={handleDelete} 
+                CreatedAt={navInfo.created_at}
+                Language={navInfo.language}
+            />
             <Box sx={{ marginTop: '15px' }}>
                 <ChangeViewBox Views={Views} setViewState={changeViewState} />
                 <Box sx={{ marginTop: '30px' }}>{ActiveComponent}</Box>

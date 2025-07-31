@@ -63,7 +63,16 @@ export const RawAudioContent: React.FC<ContentProps> = ({
 
     return (
         <>
-            {!hideNavBar && <InfoNav id={String(audioId)} projectType="Audio" onDelete={handleDelete} onShare={handleShare} />}
+            {!hideNavBar && 
+                <InfoNav 
+                    id={String(audioId)} 
+                    projectType="Audio" 
+                    onDelete={handleDelete} 
+                    onShare={handleShare} 
+                    CreatedAt={navInfo.created_at}
+                    Language={navInfo.language}
+                />
+            }
 
             <Box
                 sx={{

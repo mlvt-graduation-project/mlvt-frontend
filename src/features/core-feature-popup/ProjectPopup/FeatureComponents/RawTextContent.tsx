@@ -76,7 +76,16 @@ export const RawTextContent: React.FC<ContentProps> = ({
 
     return (
         <>
-            {!hideNavBar && <InfoNav id={String(textId)} projectType="Text" onDelete={handleDelete} onShare={handleShare} />}
+            {!hideNavBar && 
+                <InfoNav 
+                    id={String(textId)} 
+                    projectType="Text" 
+                    onDelete={handleDelete} 
+                    onShare={handleShare} 
+                    CreatedAt={navInfo.created_at}
+                    Language={navInfo.language}
+                />
+            }
             <Box
                 sx={{
                     display: 'flex',

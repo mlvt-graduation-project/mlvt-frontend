@@ -135,7 +135,14 @@ export const TextGenerationContent: React.FC<ContentProps> = ({
 
     return (
         <>
-            <InfoNav id={inputProject.id} projectType={inputProject.type_project} onShare={handleShare} onDelete={handleDelete} />
+            <InfoNav 
+                id={inputProject.id} 
+                projectType={inputProject.type_project} 
+                onShare={handleShare} 
+                onDelete={handleDelete}
+                CreatedAt={navInfo.created_at}
+                Language={navInfo.language}
+            />
             <Box
                 sx={{
                     mt: '10px',

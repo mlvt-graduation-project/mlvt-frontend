@@ -239,6 +239,8 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
                 projectType={inputProject.type_project}
                 onShare={handleShare} 
                 onDelete={handleDelete}
+                CreatedAt={navInfo.created_at}
+                Language={navInfo.language}
             />
             <Box
                 sx={{
