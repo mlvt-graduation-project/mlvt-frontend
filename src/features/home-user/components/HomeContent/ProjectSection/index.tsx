@@ -63,10 +63,13 @@ const ProjectSection = () => {
     const [isPopUpOpen, setIsPopUpOpen] = React.useState(false)
     const [displayProjects, setDisplayProjects] = useState<Project[]>([])
     const [totalCount, setTotalCount] = useState(0)
-    const [shareState, setShareState] = useState<{ open: boolean; content: string; }>({
-        open: false,
-        content: '',
-    });
+    const [shareState, setShareState] = useState<{
+            open: boolean;
+            url: string;
+        }>({
+            open: false,
+            url: '',
+        });
     const currentPage =
         Math.floor(getProjectRequest.offset / getProjectRequest.limit) + 1
     const totalPages = Math.ceil(totalCount / getProjectRequest.limit)
@@ -154,13 +157,14 @@ const ProjectSection = () => {
         setIsPopUpOpen(false);
     }, []);
 
-    const handleOpenSharePopup = useCallback((contentToShare: string) => {
-        setShareState({ open: true, content: contentToShare });
-    }, []);
+    const handleOpenSharePopup = (contentToShare: string) => {
+        console.log("handleOpenSharePopup is called");
+        setShareState({ open: true, url: contentToShare });
+    };
 
-    const handleCloseSharePopup = useCallback(() => {
-        setShareState({ open: false, content: '' });
-    }, []);
+    const handleCloseSharePopup = () => {
+        setShareState({ open: false, url: '' });
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -365,14 +369,15 @@ const ProjectSection = () => {
                     isOpen={isPopUpOpen}
                     onClose={handleClosePopUp}
                     type={selectedProject.type_project}
-                    // onShare={handleOpenSharePopup}
+                    onShare={handleOpenSharePopup}
                 />
             )}
 
-            {/* <SharePopup
+            <SharePopup
                 open={shareState.open}
                 onClose={handleCloseSharePopup}
-            /> */}
+                contentToShare={shareState.url}
+            />
 
             {snackbar && (
                 <Snackbar
