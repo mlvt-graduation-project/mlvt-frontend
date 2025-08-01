@@ -1,37 +1,35 @@
-// src/components/SharePopup.tsx
-
-import React, { useEffect, useState } from 'react';
 import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    Box,
-    Typography,
-    TextField,
-    IconButton,
-    Tooltip,
-    Divider,
-    Button,
-    useTheme,
-} from '@mui/material';
-import {
-    Close as CloseIcon,
-    Share as ShareIcon,
-    ContentCopy as ContentCopyIcon,
     Check as CheckIcon,
-    Twitter as TwitterIcon,
+    Close as CloseIcon,
+    ContentCopy as ContentCopyIcon,
+    Email as EmailIcon,
     Facebook as FacebookIcon,
     LinkedIn as LinkedInIcon,
-    Email as EmailIcon,
-} from '@mui/icons-material';
+    Share as ShareIcon,
+    Twitter as TwitterIcon,
+} from '@mui/icons-material'
+import {
+    Box,
+    Button,
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    IconButton,
+    TextField,
+    Tooltip,
+    Typography,
+    useTheme,
+} from '@mui/material'
+import React, { useEffect, useState } from 'react'
 
 interface SharePopupProps {
-    open: boolean;
-    onClose: () => void;
+    open: boolean
+    onClose: () => void
     /** The content to be shared (URL or text). */
-    contentToShare: string;
+    contentToShare: string
     /** The title of the project, used for social media sharing. */
-    projectTitle?: string;
+    projectTitle?: string
 }
 
 export const SharePopup: React.FC<SharePopupProps> = ({
@@ -40,53 +38,53 @@ export const SharePopup: React.FC<SharePopupProps> = ({
     contentToShare,
     projectTitle = 'Check out this project!',
 }) => {
-    const theme = useTheme();
-    const [copied, setCopied] = useState(false);
+    const theme = useTheme()
+    const [copied, setCopied] = useState(false)
 
     // Reset the "Copied!" status when the dialog opens or closes
     useEffect(() => {
         if (!open) {
-            setCopied(false);
+            setCopied(false)
         }
-    }, [open]);
-    
+    }, [open])
+
     // Temporarily show the "Copied!" message
     useEffect(() => {
         if (copied) {
             const timer = setTimeout(() => {
-                setCopied(false);
-            }, 2500); // Reset after 2.5 seconds
-            return () => clearTimeout(timer);
+                setCopied(false)
+            }, 2500) // Reset after 2.5 seconds
+            return () => clearTimeout(timer)
         }
-    }, [copied]);
+    }, [copied])
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(contentToShare);
-        setCopied(true);
-    };
-    
+        navigator.clipboard.writeText(contentToShare)
+        setCopied(true)
+    }
+
     const socialPlatforms = [
         {
             name: 'Twitter',
             icon: <TwitterIcon />,
-            url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(contentToShare)}&text=${encodeURIComponent(projectTitle)}`
+            url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(contentToShare)}&text=${encodeURIComponent(projectTitle)}`,
         },
         {
             name: 'Facebook',
             icon: <FacebookIcon />,
-            url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(contentToShare)}`
+            url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(contentToShare)}`,
         },
         {
             name: 'LinkedIn',
             icon: <LinkedInIcon />,
-            url: `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(contentToShare)}&title=${encodeURIComponent(projectTitle)}`
+            url: `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(contentToShare)}&title=${encodeURIComponent(projectTitle)}`,
         },
         {
             name: 'Email',
             icon: <EmailIcon />,
-            url: `mailto:?subject=${encodeURIComponent(projectTitle)}&body=${encodeURIComponent(`Check this out: ${contentToShare}`)}`
+            url: `mailto:?subject=${encodeURIComponent(projectTitle)}&body=${encodeURIComponent(`Check this out: ${contentToShare}`)}`,
         },
-    ];
+    ]
 
     return (
         <Dialog
@@ -97,10 +95,21 @@ export const SharePopup: React.FC<SharePopupProps> = ({
             PaperProps={{
                 sx: { borderRadius: 4, padding: theme.spacing(1) },
             }}
+            sx={{
+                zIndex: (theme) => theme.zIndex.modal + 1,
+            }}
         >
-            <DialogTitle sx={{ m: 0, p: 2, display: 'flex', alignItems: 'center' }}>
-                <ShareIcon sx={{ mr: 1.5, color: theme.palette.primary.main }} />
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>
+            <DialogTitle
+                sx={{ m: 0, p: 2, display: 'flex', alignItems: 'center' }}
+            >
+                <ShareIcon
+                    sx={{ mr: 1.5, color: theme.palette.primary.main }}
+                />
+                <Typography
+                    variant="h6"
+                    component="div"
+                    sx={{ flexGrow: 1, fontWeight: 600 }}
+                >
                     Share Project
                 </Typography>
                 <IconButton
@@ -116,29 +125,45 @@ export const SharePopup: React.FC<SharePopupProps> = ({
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
-            
+
             <DialogContent>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 2 }}
+                >
                     Anyone with the link can view this content.
                 </Typography>
 
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1.5,
+                        mb: 3,
+                    }}
+                >
                     <TextField
                         value={contentToShare}
                         InputProps={{ readOnly: true }}
                         fullWidth
                         size="small"
                     />
-                    <Tooltip title={copied ? 'Copied to clipboard!' : 'Copy link'} placement="top">
+                    <Tooltip
+                        title={copied ? 'Copied to clipboard!' : 'Copy link'}
+                        placement="top"
+                    >
                         <Button
                             variant="contained"
                             onClick={handleCopy}
-                            startIcon={copied ? <CheckIcon /> : <ContentCopyIcon />}
+                            startIcon={
+                                copied ? <CheckIcon /> : <ContentCopyIcon />
+                            }
                             color={copied ? 'success' : 'primary'}
                             sx={{
                                 whiteSpace: 'nowrap',
                                 transition: 'all 0.2s ease-in-out',
-                                minWidth: '110px' // Prevent layout shift
+                                minWidth: '110px', 
                             }}
                         >
                             {copied ? 'Copied!' : 'Copy'}
@@ -147,12 +172,17 @@ export const SharePopup: React.FC<SharePopupProps> = ({
                 </Box>
 
                 <Divider sx={{ mb: 2 }}>
-                    <Typography variant='caption' color="text.secondary">OR</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                        OR
+                    </Typography>
                 </Divider>
 
                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
                     {socialPlatforms.map((platform) => (
-                        <Tooltip title={`Share on ${platform.name}`} key={platform.name}>
+                        <Tooltip
+                            title={`Share on ${platform.name}`}
+                            key={platform.name}
+                        >
                             <IconButton
                                 component="a"
                                 href={platform.url}
@@ -162,7 +192,8 @@ export const SharePopup: React.FC<SharePopupProps> = ({
                                     border: `1px solid ${theme.palette.divider}`,
                                     color: theme.palette.primary.main,
                                     '&:hover': {
-                                        backgroundColor: theme.palette.action.hover,
+                                        backgroundColor:
+                                            theme.palette.action.hover,
                                         transform: 'translateY(-2px)',
                                     },
                                     transition: 'transform 0.2s ease-in-out',
@@ -175,5 +206,5 @@ export const SharePopup: React.FC<SharePopupProps> = ({
                 </Box>
             </DialogContent>
         </Dialog>
-    );
-};
+    )
+}

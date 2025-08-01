@@ -1,20 +1,23 @@
 import { Box } from '@mui/material'
 import React, { useEffect, useMemo, useState } from 'react'
+import { deleteProjectById } from 'src/api/pipeline.api'
+import { DeleteConfirmationDialog } from 'src/components/DeleteConfirmationDialog'
 import { getOneVideoById } from '../../../../api/video.api'
 import { LipSyncProject, NavInfo } from '../../../../types/Project'
 import ChangeViewBox from '../../ProcessTriggerPopup/BaseComponent/ChangeView'
 import { InfoNav } from '../BaseComponent/InfomationNavBar'
 import { MainProjectOutput } from '../BaseComponent/MainProjectOutput'
 import { OriginalVideo } from '../BaseComponent/OriginalVideo'
-import { SharePopup } from 'src/components/SharePopup'
-import { deleteProjectById } from 'src/api/pipeline.api'
 
 interface ContentProps {
-    inputProject: LipSyncProject,
-    onShare?: (url: string) => void;
+    inputProject: LipSyncProject
+    onShare?: (url: string) => void
 }
 
-export const LipSyncContent: React.FC<ContentProps> = ({ inputProject, onShare }) => {
+export const LipSyncContent: React.FC<ContentProps> = ({
+    inputProject,
+    onShare,
+}) => {
     const [viewState, setViewState] = useState<'original' | 'related output'>(
         'original',
     )
@@ -23,24 +26,52 @@ export const LipSyncContent: React.FC<ContentProps> = ({ inputProject, onShare }
     const [videoStatus, setVideoStatus] = useState<string | null>(null)
     const [imageUrl, setInputImageUrl] = useState<string | null>(null)
 
-    const [isSharePopupOpen, setSharePopupOpen] = useState(false);
     const [navInfo, setNavInfo] = useState<NavInfo>({
-            created_at: inputProject.createdAt,
-            language: 'none-detected',
-        })
-    
-   const handleShare = () => {
-        console.log("handleShare function was called! Setting popup to open.");
-        if (onShare && resultVideoURL) {
-            onShare(resultVideoURL); 
-        } else if (onShare) {
-            onShare(window.location.href);
-        }
-    };
+        created_at: inputProject.createdAt,
+        language: 'none-detected',
+    })
 
-    const handleCloseSharePopup = () => {
-        setSharePopupOpen(false);
-    };
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [projectToDelete, setProjectToDelete] =
+        useState<LipSyncProject | null>(null)
+
+    const handleOpenDeleteDialog = () => {
+        setProjectToDelete(inputProject)
+        setIsDialogOpen(true)
+    }
+
+    const handleCloseDeleteDialog = () => {
+        setProjectToDelete(null)
+        setIsDialogOpen(false)
+    }
+
+    const handleConfirmDelete = async () => {
+        if (!projectToDelete) {
+            console.error('No project selected for deletion.')
+            handleCloseDeleteDialog()
+            return
+        }
+
+        try {
+            const deleteResponse = await deleteProjectById(projectToDelete.id)
+            if (deleteResponse) {
+                window.location.reload()
+            }
+        } catch (error) {
+            console.error('Error deleting project:', error)
+        } finally {
+            handleCloseDeleteDialog()
+        }
+    }
+    
+    const handleShare = () => {
+        console.log('handleShare function was called! Setting popup to open.')
+        if (onShare && resultVideoURL) {
+            onShare(resultVideoURL)
+        } else if (onShare) {
+            onShare(window.location.href)
+        }
+    }
 
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -100,26 +131,13 @@ export const LipSyncContent: React.FC<ContentProps> = ({ inputProject, onShare }
     const activeView = Views.find((view) => view.viewState === viewState)
     const ActiveComponent = activeView?.component || null
 
-    const handleDelete = async (id: string) => {
-        console.log('Delete button is clicked with id:', id)
-        try {
-            const deleteResponse = await deleteProjectById(id);
-            if (deleteResponse) {
-                console.log('Project deleted successfully:', deleteResponse);
-                window.location.reload();
-            }
-        } catch (error) {
-            console.error('Error deleting project:', error)
-        }
-    }
-
     return (
         <>
-            <InfoNav 
-                id={inputProject.id} 
+            <InfoNav
+                id={inputProject.id}
                 projectType={inputProject.type_project}
-                onShare={handleShare} 
-                onDelete={handleDelete}
+                onShare={handleShare}
+                onDelete={handleOpenDeleteDialog}
                 CreatedAt={navInfo.created_at}
                 Language={navInfo.language}
             />
@@ -128,11 +146,13 @@ export const LipSyncContent: React.FC<ContentProps> = ({ inputProject, onShare }
                 <Box sx={{ marginTop: '20px' }}>{ActiveComponent}</Box>
             </Box>
 
-            <SharePopup
-                open={isSharePopupOpen}
-                onClose={handleCloseSharePopup}
-                contentToShare={window.location.href} 
-            />
+            {projectToDelete && (
+                <DeleteConfirmationDialog
+                    open={isDialogOpen}
+                    onClose={handleCloseDeleteDialog}
+                    onConfirm={handleConfirmDelete}
+                />
+            )}
         </>
     )
 }

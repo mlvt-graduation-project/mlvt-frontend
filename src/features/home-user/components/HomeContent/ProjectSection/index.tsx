@@ -1,13 +1,13 @@
 import {
+    Alert,
+    AlertColor,
     Box,
     FormControl,
     MenuItem,
     Pagination,
     Select,
+    Snackbar,
     Typography,
-    AlertColor,
-    Alert,
-    Snackbar
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -34,10 +34,10 @@ const ProjectSection = () => {
     const { data: userDetails } = useGetUserDetails()
     const userId = userDetails?.user.id.toString() || ''
     const [snackbar, setSnackbar] = useState<{
-        open: boolean;
-        message: string;
-        severity: AlertColor;
-    } | null>(null);
+        open: boolean
+        message: string
+        severity: AlertColor
+    } | null>(null)
 
     const [getProjectRequest, setGetProjectRequest] =
         useState<GetAllProjectRequest>({
@@ -64,107 +64,128 @@ const ProjectSection = () => {
     const [displayProjects, setDisplayProjects] = useState<Project[]>([])
     const [totalCount, setTotalCount] = useState(0)
     const [shareState, setShareState] = useState<{
-            open: boolean;
-            url: string;
-        }>({
-            open: false,
-            url: '',
-        });
+        open: boolean
+        url: string
+    }>({
+        open: false,
+        url: '',
+    })
     const currentPage =
         Math.floor(getProjectRequest.offset / getProjectRequest.limit) + 1
     const totalPages = Math.ceil(totalCount / getProjectRequest.limit)
 
-    const handleChangeProjectType = useCallback((input: PipelineShortForm | 'All') => {
-        const allTypes = [
-            PipelineShortForm.TextGeneration,
-            PipelineShortForm.AudioGeneration,
-            PipelineShortForm.Fullpipeline,
-            PipelineShortForm.TextTranslation,
-            PipelineShortForm.Lipsync,
-        ];
-        setGetProjectRequest((prev) => ({
-            ...prev,
-            project_type: input === 'All' ? allTypes : [input],
-            offset: 0,
-        }));
-    }, []);
-
-    const handleSearchKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            const keyword = e.currentTarget.value.trim();
+    const handleChangeProjectType = useCallback(
+        (input: PipelineShortForm | 'All') => {
+            const allTypes = [
+                PipelineShortForm.TextGeneration,
+                PipelineShortForm.AudioGeneration,
+                PipelineShortForm.Fullpipeline,
+                PipelineShortForm.TextTranslation,
+                PipelineShortForm.Lipsync,
+            ]
             setGetProjectRequest((prev) => ({
                 ...prev,
-                search_key: keyword === '' ? null : keyword,
+                project_type: input === 'All' ? allTypes : [input],
                 offset: 0,
-            }));
-        }
-    }, []);
+            }))
+        },
+        [],
+    )
 
-    const handleUpdateProjectTitle = useCallback(async (project: Project, newTitle: string) => {
-        try {
-            // Use a switch statement to determine which API to call
-            switch (project.type_project) {
-                case ProjectType.Video:
-                    await updateVideoById(project.id, newTitle);
-                    break;
-
-                case ProjectType.Text:
-                    await updateTextById(project.id, newTitle);
-                    break;
-
-                case ProjectType.Audio:
-                    await updateAudioById(project.id, newTitle);
-                    break;
-
-                // The default case handles all other project types (Fullpipeline, Lipsync, etc.)
-                default:
-                    await updateProjectTitle(project.id, newTitle);
-                    break;
+    const handleSearchKeyDown = useCallback(
+        (e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === 'Enter') {
+                const keyword = e.currentTarget.value.trim()
+                setGetProjectRequest((prev) => ({
+                    ...prev,
+                    search_key: keyword === '' ? null : keyword,
+                    offset: 0,
+                }))
             }
+        },
+        [],
+    )
 
-            // On API success, update the local state to show the change immediately.
-            setDisplayProjects(currentProjects =>
-                currentProjects.map(p =>
-                    p.id === project.id ? { ...p, title: newTitle } : p
+    const handleUpdateProjectTitle = useCallback(
+        async (project: Project, newTitle: string) => {
+            try {
+                // Use a switch statement to determine which API to call
+                switch (project.type_project) {
+                    case ProjectType.Video:
+                        await updateVideoById(project.id, newTitle)
+                        break
+
+                    case ProjectType.Text:
+                        await updateTextById(project.id, newTitle)
+                        break
+
+                    case ProjectType.Audio:
+                        await updateAudioById(project.id, newTitle)
+                        break
+
+                    // The default case handles all other project types (Fullpipeline, Lipsync, etc.)
+                    default:
+                        await updateProjectTitle(project.id, newTitle)
+                        break
+                }
+
+                // On API success, update the local state to show the change immediately.
+                setDisplayProjects((currentProjects) =>
+                    currentProjects.map((p) =>
+                        p.id === project.id ? { ...p, title: newTitle } : p,
+                    ),
                 )
-            );
 
-            // Also update the selectedProject if it's the one being edited in the popup
-            if (selectedProject?.id === project.id) {
-                setSelectedProject(prev => prev ? { ...prev, title: newTitle } : null);
+                // Also update the selectedProject if it's the one being edited in the popup
+                if (selectedProject?.id === project.id) {
+                    setSelectedProject((prev) =>
+                        prev ? { ...prev, title: newTitle } : null,
+                    )
+                }
+
+                setSnackbar({
+                    open: true,
+                    message: 'Project title updated successfully!',
+                    severity: 'success',
+                })
+            } catch (error) {
+                console.error('Failed to update project title:', error)
+                const errorMessage =
+                    error instanceof Error
+                        ? error.message
+                        : 'An unknown error occurred.'
+                setSnackbar({
+                    open: true,
+                    message: `Update failed: ${errorMessage}`,
+                    severity: 'error',
+                })
             }
-            
-            setSnackbar({ open: true, message: 'Project title updated successfully!', severity: 'success' });
-
-        } catch (error) {
-            console.error("Failed to update project title:", error);
-            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-            setSnackbar({ open: true, message: `Update failed: ${errorMessage}`, severity: 'error' });
-        }
-    }, []);
+        },
+        [selectedProject?.id],
+    )
 
     const handleCardClick = useCallback((project: Project) => {
-        setSelectedProject(project);
-        setIsPopUpOpen(true);
-    }, []);
+        setSelectedProject(project)
+        setIsPopUpOpen(true)
+    }, [])
 
     const handleCloseSnackbar = () => {
-        setSnackbar(null);
-    };
+        setSnackbar(null)
+    }
 
     const handleClosePopUp = useCallback(() => {
-        setSelectedProject(null);
-        setIsPopUpOpen(false);
-    }, []);
+        setSelectedProject(null)
+        setIsPopUpOpen(false)
+    }, [])
 
     const handleOpenSharePopup = (contentToShare: string) => {
-        console.log("handleOpenSharePopup is called");
-        setShareState({ open: true, url: contentToShare });
-    };
+        console.log('handleOpenSharePopup is called')
+        setShareState({ open: true, url: contentToShare })
+    }
 
     const handleCloseSharePopup = () => {
-        setShareState({ open: false, url: '' });
-    };
+        setShareState({ open: false, url: '' })
+    }
 
     useEffect(() => {
         const fetchData = async () => {

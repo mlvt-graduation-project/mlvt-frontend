@@ -1,5 +1,6 @@
 import { Box } from '@mui/material'
 import React, { useEffect, useMemo, useState } from 'react'
+import { deleteProjectById } from 'src/api/pipeline.api'
 import { NavInfo } from 'src/types/Project'
 import { getLanguageFromCode } from 'src/utils/ProcessTriggerPopup/VideoPopup.utils'
 import { getAudioById } from '../../../../api/audio.api'
@@ -11,17 +12,16 @@ import { InfoNav } from '../BaseComponent/InfomationNavBar'
 import { MainProjectOutput } from '../BaseComponent/MainProjectOutput'
 import { OriginalVideo } from '../BaseComponent/OriginalVideo'
 import { RelatedOutput } from '../BaseComponent/RelatedOutput'
-import { SharePopup } from 'src/components/SharePopup'
-import { deleteProjectById } from 'src/api/pipeline.api'
+import { DeleteConfirmationDialog } from 'src/components/DeleteConfirmationDialog'
 
 interface ContentProps {
     inputProject: FullPipelineProject
-    onShare?: (url: string) => void; 
+    onShare?: (url: string) => void
 }
 
 export const FullPipelineContent: React.FC<ContentProps> = ({
     inputProject,
-    onShare
+    onShare,
 }) => {
     const [viewState, setViewState] = useState<
         'original' | 'translated video' | 'related output'
@@ -38,21 +38,28 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
         language: 'none-detected',
     })
 
-    const [isSharePopupOpen, setSharePopupOpen] = useState(false);
-    
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [projectToDelete, setProjectToDelete] =
+        useState<FullPipelineProject | null>(null)
+
+    const handleOpenDeleteDialog = () => {
+        setProjectToDelete(inputProject)
+        setIsDialogOpen(true)
+    }
+
+    const handleCloseDeleteDialog = () => {
+        setProjectToDelete(null)
+        setIsDialogOpen(false)
+    }
+
     const handleShare = () => {
-        console.log("handleShare function was called! Setting popup to open.");
+        console.log('handleShare function was called! Setting popup to open.')
         if (onShare && resultVideoUrl) {
-            onShare(resultVideoUrl); 
+            onShare(resultVideoUrl)
         } else if (onShare) {
-            onShare(window.location.href);
+            onShare(window.location.href)
         }
-    };
-
-    const handleCloseSharePopup = () => {
-        setSharePopupOpen(false);
-    };
-
+    }
     useEffect(() => {
         const fetchVideoData = async () => {
             const [
@@ -134,16 +141,22 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
         }
     }
 
-    const handleDelete = async (id: string) => {
-        console.log('Delete button is clicked with id:', id)
+    const handleConfirmDelete = async () => {
+        if (!projectToDelete) {
+            console.error('No project selected for deletion.')
+            handleCloseDeleteDialog()
+            return
+        }
+
         try {
-            const deleteResponse = await deleteProjectById(id);
+            const deleteResponse = await deleteProjectById(projectToDelete.id)
             if (deleteResponse) {
-                console.log('Project deleted successfully:', deleteResponse);
-                window.location.reload();
+                window.location.reload()
             }
         } catch (error) {
             console.error('Error deleting project:', error)
+        } finally {
+            handleCloseDeleteDialog()
         }
     }
 
@@ -234,11 +247,11 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
                 minHeight: '35rem',
             }}
         >
-            <InfoNav 
+            <InfoNav
                 id={inputProject.id}
                 projectType={inputProject.type_project}
-                onShare={handleShare} 
-                onDelete={handleDelete}
+                onShare={handleShare}
+                onDelete={handleOpenDeleteDialog}
                 CreatedAt={navInfo.created_at}
                 Language={navInfo.language}
             />
@@ -258,6 +271,13 @@ export const FullPipelineContent: React.FC<ContentProps> = ({
                 </Box>
                 {ActiveComponent}
             </Box>
+            {projectToDelete && (
+                <DeleteConfirmationDialog
+                    open={isDialogOpen}
+                    onClose={handleCloseDeleteDialog}
+                    onConfirm={handleConfirmDelete}
+                />
+            )}
         </Box>
     )
 }
