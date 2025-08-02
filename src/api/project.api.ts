@@ -11,3 +11,14 @@ export const getAllProject = (
         getFullResponse: true,
     }) as Promise<AxiosResponse<GetAllProjectResponse>>
 }
+
+export const updateProjectTitle = (
+    projectID: string,
+    title: string,
+): Promise<AxiosResponse<string>> => {
+    return post(`/progress/update-title/${projectID}`, {
+        title: title.trim(),
+    }, {
+        getFullResponse: true,
+    })
+}

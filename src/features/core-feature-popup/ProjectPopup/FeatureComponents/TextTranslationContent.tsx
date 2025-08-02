@@ -1,5 +1,7 @@
 import { Box } from '@mui/material'
 import React, { useEffect, useMemo, useState } from 'react'
+import { deleteProjectById } from 'src/api/pipeline.api'
+import { DeleteConfirmationDialog } from 'src/components/DeleteConfirmationDialog'
 import { getLanguageFromCode } from 'src/utils/ProcessTriggerPopup/VideoPopup.utils'
 import { NavInfo, TextTranslationProject } from '../../../../types/Project'
 import { Text } from '../../../../types/Response/Text'
@@ -10,10 +12,12 @@ import { RelatedOutput } from '../BaseComponent/RelatedOutput'
 
 interface ContentProps {
     inputProject: TextTranslationProject
+    onShare?: (url: string) => void
 }
 
 export const TextTranslationContent: React.FC<ContentProps> = ({
     inputProject,
+    onShare,
 }) => {
     const [viewState, setViewState] = useState<'original' | 'related output'>(
         'original',
@@ -30,6 +34,47 @@ export const TextTranslationContent: React.FC<ContentProps> = ({
         created_at: inputProject.createdAt,
         language: 'none-detected',
     })
+
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [projectToDelete, setProjectToDelete] =
+        useState<TextTranslationProject | null>(null)
+
+    const handleOpenDeleteDialog = () => {
+        setProjectToDelete(inputProject)
+        setIsDialogOpen(true)
+    }
+
+    const handleCloseDeleteDialog = () => {
+        setProjectToDelete(null)
+        setIsDialogOpen(false)
+    }
+
+    const handleConfirmDelete = async () => {
+        if (!projectToDelete) {
+            console.error('No project selected for deletion.')
+            handleCloseDeleteDialog()
+            return
+        }
+
+        try {
+            const deleteResponse = await deleteProjectById(projectToDelete.id)
+            if (deleteResponse) {
+                window.location.reload()
+            }
+        } catch (error) {
+            console.error('Error deleting project:', error)
+        } finally {
+            handleCloseDeleteDialog()
+        }
+    }
+
+    const handleShare = () => {
+        if (onShare && resultTextContent) {
+            onShare(resultTextContent)
+        } else if (onShare) {
+            onShare('Translated text is not available yet.')
+        }
+    }
 
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -119,6 +164,10 @@ export const TextTranslationContent: React.FC<ContentProps> = ({
     return (
         <>
             <InfoNav
+                id={inputProject.id}
+                projectType={inputProject.type_project}
+                onShare={handleShare}
+                onDelete={handleOpenDeleteDialog}
                 CreatedAt={navInfo.created_at}
                 Language={navInfo.language}
             />
@@ -126,6 +175,13 @@ export const TextTranslationContent: React.FC<ContentProps> = ({
                 <ChangeViewBox Views={Views} setViewState={changeViewState} />
                 <Box sx={{ marginTop: '30px' }}>{ActiveComponent}</Box>
             </Box>
+            {projectToDelete && (
+                <DeleteConfirmationDialog
+                    open={isDialogOpen}
+                    onClose={handleCloseDeleteDialog}
+                    onConfirm={handleConfirmDelete}
+                />
+            )}
         </>
     )
 }

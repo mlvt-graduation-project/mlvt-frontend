@@ -1,21 +1,30 @@
 import {
+    Alert,
+    AlertColor,
     Box,
     FormControl,
     MenuItem,
     Pagination,
     Select,
+    Snackbar,
     Typography,
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import { updateAudioById } from 'src/api/audio.api'
+import { updateProjectTitle } from 'src/api/project.api'
+import { updateTextById } from 'src/api/text.api'
+import { updateVideoById } from 'src/api/video.api'
 import CardFeature from 'src/components/CardFeature'
 import SearchBar from 'src/components/SearchBar'
+import { SharePopup } from 'src/components/SharePopup'
 import { ProcessedVideoPopUp } from 'src/features/core-feature-popup/ProjectPopup'
 import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
 import {
     GetAllProjectRequest,
     PipelineShortForm,
     Project,
+    ProjectType,
 } from 'src/types/Project'
 import { ProjectStatus } from 'src/types/ProjectStatus'
 import { getAllProgressProjects } from 'src/utils/project.utils'
@@ -24,6 +33,11 @@ const ProjectSection = () => {
     const theme = useTheme()
     const { data: userDetails } = useGetUserDetails()
     const userId = userDetails?.user.id.toString() || ''
+    const [snackbar, setSnackbar] = useState<{
+        open: boolean
+        message: string
+        severity: AlertColor
+    } | null>(null)
 
     const [getProjectRequest, setGetProjectRequest] =
         useState<GetAllProjectRequest>({
@@ -49,51 +63,128 @@ const ProjectSection = () => {
     const [isPopUpOpen, setIsPopUpOpen] = React.useState(false)
     const [displayProjects, setDisplayProjects] = useState<Project[]>([])
     const [totalCount, setTotalCount] = useState(0)
+    const [shareState, setShareState] = useState<{
+        open: boolean
+        url: string
+    }>({
+        open: false,
+        url: '',
+    })
     const currentPage =
         Math.floor(getProjectRequest.offset / getProjectRequest.limit) + 1
     const totalPages = Math.ceil(totalCount / getProjectRequest.limit)
 
-    const handleChangeProjectType = (input: PipelineShortForm | 'All') => {
-        if (input === 'All') {
+    const handleChangeProjectType = useCallback(
+        (input: PipelineShortForm | 'All') => {
+            const allTypes = [
+                PipelineShortForm.TextGeneration,
+                PipelineShortForm.AudioGeneration,
+                PipelineShortForm.Fullpipeline,
+                PipelineShortForm.TextTranslation,
+                PipelineShortForm.Lipsync,
+            ]
             setGetProjectRequest((prev) => ({
                 ...prev,
-                project_type: [
-                    PipelineShortForm.TextGeneration,
-                    PipelineShortForm.AudioGeneration,
-                    PipelineShortForm.Fullpipeline,
-                    PipelineShortForm.TextTranslation,
-                    PipelineShortForm.Lipsync,
-                ],
+                project_type: input === 'All' ? allTypes : [input],
                 offset: 0,
             }))
-        } else {
-            setGetProjectRequest((prev) => ({
-                ...prev,
-                project_type: [input],
-                offset: 0,
-            }))
-        }
-    }
+        },
+        [],
+    )
 
-    const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            const keyword = e.currentTarget.value.trim()
-            setGetProjectRequest((prev) => ({
-                ...prev,
-                search_key: keyword === '' ? null : keyword,
-                offset: 0,
-            }))
-        }
-    }
+    const handleSearchKeyDown = useCallback(
+        (e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === 'Enter') {
+                const keyword = e.currentTarget.value.trim()
+                setGetProjectRequest((prev) => ({
+                    ...prev,
+                    search_key: keyword === '' ? null : keyword,
+                    offset: 0,
+                }))
+            }
+        },
+        [],
+    )
 
-    const handleCardClick = (project: Project) => {
+    const handleUpdateProjectTitle = useCallback(
+        async (project: Project, newTitle: string) => {
+            try {
+                // Use a switch statement to determine which API to call
+                switch (project.type_project) {
+                    case ProjectType.Video:
+                        await updateVideoById(project.id, newTitle)
+                        break
+
+                    case ProjectType.Text:
+                        await updateTextById(project.id, newTitle)
+                        break
+
+                    case ProjectType.Audio:
+                        await updateAudioById(project.id, newTitle)
+                        break
+
+                    // The default case handles all other project types (Fullpipeline, Lipsync, etc.)
+                    default:
+                        await updateProjectTitle(project.id, newTitle)
+                        break
+                }
+
+                // On API success, update the local state to show the change immediately.
+                setDisplayProjects((currentProjects) =>
+                    currentProjects.map((p) =>
+                        p.id === project.id ? { ...p, title: newTitle } : p,
+                    ),
+                )
+
+                // Also update the selectedProject if it's the one being edited in the popup
+                if (selectedProject?.id === project.id) {
+                    setSelectedProject((prev) =>
+                        prev ? { ...prev, title: newTitle } : null,
+                    )
+                }
+
+                setSnackbar({
+                    open: true,
+                    message: 'Project title updated successfully!',
+                    severity: 'success',
+                })
+            } catch (error) {
+                console.error('Failed to update project title:', error)
+                const errorMessage =
+                    error instanceof Error
+                        ? error.message
+                        : 'An unknown error occurred.'
+                setSnackbar({
+                    open: true,
+                    message: `Update failed: ${errorMessage}`,
+                    severity: 'error',
+                })
+            }
+        },
+        [selectedProject?.id],
+    )
+
+    const handleCardClick = useCallback((project: Project) => {
         setSelectedProject(project)
         setIsPopUpOpen(true)
+    }, [])
+
+    const handleCloseSnackbar = () => {
+        setSnackbar(null)
     }
 
-    const handleClosePopUp = () => {
-        setIsPopUpOpen(false)
+    const handleClosePopUp = useCallback(() => {
         setSelectedProject(null)
+        setIsPopUpOpen(false)
+    }, [])
+
+    const handleOpenSharePopup = (contentToShare: string) => {
+        console.log('handleOpenSharePopup is called')
+        setShareState({ open: true, url: contentToShare })
+    }
+
+    const handleCloseSharePopup = () => {
+        setShareState({ open: false, url: '' })
     }
 
     useEffect(() => {
@@ -265,6 +356,7 @@ const ProjectSection = () => {
                         key={project.type_project + project.id}
                         project={project}
                         onclick={() => handleCardClick(project)}
+                        onUpdateTitle={handleUpdateProjectTitle}
                     />
                 ))}
             </Box>
@@ -298,7 +390,31 @@ const ProjectSection = () => {
                     isOpen={isPopUpOpen}
                     onClose={handleClosePopUp}
                     type={selectedProject.type_project}
+                    onShare={handleOpenSharePopup}
                 />
+            )}
+
+            <SharePopup
+                open={shareState.open}
+                onClose={handleCloseSharePopup}
+                contentToShare={shareState.url}
+            />
+
+            {snackbar && (
+                <Snackbar
+                    open={snackbar.open}
+                    autoHideDuration={5000}
+                    onClose={handleCloseSnackbar}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                >
+                    <Alert
+                        onClose={handleCloseSnackbar}
+                        severity={snackbar.severity}
+                        sx={{ width: '100%', fontWeight: 600 }}
+                    >
+                        {snackbar.message}
+                    </Alert>
+                </Snackbar>
             )}
         </Box>
     )

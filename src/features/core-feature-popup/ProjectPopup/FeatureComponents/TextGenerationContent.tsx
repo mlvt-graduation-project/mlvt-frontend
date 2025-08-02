@@ -1,5 +1,7 @@
 import { Box } from '@mui/material'
 import React, { useEffect, useMemo, useState } from 'react'
+import { deleteProjectById } from 'src/api/pipeline.api'
+import { DeleteConfirmationDialog } from 'src/components/DeleteConfirmationDialog'
 import { getLanguageFromCode } from 'src/utils/ProcessTriggerPopup/VideoPopup.utils'
 import { getTextFileContent } from '../../../../api/aws.api'
 import { getTextById } from '../../../../api/text.api'
@@ -12,10 +14,12 @@ import { RelatedOutput } from '../BaseComponent/RelatedOutput'
 
 interface ContentProps {
     inputProject: TextGenerationProject
+    onShare?: (url: string) => void
 }
 
 export const TextGenerationContent: React.FC<ContentProps> = ({
     inputProject,
+    onShare,
 }) => {
     const [viewState, setViewState] = useState<
         'translated video' | 'related output'
@@ -27,6 +31,27 @@ export const TextGenerationContent: React.FC<ContentProps> = ({
         created_at: inputProject.createdAt,
         language: 'none-detected',
     })
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [projectToDelete, setProjectToDelete] =
+        useState<TextGenerationProject | null>(null)
+
+    const handleOpenDeleteDialog = () => {
+        setProjectToDelete(inputProject)
+        setIsDialogOpen(true)
+    }
+
+    const handleCloseDeleteDialog = () => {
+        setProjectToDelete(null)
+        setIsDialogOpen(false)
+    }
+
+    const handleShare = () => {
+        if (onShare && videoUrl) {
+            onShare(videoUrl) // Pass the original video URL up to the parent
+        } else if (onShare) {
+            onShare(window.location.href)
+        }
+    }
 
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -99,9 +124,33 @@ export const TextGenerationContent: React.FC<ContentProps> = ({
     const activeView = Views.find((view) => view.viewState === viewState)
     const ActiveComponent = activeView?.component || null
 
+    const handleConfirmDelete = async () => {
+        if (!projectToDelete) {
+            console.error('No project selected for deletion.')
+            handleCloseDeleteDialog()
+            return
+        }
+
+        try {
+            const deleteResponse = await deleteProjectById(projectToDelete.id)
+            if (deleteResponse) {
+                window.location.reload()
+            }
+        } catch (error) {
+            console.error('Error deleting project:', error)
+        } finally {
+            // Close the dialog after the operation is complete
+            handleCloseDeleteDialog()
+        }
+    }
+
     return (
         <>
             <InfoNav
+                id={inputProject.id}
+                projectType={inputProject.type_project}
+                onShare={handleShare}
+                onDelete={handleOpenDeleteDialog}
                 CreatedAt={navInfo.created_at}
                 Language={navInfo.language}
             />
@@ -121,6 +170,13 @@ export const TextGenerationContent: React.FC<ContentProps> = ({
                 </Box>
                 {ActiveComponent}
             </Box>
+            {projectToDelete && (
+                <DeleteConfirmationDialog
+                    open={isDialogOpen}
+                    onClose={handleCloseDeleteDialog}
+                    onConfirm={handleConfirmDelete}
+                />
+            )}
         </>
     )
 }
