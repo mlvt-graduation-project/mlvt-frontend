@@ -87,7 +87,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
                         {status ? 'Premium user' : 'Standard user'}
                     </Typography>
                 </Box>
-                <Badge
+                {/* <Badge
                     badgeContent={notifications}
                     color="primary"
                     sx={{
@@ -100,15 +100,15 @@ const UserMenu: React.FC<UserMenuProps> = ({
                     <IconButton>
                         <NotificationsNoneIcon color="primary" />
                     </IconButton>
-                </Badge>
+                </Badge> */}
             </Box>
 
-            {/* Dropdown Menu */}
+            {/* Dropdown Menu
             <MenuDropdown
                 user={user!}
                 anchorDropdown={anchorDropdown}
                 setAnchorDropdown={setAnchorDropdown}
-            />
+            /> */}
         </>
     )
 }

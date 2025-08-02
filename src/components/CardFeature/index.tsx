@@ -151,7 +151,7 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick, onUpdateTit
                     }}
                 />
 
-                {/* Bookmark icon */}
+                {/* Bookmark icon
                 <Box
                     sx={{
                         position: "absolute",
@@ -182,7 +182,7 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick, onUpdateTit
                             />
                         )}
                     </IconButton>
-                </Box>
+                </Box> */}
             </Box>
 
             {/* Card Content */}
