@@ -242,7 +242,7 @@ const Login = () => {
                 </Typography>
             )}
 
-            {/* Remember Me and Forgot Password */}
+            {/* Remember Me and Forgot Password
             <Box
                 sx={{
                     display: 'flex',
@@ -295,7 +295,7 @@ const Login = () => {
                 >
                     Forgot password?
                 </Typography>
-            </Box>
+            </Box> */}
 
             {/* Login Button */}
             <CustomButton
@@ -304,7 +304,7 @@ const Login = () => {
                 loading={loading}
                 sx={{
                     marginBottom: 2,
-                    marginTop: 2,
+                    marginTop: 5,
                     borderRadius: 1.25,
                     width: '100%',
                 }}

@@ -103,12 +103,12 @@ const UserMenu: React.FC<UserMenuProps> = ({
                 </Badge> */}
             </Box>
 
-            {/* Dropdown Menu
+            {/* Dropdown Menu */}
             <MenuDropdown
                 user={user!}
                 anchorDropdown={anchorDropdown}
                 setAnchorDropdown={setAnchorDropdown}
-            /> */}
+            />
         </>
     )
 }
