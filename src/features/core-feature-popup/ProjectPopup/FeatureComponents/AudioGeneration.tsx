@@ -1,27 +1,41 @@
 import { Box } from '@mui/material'
 import React, { useEffect, useMemo, useState } from 'react'
-import ChangeViewBox from '../../ProcessTriggerPopup/BaseComponent/ChangeView'
-import { InfoNav } from '../BaseComponent/InfomationNavBar'
-import { RelatedOutput } from '../BaseComponent/RelatedOutput'
-// import { Text } from "../../../types/Response/Text";
+import { deleteProjectById } from 'src/api/pipeline.api'
+import { DeleteConfirmationDialog } from 'src/components/DeleteConfirmationDialog'
 import { NavInfo } from 'src/types/Project'
 import { getLanguageFromCode } from 'src/utils/ProcessTriggerPopup/VideoPopup.utils'
 import { getAudioById } from '../../../../api/audio.api'
 import { AudioGenerationProject } from '../../../../types/Project'
 import { getTextContent } from '../../../../utils/ProcessTriggerPopup/TextService'
+import ChangeViewBox from '../../ProcessTriggerPopup/BaseComponent/ChangeView'
+import { InfoNav } from '../BaseComponent/InfomationNavBar'
+import { RelatedOutput } from '../BaseComponent/RelatedOutput'
 
 interface ContentProps {
     inputProject: AudioGenerationProject
+    onShare?: (url: string) => void
 }
 
 export const AudioGenerationContent: React.FC<ContentProps> = ({
     inputProject,
+    onShare,
 }) => {
     const [viewState, setViewState] = useState<'original' | 'related output'>(
         'original',
     )
-    // const [originalTextInformation, setOriginalTextInformation] =
-    //     useState<Text | null>(null);
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [projectToDelete, setProjectToDelete] =
+        useState<AudioGenerationProject | null>(null)
+
+    const handleOpenDeleteDialog = () => {
+        setProjectToDelete(inputProject)
+        setIsDialogOpen(true)
+    }
+
+    const handleCloseDeleteDialog = () => {
+        setProjectToDelete(null)
+        setIsDialogOpen(false)
+    }
 
     const [navInfo, setNavInfo] = useState<NavInfo>({
         created_at: inputProject.createdAt,
@@ -31,6 +45,14 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
         string | null
     >(null)
     const [resultAudio, setResultAudio] = useState<string | null>(null)
+
+    const handleShare = () => {
+        if (onShare && resultAudio) {
+            onShare(resultAudio)
+        } else if (onShare) {
+            onShare(window.location.href)
+        }
+    }
 
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -47,7 +69,6 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
                 const originalText = await getTextContent(
                     inputProject.original_textId,
                 )
-                // setOriginalTextInformation(originalText[0]);
                 setOriginalTextContent(originalText[1])
                 setNavInfo({
                     created_at: inputProject.createdAt,
@@ -64,6 +85,26 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
     const changeViewState = (view: string) => {
         if (['original', 'related output'].includes(view)) {
             setViewState(view as 'original' | 'related output')
+        }
+    }
+
+    const handleConfirmDelete = async () => {
+        if (!projectToDelete) {
+            console.error('No project selected for deletion.')
+            handleCloseDeleteDialog()
+            return
+        }
+
+        try {
+            const deleteResponse = await deleteProjectById(projectToDelete.id)
+            if (deleteResponse) {
+                window.location.reload()
+            }
+        } catch (error) {
+            console.error('Error deleting project:', error)
+        } finally {
+            // Close the dialog after the operation is complete
+            handleCloseDeleteDialog()
         }
     }
 
@@ -118,6 +159,10 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
     return (
         <>
             <InfoNav
+                id={inputProject.id}
+                projectType={inputProject.type_project}
+                onShare={handleShare}
+                onDelete={handleOpenDeleteDialog}
                 CreatedAt={navInfo.created_at}
                 Language={navInfo.language}
             />
@@ -137,6 +182,13 @@ export const AudioGenerationContent: React.FC<ContentProps> = ({
                 </Box>
                 {ActiveComponent}
             </Box>
+            {projectToDelete && (
+                <DeleteConfirmationDialog
+                    open={isDialogOpen}
+                    onClose={handleCloseDeleteDialog}
+                    onConfirm={handleConfirmDelete}
+                />
+            )}
         </>
     )
 }

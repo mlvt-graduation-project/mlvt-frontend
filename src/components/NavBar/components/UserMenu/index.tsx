@@ -1,5 +1,4 @@
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
-import { Avatar, Badge, Box, IconButton, Typography } from '@mui/material'
+import { Avatar, Box, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import React, { useState } from 'react'
 import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
@@ -87,7 +86,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
                         {status ? 'Premium user' : 'Standard user'}
                     </Typography>
                 </Box>
-                <Badge
+                {/* <Badge
                     badgeContent={notifications}
                     color="primary"
                     sx={{
@@ -100,7 +99,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
                     <IconButton>
                         <NotificationsNoneIcon color="primary" />
                     </IconButton>
-                </Badge>
+                </Badge> */}
             </Box>
 
             {/* Dropdown Menu */}

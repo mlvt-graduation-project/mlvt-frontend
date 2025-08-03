@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios'
 import { AudioList, GetAudioById, PostAudio } from '../types/Response/Audio'
 import { GetPresignedURL } from '../types/Response/Video'
-import { get, post } from './base.api'
+import { get, post, del, patch } from './base.api'
 
 /**
  * Fetches a list of audios for a specific user.
@@ -99,6 +99,24 @@ export const postAudio = async (
         })
     } catch (error) {
         console.error('Posting audio to server failed:', error)
+        throw error
+    }
+}
+
+export const updateAudioById = async (audioId: number, title: string): Promise<void> => {
+    try {
+        return await patch(`/audios/title/${audioId}`, { title: title})
+    } catch (error) {
+        console.error(`Failed to update audio with ID ${audioId}:`, error)
+        throw error
+    }
+}
+
+export const deleteAudioById = async (audioId: string): Promise<void> => {
+    try {
+        return await del(`/audios/${audioId}`)
+    } catch (error) {
+        console.error(`Failed to delete audio with ID ${audioId}:`, error)
         throw error
     }
 }

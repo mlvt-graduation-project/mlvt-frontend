@@ -11,12 +11,10 @@ import {
 import { Project } from "../../types/Project";
 import { ProjectType } from "../../types/Project";
 import { hasThumbnail } from "../../utils/project.utils";
-import { alpha, useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import {
     EditSharp as EditSharpIcon,
     Circle as CircleIcon,
-    Bookmark,
-    BookmarkBorder,
 } from "@mui/icons-material";
 import { toDisplayText } from "../../types/ProjectStatus";
 import TextIcon from "../../assets/TextIcon.png";
@@ -26,15 +24,20 @@ import { mapStatusToColor } from "../../utils/mapProjectStatus.util";
 interface CardFeatureProps {
     project: Project;
     onclick: () => void;
+    onUpdateTitle: (project: Project, newTitle: string) => Promise<void>;
 }
 
-const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
+const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick, onUpdateTitle }) => {
     const theme = useTheme();
-    const [isBookmarked, setIsBookmarked] = React.useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [title, setTitle] = useState(project.title);
 
-    const handleEditClick = () => {
+    useEffect(() => {
+        setTitle(project.title);
+    }, [project.title]);
+
+    const handleEditClick = (e: React.MouseEvent) => {
+        e.stopPropagation(); // Prevent the main card click event
         setIsEditing(true);
     };
 
@@ -42,27 +45,45 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
         setTitle(e.target.value);
     };
 
+    const handleSaveTitle = async () => {
+        // Don't make an API call if the title hasn't changed
+        if (title.trim() === project.title) {
+            setIsEditing(false);
+            return;
+        }
+
+        try {
+            // Call the async function passed from the parent
+            await onUpdateTitle(project, title.trim());
+            // If the API call succeeds, the parent's state will update,
+            // which will re-render this component with the new project prop.
+        } catch (error) {
+            console.error("Failed to update title:", error);
+            // If API call fails, revert the title to the original
+            setTitle(project.title);
+        } finally {
+            setIsEditing(false);
+        }
+    };
+
     const handleTitleBlur = () => {
-        setIsEditing(false);
-        // onUpdateTitle(project.id, title); // Call the update function to save changes
+        handleSaveTitle();
     };
 
     const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
+            handleSaveTitle();
+        } else if (e.key === "Escape") {
             setIsEditing(false);
-            // onUpdateTitle(project.id, title); // Save changes on Enter key press
+            setTitle(project.title); // Revert changes on Escape
         }
     };
 
     const handleClick = () => {
+        if (isEditing) return;
         onclick();
     };
 
-    const handleBookmarkClick = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setIsBookmarked((prev) => !prev);
-        console.log("Bookmark clicked");
-    };
     function isValidDate(d: any) {
         return d instanceof Date && !isNaN(d.getTime());
     }
@@ -74,6 +95,7 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
     return (
         <Card
             variant="outlined"
+            onClick={handleClick}
             sx={{
                 width: "90%",
                 aspectRatio: 25 / 22,
@@ -117,7 +139,7 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                     }}
                 />
 
-                {/* Bookmark icon */}
+                {/* Bookmark icon
                 <Box
                     sx={{
                         position: "absolute",
@@ -148,7 +170,7 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick }) => {
                             />
                         )}
                     </IconButton>
-                </Box>
+                </Box> */}
             </Box>
 
             {/* Card Content */}

@@ -1,11 +1,12 @@
 import { Box } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { InfoNav } from '../BaseComponent/InfomationNavBar'
-import { TextView } from '../BaseComponent/RelatedOutput/CustomizedTextBox'
-// import { Text } from '../../../types/Response/Text';
+import { deleteTextById } from 'src/api/text.api'
+import { SharePopup } from 'src/components/SharePopup'
 import { NavInfo } from 'src/types/Project'
 import { getLanguageFromCode } from 'src/utils/ProcessTriggerPopup/VideoPopup.utils'
 import { getTextContent } from '../../../../utils/ProcessTriggerPopup/TextService'
+import { InfoNav } from '../BaseComponent/InfomationNavBar'
+import { TextView } from '../BaseComponent/RelatedOutput/CustomizedTextBox'
 
 interface ContentProps {
     textId: number
@@ -31,6 +32,17 @@ export const RawTextContent: React.FC<ContentProps> = ({
     })
     // const [textInfomation, setTextInfomation] = useState<Text | null>(null);
 
+    const [isSharePopupOpen, setSharePopupOpen] = useState(false)
+
+    const handleShare = () => {
+        console.log('handleShare function was called! Setting popup to open.')
+        setSharePopupOpen(true)
+    }
+
+    const handleCloseSharePopup = () => {
+        setSharePopupOpen(false)
+    }
+
     useEffect(() => {
         const fetchTextData = async () => {
             try {
@@ -49,10 +61,25 @@ export const RawTextContent: React.FC<ContentProps> = ({
         fetchTextData()
     }, [textId])
 
+    const handleDelete = async (id: string) => {
+        console.log('Delete button is clicked with id:', id)
+        try {
+            await deleteTextById(id)
+            console.log('Project deleted successfully. Reloading page...')
+            window.location.reload()
+        } catch (error) {
+            console.error('Error deleting project:', error)
+        }
+    }
+
     return (
         <>
             {!hideNavBar && (
                 <InfoNav
+                    id={String(textId)}
+                    projectType="Text"
+                    onDelete={handleDelete}
+                    onShare={handleShare}
                     CreatedAt={navInfo.created_at}
                     Language={navInfo.language}
                 />
@@ -77,6 +104,12 @@ export const RawTextContent: React.FC<ContentProps> = ({
                     disableDownload={hideDownloadButton}
                 />
             </Box>
+
+            <SharePopup
+                open={isSharePopupOpen}
+                onClose={handleCloseSharePopup}
+                contentToShare={window.location.href}
+            />
         </>
     )
 }

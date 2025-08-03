@@ -1,10 +1,11 @@
-import { Box } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from "react";
+import { Box } from "@mui/material";
+import { InfoNav } from "../BaseComponent/InfomationNavBar";
 import { NavInfo } from 'src/types/Project'
+import { CustomAudioPlayer } from "../BaseComponent/RelatedOutput/CustomizedVideoBox";
+import { deleteAudioById, getAudioById } from "../../../../api/audio.api";
+import { SharePopup } from "src/components/SharePopup";
 import { getLanguageFromCode } from 'src/utils/ProcessTriggerPopup/VideoPopup.utils'
-import { getAudioById } from '../../../../api/audio.api'
-import { InfoNav } from '../BaseComponent/InfomationNavBar'
-import { CustomAudioPlayer } from '../BaseComponent/RelatedOutput/CustomizedVideoBox'
 
 interface ContentProps {
     audioId: number
@@ -20,6 +21,17 @@ export const RawAudioContent: React.FC<ContentProps> = ({
         created_at: 'none-detected',
         language: 'none-detected',
     })
+
+    const [isSharePopupOpen, setSharePopupOpen] = useState(false);
+
+    const handleShare = () => {
+        console.log("handleShare function was called! Setting popup to open.");
+        setSharePopupOpen(true);
+    };
+
+    const handleCloseSharePopup = () => {
+        setSharePopupOpen(false);
+    };
 
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -38,14 +50,29 @@ export const RawAudioContent: React.FC<ContentProps> = ({
         fetchVideoData()
     }, [audioId])
 
+    const handleDelete = async (id: string) => {
+        console.log('Delete button is clicked with id:', id)
+        try {
+            await deleteAudioById(id);
+            console.log('Project deleted successfully. Reloading page...');
+            window.location.reload();
+        } catch (error) {
+            console.error('Error deleting project:', error)
+        }
+    }
+
     return (
         <>
-            {!hideNavBar && (
-                <InfoNav
+            {!hideNavBar && 
+                <InfoNav 
+                    id={String(audioId)} 
+                    projectType="Audio" 
+                    onDelete={handleDelete} 
+                    onShare={handleShare} 
                     CreatedAt={navInfo.created_at}
                     Language={navInfo.language}
                 />
-            )}
+            }
 
             <Box
                 sx={{
@@ -66,6 +93,12 @@ export const RawAudioContent: React.FC<ContentProps> = ({
                     disableDownload={true}
                 />
             </Box>
+
+            <SharePopup
+                open={isSharePopupOpen}
+                onClose={handleCloseSharePopup}
+                contentToShare={window.location.href} 
+            />
         </>
     )
 }

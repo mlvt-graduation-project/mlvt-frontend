@@ -73,7 +73,6 @@ export const BasePopup: FC<BasePopupProps> = ({
             scroll="paper"
             container={document.body}
             sx={{
-                zIndex: (theme) => theme.zIndex.modal + 2,
                 "& .MuiDialog-container": {
                     display: "flex",
                     alignItems: "center",

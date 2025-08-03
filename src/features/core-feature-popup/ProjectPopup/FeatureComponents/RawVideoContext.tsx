@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { NavInfo } from 'src/types/Project'
-import { getOneVideoById } from '../../../../api/video.api'
+import { deleteVideoById, getOneVideoById } from '../../../../api/video.api'
 import { InfoNav } from '../BaseComponent/InfomationNavBar'
 import { OriginalVideo } from '../BaseComponent/OriginalVideo'
+import { SharePopup } from "src/components/SharePopup";
 
 interface ContentProps {
     videoId: number
@@ -18,6 +19,17 @@ export const RawVideoContent: React.FC<ContentProps> = ({
         created_at: 'none-detected',
         language: 'none-detected',
     })
+
+    const [isSharePopupOpen, setSharePopupOpen] = useState(false);
+        
+    const handleShare = () => {
+        console.log("handleShare function was called! Setting popup to open.");
+        setSharePopupOpen(true);
+    };
+
+    const handleCloseSharePopup = () => {
+        setSharePopupOpen(false);
+    };
 
     useEffect(() => {
         const fetchVideoData = async () => {
@@ -36,10 +48,36 @@ export const RawVideoContent: React.FC<ContentProps> = ({
         fetchVideoData()
     }, [videoId])
 
+    const handleDelete = async (id: string) => {
+        console.log('Delete button is clicked with id:', id)
+        try {
+            await deleteVideoById(id);
+            console.log('Project deleted successfully. Reloading page...');
+            window.location.reload();
+        } catch (error) {
+            console.error('Error deleting project:', error)
+        }
+    }
+
     return (
         <>
-            {!hideNavBar && <InfoNav CreatedAt={navInfo.created_at} />}
+            {!hideNavBar && 
+            <InfoNav 
+                id={String(videoId)} 
+                projectType="Video" 
+                onDelete={handleDelete} 
+                onShare={handleShare} 
+                CreatedAt={navInfo.created_at}
+                Language={navInfo.language}
+            />
+            }
             <OriginalVideo videoUrl={videoUrl}></OriginalVideo>
+
+            <SharePopup
+                open={isSharePopupOpen}
+                onClose={handleCloseSharePopup}
+                contentToShare={window.location.href} 
+            />
         </>
     )
 }

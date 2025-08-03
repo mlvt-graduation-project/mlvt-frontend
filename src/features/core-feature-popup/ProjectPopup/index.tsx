@@ -16,7 +16,8 @@ interface ProcessedVideoProps {
     type: ProjectType
     hideNavBar?: boolean
     hideDownloadButton?: boolean
-    onClose: () => void
+    onClose: () => void,
+    onShare?: (url: string) => void;
 }
 
 export const ProcessedVideoPopUp: React.FC<ProcessedVideoProps> = ({
@@ -24,6 +25,7 @@ export const ProcessedVideoPopUp: React.FC<ProcessedVideoProps> = ({
     type,
     isOpen,
     onClose,
+    onShare,
     hideNavBar = false,
     hideDownloadButton,
 }) => {
@@ -54,15 +56,15 @@ export const ProcessedVideoPopUp: React.FC<ProcessedVideoProps> = ({
                     />
                 )
             case ProjectType.Fullpipeline:
-                return <FullPipelineContent inputProject={project} /> // Use project.id instead of videoId
+                return <FullPipelineContent inputProject={project} onShare={onShare} /> // Use project.id instead of videoId
             case ProjectType.TextGeneration:
-                return <TextGenerationContent inputProject={project} /> // Use project.id
+                return <TextGenerationContent inputProject={project} onShare={onShare} /> // Use project.id
             case ProjectType.TextTranslation:
-                return <TextTranslationContent inputProject={project} />
+                return <TextTranslationContent inputProject={project} onShare={onShare} />
             case ProjectType.AudioGeneration:
-                return <AudioGenerationContent inputProject={project} />
+                return <AudioGenerationContent inputProject={project} onShare={onShare} />
             case ProjectType.Lipsync:
-                return <LipSyncContent inputProject={project} />
+                return <LipSyncContent inputProject={project} onShare={onShare} />
 
             default:
                 return <></> // Handle unknown project types
