@@ -11,12 +11,10 @@ import {
 import { Project } from "../../types/Project";
 import { ProjectType } from "../../types/Project";
 import { hasThumbnail } from "../../utils/project.utils";
-import { alpha, useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import {
     EditSharp as EditSharpIcon,
     Circle as CircleIcon,
-    Bookmark,
-    BookmarkBorder,
 } from "@mui/icons-material";
 import { toDisplayText } from "../../types/ProjectStatus";
 import TextIcon from "../../assets/TextIcon.png";
@@ -31,10 +29,8 @@ interface CardFeatureProps {
 
 const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick, onUpdateTitle }) => {
     const theme = useTheme();
-    const [isBookmarked, setIsBookmarked] = React.useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [title, setTitle] = useState(project.title);
-    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         setTitle(project.title);
@@ -56,7 +52,6 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick, onUpdateTit
             return;
         }
 
-        setIsSaving(true);
         try {
             // Call the async function passed from the parent
             await onUpdateTitle(project, title.trim());
@@ -67,8 +62,6 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick, onUpdateTit
             // If API call fails, revert the title to the original
             setTitle(project.title);
         } finally {
-            // Whether it succeeded or failed, stop the saving process.
-            setIsSaving(false);
             setIsEditing(false);
         }
     };
@@ -91,11 +84,6 @@ const CardFeature: React.FC<CardFeatureProps> = ({ project, onclick, onUpdateTit
         onclick();
     };
 
-    const handleBookmarkClick = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setIsBookmarked((prev) => !prev);
-        console.log("Bookmark clicked");
-    };
     function isValidDate(d: any) {
         return d instanceof Date && !isNaN(d.getTime());
     }

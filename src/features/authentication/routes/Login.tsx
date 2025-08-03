@@ -1,5 +1,5 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material'
-import { Box, Checkbox, TextField, Typography } from '@mui/material'
+import { Box, TextField, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { useSnackbar } from 'notistack'
 import React, { useEffect } from 'react'
@@ -44,7 +44,6 @@ const Login = () => {
     const [emailError, setEmailError] = React.useState(false)
     const [passwordError, setPasswordError] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
-    const [rememberMe, setRememberMe] = React.useState(false)
     const [showPassword, setShowPassword] = React.useState(false)
     const location = useLocation()
 

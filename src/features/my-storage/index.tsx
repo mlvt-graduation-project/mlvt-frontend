@@ -250,7 +250,6 @@ const Storage = () => {
         })
 
     const [selectedProject, setSelectedProject] = useState<Project | null>(null)
-    const [isPopUpOpen, setIsPopUpOpen] = useState(false)
     const [totalCount, setTotalCount] = useState(0)
 
     const [shareState, setShareState] = useState<{
@@ -417,11 +416,9 @@ const Storage = () => {
 
     const handleCardClick = (project: Project) => {
         setSelectedProject(project)
-        setIsPopUpOpen(true)
     }
 
     const handleClosePopUp = () => {
-        setIsPopUpOpen(false)
         setSelectedProject(null)
     }
 

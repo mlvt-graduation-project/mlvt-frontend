@@ -26,10 +26,10 @@ export const LipSyncContent: React.FC<ContentProps> = ({
     const [videoStatus, setVideoStatus] = useState<string | null>(null)
     const [imageUrl, setInputImageUrl] = useState<string | null>(null)
 
-    const [navInfo, setNavInfo] = useState<NavInfo>({
+    const navInfo = {
         created_at: inputProject.createdAt,
         language: 'none-detected',
-    })
+    }
 
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [projectToDelete, setProjectToDelete] =

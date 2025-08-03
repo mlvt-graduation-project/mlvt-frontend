@@ -1,5 +1,4 @@
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
-import { Avatar, Badge, Box, IconButton, Typography } from '@mui/material'
+import { Avatar, Box, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import React, { useState } from 'react'
 import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
