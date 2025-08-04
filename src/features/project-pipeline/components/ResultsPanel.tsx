@@ -323,7 +323,7 @@ const ResultsPanel = () => {
                 variant="contained"
                 size="large"
                 onClick={handleGenerate}
-                disabled={!formIsValid || state.isGenerating}
+                disabled={!formIsValid || state.isGenerating || isLoadingCost}
                 sx={{
                     backgroundColor: (theme) =>
                         theme.palette.secondary.contrastText,
@@ -333,7 +333,11 @@ const ResultsPanel = () => {
                     width: '100%',
                 }}
             >
-                {state.isGenerating ? 'Generating...' : 'Generate'}
+                {state.isGenerating
+                    ? 'Generating...'
+                    : isLoadingCost
+                      ? 'Calculating Cost...'
+                      : 'Generate'}
             </Button>
             {pipelineShortForm && (
                 <ConfirmRunModal
