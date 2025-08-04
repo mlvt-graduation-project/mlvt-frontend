@@ -93,3 +93,4 @@ export type PipelineAction =
       }
     | { type: 'GENERATION_SUCCESS'; payload: PipelineResult }
     | { type: 'GENERATION_FAILURE'; payload: string }
+    | { type: 'CLEAR_ERROR' }

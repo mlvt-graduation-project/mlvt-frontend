@@ -88,6 +88,7 @@ const ConfirmRunModal: React.FC<ConfirmRunModalProps> = ({
                         borderRadius: 2,
                         px: 4,
                         textTransform: 'none',
+                        fontWeight: 700,
                     }}
                 >
                     No
@@ -99,9 +100,12 @@ const ConfirmRunModal: React.FC<ConfirmRunModalProps> = ({
                         borderRadius: 2,
                         px: 4,
                         textTransform: 'none',
-                        backgroundColor: '#9c27b0',
+                        fontWeight: 700,
+                        backgroundColor: (theme) => theme.palette.primary.main,
+                        color: (theme) => theme.palette.primary.contrastText,
                         '&:hover': {
-                            backgroundColor: '#7b1fa2',
+                            backgroundColor: (theme) =>
+                                theme.palette.primary.dark,
                         },
                     }}
                 >

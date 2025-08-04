@@ -1,6 +1,9 @@
 import { Alert, Box, Button, CircularProgress, Typography } from '@mui/material'
-import { useContext, useEffect, useRef } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { GetPipelineCost } from 'src/api/model.api'
+import ConfirmRunModal from 'src/components/ModelCostPopup'
 import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
+import { PipelineShortForm } from 'src/types/Project'
 import { getAllPipelineProgress } from '../apis/pipeline-progress.api'
 import { PipelineContext } from '../context/PipelineContext'
 import { executePipeline } from '../services/pipelineExecutor'
@@ -28,6 +31,14 @@ const ResultsPanel = () => {
     const userId = useGetUserDetails().data?.user.id ?? null
     const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null)
     const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+    // --- New State for Modal and Cost ---
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [pipelineCost, setPipelineCost] = useState(0)
+    const [isLoadingCost, setIsLoadingCost] = useState(false)
+    const [pipelineShortForm, setPipelineShortForm] =
+        useState<PipelineShortForm | null>(null)
+    // ------------------------------------
 
     const stopPolling = () => {
         if (pollingIntervalRef.current) {
@@ -141,7 +152,9 @@ const ResultsPanel = () => {
         }
     }, [state.pollingInfo, userId, dispatch, state])
 
-    const handleGenerate = async () => {
+    // --- Function to run after user confirms in modal ---
+    const proceedWithGeneration = async () => {
+        setIsModalOpen(false) // Close the modal
         if (!userId) {
             dispatch({ type: 'GENERATION_FAILURE', payload: 'User not found.' })
             return
@@ -156,6 +169,30 @@ const ResultsPanel = () => {
             dispatch({ type: 'START_POLLING', payload: pollingDetails })
         } catch (err: any) {
             dispatch({ type: 'GENERATION_FAILURE', payload: err.message })
+        }
+    }
+    // --------------------------------------------------------
+
+    const handleGenerate = async () => {
+        if (state.error) {
+            dispatch({ type: 'CLEAR_ERROR' })
+        }
+        setIsLoadingCost(true)
+        try {
+            const shortForm = convertPipelineTypeToShortForm(
+                state.selectedPipeline,
+            )
+            setPipelineShortForm(shortForm)
+            const costData = await GetPipelineCost(shortForm)
+            setPipelineCost(costData.cost)
+            setIsModalOpen(true) // Open the modal on success
+        } catch (error: any) {
+            dispatch({
+                type: 'GENERATION_FAILURE',
+                payload: error.message || 'Failed to fetch pipeline cost.',
+            })
+        } finally {
+            setIsLoadingCost(false)
         }
     }
 
@@ -298,8 +335,38 @@ const ResultsPanel = () => {
             >
                 {state.isGenerating ? 'Generating...' : 'Generate'}
             </Button>
+            {pipelineShortForm && (
+                <ConfirmRunModal
+                    isOpen={isModalOpen}
+                    onNo={() => setIsModalOpen(false)}
+                    onYes={proceedWithGeneration}
+                    cost={pipelineCost}
+                    model={pipelineShortForm}
+                />
+            )}
         </Box>
     )
 }
 
 export default ResultsPanel
+
+export const convertPipelineTypeToShortForm = (
+    pipelineType: PipelineType,
+): PipelineShortForm => {
+    switch (pipelineType) {
+        case PipelineType.VideoTranslation:
+            return PipelineShortForm.Fullpipeline
+        case PipelineType.TextGeneration:
+            return PipelineShortForm.TextGeneration
+        case PipelineType.TextTranslation:
+            return PipelineShortForm.TextTranslation
+        case PipelineType.VoiceGeneration:
+            return PipelineShortForm.AudioGeneration
+        case PipelineType.LipSynchronization:
+            return PipelineShortForm.Lipsync
+        default:
+            throw new Error(
+                `Unsupported pipeline type for cost calculation: ${pipelineType}`,
+            )
+    }
+}

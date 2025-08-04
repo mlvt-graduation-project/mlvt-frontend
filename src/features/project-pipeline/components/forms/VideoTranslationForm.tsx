@@ -55,6 +55,7 @@ const VideoTranslationForm = () => {
                         choices={languageChoices}
                         handleChangeOption={handleChangeAudioLanguage}
                         value={state.inputs.sourceLanguage || ''}
+                        disabled={state.isGenerating}
                     />
                 </Box>
                 <Box flex={1}>
