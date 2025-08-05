@@ -45,12 +45,12 @@ export const DeleteConfirmationDialog: React.FC<
                 <Button onClick={onClose} color="primary">
                     Cancel
                 </Button>
-                {/* Delete Button - styled to indicate a destructive action */}
                 <Button
                     onClick={handleConfirm}
                     variant="contained"
                     sx={{
                         backgroundColor: '#CF0A0A',
+                        color: '#FFFFFF',
                         '&:hover': {
                             backgroundColor: '#8E1616',
                         },

@@ -108,6 +108,11 @@ export const pipelineReducer = (
                 pollingInfo: null, // Clear any polling info.
             }
 
+        case 'CLEAR_ERROR':
+            return {
+                ...state,
+                error: null,
+            }
         // Default case for any unhandled actions.
         default:
             return state
