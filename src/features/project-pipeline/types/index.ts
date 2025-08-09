@@ -13,6 +13,7 @@ export interface PipelineInputs {
     text?: string | File | number | null
     sourceLanguage?: string
     targetLanguage?: string
+    sampleAudioID?: number | null
     language?: string
     customVoiceFile?: File | null
     model?: string

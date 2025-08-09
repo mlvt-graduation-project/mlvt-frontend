@@ -5,11 +5,13 @@ export const postVideoTranslation = (
     videoId: number,
     sourceLanguage: string,
     targetLanguage: string,
+    sampleAudioID: number | null,
 ): Promise<any> => {
     return post(`/mlvt/pipeline/full/${videoId}`, null, {
         params: {
             source_language: sourceLanguage,
             target_language: targetLanguage,
+            ...(sampleAudioID !== null && { sample_audio_id: sampleAudioID }),
         },
         getFullResponse: true,
     })

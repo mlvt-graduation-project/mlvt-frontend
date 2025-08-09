@@ -1,12 +1,28 @@
-import { Box, IconButton, Typography } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from '@mui/icons-material/Delete'
+import { Box, IconButton, Typography } from '@mui/material'
+import { useEffect, useState } from 'react'
 
 interface CustomAudioProps {
-    handleRemoveFile: () => void;
-    audioURL: string;
-    fileName?: string;
+    handleRemoveFile: () => void
+    audioURL: string | null
+    localFile?: string
+    fileName?: string
 }
-export const CustomAudio: React.FC<CustomAudioProps> = ({ handleRemoveFile, audioURL, fileName }) => {
+export const CustomAudio: React.FC<CustomAudioProps> = ({
+    handleRemoveFile,
+    audioURL,
+    fileName,
+    localFile,
+}) => {
+    const [src, setSrc] = useState<string>('')
+    useEffect(() => {
+        if (localFile) {
+            const localFileURL = `${process.env.PUBLIC_URL}/audio/${encodeURIComponent(localFile)}`
+            setSrc(localFileURL)
+        } else {
+            setSrc(audioURL ? audioURL : '')
+        }
+    }, [localFile, audioURL])
     return (
         <Box sx={{ position: 'relative' }}>
             <Box
@@ -16,7 +32,11 @@ export const CustomAudio: React.FC<CustomAudioProps> = ({ handleRemoveFile, audi
                     justifyContent: 'space-between',
                 }}
             >
-                <audio src={audioURL} controls style={{ flex: '1', maxWidth: 'calc(100% - 50px)' }} />
+                <audio
+                    src={src}
+                    controls
+                    style={{ flex: '1', maxWidth: 'calc(100% - 50px)' }}
+                />
                 <IconButton
                     onClick={handleRemoveFile}
                     sx={{
@@ -41,5 +61,5 @@ export const CustomAudio: React.FC<CustomAudioProps> = ({ handleRemoveFile, audi
                 </Typography>
             )}
         </Box>
-    );
-};
+    )
+}

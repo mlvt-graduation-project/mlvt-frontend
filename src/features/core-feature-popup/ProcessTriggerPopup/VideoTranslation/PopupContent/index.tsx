@@ -17,6 +17,7 @@ import { checkValidGenerate } from '../../../../../utils/ProcessTriggerPopup/Che
 import { uploadVideo } from '../../../../../utils/ProcessTriggerPopup/VideoService'
 import { BrowseFile } from '../../BaseComponent/BrowseMLVTFile'
 import ChangeViewBox from '../../BaseComponent/ChangeView'
+import { CustomAudio } from '../../BaseComponent/CustomAudio'
 import { GenerateButton } from '../../BaseComponent/GenerateButton'
 import { SingleOptionBox } from '../../BaseComponent/SingleOptionBox'
 import { UploadFileFromDevice } from '../../BaseComponent/UploadFileFromDevice'
@@ -28,10 +29,17 @@ export interface GenerateVideoData {
     sourceLanguage: TranslateLanguage | null
     targetLanguage: TranslateLanguage | null
     fileData: VideoData
+    sampleAudioID: number | null
 }
 
 interface DialogContentProps {
     onGenerate: (data: GenerateVideoData) => void
+}
+
+interface sampleVoiceInterface {
+    displayName: string
+    audioID: number | null
+    fileName: string | null
 }
 
 export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
@@ -44,6 +52,25 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const [sourceLanguage, setSourceLanguage] = useState<TranslateLanguage>(
         TranslateLanguage.English,
     )
+
+    const sampleVoice: sampleVoiceInterface[] = [
+        {
+            displayName: 'Vietnamese voice 1',
+            audioID: 117,
+            fileName: 'vietnamese1(117).wav',
+        },
+        {
+            displayName: 'Vietnamese voice 2',
+            audioID: 119,
+            fileName: 'vietnamese2(119).wav',
+        },
+        { displayName: 'None', audioID: null, fileName: null },
+    ]
+    const [selectedVoice, setSelectedVoice] = useState<sampleVoiceInterface>({
+        displayName: 'None',
+        audioID: null,
+        fileName: null,
+    })
 
     const [confirmPopup, setConfirmPopup] = useState<boolean>(false)
     const [cost, setCost] = useState<number>(0)
@@ -83,6 +110,23 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         ) {
             setTargetLanguage(value as TranslateLanguage)
         }
+    }
+
+    const handleChangeSampleVoice = (value: string) => {
+        const foundVoice = sampleVoice.find((v) => v.displayName === value)
+        if (foundVoice) {
+            setSelectedVoice(foundVoice)
+        } else {
+            setSelectedVoice({
+                displayName: 'None',
+                audioID: null,
+                fileName: null,
+            })
+        }
+    }
+
+    const handleRemoveSampleVoice = () => {
+        setSelectedVoice({ displayName: 'None', audioID: null, fileName: null })
     }
 
     const handleChangeFileData = useCallback((update: Partial<VideoData>) => {
@@ -186,6 +230,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
             sourceLanguage,
             targetLanguage,
             fileData,
+            sampleAudioID: selectedVoice.audioID,
         }
 
         // Call the function passed down from the parent
@@ -198,6 +243,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
         targetLanguage,
         fileData,
         onGenerate,
+        selectedVoice.audioID,
     ])
 
     const handleYesConfirmPopup = handlePipelineTrigger
@@ -255,7 +301,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                             TranslateLanguage.Vietnamese,
                         ]}
                         handleChangeOption={handleChangeSourceLanguage}
-                        value={TranslateLanguage.English}
+                        value={sourceLanguage}
                     />
                 </Box>
                 <Box flex={1}>
@@ -274,9 +320,40 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                             TranslateLanguage.Vietnamese,
                         ]}
                         handleChangeOption={handleChangeTargetLanguage}
-                        value={TranslateLanguage.Vietnamese}
+                        value={targetLanguage}
                     />
                 </Box>
+            </Box>
+
+            <Box
+                sx={{
+                    marginTop: '15px',
+                    border: '1.5px dashed grey',
+                    padding: '20px',
+                    borderRadius: '10px',
+                }}
+            >
+                <Typography mb="0.9rem" sx={{ fontSize: '0.9rem' }}>
+                    {' '}
+                    Choose sample voice (optional):{' '}
+                </Typography>
+
+                {selectedVoice.fileName && (
+                    <CustomAudio
+                        handleRemoveFile={handleRemoveSampleVoice}
+                        audioURL={null}
+                        localFile={selectedVoice.fileName}
+                    />
+                )}
+
+                <SingleOptionBox
+                    choices={sampleVoice.map((v) => v.displayName)}
+                    handleChangeOption={handleChangeSampleVoice}
+                    value={selectedVoice.displayName}
+                    customSx={
+                        selectedVoice.fileName ? { mt: '1.2rem' } : undefined
+                    }
+                />
             </Box>
 
             <GenerateButton

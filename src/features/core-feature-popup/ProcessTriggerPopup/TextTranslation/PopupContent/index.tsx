@@ -254,7 +254,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                         ]}
                         customSx={{}}
                         handleChangeOption={handleChangeSourceLanguage}
-                        value={TranslateLanguage.English}
+                        value={sourceLanguage}
                     />
                 </Box>
                 {/* choosing model section */}
@@ -274,7 +274,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                             TranslateLanguage.Vietnamese,
                         ]}
                         handleChangeOption={handleChangeTargetLanguage}
-                        value={TranslateLanguage.Vietnamese}
+                        value={targetLanguage}
                     />
                 </Box>
             </Box>
