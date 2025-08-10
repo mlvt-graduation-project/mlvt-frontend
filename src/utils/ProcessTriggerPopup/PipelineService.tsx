@@ -101,16 +101,18 @@ export const translateVideo = async (
     videoId: number,
     sourceLanguage: TranslateLanguage,
     targetLanguage: TranslateLanguage,
+    sampleAudioID: number | null,
 ): Promise<JobCreationResponse> => {
     const sourceLanguageCode = getLanguageCode(sourceLanguage)
     const targetLanguageCode = getLanguageCode(targetLanguage)
+    console.log('API sampleAudioID: ', sampleAudioID)
     const postVideoTranslationResponse = await postVideoTranslation(
         videoId,
         sourceLanguageCode,
         targetLanguageCode,
+        sampleAudioID,
     )
 
-    console.log('postVideoTranslationResponse', postVideoTranslationResponse)
     if (!checkSuccessResponse(postVideoTranslationResponse.status)) {
         throw new Error('Server indicated an error during video translation.')
     }

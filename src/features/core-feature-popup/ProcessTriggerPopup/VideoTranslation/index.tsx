@@ -56,6 +56,7 @@ export const VideoTranslationPopup: React.FC<VideoTranslationPopupProps> = ({
                     videoId,
                     data.sourceLanguage,
                     data.targetLanguage,
+                    data.sampleAudioID,
                 )
 
                 setNotification({

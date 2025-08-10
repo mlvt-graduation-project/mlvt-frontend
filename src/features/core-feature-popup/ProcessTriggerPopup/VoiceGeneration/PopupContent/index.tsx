@@ -54,7 +54,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
     const [MLVTText, setMLVTText] = useState<RawText | null>(null)
     const [inputText, setInputText] = useState<string>('')
     const [disableGenerate, setDisableGenerate] = useState<boolean>(true)
-    const [textLanguage, setTextLanguage] = useState<TranslateLanguage | null>(
+    const [textLanguage, setTextLanguage] = useState<TranslateLanguage>(
         TranslateLanguage.English,
     )
 
@@ -343,7 +343,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
                     ]}
                     handleChangeOption={handleChangeTextLanguage}
                     customSx={{ width: '30%' }}
-                    value={TranslateLanguage.English}
+                    value={textLanguage}
                 />
             </Box>
 

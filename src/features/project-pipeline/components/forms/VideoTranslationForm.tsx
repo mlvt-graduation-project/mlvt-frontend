@@ -1,9 +1,16 @@
 import { Box, Divider, Stack, Typography } from '@mui/material'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
+import { CustomAudio } from 'src/features/core-feature-popup/ProcessTriggerPopup/BaseComponent/CustomAudio'
 import { SingleOptionBox } from 'src/features/core-feature-popup/ProcessTriggerPopup/BaseComponent/SingleOptionBox'
 import { TranslateLanguage } from 'src/types/Translation'
 import { PipelineContext } from '../../context/PipelineContext'
 import MultiSourceInput from '../shared/MultiSourceInput'
+
+interface sampleVoiceInterface {
+    displayName: string
+    audioID: number | null
+    fileName: string | null
+}
 
 const VideoTranslationForm = () => {
     // 3. Get the global state and dispatch function from context
@@ -30,11 +37,55 @@ const VideoTranslationForm = () => {
         TranslateLanguage.Vietnamese,
     ]
 
+    const sampleVoice: sampleVoiceInterface[] = [
+        {
+            displayName: 'Vietnamese voice 1',
+            audioID: 117,
+            fileName: 'vietnamese1(117).wav',
+        },
+        {
+            displayName: 'Vietnamese voice 2',
+            audioID: 119,
+            fileName: 'vietnamese2(119).wav',
+        },
+        { displayName: 'None', audioID: null, fileName: null },
+    ]
+    const [selectedVoice, setSelectedVoice] = useState<sampleVoiceInterface>({
+        displayName: 'None',
+        audioID: null,
+        fileName: null,
+    })
+
+    const handleChangeSampleVoice = (value: string) => {
+        const foundVoice = sampleVoice.find((v) => v.displayName === value)
+        if (foundVoice) {
+            setSelectedVoice(foundVoice)
+            dispatch({
+                type: 'UPDATE_INPUT',
+                payload: { field: 'sampleAudioID', value: foundVoice.audioID },
+            })
+        } else {
+            setSelectedVoice({
+                displayName: 'None',
+                audioID: null,
+                fileName: null,
+            })
+            dispatch({
+                type: 'UPDATE_INPUT',
+                payload: { field: 'sampleAudioID', value: null },
+            })
+        }
+    }
+
+    const handleRemoveSampleVoice = () => {
+        setSelectedVoice({ displayName: 'None', audioID: null, fileName: null })
+    }
+
     return (
         <Stack spacing={3}>
             {/* This component already correctly uses the context */}
             <MultiSourceInput label="Video" field="video" inputType="video" />
-            <Divider sx={{ borderColor: 'divider', my: 2 }} />
+            {/* <Divider sx={{ borderColor: 'divider', my: 2 }} /> */}
             <Box
                 sx={{
                     display: 'flex',
@@ -74,6 +125,37 @@ const VideoTranslationForm = () => {
                         disabled={state.isGenerating}
                     />
                 </Box>
+            </Box>
+            <Divider sx={{ borderColor: 'divider', my: 2 }} />
+            <Box
+                sx={{
+                    marginTop: '15px',
+                    border: '1.5px dashed grey',
+                    padding: '20px',
+                    borderRadius: '10px',
+                }}
+            >
+                <Typography mb="0.9rem" sx={{ fontSize: '0.9rem' }}>
+                    {' '}
+                    Choose sample voice (optional):{' '}
+                </Typography>
+
+                {selectedVoice.fileName && (
+                    <CustomAudio
+                        handleRemoveFile={handleRemoveSampleVoice}
+                        audioURL={null}
+                        localFile={selectedVoice.fileName}
+                    />
+                )}
+
+                <SingleOptionBox
+                    choices={sampleVoice.map((v) => v.displayName)}
+                    handleChangeOption={handleChangeSampleVoice}
+                    value={selectedVoice.displayName}
+                    customSx={
+                        selectedVoice.fileName ? { mt: '1.2rem' } : undefined
+                    }
+                />
             </Box>
         </Stack>
     )

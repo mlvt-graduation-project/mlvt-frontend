@@ -11,6 +11,7 @@ export const initialState: PipelineState = {
     inputs: {
         sourceLanguage: TranslateLanguage.English,
         targetLanguage: TranslateLanguage.Vietnamese,
+        sampleAudioID: null,
     },
     isGenerating: false,
     results: null,
@@ -22,6 +23,7 @@ const defaultInputs: Partial<Record<PipelineType, Partial<PipelineInputs>>> = {
     video_translation: {
         sourceLanguage: TranslateLanguage.English,
         targetLanguage: TranslateLanguage.Vietnamese,
+        sampleAudioID: null,
     },
     text_generation: {
         text: '',

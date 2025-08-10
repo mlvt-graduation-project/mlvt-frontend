@@ -108,8 +108,10 @@ const executeVideoTranslation = async (
             videoId,
             inputs.sourceLanguage as TranslateLanguage,
             inputs.targetLanguage as TranslateLanguage,
+            inputs.sampleAudioID ? inputs.sampleAudioID : null,
         )
 
+        // return { key: 'progressed_video_id', value: 1 }
         return { key: 'progressed_video_id', value: jobResponse.id }
     } catch (error) {
         console.error('Error during video translation pipeline:', error)

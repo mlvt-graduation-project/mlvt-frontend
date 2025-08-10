@@ -4,12 +4,16 @@ import { styled } from '@mui/material/styles'
 import axios from 'axios'
 import React, { useRef, useState } from 'react'
 import { useGetUserDetails } from 'src/hooks/useGetUserDetails'
+import { TextFileType } from 'src/types/FileType'
+import { S3Folder } from 'src/types/S3FolderStorage'
+import { uploadAudio } from 'src/utils/ProcessTriggerPopup/AudioService'
+import { uploadText } from 'src/utils/ProcessTriggerPopup/TextService'
 import {
     getPresignedImageURL,
     getPresignedVideoURL,
     postVideo,
 } from '../../../../api/video.api'
-import { VideoData } from '../../../../types/FileData'
+import { FileData, TextData, VideoData } from '../../../../types/FileData'
 import UploadNotification from '../../../UploadNotification'
 
 const s3ApiClient = axios.create({})
@@ -100,14 +104,39 @@ function UploadButton() {
     const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0]
-            ref.current.file_name = file.name
             ref.current.user_id = parseInt(userId || '0')
+            const fileName = `${userId}_${Math.floor(Date.now() / 1000)}`
             if (file) {
-                if (file.type === 'video/mp4') {
-                    const imageFile = await extractFirstFrame(file)
-                    await uploadVideoImage(imageFile)
+                try {
+                    openNotification('loading', 'Uploading…')
+                    if (file.type === 'video/mp4') {
+                        ref.current.file_name = fileName + '.mp4'
+                        const imageFile = await extractFirstFrame(file)
+                        await uploadVideoImage(imageFile)
+                        await uploadVideoToServer(file, file.type)
+                    } else if (file.type.startsWith('audio/')) {
+                        const fileExtension = file.type.split('/')[1] // 'mp3', 'wav', etc.
+                        const data: FileData = {
+                            duration: 0,
+                            folder: S3Folder.audio,
+                            file_name: fileName + '.' + fileExtension,
+                            user_id: parseInt(userId || '0'),
+                            lang: 'undefined',
+                        }
+                        await uploadAudio(file, data)
+                    } else if (file.type.startsWith('text/')) {
+                        const data: TextData = {
+                            file_name: fileName + '.txt',
+                            user_id: parseInt(userId || '0'),
+                            folder: S3Folder.text,
+                            lang: 'undefined',
+                        }
+                        await uploadText(file, data, TextFileType.PlainText)
+                    }
+                    openNotification('success', 'Upload complete 🎉')
+                } catch (error) {
+                    openNotification('fail', 'Error uploading media')
                 }
-                await uploadFile(file, file.type)
             }
         }
     }
@@ -182,10 +211,12 @@ function UploadButton() {
         }
     }
 
-    const uploadFile = async (file: File, fileType: string) => {
-        openNotification('loading', 'Uploading…')
+    // Include 3 steps:
+    // 1. Generate presigned url
+    // 2. Upload to S3
+    // 3. Upload information to server
+    const uploadVideoToServer = async (file: File, fileType: string) => {
         try {
-            console.log(ref.current)
             const responseAdd = await postVideo(ref.current)
 
             if (responseAdd.status === 201) {
@@ -193,7 +224,7 @@ function UploadButton() {
             }
 
             const responseGeneratePresignedVideoUpload =
-                await getPresignedVideoURL(file.name, fileType)
+                await getPresignedVideoURL(ref.current.file_name, fileType)
 
             if (responseGeneratePresignedVideoUpload.status === 200) {
                 console.log(
@@ -214,10 +245,9 @@ function UploadButton() {
                 if (s3UploadVideoResponse.status === 200) {
                     console.log('Upload video to S3 successfully')
                 }
-                openNotification('success', 'Upload complete 🎉')
             }
         } catch (e) {
-            console.error('Error uploading file: ' + e)
+            throw new Error('Error uploading video')
         }
     }
 
