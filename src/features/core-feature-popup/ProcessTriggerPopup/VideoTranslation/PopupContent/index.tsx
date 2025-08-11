@@ -55,14 +55,34 @@ export const DialogContent: React.FC<DialogContentProps> = ({ onGenerate }) => {
 
     const sampleVoice: sampleVoiceInterface[] = [
         {
-            displayName: 'Vietnamese voice 1',
+            displayName: 'Vietnamese voice 1 (female child)',
             audioID: 117,
-            fileName: 'vietnamese1(117).wav',
+            fileName: 'vietnamese1(117-tre_em_nu).wav',
         },
         {
-            displayName: 'Vietnamese voice 2',
+            displayName: 'Vietnamese voice 2 (male child)',
             audioID: 119,
-            fileName: 'vietnamese2(119).wav',
+            fileName: 'vietnamese2(119-tre_em_nam).wav',
+        },
+        {
+            displayName: 'Vietnamese voice 3 (North female accent)',
+            audioID: 128,
+            fileName: 'vietnamese3(128-giong_nu_Bac).wav',
+        },
+        {
+            displayName: 'Vietnamese voice 4 (North male accent)',
+            audioID: 127,
+            fileName: 'vietnamese4(127-giong_nam_Bac).wav',
+        },
+        {
+            displayName: 'Vietnamese voice 5 (South female accent)',
+            audioID: 130,
+            fileName: 'vietnamese5(130-giong_nu_Nam).wav',
+        },
+        {
+            displayName: 'Vietnamese voice 6 (South male accent)',
+            audioID: 129,
+            fileName: 'vietnamese6(129-giong_nam_Nam).wav',
         },
         { displayName: 'None', audioID: null, fileName: null },
     ]
